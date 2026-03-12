@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="/style.css">
     <title><%= title %></title>
     <style>
-        /* 深度定制化：扁平化专业设计 */
+        /* 基础变量 */
         :root {
             --primary-color: #aa0000;
             --text-main: #2c3e50;
@@ -26,7 +26,7 @@
             color: var(--text-main);
         }
 
-        /* 顶部导航：去除阴影，使用细边框 */
+        /* 顶部导航 */
         .site-header {
             height: 70px;
             background: #fff;
@@ -35,6 +35,7 @@
             align-items: center;
             padding: 0 40px;
             border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0; /* 防止导航被压缩 */
         }
         .header-left {
             display: flex;
@@ -42,7 +43,7 @@
             gap: 15px;
         }
         .site-logo {
-            height: 40px;
+            height: 35px;
             width: auto;
         }
         .site-title {
@@ -54,19 +55,37 @@
 
         /* 主体内容布局 */
         .main-container {
-            flex: 1;
+            flex: 1; /* 撑满剩余屏幕高度 */
             display: flex;
             width: 100%;
         }
 
-        /* 左侧：定制区域 */
+        /* ================= 修改点 1：固定按钮组 ================= */
         .config-main {
             flex: 1;
             padding: 40px 60px;
             border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column; /* 让内容垂直排列 */
         }
+        #configForm {
+            display: flex;
+            flex-direction: column;
+            flex: 1; /* 表单撑满左侧的高度 */
+        }
+        .step-content {
+            flex: 1; /* 内容区弹性撑开，把按钮组往下挤 */
+        }
+        .button-group {
+            margin-top: auto; /* 神器：自动推到最底部 */
+            padding-top: 25px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 15px;
+        }
+        /* ======================================================= */
 
-        /* 右侧：汇总区域（更平整的侧边栏） */
+        /* 右侧汇总区域 */
         .summary-sidebar {
             width: 380px;
             background-color: var(--bg-side);
@@ -75,12 +94,14 @@
             top: 70px;
             height: calc(100vh - 70px);
             overflow-y: auto;
+            flex-shrink: 0;
+            box-sizing: border-box;
         }
 
-        /* 进度条：扁平化设计 */
+        /* 进度条 */
         .stepper {
             display: flex;
-            margin-bottom: 50px;
+            margin-bottom: 40px;
             gap: 20px;
         }
         .step {
@@ -90,6 +111,7 @@
             font-size: 14px;
             color: var(--text-light);
             transition: all 0.3s;
+            white-space: nowrap;
         }
         .step.active {
             border-bottom-color: var(--primary-color);
@@ -97,7 +119,7 @@
             font-weight: 600;
         }
 
-        /* 选项设计：摒弃浮动卡片，改为平铺卡片 */
+        /* 选项设计 */
         .option-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -111,6 +133,7 @@
             cursor: pointer;
             transition: all 0.2s ease;
             overflow: hidden;
+            box-sizing: border-box;
         }
         .option-item:hover {
             border-color: var(--primary-color);
@@ -141,14 +164,10 @@
             font-size: 13px;
             color: #999;
             background-color: #fff;
+            flex-shrink: 0;
         }
 
         /* 按钮设计 */
-        .button-group {
-            margin-top: 60px;
-            display: flex;
-            gap: 15px;
-        }
         button {
             padding: 12px 30px;
             border-radius: 4px;
@@ -163,7 +182,7 @@
         #prevBtn { background: #fff; color: var(--primary-color); }
         #prevBtn:disabled { border-color: #eee; color: #ccc; cursor: not-allowed; }
 
-        /* 侧边栏明细样式 */
+        /* 侧边栏样式 */
         .summary-title {
             font-size: 18px;
             font-weight: 600;
@@ -179,9 +198,52 @@
             padding-bottom: 10px;
         }
         .summary-row .label { color: var(--text-light); }
-        .summary-row .value { color: var(--text-main); font-weight: 500; }
+        .summary-row .value { color: var(--text-main); font-weight: 500; text-align: right; max-width: 60%; }
 
         .hidden { display: none !important; }
+
+        /* ================= 修改点 2：移动端响应式适配 ================= */
+        @media (max-width: 900px) {
+            .site-header { padding: 0 20px; }
+            .header-right { display: none; } /* 移动端空间有限，隐藏当前用户信息 */
+            
+            .main-container { 
+                flex-direction: column; /* 左右布局变为上下布局 */
+            }
+            
+            .config-main { 
+                padding: 20px; 
+                border-right: none;
+                min-height: 60vh; /* 保证在移动端左侧也有足够高度托底按钮 */
+            }
+
+            .summary-sidebar { 
+                width: 100%; 
+                height: auto; 
+                position: static; /* 取消吸顶 */
+                padding: 30px 20px; 
+                border-top: 1px solid var(--border-color);
+            }
+
+            /* 移动端步骤条允许横向滑动 */
+            .stepper { 
+                overflow-x: auto; 
+                padding-bottom: 10px; 
+                gap: 15px; 
+            }
+            /* 隐藏滚动条但保留滑动功能 */
+            .stepper::-webkit-scrollbar { display: none; }
+            .step { flex: 0 0 auto; }
+
+            .site-footer { padding: 20px; text-align: center; }
+
+            .option-grid {
+                /* 移动端改小一点的网格 */
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            .option-img { height: 140px; }
+        }
+        /* ========================================================== */
     </style>
 </head>
 <body>
@@ -203,7 +265,7 @@
             <nav class="stepper">
                 <div class="step active" id="step-1-label">01. 款式选择</div>
                 <div class="step" id="step-2-label">02. 面料参数</div>
-                <div class="step" id="step-3-label">03. 品牌辅助</div>
+                <div class="step" id="step-3-label">03. 品牌辅料</div>
                 <div class="step" id="step-4-label">04. 物流交付</div>
                 <div class="step" id="step-5-label">05. 确认提交</div>
             </nav>
@@ -238,9 +300,9 @@
                         </div>
                     </div>
 
-                    <div id="custom-upload" class="hidden" style="padding: 40px; border: 1px dashed var(--border-color); text-align: center; background: #fdfdfd;">
-                        <p>请拖拽或点击上传您的技术包 (Tech Pack) 或款式图片</p>
-                        <input type="file" multiple>
+                    <div id="custom-upload" class="hidden" style="padding: 40px 20px; border: 1px dashed var(--border-color); text-align: center; background: #fdfdfd;">
+                        <p style="margin-bottom: 15px; color: var(--text-main);">请上传您的技术包 (Tech Pack) 或款式图片</p>
+                        <input type="file" multiple style="font-size: 14px;">
                     </div>
                 </div>
 
@@ -249,14 +311,14 @@
                     <h2 style="font-size: 22px; margin-bottom: 30px;">面料与成分选择</h2>
                     <div class="option-grid">
                         <div class="option-item" onclick="selectItem('fabric', 'Nylon 190G', '哑光尼龙 (190G)')">
-                            <div style="height:120px; background:#333;"></div>
+                            <div style="height:140px; background:#333;"></div>
                             <div class="option-info">
                                 <h4>Matte Nylon</h4>
                                 <p>80% Nylon, 20% Spandex</p>
                             </div>
                         </div>
                         <div class="option-item" onclick="selectItem('fabric', 'Repreve 200G', '再生环保面料')">
-                            <div style="height:120px; background:#1a3c34;"></div>
+                            <div style="height:140px; background:#1a3c34;"></div>
                             <div class="option-info">
                                 <h4>REPREVE® Eco</h4>
                                 <p>100% 可回收材料</p>
@@ -265,11 +327,11 @@
                     </div>
                 </div>
 
-                <!-- 后面步骤略，保持 HTML 结构一致 -->
-                <div class="step-content hidden" id="step-3"><h3>品牌定制内容</h3><p>此模块正在根据您的需求加载选项...</p></div>
-                <div class="step-content hidden" id="step-4"><h3>交付与物流</h3><p>此模块正在根据您的需求加载选项...</p></div>
-                <div class="step-content hidden" id="step-5"><h3>核对需求预览</h3><p>请在右侧检查您的最终选择，确认无误后提交。</p></div>
+                <div class="step-content hidden" id="step-3"><h2 style="font-size: 22px; margin-bottom: 30px;">品牌辅料定制</h2><p>选项加载中...</p></div>
+                <div class="step-content hidden" id="step-4"><h2 style="font-size: 22px; margin-bottom: 30px;">交付与物流</h2><p>选项加载中...</p></div>
+                <div class="step-content hidden" id="step-5"><h2 style="font-size: 22px; margin-bottom: 30px;">核对需求预览</h2><p>请检查您的选择，确认无误后提交。</p></div>
 
+                <!-- 底部按钮组（固定在表单区域的最下方） -->
                 <div class="button-group">
                     <button type="button" id="prevBtn" class="btn-outline" onclick="changeStep(-1)" disabled>返回上一步</button>
                     <button type="button" id="nextBtn" onclick="changeStep(1)">继续下一步</button>
@@ -298,9 +360,9 @@
                 <span class="value" id="sum-shipping">未选择</span>
             </div>
 
-            <div style="margin-top: 50px; padding: 20px; background: #fff; border: 1px solid var(--border-color); font-size: 13px;">
+            <div style="margin-top: 40px; padding: 15px; background: #fff; border: 1px solid var(--border-color); font-size: 13px; line-height: 1.5;">
                 <strong>温馨提示：</strong><br>
-                提交后，我们的系统将自动为您生成初步技术规格书。业务代表将在1个工作日内联系您核对起订量（MOQ）与单价。
+                提交后，我们的系统将自动为您生成初步技术规格书。业务代表将在1个工作日内联系您核对明细与单价。
             </div>
         </aside>
     </div>
@@ -323,6 +385,9 @@
 
             document.getElementById('prevBtn').disabled = (currentStep === 1);
             document.getElementById('nextBtn').innerText = (currentStep === totalSteps) ? '确认提交需求' : '继续下一步';
+            
+            // 切换步骤时，页面回到顶部，提升体验
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function toggleStyleMode(mode) {
@@ -330,6 +395,7 @@
             const upload = document.getElementById('custom-upload');
             if(mode === 'existing') {
                 list.classList.remove('hidden'); upload.classList.add('hidden');
+                document.getElementById('sum-style').innerText = '未选择';
             } else {
                 list.classList.add('hidden'); upload.classList.remove('hidden');
                 document.getElementById('sum-style').innerText = '自定义 OEM';

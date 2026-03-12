@@ -9,11 +9,11 @@
 <body>
     <div class="auth-container">
         
-        <!-- 登录表单 -->
+        <!-- 登录表单 (默认显示) -->
         <div id="login-box" class="form-box">
             <h2>用户登录</h2>
             <form id="loginForm">
-                <input type="text" id="loginUser" placeholder="用户名/邮箱" required>
+                <input type="text" id="loginUser" placeholder="用户名或邮箱" required>
                 <input type="password" id="loginPass" placeholder="密码" required>
                 <button type="submit">登 录</button>
             </form>
@@ -23,7 +23,7 @@
             </div>
         </div>
 
-        <!-- 注册表单 -->
+        <!-- 注册表单 (默认隐藏) -->
         <div id="register-box" class="form-box hidden">
             <h2>创建账号</h2>
             <form id="registerForm">
@@ -33,33 +33,37 @@
                 <button type="submit">注 册</button>
             </form>
             <div class="links">
-                <span onclick="switchBox('login-box')">返回登录</span>
+                <span onclick="switchBox('login-box')">已有账号？返回登录</span>
             </div>
         </div>
 
-        <!-- 忘记密码表单 -->
+        <!-- 忘记密码表单 (默认隐藏) -->
         <div id="forgot-box" class="form-box hidden">
             <h2>找回密码</h2>
-            <p style="font-size: 14px; color: #666; margin-bottom: 15px;">请输入您的邮箱，我们将发送重置链接。</p>
+            <p class="help-text">请输入您注册时使用的邮箱，<br>我们将向您发送重置链接。</p>
             <form id="forgotForm">
-                <input type="email" id="forgotEmail" placeholder="注册时的邮箱" required>
+                <input type="email" id="forgotEmail" placeholder="注册邮箱" required>
                 <button type="submit">发送重置邮件</button>
             </form>
             <div class="links">
-                <span onclick="switchBox('login-box')">返回登录</span>
+                <span onclick="switchBox('login-box')">记起密码了？返回登录</span>
             </div>
         </div>
 
     </div>
 
     <script>
-        // 切换显示的表单
+        // 核心切换逻辑：隐藏所有表单，只显示目标表单
         function switchBox(boxId) {
-            document.querySelectorAll('.form-box').forEach(box => box.classList.add('hidden'));
+            // 找到所有带有 form-box 类的 div，给它们添加 hidden 类
+            document.querySelectorAll('.form-box').forEach(box => {
+                box.classList.add('hidden');
+            });
+            // 移除目标 div 的 hidden 类，让它显示出来
             document.getElementById(boxId).classList.remove('hidden');
         }
 
-        // 统一处理表单提交的函数
+        // 统一处理表单提交并发送给你的 Node.js 后端
         async function handleFormSubmit(e, endpoint, payload) {
             e.preventDefault();
             const btn = e.target.querySelector('button');
@@ -75,15 +79,13 @@
                 });
                 
                 const result = await response.json();
-                // 假设 n8n 必定返回 JSON，格式如 { "success": true, "message": "登录成功" }
                 if(result.success) {
                     alert(result.message || '操作成功！');
-                    // 如果是登录成功，这里以后可以写跳转逻辑：window.location.href = '/dashboard';
                 } else {
-                    alert(result.message || '操作失败，请重试');
+                    alert(result.message || '操作失败，请检查输入或重试');
                 }
             } catch (error) {
-                alert('网络或服务器错误！');
+                alert('网络或服务器错误，无法连接到后端！');
             } finally {
                 btn.innerText = originalText;
                 btn.disabled = false;

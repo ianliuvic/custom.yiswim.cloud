@@ -5,7 +5,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // 配置你的 n8n 基础地址
-const N8N_BASE_URL = 'http://n8n-ywock00sw4ko80c4w4ogs8so:5678/webhook-test';
+//const N8N_BASE_URL = 'http://n8n-ywock00sw4ko80c4w4ogs8so:5678/webhook-test';
+const N8N_BASE_URL = 'https://n8n.yiswim.cloud/webhook-test';
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

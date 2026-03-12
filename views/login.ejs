@@ -68,14 +68,23 @@
     </div>
 
     <script>
-        // 核心切换逻辑：隐藏所有表单，只显示目标表单
-        function switchBox(boxId) {
-            // 找到所有带有 form-box 类的 div，给它们添加 hidden 类
-            document.querySelectorAll('.form-box').forEach(box => {
-                box.classList.add('hidden');
-            });
-            // 移除目标 div 的 hidden 类，让它显示出来
-            document.getElementById(boxId).classList.remove('hidden');
+        // 切换密码显示/隐藏
+        function togglePassword(inputId, el) {
+            const passwordInput = document.getElementById(inputId);
+            
+            // 睁眼图标的 SVG 路径
+            const eyeOpen = `<svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+            
+            // 闭眼图标的 SVG 路径
+            const eyeClose = `<svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+        
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                el.innerHTML = eyeOpen;
+            } else {
+                passwordInput.type = 'password';
+                el.innerHTML = eyeClose;
+            }
         }
 
         // 辅助函数：显示消息
@@ -99,13 +108,22 @@
         
         // 核心逻辑：切换表单时，顺便隐藏旧的消息
         function switchBox(boxId) {
-            hideMessage(); // 切换时清理提示
+            hideMessage();
+            
+            // 重置所有密码框为隐藏
+            document.querySelectorAll('input[type="text"]').forEach(input => {
+                if (input.id.includes('Pass')) { // 针对密码框
+                    input.type = 'password';
+                }
+            });
+            // 顺便把图标也重置回闭眼（可选，如果需要更严谨的话）
+        
             document.querySelectorAll('.form-box').forEach(box => {
                 box.classList.add('hidden');
             });
             document.getElementById(boxId).classList.remove('hidden');
         }
-        
+
         // 修改后的统一提交函数
         async function handleFormSubmit(e, endpoint, payload) {
             e.preventDefault();

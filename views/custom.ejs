@@ -5,21 +5,357 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/style.css">
     <title><%= title %></title>
+    <style>
+        /* 局部样式：专为定制页面设计 */
+        :root {
+            --primary-color: #aa0000;
+            --bg-light: #f4f7f6;
+            --text-dark: #333;
+            --border-color: #ddd;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            display: block; /* 覆盖之前的 flex 居中 */
+            height: auto;
+        }
+
+        .main-wrapper {
+            max-width: 1200px;
+            margin: 40px auto;
+            display: flex;
+            gap: 30px;
+            padding: 0 20px;
+        }
+
+        /* 左侧主操作区 */
+        .config-container {
+            flex: 1;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            padding: 40px;
+            min-height: 600px;
+            position: relative;
+        }
+
+        /* 顶部进度条 */
+        .stepper {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        .stepper::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #eee;
+            z-index: 1;
+        }
+        .step {
+            position: relative;
+            z-index: 2;
+            background: #fff;
+            padding: 0 10px;
+            text-align: center;
+            font-size: 13px;
+            color: #999;
+        }
+        .step-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #eee;
+            margin: 0 auto 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .step.active .step-circle {
+            background: var(--primary-color);
+            color: #fff;
+        }
+        .step.active { color: var(--primary-color); font-weight: bold; }
+
+        /* 卡片选择器 */
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .option-card {
+            border: 2px solid #eee;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            position: relative;
+        }
+        .option-card:hover { border-color: var(--primary-color); }
+        .option-card.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(170, 0, 0, 0.03);
+        }
+        .option-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        .option-card h4 { margin: 10px 0 5px; font-size: 16px; }
+        .option-card p { font-size: 12px; color: #666; margin: 0; }
+
+        /* 上传区域 */
+        .upload-section {
+            border: 2px dashed #ccc;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px;
+            background: #fafafa;
+            margin-top: 20px;
+        }
+        .upload-section:hover { border-color: var(--primary-color); }
+
+        /* 右侧侧边栏汇总 */
+        .summary-sidebar {
+            width: 320px;
+            background: #fff;
+            border-radius: 12px;
+            padding: 25px;
+            height: fit-content;
+            position: sticky;
+            top: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        .summary-sidebar h3 { 
+            margin-top: 0; 
+            padding-bottom: 15px; 
+            border-bottom: 1px solid #eee;
+            font-size: 18px;
+        }
+        .summary-item {
+            margin: 15px 0;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .summary-item span:first-child { color: #888; }
+        .summary-item span:last-child { font-weight: 500; text-align: right; }
+
+        /* 按钮控制 */
+        .button-group {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #eee;
+            padding-top: 25px;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #ccc;
+            color: #666;
+        }
+        .btn-outline:hover { background: #f5f5f5; color: #333; }
+
+        /* 隐藏功能 */
+        .hidden { display: none !important; }
+    </style>
 </head>
 <body>
-    <div class="auth-container" style="max-width: 600px;">
-        <h2>欢迎回来, <%= user.username %>!</h2>
-        <p>这是您的个人主页。</p>
-        
-        <div style="margin-top: 30px; padding: 20px; background: #f0f0f0; border-radius: 8px;">
-            <h4>您的个人信息：</h4>
-            <p>用户名：<%= user.username %></p>
-            <p>邮箱：<%= user.email %></p>
+
+    <header style="background:#fff; padding: 15px 40px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+        <div style="font-weight:bold; color:var(--primary-color); font-size:20px;">YISWIM PRODUCTION</div>
+        <div style="font-size:14px; color:#666;">欢迎, <%= user.username %> | <a href="/logout" style="color:var(--primary-color); text-decoration:none;">退出</a></div>
+    </header>
+
+    <div class="main-wrapper">
+        <!-- 左侧：分步定制 -->
+        <div class="config-container">
+            <!-- 进度指示器 -->
+            <div class="stepper">
+                <div class="step active" id="step-1-label"><div class="step-circle">1</div>款式选择</div>
+                <div class="step" id="step-2-label"><div class="step-circle">2</div>面料/颜色</div>
+                <div class="step" id="step-3-label"><div class="step-circle">3</div>品牌定制</div>
+                <div class="step" id="step-4-label"><div class="step-circle">4</div>物流选择</div>
+                <div class="step" id="step-5-label"><div class="step-circle">5</div>需求汇总</div>
+            </div>
+
+            <form id="configForm">
+                <!-- 步骤 1: 款式 -->
+                <div class="step-content" id="step-1">
+                    <h3>第一步：确定您的泳装款式</h3>
+                    <div style="margin-bottom: 20px;">
+                        <label><input type="radio" name="styleType" value="existing" checked onclick="toggleStyleMode('existing')"> 选择已有款式 (ODM)</label>
+                        <label style="margin-left: 20px;"><input type="radio" name="styleType" value="custom" onclick="toggleStyleMode('custom')"> 提交自主设计 (OEM)</label>
+                    </div>
+
+                    <div id="existing-styles" class="option-grid">
+                        <div class="option-card" onclick="selectItem('style', 'One-Piece Classic', '经典连体款')">
+                            <img src="https://images.unsplash.com/photo-1576188973526-0e5d742990af?auto=format&fit=crop&w=300" alt="款式">
+                            <h4>Classic One-Piece</h4>
+                            <p>简约优雅，热销款</p>
+                        </div>
+                        <div class="option-card" onclick="selectItem('style', 'Bikini Set A', '分体比基尼 A')">
+                            <img src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=300" alt="款式">
+                            <h4>Bikini Triangle</h4>
+                            <p>系带可调节，欧美风</p>
+                        </div>
+                    </div>
+
+                    <div id="custom-upload" class="hidden">
+                        <div class="upload-section">
+                            <p>请上传您的款式图、草图或工艺单 (PDF/IMG/AI)</p>
+                            <input type="file" multiple>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 步骤 2: 面料 (以此类推) -->
+                <div class="step-content hidden" id="step-2">
+                    <h3>第二步：选择面料与参数</h3>
+                    <div class="option-grid">
+                        <div class="option-card" onclick="selectItem('fabric', 'Nylon 80/20', '尼龙面料 (80/20)')">
+                            <div style="height:100px; background:#222; border-radius:6px;"></div>
+                            <h4>Matte Nylon</h4>
+                            <p>190gsm / 哑光</p>
+                        </div>
+                        <div class="option-card" onclick="selectItem('fabric', 'Recycled Polyester', '环保再生面料')">
+                            <div style="height:100px; background:#444; border-radius:6px;"></div>
+                            <h4>REPREVE®</h4>
+                            <p>环保可持续 / 高弹</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 步骤 3: 品牌辅料 -->
+                <div class="step-content hidden" id="step-3">
+                    <h3>第三步：品牌与辅料定制</h3>
+                    <div class="option-grid">
+                        <div class="option-card" onclick="selectItem('branding', 'Heat Transfer Logo', '烫印Logo')">
+                            <h4>Heat Transfer</h4>
+                            <p>无感舒适</p>
+                        </div>
+                        <div class="option-card" onclick="selectItem('branding', 'Woven Label', '织唛主标')">
+                            <h4>Woven Label</h4>
+                            <p>经典质感</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 步骤 4: 物流 -->
+                <div class="step-content hidden" id="step-4">
+                    <h3>第四步：选择首选物流方式</h3>
+                    <div class="option-grid">
+                        <div class="option-card" onclick="selectItem('shipping', 'Air Express', '空运快递 (5-7天)')">
+                            <h4>Air Express</h4>
+                            <p>门到门 / DHL / FedEx</p>
+                        </div>
+                        <div class="option-card" onclick="selectItem('shipping', 'Sea Freight', '海运 (30-40天)')">
+                            <h4>Sea Freight</h4>
+                            <p>适合大货 / 成本低</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 步骤 5: 汇总预览 -->
+                <div class="step-content hidden" id="step-5">
+                    <h3>第五步：确认并提交您的需求</h3>
+                    <div style="background:#f9f9f9; padding:20px; border-radius:8px;">
+                        <p>请检查右侧清单。提交后我们的业务经理将在 24 小时内联系您并提供正式报价单。</p>
+                        <textarea style="width:100%; height:100px; padding:10px; border-radius:6px; border:1px solid #ddd;" placeholder="补充其他特殊要求..."></textarea>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="btn-outline" id="prevBtn" onclick="changeStep(-1)" disabled>上一步</button>
+                    <button type="button" id="nextBtn" onclick="changeStep(1)">下一步</button>
+                </div>
+            </form>
         </div>
 
-        <div class="links">
-            <a href="/logout" style="color: var(--primary-color); text-decoration: none; font-weight: bold;">退出登录</a>
+        <!-- 右侧：实时汇总 -->
+        <div class="summary-sidebar">
+            <h3>需求清单预览</h3>
+            <div id="summary-content">
+                <div class="summary-item"><span>款式:</span> <span id="sum-style">未选择</span></div>
+                <div class="summary-item"><span>面料:</span> <span id="sum-fabric">未选择</span></div>
+                <div class="summary-item"><span>品牌定制:</span> <span id="sum-branding">未选择</span></div>
+                <div class="summary-item"><span>物流方式:</span> <span id="sum-shipping">未选择</span></div>
+            </div>
+            <div style="margin-top:20px; font-size:12px; color:#999; line-height:1.4;">
+                * 价格将根据面料波动和大货数量最终核算。
+            </div>
         </div>
     </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 5;
+        const formData = {
+            style: '',
+            fabric: '',
+            branding: '',
+            shipping: ''
+        };
+
+        function changeStep(n) {
+            // 隐藏当前步骤
+            document.getElementById(`step-${currentStep}`).classList.add('hidden');
+            document.getElementById(`step-${currentStep}-label`).classList.remove('active');
+            
+            currentStep += n;
+
+            // 显示新步骤
+            document.getElementById(`step-${currentStep}`).classList.remove('hidden');
+            document.getElementById(`step-${currentStep}-label`).classList.add('active');
+
+            // 按钮状态控制
+            document.getElementById('prevBtn').disabled = (currentStep === 1);
+            if (currentStep === totalSteps) {
+                document.getElementById('nextBtn').innerText = '提交需求';
+            } else {
+                document.getElementById('nextBtn').innerText = '下一步';
+            }
+        }
+
+        function toggleStyleMode(mode) {
+            if (mode === 'existing') {
+                document.getElementById('existing-styles').classList.remove('hidden');
+                document.getElementById('custom-upload').classList.add('hidden');
+            } else {
+                document.getElementById('existing-styles').classList.add('hidden');
+                document.getElementById('custom-upload').classList.remove('hidden');
+                updateSummary('style', '自主设计 (OEM)');
+            }
+        }
+
+        function selectItem(category, value, displayName) {
+            // 更新数据对象
+            formData[category] = displayName;
+            
+            // 更新侧边栏预览
+            updateSummary(category, displayName);
+
+            // 视觉反馈：清除同类选中并高亮当前
+            const stepDiv = document.getElementById(`step-${currentStep}`);
+            stepDiv.querySelectorAll('.option-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+        }
+
+        function updateSummary(key, text) {
+            document.getElementById(`sum-${key}`).innerText = text;
+        }
+    </script>
 </body>
 </html>

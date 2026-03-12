@@ -182,3 +182,40 @@ button:disabled {
     margin-bottom: 20px;
     line-height: 1.5;
 }
+
+/* 密码框容器 */
+.password-wrapper {
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px; /* 移出 input 的 margin，由容器承担 */
+}
+
+/* 覆盖 input 原有的 margin-bottom */
+.password-wrapper input {
+    margin-bottom: 0;
+    padding-right: 45px; /* 为右侧图标留出空间 */
+}
+
+/* 小眼睛图标容器 */
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    color: #999;
+    transition: color 0.3s;
+    z-index: 10;
+}
+
+.toggle-password:hover {
+    color: var(--primary-color);
+}
+
+/* SVG 图标大小 */
+.eye-icon {
+    width: 20px;
+    height: 20px;
+}

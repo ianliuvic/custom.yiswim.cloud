@@ -80,7 +80,12 @@
                 
                 const result = await response.json();
                 if(result.success) {
-                    alert(result.message || '操作成功！');
+                    // 如果是登录接口，成功后跳转
+                    if (endpoint === '/api/login') {
+                        window.location.href = '/'; // 跳转到主页
+                    } else {
+                        alert(result.message || '操作成功！');
+                    }
                 } else {
                     alert(result.message || '操作失败，请检查输入或重试');
                 }

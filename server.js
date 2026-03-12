@@ -66,8 +66,6 @@ app.post('/api/login', async (req, res) => {
 
         const data = await n8nResponse.json();
 
-        console.log("n8n返回的数据是：", data);
-
         // 如果 n8n 没查到该用户
         if (!data.success || !data.user) {
             return res.status(401).json({ success: false, message: '用户名或密码错误' }); // 模糊提示，防暴力猜测

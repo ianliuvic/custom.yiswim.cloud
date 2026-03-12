@@ -18,12 +18,27 @@
 
         body {
             background-color: var(--bg-body);
-            display: flex;
-            flex-direction: column;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: flex-start !important; /* 强制从顶部开始排列 */
+            align-items: stretch !important;        /* 强制宽度撑满全屏 */
             min-height: 100vh;
             margin: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             color: var(--text-main);
+        }
+        
+        /* 为了保险起见，给 header 也加上确保撑满的属性 */
+        .site-header {
+            width: 100%;
+            box-sizing: border-box;
+            height: 70px;
+            background: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+            border-bottom: 1px solid var(--border-color);
         }
 
         /* 顶部导航 */

@@ -1,6 +1,17 @@
+/* 定义全局主题颜色 */
+:root {
+    --primary-color: #aa0000;        /* 主色调：深红 */
+    --primary-hover: #880000;        /* 悬停色：更深的红 */
+    --primary-light: rgba(170, 0, 0, 0.1); /* 浅红透明色，用于阴影 */
+    --bg-color: #f8f9fa;             /* 页面背景色：浅灰 */
+    --card-bg: #ffffff;              /* 卡片背景色：纯白 */
+    --text-color: #333333;           /* 主文本色 */
+    --border-color: #e1e4e8;         /* 边框颜色 */
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f4f7f6;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-color);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -8,20 +19,38 @@ body {
     margin: 0;
 }
 
+/* 核心表单卡片 */
 .auth-container {
     width: 100%;
     max-width: 400px;
-    background: white;
-    padding: 30px;
+    background: var(--card-bg);
+    padding: 40px 35px;
     border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* 整体柔和阴影 */
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
+/* 顶部主题色装饰条 */
+.auth-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background-color: var(--primary-color);
+}
+
+/* 标题样式 */
 .form-box h2 {
     margin-top: 0;
-    color: #333;
+    color: var(--text-color);
     text-align: center;
-    margin-bottom: 25px;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 30px;
 }
 
 form {
@@ -29,56 +58,90 @@ form {
     flex-direction: column;
 }
 
+/* 输入框样式 */
 input {
-    padding: 12px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 14px;
+    width: 100%;
+    padding: 14px 15px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 15px;
     outline: none;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    background-color: #fafbfc;
 }
 
+/* 输入框点击高亮效果 */
 input:focus {
-    border-color: #4a90e2;
+    background-color: #ffffff;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-light);
 }
 
+/* 按钮样式 */
 button {
-    background-color: #4a90e2;
+    background-color: var(--primary-color);
     color: white;
     border: none;
-    padding: 12px;
+    padding: 14px;
     font-size: 16px;
-    border-radius: 6px;
+    font-weight: 600;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    margin-top: 5px;
 }
 
 button:hover {
-    background-color: #357abd;
+    background-color: var(--primary-hover);
+}
+
+/* 按钮点击时的微小缩放动效 */
+button:active {
+    transform: scale(0.98);
 }
 
 button:disabled {
-    background-color: #a0c4e8;
+    background-color: #d48080;
     cursor: not-allowed;
+    transform: none;
 }
 
+/* 底部链接容器 */
 .links {
-    margin-top: 20px;
+    margin-top: 25px;
     display: flex;
-    justify-content: space-between;
-    font-size: 13px;
-    color: #4a90e2;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    color: #666;
 }
 
+/* 链接文字样式 */
 .links span {
+    color: var(--primary-color);
     cursor: pointer;
+    font-weight: 500;
+    transition: color 0.3s;
 }
 
 .links span:hover {
+    color: var(--primary-hover);
     text-decoration: underline;
 }
 
-/* 控制表单显示隐藏 */
+/* 控制表单显示隐藏的核心类 */
 .hidden {
     display: none !important;
+}
+
+/* 忘记密码的提示文案 */
+.help-text {
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    margin-bottom: 20px;
+    line-height: 1.5;
 }

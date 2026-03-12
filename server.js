@@ -31,7 +31,7 @@ app.post('/api/register', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         // 发送给 n8n 的是加密后的 hashedPassword，不要声明明文 password
-        const n8nResponse = await fetch(`${N8N_BASE_URL}/user-register`, {
+        const n8nResponse = await fetch(`${N8N_BASE_URL}/custom-user-register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -57,7 +57,7 @@ app.post('/api/login', async (req, res) => {
         const { username, password } = req.body;
 
         // 第 1 步：只把 username 发给 n8n，请求获取该用户的信息
-        const n8nResponse = await fetch(`${N8N_BASE_URL}/user-login`, {
+        const n8nResponse = await fetch(`${N8N_BASE_URL}/custom-user-login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username: username })
@@ -91,7 +91,7 @@ app.post('/api/login', async (req, res) => {
 // ==========================================
 app.post('/api/forgot-password', async (req, res) => {
     try {
-        const n8nResponse = await fetch(`${N8N_BASE_URL}/user-forgot`, {
+        const n8nResponse = await fetch(`${N8N_BASE_URL}/custom-user-forgot`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(req.body)

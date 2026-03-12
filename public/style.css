@@ -43,6 +43,43 @@ body {
     background-color: var(--primary-color);
 }
 
+/* 消息提示框基础样式 */
+.status-msg {
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+    animation: fadeIn 0.3s ease; /* 添加一个淡入动画 */
+}
+
+/* 错误样式：浅红背景，深红文字 */
+.status-error {
+    background-color: #fde8e8;
+    color: #c81e1e;
+    border: 1px solid #f8b4b4;
+}
+
+/* 成功样式：浅绿背景，深绿文字 */
+.status-success {
+    background-color: #defadb;
+    color: #1e5e20;
+    border: 1px solid #bcf0da;
+}
+
+/* 淡入动画 */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 隐藏状态 */
+.hidden {
+    display: none !important;
+}
+
+
 /* 标题样式 */
 .form-box h2 {
     margin-top: 0;

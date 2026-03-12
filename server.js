@@ -103,6 +103,23 @@ app.get('/logout', (req, res) => {
 });
 
 // ==========================================
+// 页面路由 (添加到 /login 路由附近)
+// ==========================================
+
+// 重置密码页面
+app.get('/reset-password', (req, res) => {
+    const token = req.query.token; // 从 URL 获取 token：?token=xxxx
+    
+    // 如果没有 token，直接让他回登录页
+    if (!token) {
+        return res.redirect('/login');
+    }
+    
+    // 将 token 传给 EJS 模板
+    res.render('reset', { title: '重置密码', token: token });
+});
+
+// ==========================================
 // API 接口
 // ==========================================
 
@@ -190,6 +207,43 @@ app.post('/api/forgot-password', loginLimiter, async (req, res) => {
         res.json(data);
         
     } catch (error) {
+        res.status(500).json({ success: false, message: '后端服务异常' });
+    }
+});
+
+// ==========================================
+// API 接口 (添加到 /api/forgot-password 附近)
+// ==========================================
+
+// 提交新密码逻辑
+// 建议加上频率限制，这里复用之前写的 loginLimiter
+app.post('/api/reset-password', loginLimiter, async (req, res) => {
+    try {
+        const { token, newPassword } = req.body;
+
+        if (!token || !newPassword) {
+            return res.status(400).json({ success: false, message: '参数缺失' });
+        }
+
+        // 1. 对新密码进行 Hash 加密
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        // 2. 将 token 和加密后的新密码发给 n8n
+        // n8n 需要负责去数据库校验 token 是否存在、是否过期，然后更新密码并清空 token
+        const n8nResponse = await fetch(`${N8N_BASE_URL}/custom-user-reset-pwd`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                token: token,
+                new_password_hash: hashedPassword
+            })
+        });
+
+        const data = await n8nResponse.json();
+        res.json(data);
+    } catch (error) {
+        console.error('重置密码错误:', error);
         res.status(500).json({ success: false, message: '后端服务异常' });
     }
 });

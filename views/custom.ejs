@@ -3,28 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- 引入 public 文件夹下的 CSS -->
     <link rel="stylesheet" href="/style.css">
     <title><%= title %></title>
 </head>
 <body>
-    <div class="container">
-        <h1><%= title %></h1>
-        <p><%= message %></p>
+    <div class="auth-container" style="max-width: 600px;">
+        <h2>欢迎回来, <%= user.username %>!</h2>
+        <p>这是您的个人主页。</p>
         
-        <div class="action-box">
-            <!-- 这个按钮以后可以用来触发发往 n8n 的请求 -->
-            <button id="webhookBtn">测试发送信息到 n8n</button>
+        <div style="margin-top: 30px; padding: 20px; background: #f0f0f0; border-radius: 8px;">
+            <h4>您的个人信息：</h4>
+            <p>用户名：<%= user.username %></p>
+            <p>邮箱：<%= user.email %></p>
+        </div>
+
+        <div class="links">
+            <a href="/logout" style="color: var(--primary-color); text-decoration: none; font-weight: bold;">退出登录</a>
         </div>
     </div>
-
-    <script>
-        // 前端交互逻辑
-        document.getElementById('webhookBtn').addEventListener('click', async () => {
-            alert('这是一个基础占位按钮，日后将通过它触发 n8n Webhook！');
-            // 未来的代码示例：
-            // fetch('https://n8n.yiswim.cloud/webhook/your-webhook-id', { method: 'POST', ... })
-        });
-    </script>
 </body>
 </html>

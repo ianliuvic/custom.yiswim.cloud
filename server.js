@@ -3,9 +3,46 @@ const path = require('path');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// ==========================================
+// 核心配置：信任代理
+// ==========================================
+// 因为你的 VPS 使用了 Coolify (反向代理)，必须开启这个设置
+// 否则中间件获取到的是宿主机的 IP，会导致所有用户都被封锁
+app.set('trust proxy', 1); 
+
+// ==========================================
+// 定义限制规则
+// ==========================================
+
+// 1. 针对登录接口的限制：15分钟内最多尝试 5 次
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 分钟
+    max: 5, // 限制 5 次
+    message: { success: false, message: "登录尝试过于频繁，请15分钟后再试。" },
+    standardHeaders: true, // 在响应头中显示剩余次数
+    legacyHeaders: false,
+});
+
+// 2. 针对注册接口的限制：1小时内最多注册 2 个账号（防止恶意灌水）
+const registerLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 小时
+    max: 2, 
+    message: { success: false, message: "该 IP 注册请求过多，请稍后再试。" },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+// 3. 通用全局限制（可选）：防止恶意刷页面
+const globalLimiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 分钟
+    max: 60, // 每分钟最多 60 次请求
+    message: { success: false, message: "请求过于频繁。" }
+});
 
 // 【重要】设置一个 JWT 密钥，建议在 Coolify 环境变量中设置，这里先写死用于测试
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-123456';
@@ -70,7 +107,7 @@ app.get('/logout', (req, res) => {
 // ==========================================
 
 // 注册逻辑
-app.post('/api/register', async (req, res) => {
+app.post('/api/register', registerLimiter, async (req, res) => {
     try {
         const { username, email, password } = req.body;
         const salt = await bcrypt.genSalt(10);
@@ -95,7 +132,7 @@ app.post('/api/register', async (req, res) => {
 });
 
 // 登录逻辑
-app.post('/api/login', async (req, res) => {
+app.post('/api/login', loginLimiter, async (req, res) => {
     try {
         const { username, password } = req.body;
 
@@ -134,6 +171,25 @@ app.post('/api/login', async (req, res) => {
 
     } catch (error) {
         console.error('登录错误:', error);
+        res.status(500).json({ success: false, message: '后端服务异常' });
+    }
+});
+
+// ==========================================
+// 3. 忘记密码（暂不改动）
+// ==========================================
+app.post('/api/forgot-password', loginLimiter, async (req, res) => {
+    try {
+        const n8nResponse = await fetch(`${N8N_BASE_URL}/custom-user-forgot`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(req.body)
+        });
+        
+        const data = await n8nResponse.json();
+        res.json(data);
+        
+    } catch (error) {
         res.status(500).json({ success: false, message: '后端服务异常' });
     }
 });

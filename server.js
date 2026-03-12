@@ -2,37 +2,69 @@ const express = require('express');
 const path = require('path');
 
 const app = express();
-// Coolify 部署时会自动注入 PORT 环境变量，默认一般为 3000
 const PORT = process.env.PORT || 3000;
 
-// 配置中间件，用于解析后续可能发送给 n8n 的 JSON 数据
+// 配置你的 n8n 基础地址
+const N8N_BASE_URL = 'http://n8n-ywock00sw4ko80c4w4ogs8so:5678/webhook-test';
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// 配置 EJS 作为模板引擎
 app.set('view engine', 'ejs');
-// 指定 views 文件夹路径
 app.set('views', path.join(__dirname, 'views'));
-
-// 配置静态文件目录 (CSS, JS, 图片等存放在 public 文件夹)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// 主页面路由
+// 1. 访问主页时，渲染登录页面
 app.get('/', (req, res) => {
-    // 渲染 views/custom.ejs 并传递基础数据
-    res.render('custom', { 
-        title: 'Custom System',
-        message: '前端部署成功！准备好连接 n8n 啦！'
-    });
+    res.render('login', { title: '欢迎 - 用户验证' });
 });
 
-// [预留位置]：未来用于触发 n8n webhook 的本地 API 路由
-app.post('/api/trigger', async (req, res) => {
-    // 以后可以在这里写 fetch 请求去调用 n8n.yiswim.cloud 的 Webhook
-    res.json({ success: true, message: '收到请求，准备转发给 n8n' });
+// 2. 接收前端的【登录】请求，并转发给 n8n
+app.post('/api/login', async (req, res) => {
+    try {
+        // Node.js 18 原生支持 fetch
+        const n8nResponse = await fetch(`${N8N_BASE_URL}/user-login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(req.body) // 包含 username 和 password
+        });
+        const data = await n8nResponse.json();
+        res.json(data); // 将 n8n 的返回结果原样传回给前端
+    } catch (error) {
+        console.error('n8n 连接错误:', error);
+        res.status(500).json({ success: false, message: '后端服务异常' });
+    }
 });
 
-// 启动服务器
+// 3. 接收前端的【注册】请求，并转发给 n8n
+app.post('/api/register', async (req, res) => {
+    try {
+        const n8nResponse = await fetch(`${N8N_BASE_URL}/user-register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(req.body) 
+        });
+        const data = await n8nResponse.json();
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ success: false, message: '后端服务异常' });
+    }
+});
+
+// 4. 接收前端的【忘记密码】请求，并转发给 n8n
+app.post('/api/forgot-password', async (req, res) => {
+    try {
+        const n8nResponse = await fetch(`${N8N_BASE_URL}/user-forgot`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(req.body)
+        });
+        const data = await n8nResponse.json();
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ success: false, message: '后端服务异常' });
+    }
+});
+
 app.listen(PORT, () => {
-    console.log(`Frontend server is running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });

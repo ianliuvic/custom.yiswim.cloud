@@ -1,6 +1,8 @@
 const express = require('express');
 const path = require('path');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');        // 引入 jwt
+const cookieParser = require('cookie-parser'); // 引入 cookie-parser
 
 const app = express();
 const PORT = process.env.PORT || 3000;

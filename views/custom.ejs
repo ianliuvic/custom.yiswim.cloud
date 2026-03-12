@@ -3,54 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 引入您在 public 文件夹下的通用样式 -->
     <link rel="stylesheet" href="/style.css">
     <title><%= title %></title>
     <style>
-        /* 基础变量 */
+        /* 1. 基础布局重置：强制覆盖全局居中逻辑，实现全屏固定架构 */
         :root {
             --primary-color: #aa0000;
             --text-main: #2c3e50;
             --text-light: #7f8c8d;
-            --bg-body: #ffffff;
-            --bg-side: #fafafa;
             --border-color: #ececec;
+            --header-height: 70px;
+            --footer-height: 50px;
+            --bg-sidebar: #fafafa;
         }
 
+        /* 核心：禁止 body 滚动，使用 flex 垂直布局 */
         body {
-            background-color: var(--bg-body);
+            height: 100vh !important;
+            width: 100vw !important;
+            overflow: hidden !important; 
             display: flex !important;
             flex-direction: column !important;
-            justify-content: flex-start !important; /* 强制从顶部开始排列 */
-            align-items: stretch !important;        /* 强制宽度撑满全屏 */
-            min-height: 100vh;
-            margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            color: var(--text-main);
-        }
-        
-        /* 为了保险起见，给 header 也加上确保撑满的属性 */
-        .site-header {
-            width: 100%;
-            box-sizing: border-box;
-            height: 70px;
-            background: #fff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 40px;
-            border-bottom: 1px solid var(--border-color);
+            justify-content: flex-start !important;
+            align-items: stretch !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background-color: #fff !important;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
-        /* 顶部导航 */
+        /* 2. 顶部导航栏 (固定) */
         .site-header {
-            height: 70px;
+            height: var(--header-height);
+            min-height: var(--header-height);
             background: #fff;
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 0 40px;
             border-bottom: 1px solid var(--border-color);
-            flex-shrink: 0; /* 防止导航被压缩 */
+            box-sizing: border-box;
+            z-index: 100;
         }
         .header-left {
             display: flex;
@@ -58,7 +52,7 @@
             gap: 15px;
         }
         .site-logo {
-            height: 35px;
+            height: 38px;
             width: auto;
         }
         .site-title {
@@ -68,65 +62,69 @@
             letter-spacing: 0.5px;
         }
 
-        /* 主体内容布局 */
+        /* 3. 中间主体容器 */
         .main-container {
-            flex: 1; /* 撑满剩余屏幕高度 */
+            flex: 1; /* 自动占据剩余高度 */
             display: flex;
+            overflow: hidden; /* 容器本身不滚动 */
             width: 100%;
         }
 
-        /* ================= 修改点 1：固定按钮组 ================= */
+        /* 3.1 左侧配置区 (独立滚动) */
         .config-main {
             flex: 1;
             padding: 40px 60px;
+            overflow-y: auto;
+            height: 100%;
+            box-sizing: border-box;
             border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column; /* 让内容垂直排列 */
         }
-        #configForm {
-            display: flex;
-            flex-direction: column;
-            flex: 1; /* 表单撑满左侧的高度 */
-        }
-        .step-content {
-            flex: 1; /* 内容区弹性撑开，把按钮组往下挤 */
-        }
-        .button-group {
-            margin-top: auto; /* 神器：自动推到最底部 */
-            padding-top: 25px;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            gap: 15px;
-        }
-        /* ======================================================= */
 
-        /* 右侧汇总区域 */
+        /* 3.2 右侧汇总预览区 (独立滚动) */
         .summary-sidebar {
             width: 380px;
-            background-color: var(--bg-side);
+            min-width: 380px;
+            background-color: var(--bg-sidebar);
             padding: 40px;
-            position: sticky;
-            top: 70px;
-            height: calc(100vh - 70px);
             overflow-y: auto;
-            flex-shrink: 0;
+            height: 100%;
             box-sizing: border-box;
         }
 
-        /* 进度条 */
+        /* 4. 底部版权栏 (固定) */
+        .site-footer {
+            height: var(--footer-height);
+            min-height: var(--footer-height);
+            background: #fff;
+            border-top: 1px solid var(--border-color);
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            color: #999;
+            box-sizing: border-box;
+        }
+
+        /* --- 业务组件样式 --- */
+
+        /* 进度条 Stepper */
         .stepper {
             display: flex;
             margin-bottom: 40px;
             gap: 20px;
+            position: sticky;
+            top: 0;
+            background: #fff;
+            padding-bottom: 20px;
+            z-index: 10;
         }
         .step {
             flex: 1;
-            padding-bottom: 10px;
+            padding-bottom: 12px;
             border-bottom: 3px solid #eee;
             font-size: 14px;
             color: var(--text-light);
             transition: all 0.3s;
-            white-space: nowrap;
         }
         .step.active {
             border-bottom-color: var(--primary-color);
@@ -134,21 +132,18 @@
             font-weight: 600;
         }
 
-        /* 选项设计 */
+        /* 选项网格与卡片 */
         .option-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
             gap: 20px;
             margin-top: 25px;
         }
         .option-item {
             border: 1px solid var(--border-color);
             background: #fff;
-            padding: 0;
             cursor: pointer;
             transition: all 0.2s ease;
-            overflow: hidden;
-            box-sizing: border-box;
         }
         .option-item:hover {
             border-color: var(--primary-color);
@@ -160,9 +155,9 @@
         }
         .option-img {
             width: 100%;
-            height: 180px;
-            background-color: #f9f9f9;
+            height: 200px;
             object-fit: cover;
+            background: #f9f9f9;
             border-bottom: 1px solid var(--border-color);
         }
         .option-info {
@@ -171,20 +166,15 @@
         .option-info h4 { margin: 0 0 5px; font-size: 15px; }
         .option-info p { margin: 0; font-size: 13px; color: var(--text-light); }
 
-        /* 底部版权信息 */
-        .site-footer {
-            padding: 25px 40px;
-            border-top: 1px solid var(--border-color);
-            text-align: left;
-            font-size: 13px;
-            color: #999;
-            background-color: #fff;
-            flex-shrink: 0;
-        }
-
         /* 按钮设计 */
+        .button-group {
+            margin-top: 60px;
+            padding-bottom: 50px;
+            display: flex;
+            gap: 15px;
+        }
         button {
-            padding: 12px 30px;
+            padding: 12px 35px;
             border-radius: 4px;
             font-size: 14px;
             font-weight: 500;
@@ -197,164 +187,184 @@
         #prevBtn { background: #fff; color: var(--primary-color); }
         #prevBtn:disabled { border-color: #eee; color: #ccc; cursor: not-allowed; }
 
-        /* 侧边栏样式 */
+        /* 右侧明细行 */
         .summary-title {
             font-size: 18px;
             font-weight: 600;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
             display: block;
+            color: var(--text-main);
         }
         .summary-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin-bottom: 22px;
             font-size: 14px;
-            border-bottom: 1px dashed #eee;
-            padding-bottom: 10px;
+            border-bottom: 1px dashed #e0e0e0;
+            padding-bottom: 12px;
         }
         .summary-row .label { color: var(--text-light); }
-        .summary-row .value { color: var(--text-main); font-weight: 500; text-align: right; max-width: 60%; }
+        .summary-row .value { color: var(--text-main); font-weight: 500; text-align: right; }
+
+        /* 上传区域 */
+        .upload-box {
+            padding: 80px 40px;
+            border: 1px dashed var(--border-color);
+            text-align: center;
+            background: #fdfdfd;
+            border-radius: 4px;
+        }
 
         .hidden { display: none !important; }
 
-        /* ================= 修改点 2：移动端响应式适配 ================= */
-        @media (max-width: 900px) {
-            .site-header { padding: 0 20px; }
-            .header-right { display: none; } /* 移动端空间有限，隐藏当前用户信息 */
-            
-            .main-container { 
-                flex-direction: column; /* 左右布局变为上下布局 */
-            }
-            
-            .config-main { 
-                padding: 20px; 
-                border-right: none;
-                min-height: 60vh; /* 保证在移动端左侧也有足够高度托底按钮 */
-            }
-
-            .summary-sidebar { 
-                width: 100%; 
-                height: auto; 
-                position: static; /* 取消吸顶 */
-                padding: 30px 20px; 
-                border-top: 1px solid var(--border-color);
-            }
-
-            /* 移动端步骤条允许横向滑动 */
-            .stepper { 
-                overflow-x: auto; 
-                padding-bottom: 10px; 
-                gap: 15px; 
-            }
-            /* 隐藏滚动条但保留滑动功能 */
-            .stepper::-webkit-scrollbar { display: none; }
-            .step { flex: 0 0 auto; }
-
-            .site-footer { padding: 20px; text-align: center; }
-
-            .option-grid {
-                /* 移动端改小一点的网格 */
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            }
-            .option-img { height: 140px; }
-        }
-        /* ========================================================== */
+        /* 美化滚动条 */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e0e0e0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #d0d0d0; }
     </style>
 </head>
 <body>
 
-    <!-- 顶部导航 -->
+    <!-- 顶部固定：Logo 与 标题 -->
     <header class="site-header">
         <div class="header-left">
+            <!-- 请确保 public 文件夹下有 logo.png -->
             <img src="/logo.png" alt="Hongxiu Logo" class="site-logo">
             <span class="site-title">Hongxiu Custom System</span>
         </div>
         <div class="header-right" style="font-size: 14px; color: var(--text-light);">
-            当前用户：<strong><%= user.username %></strong> | <a href="/logout" style="color: var(--primary-color); text-decoration: none;">退出系统</a>
+            欢迎您，<strong><%= user.username %></strong> | 
+            <a href="/logout" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">安全退出</a>
         </div>
     </header>
 
+    <!-- 中间容器：左右独立滚动 -->
     <div class="main-container">
-        <!-- 左侧：逻辑配置区 -->
+        
+        <!-- 左侧：逻辑配置 -->
         <main class="config-main">
+            <!-- 步进导航 -->
             <nav class="stepper">
-                <div class="step active" id="step-1-label">01. 款式选择</div>
-                <div class="step" id="step-2-label">02. 面料参数</div>
+                <div class="step active" id="step-1-label">01. 款式定义</div>
+                <div class="step" id="step-2-label">02. 面料材质</div>
                 <div class="step" id="step-3-label">03. 品牌辅料</div>
                 <div class="step" id="step-4-label">04. 物流交付</div>
-                <div class="step" id="step-5-label">05. 确认提交</div>
+                <div class="step" id="step-5-label">05. 需求汇总</div>
             </nav>
 
             <form id="configForm">
-                <!-- 第一步 -->
+                <!-- 第一步：款式 -->
                 <div class="step-content" id="step-1">
-                    <h2 style="font-size: 22px; margin-bottom: 10px;">选择您的基本款式</h2>
-                    <p style="color: var(--text-light); margin-bottom: 30px;">选择我们为您准备的经典廓形，或通过 OEM 模式提交您的设计方案。</p>
+                    <h2 style="font-size: 24px; margin-bottom: 10px;">款式选择</h2>
+                    <p style="color: var(--text-light); margin-bottom: 35px;">请选择基础版型或开启 OEM 开发模式。</p>
                     
-                    <div style="margin-bottom: 30px;">
-                        <input type="radio" id="m1" name="styleMode" checked onclick="toggleStyleMode('existing')">
-                        <label for="m1" style="margin-right: 20px;">现有库选择 (ODM)</label>
-                        <input type="radio" id="m2" name="styleMode" onclick="toggleStyleMode('custom')">
-                        <label for="m2">自定义开发 (OEM)</label>
+                    <div style="margin-bottom: 35px; display: flex; gap: 30px;">
+                        <label style="cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                            <input type="radio" name="styleMode" checked onclick="toggleStyleMode('existing')" style="accent-color: var(--primary-color);"> 
+                            现有款式库 (ODM)
+                        </label>
+                        <label style="cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                            <input type="radio" name="styleMode" onclick="toggleStyleMode('custom')" style="accent-color: var(--primary-color);"> 
+                            自主开发提交 (OEM)
+                        </label>
                     </div>
 
+                    <!-- ODM 列表 -->
                     <div id="existing-styles" class="option-grid">
-                        <div class="option-item" onclick="selectItem('style', 'One-Piece', '简约连体款')">
-                            <img src="https://images.unsplash.com/photo-1576188973526-0e5d742990af?w=400" class="option-img">
+                        <div class="option-item" onclick="selectItem('style', 'One-Piece Classic', '经典连体款')">
+                            <img src="https://images.unsplash.com/photo-1576188973526-0e5d742990af?w=500" class="option-img">
                             <div class="option-info">
                                 <h4>Classic One-Piece</h4>
-                                <p>经典版型 · 覆盖面广</p>
+                                <p>简约版型 · 全覆盖设计</p>
                             </div>
                         </div>
-                        <div class="option-item" onclick="selectItem('style', 'Bikini Set', '分体比基尼')">
-                            <img src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=400" class="option-img">
+                        <div class="option-item" onclick="selectItem('style', 'Bikini Set A', '分体比基尼 A')">
+                            <img src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=500" class="option-img">
                             <div class="option-info">
                                 <h4>Triangle Bikini</h4>
-                                <p>热辣时尚 · 灵活调节</p>
+                                <p>热辣时尚 · 系带可调</p>
+                            </div>
+                        </div>
+                        <!-- 更多内容演示滚动 -->
+                        <div class="option-item" onclick="selectItem('style', 'Sporty Swim', '运动连体款')">
+                            <img src="https://images.unsplash.com/photo-1565538411888-06775677891a?w=500" class="option-img">
+                            <div class="option-info">
+                                <h4>Sporty Cut-out</h4>
+                                <p>动感剪裁 · 稳固支撑</p>
                             </div>
                         </div>
                     </div>
 
-                    <div id="custom-upload" class="hidden" style="padding: 40px 20px; border: 1px dashed var(--border-color); text-align: center; background: #fdfdfd;">
-                        <p style="margin-bottom: 15px; color: var(--text-main);">请上传您的技术包 (Tech Pack) 或款式图片</p>
-                        <input type="file" multiple style="font-size: 14px;">
+                    <!-- OEM 上传 -->
+                    <div id="custom-upload" class="hidden">
+                        <div class="upload-box">
+                            <p style="color: #666; margin-bottom: 15px;">请点击或拖拽上传您的技术包 (Tech Pack / PDF / AI)</p>
+                            <input type="file" multiple>
+                        </div>
                     </div>
                 </div>
 
                 <!-- 第二步：面料 -->
                 <div class="step-content hidden" id="step-2">
-                    <h2 style="font-size: 22px; margin-bottom: 30px;">面料与成分选择</h2>
+                    <h2 style="font-size: 24px; margin-bottom: 30px;">面料与成分选择</h2>
                     <div class="option-grid">
                         <div class="option-item" onclick="selectItem('fabric', 'Nylon 190G', '哑光尼龙 (190G)')">
-                            <div style="height:140px; background:#333;"></div>
+                            <div style="height:200px; background:#333;"></div>
                             <div class="option-info">
                                 <h4>Matte Nylon</h4>
                                 <p>80% Nylon, 20% Spandex</p>
                             </div>
                         </div>
-                        <div class="option-item" onclick="selectItem('fabric', 'Repreve 200G', '再生环保面料')">
-                            <div style="height:140px; background:#1a3c34;"></div>
+                        <div class="option-item" onclick="selectItem('fabric', 'Repreve 200G', '环保再生面料')">
+                            <div style="height:200px; background:#1a3c34;"></div>
                             <div class="option-info">
                                 <h4>REPREVE® Eco</h4>
-                                <p>100% 可回收材料</p>
+                                <p>Sustainable / 高回弹</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="step-content hidden" id="step-3"><h2 style="font-size: 22px; margin-bottom: 30px;">品牌辅料定制</h2><p>选项加载中...</p></div>
-                <div class="step-content hidden" id="step-4"><h2 style="font-size: 22px; margin-bottom: 30px;">交付与物流</h2><p>选项加载中...</p></div>
-                <div class="step-content hidden" id="step-5"><h2 style="font-size: 22px; margin-bottom: 30px;">核对需求预览</h2><p>请检查您的选择，确认无误后提交。</p></div>
+                <!-- 第三、四、五步结构类似 -->
+                <div class="step-content hidden" id="step-3">
+                    <h2 style="font-size: 24px; margin-bottom: 30px;">品牌定制选项</h2>
+                    <div class="option-grid">
+                        <div class="option-item" onclick="selectItem('branding', 'Heat Transfer Logo', '烫印 Logo')">
+                            <div class="option-info"><h4>Heat Transfer Logo</h4><p>无感舒适印标</p></div>
+                        </div>
+                        <div class="option-item" onclick="selectItem('branding', 'Woven Label', '主唛织标')">
+                            <div class="option-info"><h4>Woven Main Label</h4><p>经典品牌质感</p></div>
+                        </div>
+                    </div>
+                </div>
 
-                <!-- 底部按钮组（固定在表单区域的最下方） -->
+                <div class="step-content hidden" id="step-4">
+                    <h2 style="font-size: 24px; margin-bottom: 30px;">交付与物流方式</h2>
+                    <div class="option-grid">
+                        <div class="option-item" onclick="selectItem('shipping', 'Air Express', '空运快递 (5-7天)')">
+                            <div class="option-info"><h4>Air Express</h4><p>Door-to-door / DHL / FedEx</p></div>
+                        </div>
+                        <div class="option-item" onclick="selectItem('shipping', 'Sea Freight', '海运散货 (30-40天)')">
+                            <div class="option-info"><h4>Sea Freight</h4><p>成本优先 / 大货首选</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-content hidden" id="step-5">
+                    <h2 style="font-size: 24px; margin-bottom: 10px;">最后一步：核对并提交</h2>
+                    <p style="color: var(--text-light); margin-bottom: 30px;">请在右侧检查您的定制清单，确认无误后点击提交需求。</p>
+                    <textarea style="width:100%; height:150px; padding:15px; border:1px solid var(--border-color); font-family:inherit; font-size:14px; border-radius:4px;" placeholder="如有其他特殊要求（如尺码配比、包装要求等），请在此说明..."></textarea>
+                </div>
+
                 <div class="button-group">
-                    <button type="button" id="prevBtn" class="btn-outline" onclick="changeStep(-1)" disabled>返回上一步</button>
+                    <button type="button" id="prevBtn" onclick="changeStep(-1)" disabled>返回上一步</button>
                     <button type="button" id="nextBtn" onclick="changeStep(1)">继续下一步</button>
                 </div>
             </form>
         </main>
 
-        <!-- 右侧：汇总预览 -->
+        <!-- 右侧：汇总预览 (独立滚动) -->
         <aside class="summary-sidebar">
             <span class="summary-title">SELECTED DETAILS / 需求清单</span>
             
@@ -375,14 +385,16 @@
                 <span class="value" id="sum-shipping">未选择</span>
             </div>
 
-            <div style="margin-top: 40px; padding: 15px; background: #fff; border: 1px solid var(--border-color); font-size: 13px; line-height: 1.5;">
-                <strong>温馨提示：</strong><br>
-                提交后，我们的系统将自动为您生成初步技术规格书。业务代表将在1个工作日内联系您核对明细与单价。
+            <div style="margin-top: 50px; padding: 25px; background: #fff; border: 1px solid var(--border-color); font-size: 13px; line-height: 1.6;">
+                <strong style="color:var(--text-main);">温馨提示：</strong><br><br>
+                1. 提交后系统将生成需求编号并通知您的专属业务经理。<br>
+                2. 报价将基于面料市场价格及大货起订量（MOQ）实时核算。<br>
+                3. 样板制作预计在确认细节后 7-10 个工作日内完成。
             </div>
         </aside>
     </div>
 
-    <!-- 底部版权 -->
+    <!-- 底部固定：版权信息 -->
     <footer class="site-footer">
         © 2026 红绣服饰 (Hongxiu Clothing). All Rights Reserved. | 专属定制 · 品质追踪
     </footer>
@@ -391,36 +403,59 @@
         let currentStep = 1;
         const totalSteps = 5;
 
+        // 切换步骤逻辑
         function changeStep(n) {
+            // 隐藏当前
             document.getElementById(`step-${currentStep}`).classList.add('hidden');
             document.getElementById(`step-${currentStep}-label`).classList.remove('active');
+            
             currentStep += n;
+
+            // 显示新步骤
             document.getElementById(`step-${currentStep}`).classList.remove('hidden');
             document.getElementById(`step-${currentStep}-label`).classList.add('active');
 
+            // 按钮状态更新
             document.getElementById('prevBtn').disabled = (currentStep === 1);
-            document.getElementById('nextBtn').innerText = (currentStep === totalSteps) ? '确认提交需求' : '继续下一步';
             
-            // 切换步骤时，页面回到顶部，提升体验
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (currentStep === totalSteps) {
+                document.getElementById('nextBtn').innerText = '提交定制需求';
+                document.getElementById('nextBtn').style.backgroundColor = '#27ae60'; // 最后一阶段变绿提示提交
+                document.getElementById('nextBtn').style.borderColor = '#27ae60';
+            } else {
+                document.getElementById('nextBtn').innerText = '继续下一步';
+                document.getElementById('nextBtn').style.backgroundColor = 'var(--primary-color)';
+                document.getElementById('nextBtn').style.borderColor = 'var(--primary-color)';
+            }
+
+            // 自动回到左侧顶部
+            document.querySelector('.config-main').scrollTop = 0;
         }
 
+        // OEM/ODM 切换
         function toggleStyleMode(mode) {
             const list = document.getElementById('existing-styles');
             const upload = document.getElementById('custom-upload');
             if(mode === 'existing') {
-                list.classList.remove('hidden'); upload.classList.add('hidden');
-                document.getElementById('sum-style').innerText = '未选择';
+                list.classList.remove('hidden');
+                upload.classList.add('hidden');
             } else {
-                list.classList.add('hidden'); upload.classList.remove('hidden');
-                document.getElementById('sum-style').innerText = '自定义 OEM';
+                list.classList.add('hidden');
+                upload.classList.remove('hidden');
+                document.getElementById('sum-style').innerText = '自主设计开发 (OEM)';
             }
         }
 
+        // 选中选项逻辑
         function selectItem(category, value, displayName) {
+            // 更新右侧汇总
             document.getElementById(`sum-${category}`).innerText = displayName;
+
+            // 视觉反馈
             const container = document.getElementById(`step-${currentStep}`);
-            container.querySelectorAll('.option-item').forEach(item => item.classList.remove('selected'));
+            container.querySelectorAll('.option-item').forEach(item => {
+                item.classList.remove('selected');
+            });
             event.currentTarget.classList.add('selected');
         }
     </script>

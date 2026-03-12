@@ -22,7 +22,7 @@ app.get('/', (req, res) => {
 app.post('/api/login', async (req, res) => {
     try {
         // Node.js 18 原生支持 fetch
-        const n8nResponse = await fetch(`${N8N_BASE_URL}/user-login`, {
+        const n8nResponse = await fetch(`${N8N_BASE_URL}/custom-user-login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(req.body) // 包含 username 和 password
@@ -38,7 +38,7 @@ app.post('/api/login', async (req, res) => {
 // 3. 接收前端的【注册】请求，并转发给 n8n
 app.post('/api/register', async (req, res) => {
     try {
-        const n8nResponse = await fetch(`${N8N_BASE_URL}/user-register`, {
+        const n8nResponse = await fetch(`${N8N_BASE_URL}/custom-user-register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(req.body) 
@@ -53,7 +53,7 @@ app.post('/api/register', async (req, res) => {
 // 4. 接收前端的【忘记密码】请求，并转发给 n8n
 app.post('/api/forgot-password', async (req, res) => {
     try {
-        const n8nResponse = await fetch(`${N8N_BASE_URL}/user-forgot`, {
+        const n8nResponse = await fetch(`${N8N_BASE_URL}/custom-user-forgot`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(req.body)

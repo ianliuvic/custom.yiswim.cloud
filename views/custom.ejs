@@ -112,6 +112,38 @@
         .sub-pane { display: none; animation: fadeIn 0.3s; }
         .sub-pane.active { display: block; }
 
+        /* 高级上传框样式 */
+        .premium-upload-box {
+            border: 2px dashed #d9d9d9;
+            background-color: #fafafa;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .premium-upload-box:hover {
+            border-color: var(--primary-color);
+            background-color: #fff9f9;
+        }
+        .custom-file-input {
+            margin-top: 10px;
+            font-family: inherit;
+        }
+        .custom-file-input::file-selector-button {
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 8px 16px;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .custom-file-input::file-selector-button:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
         /* 是否需要开关 */
         .toggle-section { display: flex; align-items: center; gap: 30px; margin-bottom: 25px; padding: 15px 20px; background: #f9f9f9; border-radius: 4px; }
         .toggle-title { font-weight: 600; font-size: 15px; }
@@ -234,15 +266,123 @@
                         <!-- 2. 包装袋 Pane -->
                         <div id="pane-bag" class="sub-pane">
                             <div class="toggle-section">
-                                <div class="toggle-title">是否需要定制包装袋？</div>
+                                <div class="toggle-title">是否需要定制品牌包装袋？</div>
                                 <div class="toggle-options">
                                     <label><input type="radio" name="need_bag" value="no" checked onchange="toggleTrim('bag', false)"> 否 (No)</label>
                                     <label><input type="radio" name="need_bag" value="yes" onchange="toggleTrim('bag', true)"> 是 (Yes)</label>
                                 </div>
                             </div>
-                            <div id="content-bag" class="placeholder-box hidden">
-                                <h3>[ 包装袋选项 - 占位 ]</h3>
-                                <p>此处未来将展示：磨砂PE拉链袋、可降解环保袋、棉布抽绳袋等图片选项。</p>
+
+                            <div id="content-bag" class="hidden" style="animation: fadeIn 0.5s ease;">
+                                
+                                <!-- 1. 描述与灵感画廊 -->
+                                <div class="bag-intro" style="margin-bottom: 40px;">
+                                    <h3 style="font-size: 18px; color: var(--text-main); margin-bottom: 10px;">提升您的开箱体验 (Unboxing Experience)</h3>
+                                    <p style="color: var(--text-light); font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
+                                        包装是品牌与消费者接触的第一道门面。我们提供从磨砂质感拉链袋到100%可降解环保袋的多种选择。您可以上传自己的 Logo 或印花设计，打造独一无二的品牌视觉。
+                                    </p>
+                                    <!-- 灵感图片展示区 -->
+                                    <div style="display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px;">
+                                        <img src="https://images.unsplash.com/photo-1607344645866-009c320b63e0?w=300" alt="示例1" style="height: 140px; width: 220px; object-fit: cover; border-radius: 6px; border: 1px solid #eee;">
+                                        <img src="https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?w=300" alt="示例2" style="height: 140px; width: 220px; object-fit: cover; border-radius: 6px; border: 1px solid #eee;">
+                                        <img src="https://images.unsplash.com/photo-1620794341491-9f24dc3ad4fb?w=300" alt="示例3" style="height: 140px; width: 220px; object-fit: cover; border-radius: 6px; border: 1px solid #eee;">
+                                    </div>
+                                </div>
+
+                                <!-- 2. 设计文件上传区 -->
+                                <div class="premium-upload-box" style="margin-bottom: 40px;">
+                                    <div style="margin-bottom: 15px; color: var(--primary-color);">
+                                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                    </div>
+                                    <h4 style="margin: 0 0 8px; font-size: 16px;">上传您的包装设计图稿或 Logo</h4>
+                                    <p style="margin: 0 0 20px; font-size: 13px; color: #888;">支持的文件格式：PDF, AI, PSD, PNG (建议透明底)。最大限制 50MB。</p>
+                                    <input type="file" id="bag-design-file" class="custom-file-input">
+                                </div>
+
+                                <!-- 3. 定制属性：材质选择 -->
+                                <div class="attr-section" style="margin-bottom: 40px;">
+                                    <h4 class="attr-title" style="font-size: 16px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 材质与袋型 (Material & Style)</h4>
+                                    <div class="option-grid">
+                                        <div class="option-item bag-mat" onclick="selectBagAttr('material', 'CPE 磨砂拉链袋', this)">
+                                            <div style="height: 150px; background: #eef2f5; display: flex; align-items:center; justify-content:center; color:#999; border-bottom: 1px solid #eee;">[磨砂袋示意图]</div>
+                                            <div class="option-info">
+                                                <h4>CPE Frosted Zip Bag</h4>
+                                                <p>半透明磨砂质感 · 高级顺滑拉链</p>
+                                            </div>
+                                        </div>
+                                        <div class="option-item bag-mat" onclick="selectBagAttr('material', '环保可降解袋', this)">
+                                            <div style="height: 150px; background: #f2f7f4; display: flex; align-items:center; justify-content:center; color:#749c74; border-bottom: 1px solid #eee;">[环保袋示意图]</div>
+                                            <div class="option-info">
+                                                <h4>Biodegradable Bag</h4>
+                                                <p>100% 堆肥降解 · 欧美品牌首选</p>
+                                            </div>
+                                        </div>
+                                        <div class="option-item bag-mat" onclick="selectBagAttr('material', '纯棉抽绳袋', this)">
+                                            <div style="height: 150px; background: #f9f6f0; display: flex; align-items:center; justify-content:center; color:#a6937c; border-bottom: 1px solid #eee;">[棉布袋示意图]</div>
+                                            <div class="option-info">
+                                                <h4>Cotton Drawstring</h4>
+                                                <p>天然原色棉布 · 可重复收纳使用</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 4. 定制属性：尺寸选择 -->
+                                <div class="attr-section" style="margin-bottom: 40px;">
+                                    <h4 class="attr-title" style="font-size: 16px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 尺寸规格 (Dimensions)</h4>
+                                    <div class="option-grid">
+                                        <div class="option-item bag-size" onclick="selectBagAttr('size', '20x30cm (基础款)', this)">
+                                            <div style="height: 120px; background: #fafafa; display: flex; align-items:center; justify-content:center; font-size:24px; color:#ccc; border-bottom: 1px solid #eee;">20 x 30</div>
+                                            <div class="option-info">
+                                                <h4>Standard (20x30 cm)</h4>
+                                                <p>适合常规分体比基尼、单件泳裤</p>
+                                            </div>
+                                        </div>
+                                        <div class="option-item bag-size" onclick="selectBagAttr('size', '25x35cm (加大款)', this)">
+                                            <div style="height: 120px; background: #fafafa; display: flex; align-items:center; justify-content:center; font-size:24px; color:#ccc; border-bottom: 1px solid #eee;">25 x 35</div>
+                                            <div class="option-info">
+                                                <h4>Large (25x35 cm)</h4>
+                                                <p>适合连体泳衣、长袖冲浪服或套装</p>
+                                            </div>
+                                        </div>
+                                        <div class="option-item bag-size" onclick="selectBagAttr('size', '自定义尺寸', this)">
+                                            <div style="height: 120px; background: #fafafa; display: flex; align-items:center; justify-content:center; font-size:24px; color:#ccc; border-bottom: 1px solid #eee;">? x ?</div>
+                                            <div class="option-info">
+                                                <h4>Custom Size</h4>
+                                                <p>我有特殊尺寸需求（请在最后一步备注）</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 5. 定制属性：印刷工艺 -->
+                                <div class="attr-section" style="margin-bottom: 20px;">
+                                    <h4 class="attr-title" style="font-size: 16px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 印刷工艺 (Print Finish)</h4>
+                                    <div class="option-grid">
+                                        <div class="option-item bag-print" onclick="selectBagAttr('print', '空白无印', this)">
+                                            <div style="height: 120px; background: #fff; display: flex; align-items:center; justify-content:center; color:#ddd; border-bottom: 1px solid #eee;">[空白示意]</div>
+                                            <div class="option-info">
+                                                <h4>Blank (No Print)</h4>
+                                                <p>保持原质感，极简成本优选</p>
+                                            </div>
+                                        </div>
+                                        <div class="option-item bag-print" onclick="selectBagAttr('print', '单色印刷', this)">
+                                            <div style="height: 120px; background: #fafafa; display: flex; align-items:center; justify-content:center; color:#999; border-bottom: 1px solid #eee;">[单色Logo示意]</div>
+                                            <div class="option-info">
+                                                <h4>1-Color Print</h4>
+                                                <p>印制黑色/白色或单色 Logo，性价比最高</p>
+                                            </div>
+                                        </div>
+                                        <div class="option-item bag-print" onclick="selectBagAttr('print', '多色/满印', this)">
+                                            <div style="height: 120px; background: linear-gradient(45deg, #f1e1e1, #e1e8f1); display: flex; align-items:center; justify-content:center; color:#888; border-bottom: 1px solid #eee;">[彩色印花示意]</div>
+                                            <div class="option-info">
+                                                <h4>Multi-Color / Allover</h4>
+                                                <p>复杂彩色图案或平铺满印，视觉冲击力强</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
 
@@ -429,17 +569,66 @@
             el.classList.add('active');
         }
 
-        // 2. 切换是否需要该辅料的内容展示与侧边栏更新
+        // 存储包装袋的多维配置数据
+        let bagConfig = {
+            material: '未选材质',
+            size: '未选尺寸',
+            print: '未选印刷'
+        };
+
+        // 处理包装袋各个属性的点击选择
+        function selectBagAttr(attrType, displayName, el) {
+            // 1. 记录数据
+            bagConfig[attrType] = displayName;
+
+            // 2. 视觉反馈：清除同一组（mat, size, print）内的高亮，然后高亮当前点击的卡片
+            const container = document.getElementById('content-bag');
+            container.querySelectorAll(`.bag-${attrType}`).forEach(item => {
+                item.classList.remove('selected');
+            });
+            el.classList.add('selected');
+
+            // 3. 更新右侧侧边栏汇总
+            updateBagSummary();
+        }
+
+        // 统一更新右侧清单的展示文本
+        function updateBagSummary() {
+            const summaryText = document.getElementById('sum-trim-bag');
+            
+            // 如果三个都没选，提示待配置
+            if (bagConfig.material === '未选材质' && bagConfig.size === '未选尺寸' && bagConfig.print === '未选印刷') {
+                summaryText.innerText = '已开启 (待选择详细配置)';
+            } else {
+                // 拼接成精美的格式，例如: CPE 磨砂拉链袋 | 20x30cm | 单色印刷
+                // 如果有未选的，就用 ?? 代替，提示用户还没选完
+                const matStr = bagConfig.material !== '未选材质' ? bagConfig.material : '??';
+                const sizeStr = bagConfig.size !== '未选尺寸' ? bagConfig.size.split(' ')[0] : '??'; // 只取尺寸数字部分
+                const printStr = bagConfig.print !== '未选印刷' ? bagConfig.print : '??';
+                
+                summaryText.innerText = `${matStr} | ${sizeStr} | ${printStr}`;
+            }
+
+            summaryText.style.color = 'var(--primary-color)';
+            summaryText.style.fontWeight = 'bold';
+        }
+
+        // 修改原有的 toggleTrim 函数
         function toggleTrim(category, isNeeded) {
             const contentBox = document.getElementById(`content-${category}`);
             const summaryText = document.getElementById(`sum-trim-${category}`);
             
             if (isNeeded) {
                 contentBox.classList.remove('hidden');
-                // 先显示为“待配置”，如果后续在占位框里选了具体图片，可以通过另一个函数覆盖这里
-                summaryText.innerText = '已开启 (待详细配置)';
-                summaryText.style.color = 'var(--primary-color)';
-                summaryText.style.fontWeight = 'bold';
+                
+                if (category === 'bag') {
+                    // 如果开启包装袋，刷新一下当前的配置状态
+                    updateBagSummary();
+                } else {
+                    summaryText.innerText = '已开启 (待配置)';
+                    summaryText.style.color = 'var(--primary-color)';
+                    summaryText.style.fontWeight = 'bold';
+                }
             } else {
                 contentBox.classList.add('hidden');
                 summaryText.innerText = '不需要';

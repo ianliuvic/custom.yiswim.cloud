@@ -275,113 +275,103 @@
                                 </div>
                             </div>
 
-                            <div id="content-bag" class="hidden" style="animation: fadeIn 0.5s ease;">
+                            <!-- 包装袋具体配置项 -->
+                            <div id="content-bag" class="hidden" style="animation: fadeIn 0.4s ease;">
                                 
-                                <!-- 1. 描述与灵感画廊 -->
-                                <div class="bag-intro" style="margin-bottom: 40px;">
-                                    <h3 style="font-size: 18px; color: var(--text-main); margin-bottom: 10px;">提升您的开箱体验 (Unboxing Experience)</h3>
-                                    <p style="color: var(--text-light); font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
-                                        包装是品牌与消费者接触的第一道门面。我们提供从磨砂质感拉链袋到100%可降解环保袋的多种选择。您可以上传自己的 Logo 或印花设计，打造独一无二的品牌视觉。
-                                    </p>
-                                    <!-- 灵感图片展示区 -->
-                                    <div style="display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px;">
-                                        <img src="https://images.unsplash.com/photo-1607344645866-009c320b63e0?w=300" alt="示例1" style="height: 140px; width: 220px; object-fit: cover; border-radius: 6px; border: 1px solid #eee;">
-                                        <img src="https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?w=300" alt="示例2" style="height: 140px; width: 220px; object-fit: cover; border-radius: 6px; border: 1px solid #eee;">
-                                        <img src="https://images.unsplash.com/photo-1620794341491-9f24dc3ad4fb?w=300" alt="示例3" style="height: 140px; width: 220px; object-fit: cover; border-radius: 6px; border: 1px solid #eee;">
-                                    </div>
-                                </div>
-
-                                <!-- 2. 设计文件上传区 -->
-                                <div class="premium-upload-box" style="margin-bottom: 40px;">
-                                    <div style="margin-bottom: 15px; color: var(--primary-color);">
-                                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                                    </div>
-                                    <h4 style="margin: 0 0 8px; font-size: 16px;">上传您的包装设计图稿或 Logo</h4>
-                                    <p style="margin: 0 0 20px; font-size: 13px; color: #888;">支持的文件格式：PDF, AI, PSD, PNG (建议透明底)。最大限制 50MB。</p>
-                                    <input type="file" id="bag-design-file" class="custom-file-input">
-                                </div>
-
-                                <!-- 3. 定制属性：材质选择 -->
-                                <div class="attr-section" style="margin-bottom: 40px;">
-                                    <h4 class="attr-title" style="font-size: 16px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 材质与袋型 (Material & Style)</h4>
+                                <!-- A. 材质选择 -->
+                                <div class="attr-section" style="margin-bottom: 30px;">
+                                    <h4 class="attr-title" style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 材质与袋型 (Material)</h4>
                                     <div class="option-grid">
                                         <div class="option-item bag-mat" onclick="selectBagAttr('material', 'CPE 磨砂拉链袋', this)">
-                                            <div style="height: 150px; background: #eef2f5; display: flex; align-items:center; justify-content:center; color:#999; border-bottom: 1px solid #eee;">[磨砂袋示意图]</div>
+                                            <div style="height: 120px; background: #eef2f5; display: flex; align-items:center; justify-content:center; color:#999; border-bottom: 1px solid #eee; font-size: 12px;">[磨砂袋示意图]</div>
                                             <div class="option-info">
-                                                <h4>CPE Frosted Zip Bag</h4>
-                                                <p>半透明磨砂质感 · 高级顺滑拉链</p>
+                                                <h4>CPE Frosted Zip</h4>
+                                                <p>半透明磨砂 · 顺滑拉链</p>
                                             </div>
                                         </div>
                                         <div class="option-item bag-mat" onclick="selectBagAttr('material', '环保可降解袋', this)">
-                                            <div style="height: 150px; background: #f2f7f4; display: flex; align-items:center; justify-content:center; color:#749c74; border-bottom: 1px solid #eee;">[环保袋示意图]</div>
+                                            <div style="height: 120px; background: #f2f7f4; display: flex; align-items:center; justify-content:center; color:#749c74; border-bottom: 1px solid #eee; font-size: 12px;">[环保袋示意图]</div>
                                             <div class="option-info">
-                                                <h4>Biodegradable Bag</h4>
-                                                <p>100% 堆肥降解 · 欧美品牌首选</p>
+                                                <h4>Biodegradable</h4>
+                                                <p>100% 堆肥降解 · 环保优选</p>
                                             </div>
                                         </div>
                                         <div class="option-item bag-mat" onclick="selectBagAttr('material', '纯棉抽绳袋', this)">
-                                            <div style="height: 150px; background: #f9f6f0; display: flex; align-items:center; justify-content:center; color:#a6937c; border-bottom: 1px solid #eee;">[棉布袋示意图]</div>
+                                            <div style="height: 120px; background: #f9f6f0; display: flex; align-items:center; justify-content:center; color:#a6937c; border-bottom: 1px solid #eee; font-size: 12px;">[棉布袋示意图]</div>
                                             <div class="option-info">
                                                 <h4>Cotton Drawstring</h4>
-                                                <p>天然原色棉布 · 可重复收纳使用</p>
+                                                <p>天然原色棉布 · 可重复收纳</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- 4. 定制属性：尺寸选择 -->
-                                <div class="attr-section" style="margin-bottom: 40px;">
-                                    <h4 class="attr-title" style="font-size: 16px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 尺寸规格 (Dimensions)</h4>
+                                <!-- B. 尺寸选择 -->
+                                <div class="attr-section" style="margin-bottom: 30px;">
+                                    <h4 class="attr-title" style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 尺寸规格 (Dimensions)</h4>
                                     <div class="option-grid">
                                         <div class="option-item bag-size" onclick="selectBagAttr('size', '20x30cm (基础款)', this)">
-                                            <div style="height: 120px; background: #fafafa; display: flex; align-items:center; justify-content:center; font-size:24px; color:#ccc; border-bottom: 1px solid #eee;">20 x 30</div>
+                                            <div style="height: 100px; background: #fafafa; display: flex; align-items:center; justify-content:center; font-size:20px; font-weight:bold; color:#ccc; border-bottom: 1px solid #eee;">20 x 30</div>
                                             <div class="option-info">
                                                 <h4>Standard (20x30 cm)</h4>
-                                                <p>适合常规分体比基尼、单件泳裤</p>
+                                                <p>常规分体比基尼、泳裤</p>
                                             </div>
                                         </div>
                                         <div class="option-item bag-size" onclick="selectBagAttr('size', '25x35cm (加大款)', this)">
-                                            <div style="height: 120px; background: #fafafa; display: flex; align-items:center; justify-content:center; font-size:24px; color:#ccc; border-bottom: 1px solid #eee;">25 x 35</div>
+                                            <div style="height: 100px; background: #fafafa; display: flex; align-items:center; justify-content:center; font-size:20px; font-weight:bold; color:#ccc; border-bottom: 1px solid #eee;">25 x 35</div>
                                             <div class="option-info">
                                                 <h4>Large (25x35 cm)</h4>
-                                                <p>适合连体泳衣、长袖冲浪服或套装</p>
+                                                <p>连体泳衣、长袖冲浪服</p>
                                             </div>
                                         </div>
                                         <div class="option-item bag-size" onclick="selectBagAttr('size', '自定义尺寸', this)">
-                                            <div style="height: 120px; background: #fafafa; display: flex; align-items:center; justify-content:center; font-size:24px; color:#ccc; border-bottom: 1px solid #eee;">? x ?</div>
+                                            <div style="height: 100px; background: #fafafa; display: flex; align-items:center; justify-content:center; font-size:20px; font-weight:bold; color:#ccc; border-bottom: 1px solid #eee;">? x ?</div>
                                             <div class="option-info">
                                                 <h4>Custom Size</h4>
-                                                <p>我有特殊尺寸需求（请在最后一步备注）</p>
+                                                <p>特殊尺寸（请在最后一步备注）</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- 5. 定制属性：印刷工艺 -->
-                                <div class="attr-section" style="margin-bottom: 20px;">
-                                    <h4 class="attr-title" style="font-size: 16px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 印刷工艺 (Print Finish)</h4>
+                                <!-- C. 印刷工艺 -->
+                                <div class="attr-section" style="margin-bottom: 30px;">
+                                    <h4 class="attr-title" style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 印刷工艺 (Print Finish)</h4>
                                     <div class="option-grid">
                                         <div class="option-item bag-print" onclick="selectBagAttr('print', '空白无印', this)">
-                                            <div style="height: 120px; background: #fff; display: flex; align-items:center; justify-content:center; color:#ddd; border-bottom: 1px solid #eee;">[空白示意]</div>
+                                            <div style="height: 100px; background: #fff; display: flex; align-items:center; justify-content:center; color:#ddd; border-bottom: 1px solid #eee; font-size: 12px;">[空白示意]</div>
                                             <div class="option-info">
                                                 <h4>Blank (No Print)</h4>
-                                                <p>保持原质感，极简成本优选</p>
+                                                <p>保持原质感，极简优选</p>
                                             </div>
                                         </div>
                                         <div class="option-item bag-print" onclick="selectBagAttr('print', '单色印刷', this)">
-                                            <div style="height: 120px; background: #fafafa; display: flex; align-items:center; justify-content:center; color:#999; border-bottom: 1px solid #eee;">[单色Logo示意]</div>
+                                            <div style="height: 100px; background: #fafafa; display: flex; align-items:center; justify-content:center; color:#999; border-bottom: 1px solid #eee; font-size: 12px;">[单色Logo示意]</div>
                                             <div class="option-info">
                                                 <h4>1-Color Print</h4>
-                                                <p>印制黑色/白色或单色 Logo，性价比最高</p>
+                                                <p>印制单色 Logo，性价比最高</p>
                                             </div>
                                         </div>
                                         <div class="option-item bag-print" onclick="selectBagAttr('print', '多色/满印', this)">
-                                            <div style="height: 120px; background: linear-gradient(45deg, #f1e1e1, #e1e8f1); display: flex; align-items:center; justify-content:center; color:#888; border-bottom: 1px solid #eee;">[彩色印花示意]</div>
+                                            <div style="height: 100px; background: linear-gradient(45deg, #f1e1e1, #e1e8f1); display: flex; align-items:center; justify-content:center; color:#888; border-bottom: 1px solid #eee; font-size: 12px;">[彩色印花示意]</div>
                                             <div class="option-info">
                                                 <h4>Multi-Color / Allover</h4>
-                                                <p>复杂彩色图案或平铺满印，视觉冲击力强</p>
+                                                <p>彩色图案或平铺满印</p>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+
+                                <!-- D. 设计文件上传区 (移至最下方) -->
+                                <div class="attr-section" style="margin-bottom: 10px;">
+                                    <h4 class="attr-title" style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">D. 设计图稿上传 (Design Upload)</h4>
+                                    <div class="premium-upload-box">
+                                        <div style="margin-bottom: 12px; color: var(--primary-color);">
+                                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                        </div>
+                                        <h4 style="margin: 0 0 6px; font-size: 14px;">点击或拖拽上传 Logo / 包装设计图</h4>
+                                        <p style="margin: 0 0 15px; font-size: 12px; color: #888;">支持的文件格式：PDF, AI, PSD, PNG (建议透明底)</p>
+                                        <input type="file" id="bag-design-file" class="custom-file-input">
                                     </div>
                                 </div>
 

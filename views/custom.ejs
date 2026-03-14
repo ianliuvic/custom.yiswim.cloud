@@ -139,6 +139,19 @@
         .custom-file-input::file-selector-button { background-color: #fff; border: 1px solid var(--border-color); border-radius: 4px; padding: 6px 12px; color: var(--text-main); cursor: pointer; transition: 0.2s; }
         .custom-file-input::file-selector-button:hover { border-color: var(--primary-color); color: var(--primary-color); }
 
+        /* 步骤引导描述框 */
+        .step-desc {
+            font-size: 13px;
+            color: var(--text-main);
+            background: #f4f6f8;
+            padding: 12px 16px;
+            border-left: 3px solid var(--primary-color);
+            border-radius: 0 4px 4px 0;
+            margin-top: 0;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
         .hidden { display: none !important; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         ::-webkit-scrollbar { width: 5px; height: 5px; }
@@ -178,12 +191,12 @@
             <div class="config-scroll-area">
                 <form id="configForm">
                     
-                    <!-- 步骤 1: 款式 -->
+                                        <!-- 步骤 1: 款式 -->
                     <div class="step-content" id="step-1">
-                        <h2 style="font-size: 24px; margin-top:0;">款式选择 / STYLE</h2>
-                        <p style="color: var(--text-light); margin-bottom: 30px;">选择基础版型或开启 OEM 开发模式。</p>
+                        <!-- 去掉 h2，使用新的引导框 -->
+                        <div class="step-desc">请选择基础廓形，或开启 OEM 模式上传您的自主设计包。</div>
                         
-                        <div style="margin-bottom: 30px; display: flex; gap: 30px;">
+                        <div style="margin-bottom: 25px; display: flex; gap: 30px;">
                             <label style="cursor: pointer;"><input type="radio" name="styleMode" checked onclick="toggleStyleMode('existing')"> 现有款式 (ODM)</label>
                             <label style="cursor: pointer;"><input type="radio" name="styleMode" onclick="toggleStyleMode('custom')"> 自主设计 (OEM)</label>
                         </div>
@@ -209,23 +222,25 @@
 
                     <!-- 步骤 2: 面料 -->
                     <div class="step-content hidden" id="step-2">
-                        <h2 style="font-size: 24px; margin-top:0;">面料材质 / FABRIC</h2>
+                        <div class="step-desc">选择最适合您产品定位的面料材质。如需特殊面料请在最后一步备注。</div>
+                        
                         <div class="option-grid">
                             <div class="option-item" onclick="selectItem('fabric', 'Matte Nylon (190G)')">
-                                <div style="height:180px; background:#333;"></div>
+                                <div style="height:140px; background:#333;"></div>
                                 <div class="option-info"><h4>Matte Nylon</h4><p>80% Nylon, 20% Spandex</p></div>
                             </div>
+                            <!-- 未来可以加更多面料 -->
                         </div>
                     </div>
 
                     <!-- ============================================== -->
                     <!-- 步骤 3: 辅料 (全新子页面结构) -->
                     <!-- ============================================== -->
+                    <!-- 步骤 3: 辅料 -->
                     <div class="step-content hidden" id="step-3">
-                        <h2 style="font-size: 24px; margin-top:0; margin-bottom:10px;">品牌辅料 / TRIMS & BRANDING</h2>
-                        <p style="color: var(--text-light); margin-bottom: 25px;">请在下方分类中选择您需要的定制辅料。默认为不需要。</p>
+                        <div class="step-desc">请在下方标签页中分别配置您需要的品牌辅料。如果不需要某项辅料，保持默认“否”即可。</div>
 
-                        <!-- 子标签页导航 -->
+                        <!-- 子标签页导航 (保持你之前的代码不变) -->
                         <div class="sub-tabs">
                             <div class="sub-tab active" onclick="switchSubTab('metal', this)">金属饰品</div>
                             <div class="sub-tab" onclick="switchSubTab('bag', this)">包装袋</div>
@@ -437,7 +452,8 @@
 
                     <!-- 步骤 4: 物流 -->
                     <div class="step-content hidden" id="step-4">
-                        <h2 style="font-size: 24px; margin-top:0;">交付方式 / LOGISTICS</h2>
+                        <div class="step-desc">请选择首选的交付与物流方式。最终费用将在确认具体起订量后核算。</div>
+                        
                         <div class="option-grid">
                             <div class="option-item" onclick="selectItem('shipping', 'Air Express (DHL/FedEx)')">
                                 <div class="option-info"><h4>Air Express</h4><p>空运快线 5-7 天</p></div>
@@ -447,9 +463,9 @@
 
                     <!-- 步骤 5: 确认 -->
                     <div class="step-content hidden" id="step-5">
-                        <h2 style="font-size: 24px; margin-top:0;">需求汇总确认</h2>
-                        <p style="color: var(--text-light); margin-bottom: 30px;">请核对右侧清单。</p>
-                        <textarea style="width:100%; height:150px; padding:15px; border:1px solid var(--border-color); font-family:inherit;" placeholder="整体订单备注..."></textarea>
+                        <div class="step-desc">请最后核对右侧的需求清单。如有其他特殊说明（如尺码配比、混装要求等），请在下方留言。</div>
+                        
+                        <textarea style="width:100%; height:150px; padding:15px; border:1px solid var(--border-color); font-family:inherit; border-radius:4px; box-sizing:border-box;" placeholder="请输入整体订单备注..."></textarea>
                     </div>
 
                 </form>

@@ -152,6 +152,38 @@
             line-height: 1.5;
         }
 
+        /* 自定义 Radio Button 样式 */
+        input[type="radio"] {
+            accent-color: var(--primary-color); /* 将单选框颜色改为主题红 #aa0000 */
+            cursor: pointer;
+            outline: none; /* 移除焦点框 */
+        }
+
+        /* 移除 Radio Button 的焦点环（Focus Ring） */
+        input[type="radio"]:focus {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        /* 移除 Label 标签被选中时的浅粉色背景 */
+        label {
+            user-select: none; /* 防止用户误选文字 */
+            -webkit-user-select: none;
+        }
+
+        label:has(input[type="radio"]:focus) {
+            background-color: transparent !important;
+        }
+
+        /* 确保整个 toggle-options 区域没有浅色背景 */
+        .toggle-options {
+            outline: none;
+        }
+
+        .toggle-options label:focus-within {
+            background-color: transparent !important;
+        }
+
         .hidden { display: none !important; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         ::-webkit-scrollbar { width: 5px; height: 5px; }

@@ -6,14 +6,14 @@
     <link rel="stylesheet" href="/style.css">
     <title><%= title %></title>
     <style>
-        /* 1. 基础布局变量与强制重置 */
+        /* 1. 基础布局变量 - 降低头部和底部的高度 */
         :root {
             --primary-color: #aa0000;
             --text-main: #2c3e50;
             --text-light: #7f8c8d;
             --border-color: #ececec;
-            --header-height: 70px;
-            --footer-height: 50px;
+            --header-height: 56px;   /* 从 70px 缩减到 56px */
+            --footer-height: 36px;   /* 从 50px 缩减到 36px */
             --bg-sidebar: #fafafa;
         }
 
@@ -25,16 +25,16 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
-        /* 2. 顶部固定导航栏 */
+        /* 2. 顶部固定导航栏 (更紧凑) */
         .site-header {
             height: var(--header-height); min-height: var(--header-height); background: #fff;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 40px; border-bottom: 1px solid var(--border-color);
+            padding: 0 30px; border-bottom: 1px solid var(--border-color);
             z-index: 100; box-sizing: border-box;
         }
-        .header-left { display: flex; align-items: center; gap: 15px; }
-        .site-logo { height: 38px; width: auto; }
-        .site-title { font-size: 18px; font-weight: 600; color: var(--text-main); letter-spacing: 0.5px; }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .site-logo { height: 28px; width: auto; } /* Logo 适当等比缩小 */
+        .site-title { font-size: 16px; font-weight: 600; color: var(--text-main); }
 
         /* 3. 中间主体容器 */
         .main-container { flex: 1; display: flex; overflow: hidden; width: 100%; }
@@ -44,119 +44,106 @@
             flex: 1; display: flex; flex-direction: column; height: 100%;
             border-right: 1px solid var(--border-color); position: relative;
         }
+        
+        /* 步进指示器 (压缩上下边距) */
         .stepper {
-            padding: 30px 60px 10px; display: flex; gap: 20px; background: #fff; z-index: 10;
+            padding: 20px 40px 0; /* 左右边距从 60 降到 40，顶部从 30 降到 20 */
+            display: flex; gap: 15px; background: #fff; z-index: 10;
         }
         .step {
-            flex: 1; padding-bottom: 12px; border-bottom: 3px solid #eee;
-            font-size: 13px; color: var(--text-light); text-transform: uppercase;
+            flex: 1; padding-bottom: 10px; border-bottom: 3px solid #eee;
+            font-size: 12px; color: var(--text-light); text-transform: uppercase;
         }
         .step.active { border-bottom-color: var(--primary-color); color: var(--primary-color); font-weight: 600; }
 
-        .config-scroll-area { flex: 1; overflow-y: auto; padding: 20px 60px 40px; box-sizing: border-box; }
+        /* 内容滚动区 (扩展空间) */
+        .config-scroll-area { 
+            flex: 1; overflow-y: auto; 
+            padding: 20px 40px 30px; /* 左右边距释放 20px 给选项卡 */
+            box-sizing: border-box; 
+        }
 
+        /* 底部操作按钮组 (压缩上下边距) */
         .button-group {
-            padding: 20px 60px; background: #fff; border-top: 1px solid var(--border-color);
+            padding: 12px 40px; /* 上下从 20px 降到 12px */
+            background: #fff; border-top: 1px solid var(--border-color);
             display: flex; gap: 15px; z-index: 10;
         }
 
         /* 3.2 右侧汇总预览区 */
         .summary-sidebar {
-            width: 380px; min-width: 380px; background-color: var(--bg-sidebar);
-            padding: 40px; overflow-y: auto; height: 100%; box-sizing: border-box;
+            width: 340px; /* 从 380px 降到 340px，把宽度还给左侧展示区 */
+            min-width: 340px; background-color: var(--bg-sidebar);
+            padding: 30px; /* 内边距也略微缩减 */
+            overflow-y: auto; height: 100%; box-sizing: border-box;
         }
 
-        /* 4. 底部固定版权栏 */
+        /* 4. 底部固定版权栏 (压缩高度) */
         .site-footer {
             height: var(--footer-height); min-height: var(--footer-height); background: #fff;
-            border-top: 1px solid var(--border-color); padding: 0 40px;
-            display: flex; align-items: center; font-size: 13px; color: #999; z-index: 100; box-sizing: border-box;
+            border-top: 1px solid var(--border-color); padding: 0 30px;
+            display: flex; align-items: center; font-size: 12px; color: #999; z-index: 100; box-sizing: border-box;
         }
 
-        /* --- UI 选项卡片设计 --- */
-        .option-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; margin-top: 20px; }
-        .option-item { border: 1px solid var(--border-color); background: #fff; cursor: pointer; transition: all 0.2s ease; position: relative; }
+        /* --- UI 选项卡片设计 (更紧凑的卡片排版) --- */
+        .option-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* 卡片最小宽度从 220 降到 200，一行能排下更多 */
+            gap: 15px; /* 间距变小 */
+            margin-top: 15px; 
+        }
+        .option-item { border: 1px solid var(--border-color); background: #fff; cursor: pointer; transition: all 0.2s ease; position: relative; border-radius: 4px; overflow: hidden; }
         .option-item:hover { border-color: var(--primary-color); }
         .option-item.selected { border-color: var(--primary-color); background-color: #fff9f9; outline: 1px solid var(--primary-color); }
-        .option-img { width: 100%; height: 180px; object-fit: cover; background: #f9f9f9; border-bottom: 1px solid var(--border-color); }
-        .option-info { padding: 15px; }
-        .option-info h4 { margin: 0 0 5px; font-size: 15px; }
-        .option-info p { margin: 0; font-size: 13px; color: var(--text-light); }
+        
+        /* 选项图片高度压缩 */
+        .option-img { width: 100%; height: 140px; /* 从 180px 降到 140px，避免首屏被图片占满 */ object-fit: cover; background: #f9f9f9; border-bottom: 1px solid var(--border-color); }
+        
+        .option-info { padding: 12px; }
+        .option-info h4 { margin: 0 0 4px; font-size: 14px; }
+        .option-info p { margin: 0; font-size: 12px; color: var(--text-light); line-height: 1.4; }
 
-        button { padding: 12px 35px; border-radius: 4px; font-size: 14px; font-weight: 500; cursor: pointer; border: 1px solid var(--primary-color); transition: all 0.3s; }
+        /* 按钮与表单元素 */
+        button { padding: 10px 30px; border-radius: 4px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid var(--primary-color); transition: all 0.3s; }
         #nextBtn { background: var(--primary-color); color: #fff; }
         #prevBtn { background: #fff; color: var(--primary-color); }
         #prevBtn:disabled { border-color: #eee; color: #ccc; cursor: not-allowed; }
 
-        /* 右侧汇总明细行 */
-        .summary-title { font-size: 18px; font-weight: 600; margin-bottom: 30px; display: block; color: var(--text-main); }
-        .summary-row { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 14px; border-bottom: 1px dashed #e0e0e0; padding-bottom: 10px; }
+        /* 侧边栏及内部样式 */
+        .summary-title { font-size: 16px; font-weight: 600; margin-bottom: 25px; display: block; color: var(--text-main); }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 13px; border-bottom: 1px dashed #e0e0e0; padding-bottom: 8px; }
         .summary-row .label { color: var(--text-light); }
-        .summary-row .value { color: var(--text-main); font-weight: 500; text-align: right; }
+        .summary-row .value { color: var(--text-main); font-weight: 500; text-align: right; max-width: 60%; line-height: 1.3; }
         
-        /* 辅料清单子项展示 */
-        .summary-sub-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; padding-left: 15px; color: #666; }
-        .summary-sub-row .value { color: #333; }
+        .summary-sub-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; padding-left: 10px; color: #666; }
+        .summary-sub-row .value { color: #333; text-align: right; max-width: 60%; }
 
-        /* --- 辅料子标签页 (Sub-Tabs) 设计 --- */
-        .sub-tabs {
-            display: flex; gap: 5px; border-bottom: 2px solid var(--border-color); margin-bottom: 30px; overflow-x: auto;
-        }
-        .sub-tab {
-            padding: 10px 20px; cursor: pointer; font-size: 14px; color: var(--text-light); font-weight: 500;
-            border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.3s; white-space: nowrap;
-        }
+        /* 子标签页 */
+        .sub-tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border-color); margin-bottom: 25px; overflow-x: auto; }
+        .sub-tab { padding: 10px 18px; cursor: pointer; font-size: 13px; color: var(--text-light); font-weight: 500; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.3s; white-space: nowrap; }
         .sub-tab:hover { color: var(--text-main); }
         .sub-tab.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
         
         .sub-pane { display: none; animation: fadeIn 0.3s; }
         .sub-pane.active { display: block; }
 
-        /* 高级上传框样式 */
-        .premium-upload-box {
-            border: 2px dashed #d9d9d9;
-            background-color: #fafafa;
-            border-radius: 8px;
-            padding: 40px;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .premium-upload-box:hover {
-            border-color: var(--primary-color);
-            background-color: #fff9f9;
-        }
-        .custom-file-input {
-            margin-top: 10px;
-            font-family: inherit;
-        }
-        .custom-file-input::file-selector-button {
-            background-color: #fff;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            padding: 8px 16px;
-            color: var(--text-main);
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .custom-file-input::file-selector-button:hover {
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-        }
-
-        /* 是否需要开关 */
-        .toggle-section { display: flex; align-items: center; gap: 30px; margin-bottom: 25px; padding: 15px 20px; background: #f9f9f9; border-radius: 4px; }
-        .toggle-title { font-weight: 600; font-size: 15px; }
-        .toggle-options label { cursor: pointer; display: inline-flex; align-items: center; gap: 8px; margin-right: 20px; font-size: 14px; }
+        .toggle-section { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; padding: 12px 20px; background: #f9f9f9; border-radius: 4px; border: 1px solid #eee; }
+        .toggle-title { font-weight: 600; font-size: 14px; }
+        .toggle-options label { cursor: pointer; display: inline-flex; align-items: center; gap: 6px; margin-right: 15px; font-size: 13px; }
         
-        /* 占位内容框 */
-        .placeholder-box { padding: 60px 40px; border: 1px dashed #ccc; text-align: center; color: #999; font-size: 14px; background: #fff; }
+        /* 上传框与占位框 */
+        .placeholder-box { padding: 40px 20px; border: 1px dashed #ccc; text-align: center; color: #999; font-size: 13px; background: #fff; border-radius: 4px; }
+        .premium-upload-box { border: 1px dashed #d9d9d9; background-color: #fafafa; border-radius: 6px; padding: 30px 20px; text-align: center; transition: all 0.3s ease; cursor: pointer; }
+        .premium-upload-box:hover { border-color: var(--primary-color); background-color: #fff9f9; }
+        .custom-file-input { margin-top: 10px; font-family: inherit; font-size: 12px; }
+        .custom-file-input::file-selector-button { background-color: #fff; border: 1px solid var(--border-color); border-radius: 4px; padding: 6px 12px; color: var(--text-main); cursor: pointer; transition: 0.2s; }
+        .custom-file-input::file-selector-button:hover { border-color: var(--primary-color); color: var(--primary-color); }
 
         .hidden { display: none !important; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #e0e0e0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 10px; }
     </style>
 </head>
 <body>

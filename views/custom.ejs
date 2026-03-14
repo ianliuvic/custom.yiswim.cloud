@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- 引入 public 文件夹下的通用样式 -->
     <link rel="stylesheet" href="/style.css">
     <title><%= title %></title>
     <style>
@@ -18,163 +17,73 @@
             --bg-sidebar: #fafafa;
         }
 
-        /* 强制覆盖全局 style.css 的居中逻辑，实现全屏固定架构 */
         body {
-            height: 100vh !important;
-            width: 100vw !important;
-            overflow: hidden !important; 
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: flex-start !important;
-            align-items: stretch !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            background-color: #fff !important;
+            height: 100vh !important; width: 100vw !important; overflow: hidden !important; 
+            display: flex !important; flex-direction: column !important;
+            justify-content: flex-start !important; align-items: stretch !important;
+            margin: 0 !important; padding: 0 !important; background-color: #fff !important;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         /* 2. 顶部固定导航栏 */
         .site-header {
-            height: var(--header-height);
-            min-height: var(--header-height);
-            background: #fff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 40px;
-            border-bottom: 1px solid var(--border-color);
-            z-index: 100;
-            box-sizing: border-box;
+            height: var(--header-height); min-height: var(--header-height); background: #fff;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 40px; border-bottom: 1px solid var(--border-color);
+            z-index: 100; box-sizing: border-box;
         }
         .header-left { display: flex; align-items: center; gap: 15px; }
         .site-logo { height: 38px; width: auto; }
         .site-title { font-size: 18px; font-weight: 600; color: var(--text-main); letter-spacing: 0.5px; }
 
         /* 3. 中间主体容器 */
-        .main-container {
-            flex: 1; 
-            display: flex;
-            overflow: hidden; 
-            width: 100%;
-        }
+        .main-container { flex: 1; display: flex; overflow: hidden; width: 100%; }
 
-        /* 3.1 左侧配置区 - 采用 Flex 布局实现头尾固定、中间滚动 */
+        /* 3.1 左侧配置区 */
         .config-main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            border-right: 1px solid var(--border-color);
-            position: relative;
+            flex: 1; display: flex; flex-direction: column; height: 100%;
+            border-right: 1px solid var(--border-color); position: relative;
         }
-
-        /* 步骤指示器 - 固定在左侧顶部 */
         .stepper {
-            padding: 30px 60px 10px;
-            display: flex;
-            gap: 20px;
-            background: #fff;
-            z-index: 10;
+            padding: 30px 60px 10px; display: flex; gap: 20px; background: #fff; z-index: 10;
         }
         .step {
-            flex: 1;
-            padding-bottom: 12px;
-            border-bottom: 3px solid #eee;
-            font-size: 13px;
-            color: var(--text-light);
-            text-transform: uppercase;
+            flex: 1; padding-bottom: 12px; border-bottom: 3px solid #eee;
+            font-size: 13px; color: var(--text-light); text-transform: uppercase;
         }
-        .step.active {
-            border-bottom-color: var(--primary-color);
-            color: var(--primary-color);
-            font-weight: 600;
-        }
+        .step.active { border-bottom-color: var(--primary-color); color: var(--primary-color); font-weight: 600; }
 
-        /* 内容滚动区 - 只有这里垂直滚动 */
-        .config-scroll-area {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px 60px 40px;
-            box-sizing: border-box;
-        }
+        .config-scroll-area { flex: 1; overflow-y: auto; padding: 20px 60px 40px; box-sizing: border-box; }
 
-        /* 操作按钮组 - 始终固定在左侧底部 */
         .button-group {
-            padding: 20px 60px;
-            background: #fff;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            gap: 15px;
-            z-index: 10;
+            padding: 20px 60px; background: #fff; border-top: 1px solid var(--border-color);
+            display: flex; gap: 15px; z-index: 10;
         }
 
-        /* 3.2 右侧汇总预览区 - 独立滚动 */
+        /* 3.2 右侧汇总预览区 */
         .summary-sidebar {
-            width: 380px;
-            min-width: 380px;
-            background-color: var(--bg-sidebar);
-            padding: 40px;
-            overflow-y: auto;
-            height: 100%;
-            box-sizing: border-box;
+            width: 380px; min-width: 380px; background-color: var(--bg-sidebar);
+            padding: 40px; overflow-y: auto; height: 100%; box-sizing: border-box;
         }
 
         /* 4. 底部固定版权栏 */
         .site-footer {
-            height: var(--footer-height);
-            min-height: var(--footer-height);
-            background: #fff;
-            border-top: 1px solid var(--border-color);
-            padding: 0 40px;
-            display: flex;
-            align-items: center;
-            font-size: 13px;
-            color: #999;
-            z-index: 100;
-            box-sizing: border-box;
+            height: var(--footer-height); min-height: var(--footer-height); background: #fff;
+            border-top: 1px solid var(--border-color); padding: 0 40px;
+            display: flex; align-items: center; font-size: 13px; color: #999; z-index: 100; box-sizing: border-box;
         }
 
         /* --- UI 选项卡片设计 --- */
-        .option-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .option-item {
-            border: 1px solid var(--border-color);
-            background: #fff;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-        }
+        .option-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; margin-top: 20px; }
+        .option-item { border: 1px solid var(--border-color); background: #fff; cursor: pointer; transition: all 0.2s ease; position: relative; }
         .option-item:hover { border-color: var(--primary-color); }
-        .option-item.selected {
-            border-color: var(--primary-color);
-            background-color: #fff9f9;
-            outline: 1px solid var(--primary-color);
-        }
-        .option-img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            background: #f9f9f9;
-            border-bottom: 1px solid var(--border-color);
-        }
+        .option-item.selected { border-color: var(--primary-color); background-color: #fff9f9; outline: 1px solid var(--primary-color); }
+        .option-img { width: 100%; height: 180px; object-fit: cover; background: #f9f9f9; border-bottom: 1px solid var(--border-color); }
         .option-info { padding: 15px; }
         .option-info h4 { margin: 0 0 5px; font-size: 15px; }
         .option-info p { margin: 0; font-size: 13px; color: var(--text-light); }
 
-        /* 按钮样式 */
-        button {
-            padding: 12px 35px;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            border: 1px solid var(--primary-color);
-            transition: all 0.3s;
-        }
+        button { padding: 12px 35px; border-radius: 4px; font-size: 14px; font-weight: 500; cursor: pointer; border: 1px solid var(--primary-color); transition: all 0.3s; }
         #nextBtn { background: var(--primary-color); color: #fff; }
         #prevBtn { background: #fff; color: var(--primary-color); }
         #prevBtn:disabled { border-color: #eee; color: #ccc; cursor: not-allowed; }
@@ -184,19 +93,36 @@
         .summary-row { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 14px; border-bottom: 1px dashed #e0e0e0; padding-bottom: 10px; }
         .summary-row .label { color: var(--text-light); }
         .summary-row .value { color: var(--text-main); font-weight: 500; text-align: right; }
+        
+        /* 辅料清单子项展示 */
+        .summary-sub-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; padding-left: 15px; color: #666; }
+        .summary-sub-row .value { color: #333; }
 
-        /* 文件上传框 */
-        .upload-box {
-            padding: 60px 40px;
-            border: 1px dashed var(--border-color);
-            text-align: center;
-            background: #fdfdfd;
+        /* --- 辅料子标签页 (Sub-Tabs) 设计 --- */
+        .sub-tabs {
+            display: flex; gap: 5px; border-bottom: 2px solid var(--border-color); margin-bottom: 30px; overflow-x: auto;
         }
+        .sub-tab {
+            padding: 10px 20px; cursor: pointer; font-size: 14px; color: var(--text-light); font-weight: 500;
+            border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.3s; white-space: nowrap;
+        }
+        .sub-tab:hover { color: var(--text-main); }
+        .sub-tab.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+        
+        .sub-pane { display: none; animation: fadeIn 0.3s; }
+        .sub-pane.active { display: block; }
+
+        /* 是否需要开关 */
+        .toggle-section { display: flex; align-items: center; gap: 30px; margin-bottom: 25px; padding: 15px 20px; background: #f9f9f9; border-radius: 4px; }
+        .toggle-title { font-weight: 600; font-size: 15px; }
+        .toggle-options label { cursor: pointer; display: inline-flex; align-items: center; gap: 8px; margin-right: 20px; font-size: 14px; }
+        
+        /* 占位内容框 */
+        .placeholder-box { padding: 60px 40px; border: 1px dashed #ccc; text-align: center; color: #999; font-size: 14px; background: #fff; }
 
         .hidden { display: none !important; }
-
-        /* 美化滚动条 */
-        ::-webkit-scrollbar { width: 5px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #e0e0e0; border-radius: 10px; }
     </style>
@@ -220,7 +146,7 @@
         
         <!-- 左侧：定制区域 -->
         <main class="config-main">
-            <!-- 步进指示器 (固定) -->
+            <!-- 步进指示器 -->
             <nav class="stepper">
                 <div class="step active" id="step-1-label">01. 款式定义</div>
                 <div class="step" id="step-2-label">02. 面料材质</div>
@@ -244,79 +170,165 @@
                         </div>
 
                         <div id="existing-styles" class="option-grid">
-                            <div class="option-item" onclick="selectItem('style', 'One-Piece', '简约连体款')">
+                            <div class="option-item" onclick="selectItem('style', 'Classic One-Piece')">
                                 <img src="https://images.unsplash.com/photo-1576188973526-0e5d742990af?w=500" class="option-img">
                                 <div class="option-info"><h4>Classic One-Piece</h4><p>经典廓形 · 覆盖全面</p></div>
                             </div>
-                            <div class="option-item" onclick="selectItem('style', 'Bikini', '分体比基尼')">
+                            <div class="option-item" onclick="selectItem('style', 'Triangle Bikini')">
                                 <img src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=500" class="option-img">
                                 <div class="option-info"><h4>Triangle Bikini</h4><p>时尚多变 · 系带调节</p></div>
                             </div>
                         </div>
 
                         <div id="custom-upload" class="hidden">
-                            <div class="upload-box">
-                                <p>请上传您的设计稿或工艺单 (PDF/AI/PNG)</p>
-                                <input type="file" multiple style="margin-top:20px;">
+                            <div class="placeholder-box">
+                                <p style="margin-bottom:15px; color:#666;">请上传您的设计稿或工艺单 (PDF/AI/PNG)</p>
+                                <input type="file" multiple>
                             </div>
                         </div>
                     </div>
 
                     <!-- 步骤 2: 面料 -->
                     <div class="step-content hidden" id="step-2">
-                        <h2 style="font-size: 24px;">面料材质 / FABRIC</h2>
+                        <h2 style="font-size: 24px; margin-top:0;">面料材质 / FABRIC</h2>
                         <div class="option-grid">
-                            <div class="option-item" onclick="selectItem('fabric', 'Nylon 190G', '哑光尼龙 (190G)')">
+                            <div class="option-item" onclick="selectItem('fabric', 'Matte Nylon (190G)')">
                                 <div style="height:180px; background:#333;"></div>
                                 <div class="option-info"><h4>Matte Nylon</h4><p>80% Nylon, 20% Spandex</p></div>
                             </div>
-                            <div class="option-item" onclick="selectItem('fabric', 'Recycled', '环保再生面料')">
-                                <div style="height:180px; background:#1a3c34;"></div>
-                                <div class="option-info"><h4>REPREVE® Eco</h4><p>可持续材料 · 高回弹</p></div>
-                            </div>
                         </div>
                     </div>
 
-                    <!-- 步骤 3: 辅料 -->
+                    <!-- ============================================== -->
+                    <!-- 步骤 3: 辅料 (全新子页面结构) -->
+                    <!-- ============================================== -->
                     <div class="step-content hidden" id="step-3">
-                        <h2 style="font-size: 24px;">品牌定制 / BRANDING</h2>
-                        <div class="option-grid">
-                            <div class="option-item" onclick="selectItem('branding', 'Heat Transfer', '烫印 Logo')">
-                                <div class="option-info"><h4>Heat Transfer Logo</h4><p>无感舒适 · 适合高弹面料</p></div>
+                        <h2 style="font-size: 24px; margin-top:0; margin-bottom:10px;">品牌辅料 / TRIMS & BRANDING</h2>
+                        <p style="color: var(--text-light); margin-bottom: 25px;">请在下方分类中选择您需要的定制辅料。默认为不需要。</p>
+
+                        <!-- 子标签页导航 -->
+                        <div class="sub-tabs">
+                            <div class="sub-tab active" onclick="switchSubTab('metal', this)">金属饰品</div>
+                            <div class="sub-tab" onclick="switchSubTab('bag', this)">包装袋</div>
+                            <div class="sub-tab" onclick="switchSubTab('hangtag', this)">吊牌</div>
+                            <div class="sub-tab" onclick="switchSubTab('label', this)">标签(领标/水洗标)</div>
+                            <div class="sub-tab" onclick="switchSubTab('hygiene', this)">卫生贴</div>
+                            <div class="sub-tab" onclick="switchSubTab('other', this)">其他</div>
+                        </div>
+
+                        <!-- 1. 金属饰品 Pane -->
+                        <div id="pane-metal" class="sub-pane active">
+                            <div class="toggle-section">
+                                <div class="toggle-title">是否需要金属饰品？</div>
+                                <div class="toggle-options">
+                                    <label><input type="radio" name="need_metal" value="no" checked onchange="toggleTrim('metal', false)"> 否 (No)</label>
+                                    <label><input type="radio" name="need_metal" value="yes" onchange="toggleTrim('metal', true)"> 是 (Yes)</label>
+                                </div>
                             </div>
-                            <div class="option-item" onclick="selectItem('branding', 'Metal Tag', '金属吊牌')">
-                                <div class="option-info"><h4>Zinc Alloy Tag</h4><p>高端质感 · 多色可选</p></div>
+                            <div id="content-metal" class="placeholder-box hidden">
+                                <h3>[ 金属饰品选项 - 占位 ]</h3>
+                                <p>此处未来将展示：金色调节扣、银色Logo铭牌、防锈合金扣等图片选项。</p>
                             </div>
-                            <div class="option-item" onclick="selectItem('branding', 'Woven Label', '织唛主标')">
-                                <div class="option-info"><h4>Woven Label</h4><p>经典品牌工艺</p></div>
+                        </div>
+
+                        <!-- 2. 包装袋 Pane -->
+                        <div id="pane-bag" class="sub-pane">
+                            <div class="toggle-section">
+                                <div class="toggle-title">是否需要定制包装袋？</div>
+                                <div class="toggle-options">
+                                    <label><input type="radio" name="need_bag" value="no" checked onchange="toggleTrim('bag', false)"> 否 (No)</label>
+                                    <label><input type="radio" name="need_bag" value="yes" onchange="toggleTrim('bag', true)"> 是 (Yes)</label>
+                                </div>
+                            </div>
+                            <div id="content-bag" class="placeholder-box hidden">
+                                <h3>[ 包装袋选项 - 占位 ]</h3>
+                                <p>此处未来将展示：磨砂PE拉链袋、可降解环保袋、棉布抽绳袋等图片选项。</p>
+                            </div>
+                        </div>
+
+                        <!-- 3. 吊牌 Pane -->
+                        <div id="pane-hangtag" class="sub-pane">
+                            <div class="toggle-section">
+                                <div class="toggle-title">是否需要品牌吊牌？</div>
+                                <div class="toggle-options">
+                                    <label><input type="radio" name="need_hangtag" value="no" checked onchange="toggleTrim('hangtag', false)"> 否 (No)</label>
+                                    <label><input type="radio" name="need_hangtag" value="yes" onchange="toggleTrim('hangtag', true)"> 是 (Yes)</label>
+                                </div>
+                            </div>
+                            <div id="content-hangtag" class="placeholder-box hidden">
+                                <h3>[ 吊牌选项 - 占位 ]</h3>
+                                <p>此处未来将展示：牛皮纸吊牌、铜版纸覆膜吊牌、异形吊牌等图片选项。</p>
+                            </div>
+                        </div>
+
+                        <!-- 4. 标签 Pane -->
+                        <div id="pane-label" class="sub-pane">
+                            <div class="toggle-section">
+                                <div class="toggle-title">是否需要缝制标签？</div>
+                                <div class="toggle-options">
+                                    <label><input type="radio" name="need_label" value="no" checked onchange="toggleTrim('label', false)"> 否 (No)</label>
+                                    <label><input type="radio" name="need_label" value="yes" onchange="toggleTrim('label', true)"> 是 (Yes)</label>
+                                </div>
+                            </div>
+                            <div id="content-label" class="placeholder-box hidden">
+                                <h3>[ 标签选项 - 占位 ]</h3>
+                                <p>此处未来将展示：无感烫印标、高密织唛主标、丝印水洗标等图片选项。</p>
+                            </div>
+                        </div>
+
+                        <!-- 5. 卫生贴 Pane -->
+                        <div id="pane-hygiene" class="sub-pane">
+                            <div class="toggle-section">
+                                <div class="toggle-title">是否需要底裤卫生贴？</div>
+                                <div class="toggle-options">
+                                    <label><input type="radio" name="need_hygiene" value="no" checked onchange="toggleTrim('hygiene', false)"> 否 (No)</label>
+                                    <label><input type="radio" name="need_hygiene" value="yes" onchange="toggleTrim('hygiene', true)"> 是 (Yes)</label>
+                                </div>
+                            </div>
+                            <div id="content-hygiene" class="placeholder-box hidden">
+                                <h3>[ 卫生贴选项 - 占位 ]</h3>
+                                <p>此处未来将展示：透明标准卫生贴、印字定制卫生贴等图片选项。</p>
+                            </div>
+                        </div>
+
+                        <!-- 6. 其他 Pane -->
+                        <div id="pane-other" class="sub-pane">
+                            <div class="toggle-section">
+                                <div class="toggle-title">是否有其他辅料需求？</div>
+                                <div class="toggle-options">
+                                    <label><input type="radio" name="need_other" value="no" checked onchange="toggleTrim('other', false)"> 否 (No)</label>
+                                    <label><input type="radio" name="need_other" value="yes" onchange="toggleTrim('other', true)"> 是 (Yes)</label>
+                                </div>
+                            </div>
+                            <div id="content-other" class="placeholder-box hidden">
+                                <p style="margin-bottom: 10px; color:#333;">请输入您的其他特殊要求（如：特定的拉链、反光条等）：</p>
+                                <textarea style="width:100%; height:100px; padding:10px; border:1px solid #ccc; font-family:inherit;"></textarea>
                             </div>
                         </div>
                     </div>
+                    <!-- ============================================== -->
 
                     <!-- 步骤 4: 物流 -->
                     <div class="step-content hidden" id="step-4">
-                        <h2 style="font-size: 24px;">交付方式 / LOGISTICS</h2>
+                        <h2 style="font-size: 24px; margin-top:0;">交付方式 / LOGISTICS</h2>
                         <div class="option-grid">
-                            <div class="option-item" onclick="selectItem('shipping', 'Air Express', '空运快递 (5-7天)')">
-                                <div class="option-info"><h4>Air Express</h4><p>DHL / FedEx / UPS</p></div>
-                            </div>
-                            <div class="option-item" onclick="selectItem('shipping', 'Sea Freight', '海运散货 (35天+)')">
-                                <div class="option-info"><h4>Sea Freight</h4><p>适合大批量 · 成本最低</p></div>
+                            <div class="option-item" onclick="selectItem('shipping', 'Air Express (DHL/FedEx)')">
+                                <div class="option-info"><h4>Air Express</h4><p>空运快线 5-7 天</p></div>
                             </div>
                         </div>
                     </div>
 
                     <!-- 步骤 5: 确认 -->
                     <div class="step-content hidden" id="step-5">
-                        <h2 style="font-size: 24px;">需求汇总确认</h2>
-                        <p style="color: var(--text-light); margin-bottom: 30px;">请核对右侧清单。您可以在下方留言其他特殊需求。</p>
-                        <textarea style="width:100%; height:150px; padding:15px; border:1px solid var(--border-color); font-family:inherit;" placeholder="备注：如尺码配比、特殊包装要求等..."></textarea>
+                        <h2 style="font-size: 24px; margin-top:0;">需求汇总确认</h2>
+                        <p style="color: var(--text-light); margin-bottom: 30px;">请核对右侧清单。</p>
+                        <textarea style="width:100%; height:150px; padding:15px; border:1px solid var(--border-color); font-family:inherit;" placeholder="整体订单备注..."></textarea>
                     </div>
 
                 </form>
             </div>
 
-            <!-- 按钮组 (固定) -->
+            <!-- 按钮组 -->
             <div class="button-group">
                 <button type="button" id="prevBtn" onclick="changeStep(-1)" disabled>返回上一步</button>
                 <button type="button" id="nextBtn" onclick="changeStep(1)">继续下一步</button>
@@ -329,19 +341,31 @@
             
             <div class="summary-row"><span class="label">款式类型</span><span class="value" id="sum-style">未选择</span></div>
             <div class="summary-row"><span class="label">面料材质</span><span class="value" id="sum-fabric">未选择</span></div>
-            <div class="summary-row"><span class="label">品牌辅料</span><span class="value" id="sum-branding">未选择</span></div>
+            
+            <!-- 辅料汇总展开区 -->
+            <div style="margin-bottom: 20px; border-bottom: 1px dashed #e0e0e0; padding-bottom: 10px;">
+                <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:15px;">
+                    <span style="color: var(--text-light);">品牌辅料设置</span>
+                </div>
+                <div class="summary-sub-row"><span class="label">金属饰品:</span><span class="value" id="sum-trim-metal">不需要</span></div>
+                <div class="summary-sub-row"><span class="label">包装袋:</span><span class="value" id="sum-trim-bag">不需要</span></div>
+                <div class="summary-sub-row"><span class="label">吊牌:</span><span class="value" id="sum-trim-hangtag">不需要</span></div>
+                <div class="summary-sub-row"><span class="label">缝制标签:</span><span class="value" id="sum-trim-label">不需要</span></div>
+                <div class="summary-sub-row"><span class="label">卫生贴:</span><span class="value" id="sum-trim-hygiene">不需要</span></div>
+                <div class="summary-sub-row"><span class="label">其他辅料:</span><span class="value" id="sum-trim-other">不需要</span></div>
+            </div>
+
             <div class="summary-row"><span class="label">交付方式</span><span class="value" id="sum-shipping">未选择</span></div>
 
             <div style="margin-top: 50px; padding: 20px; background: #fff; border: 1px solid var(--border-color); font-size: 13px; line-height: 1.6;">
                 <strong>注意事项：</strong><br><br>
                 · 提交后系统将生成需求编号，业务经理将在1个工作日内联系您。<br>
-                · 初步报价基于当前面料价格，最终报价以正式合同为准。<br>
                 · 样板周期预计 7-10 个工作日。
             </div>
         </aside>
     </div>
 
-    <!-- 3. 底部固定版权 -->
+    <!-- 底部固定版权 -->
     <footer class="site-footer">
         © 2026 红绣服饰 (Hongxiu Clothing). All Rights Reserved. | 专属定制 · 品质追踪
     </footer>
@@ -350,18 +374,13 @@
         let currentStep = 1;
         const totalSteps = 5;
 
+        // --- 整体流程控制 ---
         function changeStep(n) {
-            // 隐藏当前步骤
             document.getElementById(`step-${currentStep}`).classList.add('hidden');
             document.getElementById(`step-${currentStep}-label`).classList.remove('active');
-            
             currentStep += n;
-
-            // 显示新步骤
             document.getElementById(`step-${currentStep}`).classList.remove('hidden');
             document.getElementById(`step-${currentStep}-label`).classList.add('active');
-
-            // 按钮状态更新
             document.getElementById('prevBtn').disabled = (currentStep === 1);
             
             if (currentStep === totalSteps) {
@@ -373,11 +392,10 @@
                 document.getElementById('nextBtn').style.backgroundColor = 'var(--primary-color)';
                 document.getElementById('nextBtn').style.borderColor = 'var(--primary-color)';
             }
-
-            // 重要：切换步骤后内容区自动置顶
             document.querySelector('.config-scroll-area').scrollTop = 0;
         }
 
+        // --- 款式切换逻辑 ---
         function toggleStyleMode(mode) {
             const list = document.getElementById('existing-styles');
             const upload = document.getElementById('custom-upload');
@@ -389,15 +407,45 @@
             }
         }
 
-        function selectItem(category, value, displayName) {
-            // 更新右侧汇总显示
+        // --- 通用选项选中逻辑 ---
+        function selectItem(category, displayName) {
             document.getElementById(`sum-${category}`).innerText = displayName;
-            // 视觉高亮
             const container = document.getElementById(`step-${currentStep}`);
             container.querySelectorAll('.option-item').forEach(item => {
                 item.classList.remove('selected');
             });
             event.currentTarget.classList.add('selected');
+        }
+
+        // --- 辅料 (子页面) 控制逻辑 ---
+        
+        // 1. 切换水平子标签
+        function switchSubTab(paneId, el) {
+            // 移除所有子页面的 active
+            document.querySelectorAll('.sub-pane').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+            // 激活当前
+            document.getElementById(`pane-${paneId}`).classList.add('active');
+            el.classList.add('active');
+        }
+
+        // 2. 切换是否需要该辅料的内容展示与侧边栏更新
+        function toggleTrim(category, isNeeded) {
+            const contentBox = document.getElementById(`content-${category}`);
+            const summaryText = document.getElementById(`sum-trim-${category}`);
+            
+            if (isNeeded) {
+                contentBox.classList.remove('hidden');
+                // 先显示为“待配置”，如果后续在占位框里选了具体图片，可以通过另一个函数覆盖这里
+                summaryText.innerText = '已开启 (待详细配置)';
+                summaryText.style.color = 'var(--primary-color)';
+                summaryText.style.fontWeight = 'bold';
+            } else {
+                contentBox.classList.add('hidden');
+                summaryText.innerText = '不需要';
+                summaryText.style.color = '#666';
+                summaryText.style.fontWeight = 'normal';
+            }
         }
     </script>
 </body>

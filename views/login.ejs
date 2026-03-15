@@ -179,10 +179,20 @@
 
         // 绑定注册事件
         document.getElementById('registerForm').addEventListener('submit', (e) => {
+            const password = document.getElementById('regPass').value;
+        
+            // --- 新增：前端校验逻辑 ---
+            if (password.length < 8) {
+                // 使用我们之前写的 showMessage 函数（如果没有该函数，请用 alert）
+                showMessage('密码长度至少需要 8 位', 'error');
+                e.preventDefault(); // 阻止表单提交
+                return;
+            }
+        
             const payload = {
                 username: document.getElementById('regUser').value,
                 email: document.getElementById('regEmail').value,
-                password: document.getElementById('regPass').value
+                password: password
             };
             handleFormSubmit(e, '/api/register', payload);
         });

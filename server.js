@@ -124,9 +124,19 @@ app.get('/reset-password', (req, res) => {
 // ==========================================
 
 // 注册逻辑
-app.post('/api/register', registerLimiter, async (req, res) => {
+app.post('/api/register', async (req, res) => {
     try {
         const { username, email, password } = req.body;
+
+        // --- 新增：后端安全校验 ---
+        if (!password || password.length < 8) {
+            return res.status(400).json({ 
+                success: false, 
+                message: '注册失败：密码长度不能少于 8 位' 
+            });
+        }
+
+        // 校验通过后再进行加密
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 

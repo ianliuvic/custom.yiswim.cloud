@@ -339,6 +339,44 @@
             border-radius: 6px;
         }
 
+        /* --- 品类分类导航 --- */
+        .category-nav {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        
+        .cat-item {
+            font-size: 13px;
+            color: var(--text-light);
+            cursor: pointer;
+            padding-bottom: 8px;
+            position: relative;
+            transition: all 0.2s;
+        }
+        
+        .cat-item:hover { color: var(--text-main); }
+        
+        .cat-item.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        /* 激活项的下划线 */
+        .cat-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; left: 0; right: 0;
+            height: 2px;
+            background: var(--primary-color);
+        }
+        
+        /* 分类面板切换 */
+        .cat-pane { display: none; animation: fadeIn 0.4s; }
+        .cat-pane.active { display: block; }
+
         .hidden { display: none !important; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         ::-webkit-scrollbar { width: 5px; height: 5px; }
@@ -393,14 +431,61 @@
                             </div>
                         </div>
 
-                        <div id="existing-styles" class="option-grid">
-                            <div class="option-item" onclick="selectItem('style', 'Classic One-Piece')">
-                                <img src="https://images.unsplash.com/photo-1576188973526-0e5d742990af?w=500" class="option-img">
-                                <div class="option-info"><h4>Classic One-Piece</h4><p>经典廓形 · 覆盖全面</p></div>
+                        <!-- ODM 分类展示区 -->
+                        <div id="existing-styles">
+                            <!-- 品类二级导航 -->
+                            <div class="category-nav">
+                                <div class="cat-item active" onclick="switchCategory('bikini', this)">比基尼 (Bikini)</div>
+                                <div class="cat-item" onclick="switchCategory('onepiece', this)">连体泳衣 (One-Piece)</div>
+                                <div class="cat-item" onclick="switchCategory('kids', this)">儿童系列 (Kids)</div>
+                                <div class="cat-item" onclick="switchCategory('shorts', this)">沙滩裤 (Shorts)</div>
                             </div>
-                            <div class="option-item" onclick="selectItem('style', 'Triangle Bikini')">
-                                <img src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=500" class="option-img">
-                                <div class="option-info"><h4>Triangle Bikini</h4><p>时尚多变 · 系带调节</p></div>
+                    
+                            <!-- 各分类对应的网格 (通过类名控制显示隐藏) -->
+                            <div id="cat-content-bikini" class="cat-pane active">
+                                <div class="option-grid">
+                                    <div class="option-item" onclick="selectItem('style', 'Classic Triangle')">
+                                        <div class="details-btn" onclick="event.stopPropagation(); openDetailModal({name:'Classic Triangle', description:'经典三角系带比基尼，可调节性强。'})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div>
+                                        <img src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=400" class="option-img">
+                                        <div class="option-info"><h4>Classic Triangle</h4><p>经典三角 · 系带可调</p></div>
+                                    </div>
+                                    <div class="option-item" onclick="selectItem('style', 'High-Waisted Retro')">
+                                        <div class="details-btn" onclick="event.stopPropagation(); openDetailModal({name:'High-Waisted Retro', description:'高腰复古剪裁，修饰腹部线条。'})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div>
+                                        <img src="https://images.unsplash.com/photo-1582533561751-ef6f6ab93a2e?w=400" class="option-img">
+                                        <div class="option-info"><h4>High-Waisted Retro</h4><p>复古高腰 · 优雅剪裁</p></div>
+                                    </div>
+                                </div>
+                            </div>
+                    
+                            <div id="cat-content-onepiece" class="cat-pane">
+                                <div class="option-grid">
+                                    <div class="option-item" onclick="selectItem('style', 'Athletic Training')">
+                                        <img src="https://images.unsplash.com/photo-1576188973526-0e5d742990af?w=400" class="option-img">
+                                        <div class="option-info"><h4>Athletic Training</h4><p>专业竞技 · 减阻面料</p></div>
+                                    </div>
+                                    <div class="option-item" onclick="selectItem('style', 'Elegant Plunge')">
+                                        <img src="https://images.unsplash.com/photo-1597196526281-949ec3087221?w=400" class="option-img">
+                                        <div class="option-info"><h4>Elegant Plunge</h4><p>深V露背 · 时尚优雅</p></div>
+                                    </div>
+                                </div>
+                            </div>
+                    
+                            <div id="cat-content-kids" class="cat-pane">
+                                <div class="option-grid">
+                                    <div class="option-item" onclick="selectItem('style', 'Cute Ruffles')">
+                                        <img src="https://images.unsplash.com/photo-1621451537084-482c73073a0f?w=400" class="option-img">
+                                        <div class="option-info"><h4>Cute Ruffles</h4><p>可爱荷叶边 · 柔软亲肤</p></div>
+                                    </div>
+                                </div>
+                            </div>
+                    
+                            <div id="cat-content-shorts" class="cat-pane">
+                                <div class="option-grid">
+                                    <div class="option-item" onclick="selectItem('style', 'Classic Boardshorts')">
+                                        <img src="https://images.unsplash.com/photo-1533107862482-0e6974b06ec4?w=400" class="option-img">
+                                        <div class="option-info"><h4>Classic Boardshorts</h4><p>速干材质 · 中性印花</p></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -800,23 +885,32 @@
             document.querySelector('.config-scroll-area').scrollTop = 0;
         }
 
-        // --- 款式切换逻辑 ---
+        // 切换 ODM 品类
+        function switchCategory(catId, el) {
+            // 1. 切换标签样式
+            document.querySelectorAll('.cat-item').forEach(item => item.classList.remove('active'));
+            el.classList.add('active');
+        
+            // 2. 切换内容显示
+            document.querySelectorAll('.cat-pane').forEach(pane => pane.classList.remove('active'));
+            document.getElementById(`cat-content-${catId}`).classList.add('active');
+        }
+        
+        // 联动修改 toggleStyleMode
         function toggleStyleMode(mode) {
-            const list = document.getElementById('existing-styles');
-            const upload = document.getElementById('custom-upload');
+            const odmArea = document.getElementById('existing-styles');
+            const uploadArea = document.getElementById('custom-upload');
             const odmBtn = document.getElementById('mode-odm');
             const oemBtn = document.getElementById('mode-oem');
         
             if(mode === 'existing') {
-                list.classList.remove('hidden'); 
-                upload.classList.add('hidden');
+                odmArea.classList.remove('hidden'); 
+                uploadArea.classList.add('hidden');
                 odmBtn.classList.add('active');
                 oemBtn.classList.remove('active');
-                // 右侧汇总恢复
-                document.getElementById('sum-style').innerText = '未选择'; 
             } else {
-                list.classList.add('hidden'); 
-                upload.classList.remove('hidden');
+                odmArea.classList.add('hidden'); 
+                uploadArea.classList.remove('hidden');
                 oemBtn.classList.add('active');
                 odmBtn.classList.remove('active');
                 document.getElementById('sum-style').innerText = 'OEM 自定义开发';

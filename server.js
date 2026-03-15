@@ -142,9 +142,11 @@ app.get('/reset-password', (req, res) => {
 // 1. 获取业务数据 (新增：替代原有的 get-catalog-data)
 app.get('/api/get-data', authenticateToken, async (req, res) => {
     try {
+        const n8nUrl = `${N8N_BASE_URL}/get-data?username=${encodeURIComponent(req.user.username)}`;
+        
         // 请求 n8n 获取定制所需的所有基础数据
         // 注意：这里用的是 GET 方法，n8n 端的 Webhook 也需要设为 GET
-        const n8nResponse = await fetch(`${N8N_BASE_URL}/custom-get-data`, {
+        const n8nResponse = await fetch(n8nUrl, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         });

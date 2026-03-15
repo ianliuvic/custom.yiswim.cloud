@@ -184,6 +184,86 @@
             background-color: transparent !important;
         }
 
+        /* --- 详情小按钮 (悬浮在卡片右上角) --- */
+        .details-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 28px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(4px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            z-index: 5; /* 确保在图片上方 */
+            color: var(--text-light);
+        }
+        .details-btn:hover {
+            background: var(--primary-color);
+            color: #fff;
+            transform: scale(1.1);
+        }
+        
+        /* --- 模态弹窗样式 (Modal) --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(3px); /* 背景轻微模糊 */
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background: #fff;
+            width: 90%;
+            max-width: 480px;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            overflow: hidden;
+        }
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fafafa;
+        }
+        .modal-header h3 { margin: 0; font-size: 16px; color: var(--text-main); font-weight: 600;}
+        .modal-close {
+            background: none; border: none; font-size: 24px;
+            color: #999; cursor: pointer; padding: 0; line-height: 1;
+            transition: color 0.2s;
+        }
+        .modal-close:hover { color: var(--primary-color); }
+        .modal-body { padding: 20px; max-height: 60vh; overflow-y: auto; }
+        .modal-body img { 
+            width: 100%; height: auto; 
+            border-radius: 6px; margin-bottom: 15px; 
+            border: 1px solid #eee;
+        }
+        .modal-desc { font-size: 13px; color: var(--text-main); line-height: 1.6; }
+        .modal-desc p { margin-top: 0; margin-bottom: 10px; }
+
         .hidden { display: none !important; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         ::-webkit-scrollbar { width: 5px; height: 5px; }
@@ -498,6 +578,22 @@
         © 2026 红绣服饰 (Hongxiu Clothing). All Rights Reserved. | 专属定制 · 品质追踪
     </footer>
 
+    <!-- 详情弹窗 (默认隐藏) -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">产品详情</h3>
+                <button class="modal-close" id="closeModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <img id="modalImg" src="" alt="预览图">
+                <div id="modalDesc" class="modal-desc">
+                    <!-- 描述内容将通过 JS 动态注入 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             try {
@@ -519,14 +615,21 @@
         // 1. 渲染包装袋列表 (A部分)
         function renderBags(bags) {
             const container = document.getElementById('bag-list-container');
-            container.innerHTML = ''; // 清空加载提示
+            container.innerHTML = ''; 
         
             bags.forEach(bag => {
-                // 取第一张图作为封面
                 const coverImg = (bag.image_urls && bag.image_urls.length > 0) ? bag.image_urls[0] : '/images/default-bag.jpg';
+                // 将对象转为字符串以传递给内联函数
+                const bagJson = JSON.stringify(bag).replace(/"/g, '&quot;');
                 
                 const html = `
-                    <div class="option-item bag-material" onclick="onBagClick(${JSON.stringify(bag).replace(/"/g, '&quot;')}, this)">
+                    <div class="option-item bag-material" onclick="onBagClick(${bagJson}, this)">
+                        
+                        <!-- 【新增】放大镜详情按钮 -->
+                        <div class="details-btn" onclick="event.stopPropagation(); openDetailModal(${bagJson})" title="查看详情">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        </div>
+
                         <img src="${coverImg}" class="option-img" loading="lazy">
                         <div class="option-info">
                             <h4>${bag.name}</h4>
@@ -718,6 +821,48 @@
                 summaryText.style.fontWeight = 'normal';
             }
         }
+
+        // --- 弹窗功能控制逻辑 ---
+
+        // 打开详情弹窗并渲染数据
+        function openDetailModal(itemData) {
+            // 1. 设置标题
+            document.getElementById('modalTitle').innerText = itemData.name || '材质详情';
+            
+            // 2. 设置大图 (取第一张图，没有则用默认图)
+            const imgEl = document.getElementById('modalImg');
+            imgEl.src = (itemData.image_urls && itemData.image_urls.length > 0) ? itemData.image_urls[0] : '/images/default-bag.jpg';
+            
+            // 3. 设置描述文本
+            const descHtml = `
+                <div style="background:#f9f9f9; padding:12px; border-radius:4px; margin-bottom:15px;">
+                    <strong style="color:var(--text-main);">材质简介：</strong><br>
+                    <span style="color:#666;">${itemData.description || '暂无详细说明。'}</span>
+                </div>
+                <p style="color:#999; font-size:12px;">* 实际效果以最终打样为准。如需特殊工艺（如加厚、覆膜等），请在最后一步备注说明。</p>
+            `;
+            document.getElementById('modalDesc').innerHTML = descHtml;
+            
+            // 4. 显示弹窗
+            document.getElementById('detailModal').classList.add('active');
+        }
+
+        // 关闭弹窗的统一函数
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.remove('active');
+        }
+
+        // 绑定关闭按钮点击事件
+        document.getElementById('closeModalBtn').addEventListener('click', closeDetailModal);
+
+        // 绑定点击灰色背景遮罩关闭弹窗事件
+        document.getElementById('detailModal').addEventListener('click', function(event) {
+            // 确保点击的是遮罩层本身，而不是弹窗内部的内容
+            if (event.target === this) {
+                closeDetailModal();
+            }
+        });
+
     </script>
 </body>
 </html>

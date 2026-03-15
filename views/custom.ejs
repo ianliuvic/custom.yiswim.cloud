@@ -288,6 +288,99 @@
         .modal-desc { font-size: 13px; color: var(--text-main); line-height: 1.6; }
         .modal-desc p { margin-top: 0; margin-bottom: 10px; }
 
+        /* --- 模式选择器 (Mode Selector) --- */
+        .mode-selector {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+        
+        .mode-card {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        
+        /* 隐藏原生单选框 */
+        .mode-card input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0; height: 0;
+        }
+        
+        /* 图标装饰 */
+        .mode-icon {
+            width: 44px;
+            height: 44px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: var(--text-light);
+            transition: all 0.3s;
+        }
+        
+        .mode-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .mode-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 2px;
+        }
+        
+        .mode-sub {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+        
+        /* 推荐标签 */
+        .mode-badge {
+            position: absolute;
+            top: 0; right: 0;
+            background: var(--primary-color);
+            color: #fff;
+            font-size: 10px;
+            padding: 2px 10px;
+            border-bottom-left-radius: 8px;
+            font-weight: 500;
+        }
+        
+        /* --- 选中状态 --- */
+        .mode-card.active {
+            border-color: var(--primary-color);
+            background-color: #fff9f9;
+            box-shadow: 0 4px 12px rgba(170, 0, 0, 0.08);
+        }
+        
+        .mode-card.active .mode-icon {
+            background: var(--primary-color);
+            color: #fff;
+        }
+        
+        .mode-card.active .mode-title {
+            color: var(--primary-color);
+        }
+        
+        /* Hover 效果 */
+        .mode-card:hover:not(.active) {
+            border-color: #ccc;
+            background: #fafafa;
+        }
+
         .hidden { display: none !important; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         ::-webkit-scrollbar { width: 5px; height: 5px; }
@@ -327,14 +420,35 @@
             <div class="config-scroll-area">
                 <form id="configForm">
                     
-                                        <!-- 步骤 1: 款式 -->
+                    <!-- 步骤 1: 款式 -->
                     <div class="step-content" id="step-1">
                         <!-- 去掉 h2，使用新的引导框 -->
                         <div class="step-desc">请选择基础廓形，或开启 OEM 模式上传您的自主设计包。</div>
                         
-                        <div style="margin-bottom: 25px; display: flex; gap: 30px;">
-                            <label style="cursor: pointer;"><input type="radio" name="styleMode" checked onclick="toggleStyleMode('existing')"> 现有款式 (ODM)</label>
-                            <label style="cursor: pointer;"><input type="radio" name="styleMode" onclick="toggleStyleMode('custom')"> 自主设计 (OEM)</label>
+                        <!-- 优化后的模式切换器 -->
+                        <div class="mode-selector">
+                            <label class="mode-card active" id="mode-odm">
+                                <input type="radio" name="styleMode" value="existing" checked onclick="toggleStyleMode('existing')">
+                                <div class="mode-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                                </div>
+                                <div class="mode-text">
+                                    <span class="mode-title">挑选现有款式 (ODM)</span>
+                                    <span class="mode-sub">从红绣经典廓形库中选择，快速打样</span>
+                                </div>
+                                <div class="mode-badge">推荐</div>
+                            </label>
+                    
+                            <label class="mode-card" id="mode-oem">
+                                <input type="radio" name="styleMode" value="custom" onclick="toggleStyleMode('custom')">
+                                <div class="mode-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                                </div>
+                                <div class="mode-text">
+                                    <span class="mode-title">上传自主设计 (OEM)</span>
+                                    <span class="mode-sub">上传您的工艺单/设计图，由我们实现</span>
+                                </div>
+                            </label>
                         </div>
 
                         <div id="existing-styles" class="option-grid">
@@ -748,10 +862,22 @@
         function toggleStyleMode(mode) {
             const list = document.getElementById('existing-styles');
             const upload = document.getElementById('custom-upload');
+            const odmCard = document.getElementById('mode-odm');
+            const oemCard = document.getElementById('mode-oem');
+        
             if(mode === 'existing') {
-                list.classList.remove('hidden'); upload.classList.add('hidden');
+                list.classList.remove('hidden'); 
+                upload.classList.add('hidden');
+                // 更新 UI 高亮
+                odmCard.classList.add('active');
+                oemCard.classList.remove('active');
             } else {
-                list.classList.add('hidden'); upload.classList.remove('hidden');
+                list.classList.add('hidden'); 
+                upload.classList.remove('hidden');
+                // 更新 UI 高亮
+                oemCard.classList.add('active');
+                odmCard.classList.remove('active');
+                // 更新右侧汇总
                 document.getElementById('sum-style').innerText = 'OEM 自定义开发';
             }
         }

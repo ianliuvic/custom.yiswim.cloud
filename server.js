@@ -147,8 +147,7 @@ app.get('/api/get-data', authenticateToken, async (req, res) => {
         // 请求 n8n 获取定制所需的所有基础数据
         // 注意：这里用的是 GET 方法，n8n 端的 Webhook 也需要设为 GET
         const n8nResponse = await fetch(n8nUrl, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
+            method: 'GET'
         });
         const data = await n8nResponse.json();
         res.json(data);

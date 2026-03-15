@@ -87,6 +87,31 @@ app.get('/', authenticateToken, (req, res) => {
     res.render('custom', { title: '控制台主页', user: req.user });
 });
 
+// 1. 处理用户点击邮箱里的激活链接
+app.get('/activate', async (req, res) => {
+    const token = req.query.token;
+    if (!token) return res.redirect('/login');
+
+    try {
+        // 请求 n8n 验证这个 token 并激活用户
+        const n8nResponse = await fetch(`${N8N_BASE_URL}/custom-user-activate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: token })
+        });
+        const data = await n8nResponse.json();
+
+        if (data.success) {
+            // 激活成功，重定向到登录页（你可以带个参数让前端弹窗提示成功）
+            res.redirect('/login?activated=true');
+        } else {
+            res.send('激活链接无效或已过期，请联系客服。');
+        }
+    } catch (err) {
+        res.send('服务器错误，请稍后再试');
+    }
+});
+
 // 2. 登录页面
 app.get('/login', (req, res) => {
     // 如果已经登录了，直接去主页，别再看登录页了
@@ -170,6 +195,11 @@ app.post('/api/login', loginLimiter, async (req, res) => {
         });
 
         const data = await n8nResponse.json();
+
+        // 假设 n8n 查出来的用户信息里包含了 is_active 字段
+        if (data.user && data.user.is_active === false) {
+            return res.status(403).json({ success: false, message: '请先前往邮箱验证并激活您的账号' });
+        }
 
         if (!data.success || !data.user) {
             return res.status(401).json({ success: false, message: '用户名或密码错误' });

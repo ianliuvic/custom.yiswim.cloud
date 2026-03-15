@@ -542,7 +542,7 @@
             
             try {
                 // 调用 Node.js 后端接口，后端会去请求 n8n
-                const response = await fetch('/api/catalog');
+                const response = await fetch('/api/get-data');
                 const result = await response.json();
             } catch (error) {
                 console.error('网络错误:', error);

@@ -78,11 +78,21 @@
             overflow-y: auto; height: 100%; box-sizing: border-box;
         }
 
-        /* 4. 底部固定版权栏 (压缩高度) */
+        /* 4. 底部固定版权栏 (内容居中优化) */
         .site-footer {
-            height: var(--footer-height); min-height: var(--footer-height); background: #fff;
-            border-top: 1px solid var(--border-color); padding: 0 30px;
-            display: flex; align-items: center; font-size: 12px; color: #999; z-index: 100; box-sizing: border-box;
+            height: var(--footer-height); 
+            min-height: var(--footer-height); 
+            background: #fff;
+            border-top: 1px solid var(--border-color); 
+            padding: 0 30px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; /* 添加这一行：水平居中 */
+            font-size: 11px; /* 稍微调细一点，显得更精致 */
+            color: #aaa; 
+            z-index: 100; 
+            box-sizing: border-box;
+            letter-spacing: 0.5px; /* 增加一点字间距 */
         }
 
         /* --- UI 选项卡片设计 (更紧凑的卡片排版) --- */

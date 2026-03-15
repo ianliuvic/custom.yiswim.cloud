@@ -536,6 +536,19 @@
     </footer>
 
     <script>
+        // 页面加载完成后立即触发
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('页面已加载，开始获取产品目录数据...');
+            
+            try {
+                // 调用 Node.js 后端接口，后端会去请求 n8n
+                const response = await fetch('/api/catalog');
+                const result = await response.json();
+            } catch (error) {
+                console.error('网络错误:', error);
+            }
+        });
+
         let currentStep = 1;
         const totalSteps = 5;
 

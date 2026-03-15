@@ -184,29 +184,58 @@
             background-color: transparent !important;
         }
 
-        /* --- 详情小按钮 (悬浮在卡片右上角) --- */
+        /* --- 详情小按钮 (默认隐藏) --- */
         .details-btn {
             position: absolute;
             top: 8px;
             right: 8px;
             width: 28px;
             height: 28px;
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(4px);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            transition: all 0.2s ease;
-            z-index: 5; /* 确保在图片上方 */
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
             color: var(--text-light);
+            z-index: 5;
+            
+            /* 核心修改：默认透明且不可见，加上一点缩放显得更平滑 */
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.8);
+            transition: all 0.2s ease;
         }
         .details-btn:hover {
             background: var(--primary-color);
             color: #fff;
             transform: scale(1.1);
+        }
+
+        /* 1. 当父级卡片拥有 selected 类名时，立刻显示按钮 */
+        .option-item.selected .details-btn {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+        
+        /* 2. 按钮自身的 Hover 高亮效果 (鼠标放在放大镜上变红) */
+        .option-item.selected .details-btn:hover {
+            background: var(--primary-color);
+            color: #fff;
+            transform: scale(1.1);
+        }
+        
+        /* 💡【可选体验升级】：
+           如果你希望在电脑端，即使没选中，鼠标划过(Hover)卡片时也显示按钮，
+           可以把下面这三行代码的注释取消掉。纯手机端可忽略。
+        */
+        .option-item:hover .details-btn {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
         }
         
         /* --- 模态弹窗样式 (Modal) --- */

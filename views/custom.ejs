@@ -288,85 +288,45 @@
         .modal-desc { font-size: 13px; color: var(--text-main); line-height: 1.6; }
         .modal-desc p { margin-top: 0; margin-bottom: 10px; }
 
-        /* --- 模式选择器 (Mode Selector) --- */
-        .mode-selector {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 30px;
+        /* --- 极简分段选择器 --- */
+        .mode-switcher {
+            display: inline-flex; /* 不再占满整行，按需展示 */
+            background: #f0f0f0;  /* 浅灰底色 */
+            padding: 3px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+            border: 1px solid #e5e5e5;
         }
         
-        .mode-card {
-            flex: 1;
-            position: relative;
-            display: flex;
-            align-items: center;
-            padding: 16px 20px;
-            background: #fff;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
+        .mode-option {
+            padding: 8px 24px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #666;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow: hidden;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            user-select: none;
         }
         
-        /* 隐藏原生单选框 */
-        .mode-card input[type="radio"] {
-            position: absolute;
-            opacity: 0;
-            width: 0; height: 0;
-        }
-        
-        /* 图标装饰 */
-        .mode-icon {
-            width: 44px;
-            height: 44px;
-            background: #f5f5f5;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            color: var(--text-light);
-            transition: all 0.3s;
-        }
-        
-        .mode-text {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .mode-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-main);
-            margin-bottom: 2px;
-        }
-        
-        .mode-sub {
-            font-size: 12px;
-            color: var(--text-light);
-        }
-        
-        /* --- 选中状态 --- */
-        .mode-card.active {
-            border-color: var(--primary-color);
-            background-color: #fff9f9;
-            box-shadow: 0 4px 12px rgba(170, 0, 0, 0.08);
-        }
-        
-        .mode-card.active .mode-icon {
-            background: var(--primary-color);
-            color: #fff;
-        }
-        
-        .mode-card.active .mode-title {
+        /* 激活状态：模拟滑块效果 */
+        .mode-option.active {
+            background: #fff;
             color: var(--primary-color);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
         }
         
-        /* Hover 效果 */
-        .mode-card:hover:not(.active) {
-            border-color: #ccc;
+        .mode-option:hover:not(.active) {
+            color: #333;
+        }
+        
+        /* 优化上传框，也使其更简洁 */
+        .premium-upload-box {
+            border: 1px dashed #ccc;
             background: #fafafa;
+            padding: 40px;
+            text-align: center;
+            border-radius: 6px;
         }
 
         .hidden { display: none !important; }
@@ -413,29 +373,14 @@
                         <!-- 去掉 h2，使用新的引导框 -->
                         <div class="step-desc">请选择基础廓形，或开启 OEM 模式上传您的自主设计包。</div>
                         
-                        <!-- 优化后的模式切换器 -->
-                        <div class="mode-selector">
-                            <label class="mode-card active" id="mode-odm">
-                                <input type="radio" name="styleMode" value="existing" checked onclick="toggleStyleMode('existing')">
-                                <div class="mode-icon">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                                </div>
-                                <div class="mode-text">
-                                    <span class="mode-title">挑选现有款式 (ODM)</span>
-                                    <span class="mode-sub">从红绣经典廓形库中选择，快速打样</span>
-                                </div>
-                            </label>
-                    
-                            <label class="mode-card" id="mode-oem">
-                                <input type="radio" name="styleMode" value="custom" onclick="toggleStyleMode('custom')">
-                                <div class="mode-icon">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                                </div>
-                                <div class="mode-text">
-                                    <span class="mode-title">上传自主设计 (OEM)</span>
-                                    <span class="mode-sub">上传您的工艺单/设计图，由我们实现</span>
-                                </div>
-                            </label>
+                        <!-- 极简分段选择器 -->
+                        <div class="mode-switcher">
+                            <div class="mode-option active" id="mode-odm" onclick="toggleStyleMode('existing')">
+                                现有款式 (ODM)
+                            </div>
+                            <div class="mode-option" id="mode-oem" onclick="toggleStyleMode('custom')">
+                                自主设计 (OEM)
+                            </div>
                         </div>
 
                         <div id="existing-styles" class="option-grid">
@@ -849,19 +794,21 @@
         function toggleStyleMode(mode) {
             const list = document.getElementById('existing-styles');
             const upload = document.getElementById('custom-upload');
-            const odmCard = document.getElementById('mode-odm');
-            const oemCard = document.getElementById('mode-oem');
+            const odmBtn = document.getElementById('mode-odm');
+            const oemBtn = document.getElementById('mode-oem');
         
             if(mode === 'existing') {
                 list.classList.remove('hidden'); 
                 upload.classList.add('hidden');
-                odmCard.classList.add('active');
-                oemCard.classList.remove('active');
+                odmBtn.classList.add('active');
+                oemBtn.classList.remove('active');
+                // 右侧汇总恢复
+                document.getElementById('sum-style').innerText = '未选择'; 
             } else {
                 list.classList.add('hidden'); 
                 upload.classList.remove('hidden');
-                oemCard.classList.add('active');
-                odmCard.classList.remove('active');
+                oemBtn.classList.add('active');
+                odmBtn.classList.remove('active');
                 document.getElementById('sum-style').innerText = 'OEM 自定义开发';
             }
         }

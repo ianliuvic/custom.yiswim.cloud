@@ -377,6 +377,69 @@
         .cat-pane { display: none; animation: fadeIn 0.4s; }
         .cat-pane.active { display: block; }
 
+        /* --- 面料配置台 --- */
+        .fabric-config-panel {
+            margin-top: 25px;
+            padding: 25px 30px;
+            background: #fbfbfb;
+            border: 1px solid #ebebeb;
+            border-radius: 8px;
+            position: relative;
+            animation: fadeIn 0.4s ease;
+        }
+        
+        /* 顶部标题角标效果 */
+        .fabric-config-panel::before {
+            content: ''; position: absolute;
+            top: -8px; left: 40px;
+            width: 15px; height: 15px;
+            background: #fbfbfb;
+            border-top: 1px solid #ebebeb;
+            border-left: 1px solid #ebebeb;
+            transform: rotate(45deg);
+        }
+        
+        .config-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #e0e0e0;
+            display: flex; justify-content: space-between; align-items: flex-end;
+        }
+        .config-header h4 { margin: 0; font-size: 16px; color: var(--text-main); }
+        
+        /* --- 高级色卡 (Color Swatches) --- */
+        .color-palette {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .color-swatch {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .color-swatch:hover {
+            transform: scale(1.1);
+        }
+        
+        /* 选中时的苹果风效果：内部色块变小，外部出现细外环 */
+        .color-swatch.selected {
+            transform: scale(0.85);
+            box-shadow: 0 0 0 3px #fbfbfb, 0 0 0 5px var(--primary-color);
+        }
+        
+        /* --- 配置说明区 --- */
+        .fabric-notes-area {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
         .hidden { display: none !important; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         ::-webkit-scrollbar { width: 5px; height: 5px; }
@@ -499,14 +562,74 @@
 
                     <!-- 步骤 2: 面料 -->
                     <div class="step-content hidden" id="step-2">
-                        <div class="step-desc">选择最适合您产品定位的面料材质。如需特殊面料请在最后一步备注。</div>
+                        <div class="step-desc">请选择基础面料材质，随后在展开的配置台中选择颜色或上传印花图稿。</div>
                         
-                        <div class="option-grid">
-                            <div class="option-item" onclick="selectItem('fabric', 'Matte Nylon (190G)')">
-                                <div style="height:140px; background:#333;"></div>
-                                <div class="option-info"><h4>Matte Nylon</h4><p>80% Nylon, 20% Spandex</p></div>
+                        <!-- 1. 面料选择区 -->
+                        <div class="option-grid" id="fabric-grid">
+                            <div class="option-item fabric-item" onclick="selectFabric('Matte Nylon', this)">
+                                <div class="details-btn" onclick="event.stopPropagation(); openDetailModal({name:'Matte Nylon', description:'哑光尼龙，高弹舒适，适合经典泳衣。'})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div>
+                                <div style="height:140px; background:linear-gradient(135deg, #2c3e50, #34495e);"></div>
+                                <div class="option-info"><h4>Matte Nylon (190G)</h4><p>80% Nylon, 20% Spandex</p></div>
                             </div>
-                            <!-- 未来可以加更多面料 -->
+                            <div class="option-item fabric-item" onclick="selectFabric('Ribbed Texture', this)">
+                                <div class="details-btn" onclick="event.stopPropagation(); openDetailModal({name:'Ribbed Texture', description:'竖条纹坑条面料，质感高级，修饰身形。'})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div>
+                                <div style="height:140px; background:repeating-linear-gradient(45deg, #e0d7c6, #e0d7c6 5px, #d6ccba 5px, #d6ccba 10px);"></div>
+                                <div class="option-info"><h4>Ribbed Texture</h4><p>法式复古坑条 · 柔软亲肤</p></div>
+                            </div>
+                        </div>
+                    
+                        <!-- 2. 面料配置台 (默认隐藏，选中面料后展开) -->
+                        <div id="fabric-config-panel" class="fabric-config-panel hidden">
+                            <div class="config-header">
+                                <h4 id="selected-fabric-name">已选面料配置</h4>
+                                <span style="font-size: 12px; color: #888;">请选择色彩呈现方式</span>
+                            </div>
+                    
+                            <!-- 模式切换：纯色 / 印花 -->
+                            <div class="mode-switcher" style="margin-bottom: 20px;">
+                                <div class="mode-option active" id="mode-solid" onclick="switchFabricMode('solid')">纯色 (Solid Colors)</div>
+                                <div class="mode-option" id="mode-print" onclick="switchFabricMode('print')">定制印花 (Custom Print)</div>
+                            </div>
+                    
+                            <!-- 纯色选择区 (支持多选) -->
+                            <div id="fabric-solid-area">
+                                <p style="font-size: 13px; color: var(--text-light); margin-bottom: 15px;">点击选择所需颜色（支持多选），悬浮查看色号：</p>
+                                <div class="color-palette">
+                                    <!-- 占位色卡 -->
+                                    <div class="color-swatch" style="background-color: #111111;" title="Noir Black (#111)" onclick="toggleColor('Noir Black', this)"></div>
+                                    <div class="color-swatch" style="background-color: #ffffff; border: 1px solid #ddd;" title="Pure White (#FFF)" onclick="toggleColor('Pure White', this)"></div>
+                                    <div class="color-swatch" style="background-color: #aa0000;" title="Signature Red (#A00)" onclick="toggleColor('Signature Red', this)"></div>
+                                    <div class="color-swatch" style="background-color: #2c3e50;" title="Navy Blue (#2C3E50)" onclick="toggleColor('Navy Blue', this)"></div>
+                                    <div class="color-swatch" style="background-color: #8f9779;" title="Olive Green (#8F9779)" onclick="toggleColor('Olive Green', this)"></div>
+                                    <div class="color-swatch" style="background-color: #e6c2b1;" title="Nude Blush (#E6C2B1)" onclick="toggleColor('Nude Blush', this)"></div>
+                                    <div class="color-swatch" style="background-color: #d4af37;" title="Mustard Gold (#D4AF37)" onclick="toggleColor('Mustard Gold', this)"></div>
+                                    <div class="color-swatch" style="background-color: #7b4f74;" title="Plum Purple (#7B4F74)" onclick="toggleColor('Plum Purple', this)"></div>
+                                    <div style="font-size: 12px; color: #aaa; margin-left: 10px; align-self: center;">+ 更多色卡可向业务员索取</div>
+                                </div>
+                                <div id="selected-colors-text" style="font-size: 12px; color: var(--primary-color); margin-top: 10px; font-weight: 500;">未选择颜色</div>
+                            </div>
+                    
+                            <!-- 定制印花区 -->
+                            <div id="fabric-print-area" class="hidden">
+                                <div class="premium-upload-box" style="padding: 25px;">
+                                    <p style="margin: 0 0 10px; color: var(--text-main); font-size: 14px; font-weight: 500;">上传您的印花图案 (Allover Print)</p>
+                                    <p style="color: #888; font-size: 12px; margin-bottom: 15px;">支持无缝拼接图 (AI, EPS, TIFF, 高清JPG)。请确保分辨率在 300dpi 以上。</p>
+                                    <input type="file" multiple class="custom-file-input">
+                                </div>
+                            </div>
+                    
+                            <!-- 通用：配置说明与附件区 -->
+                            <div class="fabric-notes-area">
+                                <h4 style="font-size: 13px; margin: 0 0 10px; color: var(--text-main);">拼色说明 / 特殊工艺要求 (可选)</h4>
+                                <p style="font-size: 12px; color: #888; margin-bottom: 10px;">例如：左杯用红色，右杯用黑色；或印花图案的缩放比例等。如有拼色参考图请一并上传。</p>
+                                <textarea placeholder="请在此描述您的色彩搭配或印花要求..." style="width:100%; height:80px; padding:12px; border:1px solid #ddd; border-radius:4px; font-family:inherit; font-size:13px; box-sizing:border-box; margin-bottom:10px; resize:vertical;"></textarea>
+                                
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 12px; color: #666;">附件参考图：</span>
+                                    <input type="file" multiple class="custom-file-input" style="width: 200px;">
+                                </div>
+                            </div>
+                    
                         </div>
                     </div>
 
@@ -773,7 +896,98 @@
                 console.error('加载数据失败:', error);
             }
         });
+
+        // --- 面料全局状态 ---
+        let currentFabricConfig = {
+            fabricName: '',
+            mode: 'solid', // 'solid' 或 'print'
+            colors: []     // 存储多选颜色的数组
+        };
         
+        // 1. 选择面料，展开配置台
+        function selectFabric(fabricName, el) {
+            // 视觉高亮卡片
+            document.querySelectorAll('.fabric-item').forEach(item => item.classList.remove('selected'));
+            el.classList.add('selected');
+        
+            // 更新状态
+            currentFabricConfig.fabricName = fabricName;
+            
+            // 展开配置台并更新标题
+            const panel = document.getElementById('fabric-config-panel');
+            panel.classList.remove('hidden');
+            document.getElementById('selected-fabric-name').innerText = `面料：${fabricName}`;
+        
+            updateFabricSummary();
+        }
+        
+        // 2. 切换 纯色/印花 模式
+        function switchFabricMode(mode) {
+            currentFabricConfig.mode = mode;
+            
+            const solidBtn = document.getElementById('mode-solid');
+            const printBtn = document.getElementById('mode-print');
+            const solidArea = document.getElementById('fabric-solid-area');
+            const printArea = document.getElementById('fabric-print-area');
+        
+            if (mode === 'solid') {
+                solidBtn.classList.add('active'); printBtn.classList.remove('active');
+                solidArea.classList.remove('hidden'); printArea.classList.add('hidden');
+            } else {
+                printBtn.classList.add('active'); solidBtn.classList.remove('active');
+                printArea.classList.remove('hidden'); solidArea.classList.add('hidden');
+            }
+        
+            updateFabricSummary();
+        }
+        
+        // 3. 多选/取消选择 颜色
+        function toggleColor(colorName, el) {
+            const idx = currentFabricConfig.colors.indexOf(colorName);
+            
+            if (idx > -1) {
+                // 已存在，取消选中
+                currentFabricConfig.colors.splice(idx, 1);
+                el.classList.remove('selected');
+            } else {
+                // 不存在，添加选中
+                currentFabricConfig.colors.push(colorName);
+                el.classList.add('selected');
+            }
+        
+            // 更新下方文字提示
+            const textEl = document.getElementById('selected-colors-text');
+            if (currentFabricConfig.colors.length === 0) {
+                textEl.innerText = '未选择颜色';
+                textEl.style.color = '#999';
+            } else {
+                textEl.innerText = `已选颜色 (${currentFabricConfig.colors.length})：${currentFabricConfig.colors.join(', ')}`;
+                textEl.style.color = 'var(--primary-color)';
+            }
+        
+            updateFabricSummary();
+        }
+        
+        // 4. 更新右侧侧边栏汇总
+        function updateFabricSummary() {
+            const summaryText = document.getElementById('sum-fabric');
+            
+            if (!currentFabricConfig.fabricName) {
+                summaryText.innerText = '未选择';
+                return;
+            }
+        
+            if (currentFabricConfig.mode === 'print') {
+                summaryText.innerText = `${currentFabricConfig.fabricName} (定制满印)`;
+            } else {
+                if (currentFabricConfig.colors.length === 0) {
+                    summaryText.innerText = `${currentFabricConfig.fabricName} (待选色)`;
+                } else {
+                    summaryText.innerText = `${currentFabricConfig.fabricName} (${currentFabricConfig.colors.length}色拼接)`;
+                }
+            }
+        }
+
         // 全局变量存储当前选择的包装袋对象，方便后续获取它的尺寸
         let currentSelectedBag = null;
         

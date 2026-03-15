@@ -310,59 +310,22 @@
                             <!-- 包装袋具体配置项 -->
                             <div id="content-bag" class="hidden" style="animation: fadeIn 0.4s ease;">
                                 
-                                <!-- A. 材质选择 -->
+                                <!-- A. 材质与袋型 -->
                                 <div class="attr-section" style="margin-bottom: 30px;">
                                     <h4 class="attr-title" style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 材质与袋型 (Material)</h4>
-                                    <div class="option-grid">
-                                        <div class="option-item bag-mat" onclick="selectBagAttr('material', 'CPE 磨砂拉链袋', this)">
-                                            <div style="height: 120px; background: #eef2f5; display: flex; align-items:center; justify-content:center; color:#999; border-bottom: 1px solid #eee; font-size: 12px;">[磨砂袋示意图]</div>
-                                            <div class="option-info">
-                                                <h4>CPE Frosted Zip</h4>
-                                                <p>半透明磨砂 · 顺滑拉链</p>
-                                            </div>
-                                        </div>
-                                        <div class="option-item bag-mat" onclick="selectBagAttr('material', '环保可降解袋', this)">
-                                            <div style="height: 120px; background: #f2f7f4; display: flex; align-items:center; justify-content:center; color:#749c74; border-bottom: 1px solid #eee; font-size: 12px;">[环保袋示意图]</div>
-                                            <div class="option-info">
-                                                <h4>Biodegradable</h4>
-                                                <p>100% 堆肥降解 · 环保优选</p>
-                                            </div>
-                                        </div>
-                                        <div class="option-item bag-mat" onclick="selectBagAttr('material', '纯棉抽绳袋', this)">
-                                            <div style="height: 120px; background: #f9f6f0; display: flex; align-items:center; justify-content:center; color:#a6937c; border-bottom: 1px solid #eee; font-size: 12px;">[棉布袋示意图]</div>
-                                            <div class="option-info">
-                                                <h4>Cotton Drawstring</h4>
-                                                <p>天然原色棉布 · 可重复收纳</p>
-                                            </div>
-                                        </div>
+                                    <!-- 给这个 grid 加上 ID: bag-list-container -->
+                                    <div id="bag-list-container" class="option-grid">
+                                        <!-- 动态加载内容 -->
+                                        <p style="color:#999; font-size:12px; padding:20px;">正在加载包装袋库...</p>
                                     </div>
                                 </div>
-
-                                <!-- B. 尺寸选择 -->
+                                
+                                <!-- B. 尺寸规格 -->
                                 <div class="attr-section" style="margin-bottom: 30px;">
                                     <h4 class="attr-title" style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 尺寸规格 (Dimensions)</h4>
-                                    <div class="option-grid">
-                                        <div class="option-item bag-size" onclick="selectBagAttr('size', '20x30cm (基础款)', this)">
-                                            <div style="height: 100px; background: #fafafa; display: flex; align-items:center; justify-content:center; font-size:20px; font-weight:bold; color:#ccc; border-bottom: 1px solid #eee;">20 x 30</div>
-                                            <div class="option-info">
-                                                <h4>Standard (20x30 cm)</h4>
-                                                <p>常规分体比基尼、泳裤</p>
-                                            </div>
-                                        </div>
-                                        <div class="option-item bag-size" onclick="selectBagAttr('size', '25x35cm (加大款)', this)">
-                                            <div style="height: 100px; background: #fafafa; display: flex; align-items:center; justify-content:center; font-size:20px; font-weight:bold; color:#ccc; border-bottom: 1px solid #eee;">25 x 35</div>
-                                            <div class="option-info">
-                                                <h4>Large (25x35 cm)</h4>
-                                                <p>连体泳衣、长袖冲浪服</p>
-                                            </div>
-                                        </div>
-                                        <div class="option-item bag-size" onclick="selectBagAttr('size', '自定义尺寸', this)">
-                                            <div style="height: 100px; background: #fafafa; display: flex; align-items:center; justify-content:center; font-size:20px; font-weight:bold; color:#ccc; border-bottom: 1px solid #eee;">? x ?</div>
-                                            <div class="option-info">
-                                                <h4>Custom Size</h4>
-                                                <p>特殊尺寸（请在最后一步备注）</p>
-                                            </div>
-                                        </div>
+                                    <!-- 给这个 grid 加上 ID: bag-size-container -->
+                                    <div id="bag-size-container" class="option-grid">
+                                        <p style="color:#999; font-size:12px; padding:20px;">请先选择包装材质</p>
                                     </div>
                                 </div>
 
@@ -536,18 +499,99 @@
     </footer>
 
     <script>
-        // 页面加载完成后立即触发
         document.addEventListener('DOMContentLoaded', async () => {
-            console.log('页面已加载，开始获取产品目录数据...');
-            
             try {
-                // 调用 Node.js 后端接口，后端会去请求 n8n
                 const response = await fetch('/api/get-data');
                 const result = await response.json();
+        
+                if (result.success && result.data) {
+                    // 调用渲染函数
+                    renderBags(result.data.bags);
+                }
             } catch (error) {
-                console.error('网络错误:', error);
+                console.error('加载数据失败:', error);
             }
         });
+        
+        // 全局变量存储当前选择的包装袋对象，方便后续获取它的尺寸
+        let currentSelectedBag = null;
+        
+        // 1. 渲染包装袋列表 (A部分)
+        function renderBags(bags) {
+            const container = document.getElementById('bag-list-container');
+            container.innerHTML = ''; // 清空加载提示
+        
+            bags.forEach(bag => {
+                // 取第一张图作为封面
+                const coverImg = (bag.image_urls && bag.image_urls.length > 0) ? bag.image_urls[0] : '/images/default-bag.jpg';
+                
+                const html = `
+                    <div class="option-item bag-mat" onclick="onBagClick(${JSON.stringify(bag).replace(/"/g, '&quot;')}, this)">
+                        <img src="${coverImg}" class="option-img" loading="lazy">
+                        <div class="option-info">
+                            <h4>${bag.name}</h4>
+                            <p>${bag.description || '优质定制包装'}</p>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+        
+        // 2. 当用户点击某个包装袋卡片时触发
+        function onBagClick(bag, el) {
+            currentSelectedBag = bag;
+            
+            // 调用之前的 selectBagAttr 视觉反馈逻辑 (高亮 A 部分)
+            selectBagAttr('material', bag.name, el);
+        
+            // 【核心】根据当前选中的袋子，动态渲染它的 B 部分 (尺寸)
+            renderBagSizes(bag.sizes);
+            
+            // 重置侧边栏里的尺寸显示，因为换了袋子，旧尺寸可能不适用了
+            bagConfig.size = '未选尺寸';
+            updateBagSummary();
+        }
+        
+        // 3. 渲染尺寸规格卡片 (B部分)
+        function renderBagSizes(sizes) {
+            const container = document.getElementById('bag-size-container');
+            container.innerHTML = ''; // 清空
+        
+            if (!sizes || sizes.length === 0) {
+                container.innerHTML = '<p style="color:#999; font-size:12px; padding:20px;">该款式暂无可选规格</p>';
+                return;
+            }
+        
+            sizes.forEach(size => {
+                const html = `
+                    <div class="option-item bag-size" onclick="selectBagAttr('size', '${size}', this)">
+                        <div style="height: 100px; background: #fafafa; display: flex; align-items:center; justify-content:center; font-size:18px; font-weight:bold; color:#666; border-bottom: 1px solid #eee;">
+                            ${size}
+                        </div>
+                        <div class="option-info">
+                            <h4>规格: ${size} cm</h4>
+                            <p>适配当前选中的袋型</p>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+            
+            // 特外加一个“自定义尺寸”选项
+            const customHtml = `
+                <div class="option-item bag-size" onclick="selectBagAttr('size', '自定义尺寸', this)">
+                    <div style="height: 100px; background: #fafafa; display: flex; align-items:center; justify-content:center; font-size:18px; font-weight:bold; color:#ccc; border-bottom: 1px solid #eee;">
+                        ? x ?
+                    </div>
+                    <div class="option-info">
+                        <h4>自定义尺寸</h4>
+                        <p>我有特殊要求 (请在备注说明)</p>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', customHtml);
+        }
 
         let currentStep = 1;
         const totalSteps = 5;

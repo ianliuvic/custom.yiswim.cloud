@@ -526,7 +526,7 @@
                 const coverImg = (bag.image_urls && bag.image_urls.length > 0) ? bag.image_urls[0] : '/images/default-bag.jpg';
                 
                 const html = `
-                    <div class="option-item bag-mat" onclick="onBagClick(${JSON.stringify(bag).replace(/"/g, '&quot;')}, this)">
+                    <div class="option-item bag-material" onclick="onBagClick(${JSON.stringify(bag).replace(/"/g, '&quot;')}, this)">
                         <img src="${coverImg}" class="option-img" loading="lazy">
                         <div class="option-info">
                             <h4>${bag.name}</h4>

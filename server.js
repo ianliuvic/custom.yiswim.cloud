@@ -21,16 +21,16 @@ app.set('trust proxy', 1);
 
 // 1. 针对登录接口的限制：15分钟内最多尝试 5 次
 const loginLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 分钟
-    max: 5, // 限制 5 次
+    windowMs: 15 * 60 * 1000, 
+    max: 5, 
     message: { success: false, message: "请求过于频繁，请15分钟后再试。" },
-    standardHeaders: true, // 在响应头中显示剩余次数
+    standardHeaders: true, 
     legacyHeaders: false,
 });
 
 // 2. 针对注册接口的限制：1小时内最多注册 2 个账号（防止恶意灌水）
 const registerLimiter = rateLimit({
-    windowMs: 60 * 60 * 1000, // 1 小时
+    windowMs: 60 * 60 * 1000, 
     max: 2, 
     message: { success: false, message: "该 IP 注册请求过多，请稍后再试。" },
     standardHeaders: true,
@@ -39,12 +39,12 @@ const registerLimiter = rateLimit({
 
 // 3. 通用全局限制（可选）：防止恶意刷页面
 const globalLimiter = rateLimit({
-    windowMs: 1 * 60 * 1000, // 1 分钟
-    max: 60, // 每分钟最多 60 次请求
+    windowMs: 1 * 60 * 1000, 
+    max: 60, 
     message: { success: false, message: "请求过于频繁。" }
 });
 
-// 【重要】设置一个 JWT 密钥，建议在 Coolify 环境变量中设置，这里先写死用于测试
+// 【重要】设置一个 JWT 密钥
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-123456';
 
 // 配置 n8n 内部地址
@@ -52,27 +52,30 @@ const N8N_BASE_URL = 'http://n8n-ywock00sw4ko80c4w4ogs8so:5678/webhook-test';
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser()); // 启用 cookie 解析
+app.use(cookieParser());
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
+
+// 修复点 1：应用全局频率限制
+app.use(globalLimiter);
 
 // ==========================================
 // 中间件：验证用户是否已登录
 // ==========================================
 const authenticateToken = (req, res, next) => {
-    const token = req.cookies.auth_token; // 从 cookie 中获取 token
+    const token = req.cookies.auth_token; 
 
     if (!token) {
-        return res.redirect('/login'); // 没 token，跳转到登录页
+        return res.redirect('/login'); 
     }
 
     jwt.verify(token, JWT_SECRET, (err, user) => {
         if (err) {
             res.clearCookie('auth_token');
-            return res.redirect('/login'); // token 无效，清理并跳转
+            return res.redirect('/login'); 
         }
-        req.user = user; // 将用户信息挂载到请求对象
+        req.user = user; 
         next();
     });
 };
@@ -83,17 +86,15 @@ const authenticateToken = (req, res, next) => {
 
 // 1. 根目录：受保护，登录后才能看
 app.get('/', authenticateToken, (req, res) => {
-    // 渲染 custom.ejs，并把用户名传过去
-    res.render('custom', { title: '控制台主页', user: req.user });
+    res.render('custom', { title: '定制系统主页', user: req.user });
 });
 
-// 1. 处理用户点击邮箱里的激活链接
+// 2. 处理用户点击邮箱里的激活链接
 app.get('/activate', async (req, res) => {
     const token = req.query.token;
     if (!token) return res.redirect('/login');
 
     try {
-        // 请求 n8n 验证这个 token 并激活用户
         const n8nResponse = await fetch(`${N8N_BASE_URL}/custom-user-activate`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -102,7 +103,6 @@ app.get('/activate', async (req, res) => {
         const data = await n8nResponse.json();
 
         if (data.success) {
-            // 激活成功，重定向到登录页（你可以带个参数让前端弹窗提示成功）
             res.redirect('/login?activated=true');
         } else {
             res.send('激活链接无效或已过期，请联系客服。');
@@ -112,35 +112,26 @@ app.get('/activate', async (req, res) => {
     }
 });
 
-// 2. 登录页面
+// 3. 登录页面
 app.get('/login', (req, res) => {
-    // 如果已经登录了，直接去主页，别再看登录页了
     if (req.cookies.auth_token) {
         return res.redirect('/');
     }
     res.render('login', { title: '用户验证' });
 });
 
-// 3. 退出登录
+// 4. 退出登录
 app.get('/logout', (req, res) => {
     res.clearCookie('auth_token');
     res.redirect('/login');
 });
 
-// ==========================================
-// 页面路由 (添加到 /login 路由附近)
-// ==========================================
-
-// 重置密码页面
+// 5. 重置密码页面
 app.get('/reset-password', (req, res) => {
-    const token = req.query.token; // 从 URL 获取 token：?token=xxxx
-    
-    // 如果没有 token，直接让他回登录页
+    const token = req.query.token; 
     if (!token) {
         return res.redirect('/login');
     }
-    
-    // 将 token 传给 EJS 模板
     res.render('reset', { title: '重置密码', token: token });
 });
 
@@ -148,12 +139,29 @@ app.get('/reset-password', (req, res) => {
 // API 接口
 // ==========================================
 
-// 注册逻辑
-app.post('/api/register', async (req, res) => {
+// 1. 获取业务数据 (新增：替代原有的 get-catalog-data)
+app.get('/api/get-data', authenticateToken, async (req, res) => {
+    try {
+        // 请求 n8n 获取定制所需的所有基础数据
+        // 注意：这里用的是 GET 方法，n8n 端的 Webhook 也需要设为 GET
+        const n8nResponse = await fetch(`${N8N_BASE_URL}/custom-get-data`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await n8nResponse.json();
+        res.json(data);
+    } catch (error) {
+        console.error('获取基础数据失败:', error);
+        res.status(500).json({ success: false, message: '无法连接到数据服务器' });
+    }
+});
+
+// 2. 注册逻辑
+// 修复点 2：加上了 registerLimiter
+app.post('/api/register', registerLimiter, async (req, res) => {
     try {
         const { username, email, password } = req.body;
 
-        // --- 新增：后端安全校验 ---
         if (!password || password.length < 8) {
             return res.status(400).json({ 
                 success: false, 
@@ -161,7 +169,6 @@ app.post('/api/register', async (req, res) => {
             });
         }
 
-        // 校验通过后再进行加密
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -183,7 +190,7 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-// 登录逻辑
+// 3. 登录逻辑
 app.post('/api/login', loginLimiter, async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -196,7 +203,7 @@ app.post('/api/login', loginLimiter, async (req, res) => {
 
         const data = await n8nResponse.json();
 
-        // 假设 n8n 查出来的用户信息里包含了 is_active 字段
+        // 拦截未激活用户
         if (data.user && data.user.is_active === false) {
             return res.status(403).json({ success: false, message: '请先前往邮箱验证并激活您的账号' });
         }
@@ -210,18 +217,16 @@ app.post('/api/login', loginLimiter, async (req, res) => {
             return res.status(401).json({ success: false, message: '用户名或密码错误' });
         }
 
-        // --- 核心修改：签发 JWT ---
         const token = jwt.sign(
             { username: data.user.username, email: data.user.email },
             JWT_SECRET,
-            { expiresIn: '24h' } // 有效期24小时
+            { expiresIn: '24h' }
         );
 
-        // 将 JWT 写入 Cookie
         res.cookie('auth_token', token, {
-            httpOnly: true,  // 安全：前端 JS 无法读取 cookie，防 XSS
-            secure: false,   // 如果你的 custom.yiswim.cloud 是 https，设为 true
-            maxAge: 24 * 60 * 60 * 1000 // 1天
+            httpOnly: true,  
+            secure: false,   
+            maxAge: 24 * 60 * 60 * 1000 
         });
 
         res.json({ success: true, message: '登录成功！' });
@@ -232,9 +237,7 @@ app.post('/api/login', loginLimiter, async (req, res) => {
     }
 });
 
-// ==========================================
-// 3. 忘记密码（暂不改动）
-// ==========================================
+// 4. 忘记密码
 app.post('/api/forgot-password', loginLimiter, async (req, res) => {
     try {
         const n8nResponse = await fetch(`${N8N_BASE_URL}/custom-user-forgot`, {
@@ -251,12 +254,7 @@ app.post('/api/forgot-password', loginLimiter, async (req, res) => {
     }
 });
 
-// ==========================================
-// API 接口 (添加到 /api/forgot-password 附近)
-// ==========================================
-
-// 提交新密码逻辑
-// 建议加上频率限制，这里复用之前写的 loginLimiter
+// 5. 提交新密码逻辑
 app.post('/api/reset-password', loginLimiter, async (req, res) => {
     try {
         const { token, newPassword } = req.body;
@@ -265,12 +263,9 @@ app.post('/api/reset-password', loginLimiter, async (req, res) => {
             return res.status(400).json({ success: false, message: '参数缺失' });
         }
 
-        // 1. 对新密码进行 Hash 加密
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-        // 2. 将 token 和加密后的新密码发给 n8n
-        // n8n 需要负责去数据库校验 token 是否存在、是否过期，然后更新密码并清空 token
         const n8nResponse = await fetch(`${N8N_BASE_URL}/custom-user-reset-pwd`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

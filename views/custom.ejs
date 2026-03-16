@@ -471,7 +471,27 @@
         .summary-sub-row .value { font-weight: 500; color: #475569; }
     
         .placeholder-box { padding: 60px 20px; border: 1px dashed #e2e8f0; text-align: center; color: #94a3b8; font-size: 13px; background: #fff; border-radius: 8px; }
-    
+
+        /* 清空重置按钮样式 */
+        .clear-all-btn {
+            background: none; 
+            border: none; 
+            color: #94a3b8; 
+            font-size: 11px; 
+            font-weight: 600;
+            cursor: pointer; 
+            display: inline-flex; 
+            align-items: center; 
+            padding: 4px 8px;
+            border-radius: 4px; 
+            transition: all 0.2s ease;
+            letter-spacing: 0.5px;
+        }
+        .clear-all-btn:hover { 
+            background: #fee2e2; 
+            color: #ef4444; 
+        }
+
         /* =========================================================
            9. 状态类
            ========================================================= */
@@ -820,7 +840,17 @@
 
         <!-- 右侧汇总 -->
         <aside class="summary-sidebar">
-            <span class="summary-title">SELECTED DETAILS</span>
+            <!-- 标题栏与清空按钮 -->
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 30px;">
+                <span class="summary-title" style="margin-bottom: 0;">SELECTED DETAILS</span>
+                <button type="button" class="clear-all-btn" onclick="clearAllSelections()" title="清空当前所有选项">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: text-bottom;">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    重置
+                </button>
+            </div>
             
             <div class="summary-row"><span class="label">款式类型</span><span class="value" id="sum-style">未选择</span></div>
             <div class="summary-row" style="align-items: flex-start;">
@@ -1571,6 +1601,67 @@
             summaryText.style.color = 'var(--primary-color)';
             summaryText.style.fontWeight = 'bold';
         }
+
+        // ==========================================
+        // 全局重置功能 (清空所有已选项)
+        // ==========================================
+        function clearAllSelections() {
+            // 增加确认提示，防止误触导致数据丢失
+            if (!confirm('确定要清空所有已选配置并重头开始吗？')) {
+                return;
+            }
+
+            // 1. 重置款式 (Step 1)
+            document.querySelectorAll('.style-item').forEach(item => item.classList.remove('selected'));
+            document.getElementById('sum-style').innerText = '未选择';
+            odmCustomData = {}; // 清空所有的轻定制数据
+            currentEditingStyle = '';
+            document.querySelectorAll('.custom-badge').forEach(badge => badge.classList.remove('active')); // 隐藏所有卡片上的"已定制"标签
+
+            // 2. 重置面料 (Step 2)
+            fabricSelection = {
+                main: { name: '', mode: 'solid', colors: [], remark: '' },
+                lining: { name: '', mode: 'solid', colors: [], remark: '' }
+            };
+            document.querySelectorAll('.fabric-item').forEach(item => item.classList.remove('selected'));
+            document.getElementById('fabric-config-panel').classList.add('hidden'); // 隐藏配置台
+            document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.remove('selected'));
+            document.getElementById('selected-colors-text').innerText = '未选择颜色';
+            document.getElementById('selected-colors-text').style.color = '#999';
+            document.getElementById('fabric-remark').value = '';
+            document.getElementById('sum-fabric').innerHTML = 
+                `<div style="font-size:12px; margin-bottom:4px; color:var(--text-main);">面: 未选</div>` +
+                `<div style="font-size:12px; color:var(--text-main);">里: 未选</div>`;
+
+            // 3. 重置辅料 (Step 3)
+            const trimCategories = ['metal', 'bag', 'hangtag', 'label', 'hygiene', 'other'];
+            trimCategories.forEach(category => {
+                // 将单选按钮强制切回 "否" (value="no")
+                const noRadio = document.querySelector(`input[name="need_${category}"][value="no"]`);
+                if(noRadio) noRadio.checked = true;
+                // 触发隐藏面板及恢复右侧文本
+                toggleTrim(category, false); 
+            });
+            // 彻底清空包装袋数据
+            bagConfig = { material: '未选材质', size: '未选尺寸', print: '未选印刷' };
+            document.querySelectorAll('.bag-material, .bag-size, .bag-print').forEach(item => item.classList.remove('selected'));
+            if(document.getElementById('bag-design-file')) document.getElementById('bag-design-file').value = '';
+
+            // 4. 重置物流交付 (Step 4)
+            document.querySelectorAll('#step-4 .option-item').forEach(item => item.classList.remove('selected'));
+            document.getElementById('sum-shipping').innerText = '未选择';
+
+            // 5. 重置最终备注 (Step 5)
+            const finalRemark = document.querySelector('#step-5 textarea');
+            if (finalRemark) finalRemark.value = '';
+
+            // 6. 界面回到第一步
+            if (currentStep !== 1) {
+                // 计算当前步数与第1步的差值，通过 changeStep 函数自动处理页面切换
+                changeStep(1 - currentStep); 
+            }
+        }
+
     </script>
 </body>
 </html>

@@ -11,8 +11,8 @@
         :root {
             --primary-color: #aa0000;
             --text-main: #2c3e50;
-            --text-light: #94a3b8; /* 更淡雅的灰色 */
-            --border-color: #f1f5f9; /* 更浅的边框色 */
+            --text-light: #94a3b8; 
+            --border-color: #f1f5f9; 
             --header-height: 56px;   
             --footer-height: 36px;   
             --bg-sidebar: #fafafa;
@@ -46,7 +46,7 @@
         .main-container { flex: 1; display: flex; overflow: hidden; width: 100%; }
     
         /* =========================================================
-           2. 核心框架布局
+           2. 核心框架布局 (Stepper, Scroll, Buttons)
            ========================================================= */
         .config-main { flex: 1; display: flex; flex-direction: column; height: 100%; border-right: 1px solid #f1f5f9; position: relative; }
         
@@ -62,11 +62,10 @@
         .site-footer { height: var(--footer-height); min-height: var(--footer-height); background: #fff; border-top: 1px solid #f1f5f9; padding: 0 30px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #94a3b8; z-index: 100; box-sizing: border-box; letter-spacing: 0.5px; }
     
         /* =========================================================
-           3. ODM 款式网格与卡片 (重点优化区)
+           3. ODM 款式网格与卡片 (电商大气风格)
            ========================================================= */
         .step-desc { font-size: 13px; color: #64748b; background: #f8fafc; padding: 14px 20px; border-left: 3px solid var(--primary-color); border-radius: 4px; margin-bottom: 30px; line-height: 1.6; }
         
-        /* 增加网格间距，每行显示的更少，单张图更大 */
         .option-grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
@@ -74,7 +73,6 @@
             margin-top: 20px; 
         }
     
-        /* 去掉边框，改用投影，增加圆角 */
         .option-item { 
             border: 1px solid transparent; 
             background: #fff; 
@@ -86,20 +84,18 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.03); 
         }
     
-        /* 悬浮动效：轻微浮起，加深阴影 */
         .option-item:hover { 
             transform: translateY(-6px); 
             box-shadow: 0 12px 24px rgba(0,0,0,0.08); 
         }
     
-        /* 选中动效：保持简洁 */
         .option-item.selected { 
             border-color: var(--primary-color); 
             background-color: #fff; 
             box-shadow: 0 0 0 1px var(--primary-color), 0 12px 24px rgba(170, 0, 0, 0.08); 
         }
     
-        /* 封面图：3:4比例，配合悬浮缩放 */
+        /* 电商 3:4 图片比例 */
         .option-img { 
             width: 100%; 
             aspect-ratio: 3 / 4; 
@@ -111,13 +107,12 @@
         }
         .option-item:hover .option-img { transform: scale(1.06); }
     
-        /* 文字区域：加大间距 */
         .option-info { padding: 16px 18px; }
         .option-info h4 { margin: 0 0 6px; font-size: 15px; color: var(--text-main); font-weight: 600; letter-spacing: 0.3px; }
         .option-info p { margin: 0; font-size: 12px; color: var(--text-light); line-height: 1.5; }
     
         /* =========================================================
-           4. 详情按钮与轮播弹窗
+           4. 详情弹窗 (Modal) 与 多图轮播 (Carousel)
            ========================================================= */
         .details-btn { 
             position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; 
@@ -137,38 +132,23 @@
         .modal-header { padding: 20px 24px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
         .modal-header h3 { margin: 0; font-size: 17px; color: var(--text-main); font-weight: 600;}
         .modal-close { background: none; border: none; font-size: 24px; color: #94a3b8; cursor: pointer; padding: 0; line-height: 1; }
-        .modal-close:hover { color: var(--primary-color); }
         
         .modal-body { padding: 24px; max-height: 75vh; overflow-y: auto; }
         .modal-carousel { position: relative; width: 100%; aspect-ratio: 3 / 4; background: #f8fafc; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; overflow: hidden; }
         .modal-carousel img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .carousel-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); color: #1e293b; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 2; transition: all 0.2s; }
-        .carousel-btn:hover { background: var(--primary-color); color: #fff; }
+        .carousel-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); color: #1e293b; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 2; }
         .carousel-btn.left { left: 12px; }
         .carousel-btn.right { right: 12px; }
         .carousel-dots { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
-        .carousel-dot { width: 6px; height: 6px; border-radius: 50%; background: #e2e8f0; cursor: pointer; transition: 0.3s; }
+        .carousel-dot { width: 6px; height: 6px; border-radius: 50%; background: #e2e8f0; cursor: pointer; }
         .carousel-dot.active { background: var(--primary-color); transform: scale(1.5); }
         .modal-desc { font-size: 14px; color: #475569; line-height: 1.7; }
     
         /* =========================================================
-           5. 导航与切换器 (极简 SaaS 风格)
+           5. 面料配置台 (Fabric Configurator)
            ========================================================= */
-        .mode-switcher { display: inline-flex; background: #f1f5f9; padding: 4px; border-radius: 8px; margin-bottom: 30px; }
-        .mode-option { padding: 8px 24px; font-size: 13px; font-weight: 500; color: #64748b; cursor: pointer; border-radius: 6px; transition: all 0.25s ease; }
-        .mode-option.active { background: #fff; color: var(--primary-color); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    
-        .category-nav { display: flex; gap: 35px; margin-bottom: 30px; border-bottom: 1px solid #f1f5f9; padding-bottom: 2px; overflow-x: auto; }
-        .cat-item { font-size: 14px; color: #94a3b8; cursor: pointer; padding-bottom: 10px; position: relative; transition: all 0.3s; white-space: nowrap; }
-        .cat-item:hover { color: var(--text-main); }
-        .cat-item.active { color: var(--primary-color); font-weight: 600; }
-        .cat-item.active::after { content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 2px; background: var(--primary-color); border-radius: 2px; }
-    
-        /* =========================================================
-           6. 面料配置台与辅料标签页
-           ========================================================= */
-        .sub-tabs { display: flex; gap: 30px; border-bottom: 2px solid #f1f5f9; margin-bottom: 30px; }
-        .sub-tab { padding: 12px 0; cursor: pointer; font-size: 13px; color: #94a3b8; font-weight: 600; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.3s; }
+        .sub-tabs { display: flex; gap: 30px; border-bottom: 2px solid #f1f5f9; margin-bottom: 30px; overflow-x: auto; }
+        .sub-tab { padding: 12px 0; cursor: pointer; font-size: 13px; color: #94a3b8; font-weight: 600; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.3s; white-space: nowrap; }
         .sub-tab.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
         
         .fabric-pane { display: none; }
@@ -179,23 +159,66 @@
         .config-header { margin-bottom: 20px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
         .config-header h4 { margin: 0; font-size: 16px; color: var(--text-main); }
     
+        .color-palette { display: flex; flex-wrap: wrap; gap: 12px; }
         .color-swatch { width: 34px; height: 34px; border-radius: 50%; cursor: pointer; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+        .color-swatch:hover { transform: scale(1.1); }
         .color-swatch.selected { transform: scale(0.8); box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--primary-color) !important; }
+    
+        .fabric-notes-area { margin-top: 25px; padding-top: 20px; border-top: 1px solid #f1f5f9; }
+        #fabric-remark { width: 100%; height: 80px; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-family: inherit; font-size: 13px; box-sizing: border-box; resize: none; transition: border 0.3s; }
+        #fabric-remark:focus { outline: none; border-color: var(--primary-color); }
+    
+        /* =========================================================
+           6. 切换器与导航 (SaaS 极简风)
+           ========================================================= */
+        .mode-switcher { display: inline-flex; background: #f1f5f9; padding: 4px; border-radius: 8px; margin-bottom: 30px; }
+        .mode-option { padding: 8px 24px; font-size: 13px; font-weight: 500; color: #64748b; cursor: pointer; border-radius: 6px; transition: all 0.25s ease; }
+        .mode-option.active { background: #fff; color: var(--primary-color); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    
+        .category-nav { display: flex; gap: 35px; margin-bottom: 30px; border-bottom: 1px solid #f1f5f9; padding-bottom: 2px; overflow-x: auto; }
+        .cat-item { font-size: 14px; color: #94a3b8; cursor: pointer; padding-bottom: 10px; position: relative; transition: all 0.3s; white-space: nowrap; }
+        .cat-item.active { color: var(--primary-color); font-weight: 600; }
+        .cat-item.active::after { content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 2px; background: var(--primary-color); border-radius: 2px; }
     
         .toggle-section { display: flex; align-items: center; gap: 20px; margin-bottom: 25px; padding: 16px 20px; background: #f8fafc; border-radius: 8px; border: 1px solid #f1f5f9; }
         .toggle-title { font-weight: 600; font-size: 14px; color: #475569; }
-        
-        /* =========================================================
-           7. 右侧汇总栏细节
-           ========================================================= */
-        .summary-title { font-size: 14px; font-weight: 700; margin-bottom: 30px; display: block; color: var(--text-main); letter-spacing: 1.5px; text-transform: uppercase; }
-        .summary-row { display: flex; justify-content: space-between; margin-bottom: 18px; font-size: 13px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 10px; }
-        .summary-row .label { color: #64748b; }
-        .summary-row .value { color: var(--text-main); font-weight: 600; text-align: right; }
-        .summary-sub-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 12px; padding-left: 12px; color: #94a3b8; }
+        .toggle-options label { cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #64748b; margin-right: 15px; }
     
+        /* =========================================================
+           7. 上传框与通用按钮
+           ========================================================= */
+        .premium-upload-box { border: 2px dashed #e2e8f0; background-color: #f8fafc; border-radius: 12px; padding: 40px 20px; text-align: center; transition: all 0.3s; cursor: pointer; }
+        .premium-upload-box:hover { border-color: var(--primary-color); background-color: #fffafb; }
+        
+        button { padding: 12px 32px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid var(--primary-color); }
+        #nextBtn { background: var(--primary-color); color: #fff; box-shadow: 0 4px 12px rgba(170, 0, 0, 0.2); }
+        #nextBtn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(170, 0, 0, 0.3); }
+        #prevBtn { background: #fff; color: var(--primary-color); }
+        #prevBtn:disabled { border-color: #e2e8f0; color: #cbd5e1; cursor: not-allowed; }
+    
+        /* =========================================================
+           8. 右侧侧边栏汇总细节
+           ========================================================= */
+        .summary-title { font-size: 13px; font-weight: 800; margin-bottom: 30px; display: block; color: #1e293b; letter-spacing: 1.5px; text-transform: uppercase; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 13px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 12px; align-items: center; }
+        .summary-row .label { color: #64748b; }
+        .summary-row .value { color: var(--text-main); font-weight: 700; text-align: right; }
+        
+        .summary-sub-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 12px; padding-left: 12px; color: #94a3b8; }
+        .summary-sub-row .value { font-weight: 500; color: #475569; }
+    
+        .placeholder-box { padding: 60px 20px; border: 1px dashed #e2e8f0; text-align: center; color: #94a3b8; font-size: 13px; background: #fff; border-radius: 8px; }
+    
+        /* =========================================================
+           9. 状态类
+           ========================================================= */
         .hidden { display: none !important; }
+        .cat-pane { display: none; animation: fadeIn 0.4s; }
+        .cat-pane.active { display: block; }
+        .sub-pane { display: none; animation: fadeIn 0.3s; }
+        .sub-pane.active { display: block; }
     </style>
+
 
 </head>
 <body>

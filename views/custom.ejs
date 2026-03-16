@@ -987,11 +987,28 @@
             document.getElementById(catId).classList.add('active');
         }
 
-        // ODM 选中款式
+        // ODM 选中款式 (已修复：点击切换时保持定制状态回显)
         function selectOdmStyle(name, el) {
-            document.getElementById('sum-style').innerText = name;
+            // 1. 获取右侧汇总的 DOM 节点
+            const sumStyleEl = document.getElementById('sum-style');
+            
+            // 2. 检查全局变量 odmCustomData 中该款式是否有定制数据
+            const customData = odmCustomData[name];
+            const hasCustomization = customData && (customData.remark !== '' || customData.hasFile);
+
+            // 3. 根据是否有定制数据，动态更新右侧面板的文字
+            if (hasCustomization) {
+                sumStyleEl.innerHTML = `${name} <span style="color:var(--primary-color); font-size:11px;">(含定制修改)</span>`;
+            } else {
+                sumStyleEl.innerText = name;
+            }
+
+            // 4. 处理卡片的 UI 选中状态
             document.querySelectorAll('.style-item').forEach(item => item.classList.remove('selected'));
             el.classList.add('selected');
+            
+            // 同步更新当前正在操作的款式名称
+            currentEditingStyle = name;
         }
 
         // 全局对象，用于存储每个 ODM 款式的轻定制数据

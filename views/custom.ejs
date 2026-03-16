@@ -916,9 +916,9 @@
                 <textarea id="customRemark" placeholder="请详细描述您的版型修改要求。&#10;例如：肩带加宽至2cm、后背改交叉带、罩杯容量加深等..."></textarea>
                 
                 <label style="display:block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 10px;">参考附件</label>
-                <div class="premium-upload-row" onclick="document.getElementById('customFile').click()">
+                <div class="premium-upload-row" id="customDropzone" onclick="document.getElementById('customFile').click()">
                     <div class="upload-label-group">
-                        <span class="upload-label-main">📎 上传参考图或工艺单</span>
+                        <span class="upload-label-main">上传参考图或工艺单</span>
                         <span class="upload-label-sub">Max 20MB</span>
                     </div>
                     <!-- 隐藏原始 input，保留 JS 逻辑 -->
@@ -1223,23 +1223,25 @@
         // --- 绑定事件：拖拽文件 ---
         const dropzone = document.getElementById('customDropzone');
         
-        dropzone.addEventListener('dragover', (e) => {
-            e.preventDefault(); // 必须阻止默认行为，否则无法触发 drop
-            dropzone.classList.add('dragover');
-        });
-
-        dropzone.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            dropzone.classList.remove('dragover');
-        });
-
-        dropzone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropzone.classList.remove('dragover');
-            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                handleFilesAdded(e.dataTransfer.files);
-            }
-        });
+        if (dropzone) { // 加上这层判断，即使 HTML 没写对也不会让整个页面崩溃
+            dropzone.addEventListener('dragover', (e) => {
+                e.preventDefault(); 
+                dropzone.classList.add('dragover');
+            });
+        
+            dropzone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('dragover');
+            });
+        
+            dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('dragover');
+                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                    handleFilesAdded(e.dataTransfer.files);
+                }
+            });
+        }
 
         // --- 2. 弹窗与多图轮播逻辑 ---
         let currentModalImages = [];

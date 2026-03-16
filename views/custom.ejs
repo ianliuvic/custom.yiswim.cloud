@@ -344,7 +344,70 @@
             .modal-close-abs { top: 15px; right: 15px; background: rgba(255,255,255,0.8); }
             .carousel-btn { width: 36px; height: 36px; font-size: 14px; }
         }
+
+        /* =========================================================
+           轻定制弹窗 - 附件上传列表样式
+           ========================================================= */
+        /* 拖拽悬浮状态 */
+        .premium-upload-row.dragover {
+            border-color: var(--primary-color);
+            background: #fffafb;
+            transform: scale(1.01);
+        }
     
+        /* 文件列表容器 */
+        .file-list-container {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    
+        /* 单个文件项 */
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 15px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .file-item:hover { background: #f1f5f9; border-color: #cbd5e1; }
+    
+        /* 文件信息区 */
+        .file-info { display: flex; align-items: center; gap: 12px; overflow: hidden; }
+        
+        /* 模拟文件类型图标 */
+        .file-icon {
+            width: 32px; height: 32px; min-width: 32px;
+            border-radius: 6px; background: #e2e8f0; color: #64748b;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: bold; text-transform: uppercase;
+        }
+        /* 针对不同类型给点颜色区分 */
+        .file-icon.img { background: #e0e7ff; color: #4f46e5; }
+        .file-icon.pdf { background: #fee2e2; color: #ef4444; }
+        .file-icon.ai { background: #fef08a; color: #ca8a04; }
+    
+        .file-details { display: flex; flex-direction: column; overflow: hidden; }
+        .file-name {
+            font-size: 13px; color: #334155; font-weight: 500;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 300px;
+        }
+        .file-size { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+    
+        /* 删除按钮 */
+        .file-remove {
+            background: none; border: none; color: #94a3b8; cursor: pointer;
+            padding: 5px; border-radius: 4px; display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .file-remove:hover { background: #fee2e2; color: #ef4444; }
+
         /* =========================================================
            5. 面料配置台 (Fabric Configurator)
            ========================================================= */
@@ -856,12 +919,15 @@
                 <div class="premium-upload-row" onclick="document.getElementById('customFile').click()">
                     <div class="upload-label-group">
                         <span class="upload-label-main">📎 上传参考图或工艺单</span>
-                        <span class="upload-label-sub">支持格式：JPG, PNG, PDF (Max 20MB)</span>
+                        <span class="upload-label-sub">Max 20MB</span>
                     </div>
                     <!-- 隐藏原始 input，保留 JS 逻辑 -->
                     <input type="file" id="customFile" multiple class="hidden"> 
                     <button type="button" style="background:#fff; border:1px solid #e2e8f0; color:#64748b; padding: 6px 16px; font-size:12px; pointer-events:none;">选择文件</button>
                 </div>
+
+                <!-- 【新增】文件列表容器，用于动态插入文件项 -->
+                <div id="customFileList" class="file-list-container"></div>
 
                 <div class="modal-footer">
                     <button type="button" class="btn-outline" onclick="closeCustomModal()">取消</button>
@@ -1011,56 +1077,60 @@
             currentEditingStyle = name;
         }
 
-        // 全局对象，用于存储每个 ODM 款式的轻定制数据
-        let odmCustomData = {};
+        // ==========================================
+        // 轻定制 (Custom Modal) 核心逻辑及文件上传
+        // ==========================================
+        let odmCustomData = {}; // 全局存储每个款式的定制数据 { remark: string, files: Array<File> }
         let currentEditingStyle = '';
+        let currentModalFiles = []; // 临时存储当前弹窗正在编辑的文件数组
+
+        const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
 
         // 1. 打开定制弹窗
         function openCustomModal(styleName, cardEl) {
-            // 自动选中该卡片
-            selectOdmStyle(styleName, cardEl);
+            selectOdmStyle(styleName, cardEl); // 自动选中该卡片
             
             currentEditingStyle = styleName;
             document.getElementById('customModalTarget').innerText = `(${styleName})`;
             
-            // 回显已有的数据（如果之前填过）
-            const existingData = odmCustomData[styleName] || { remark: '' };
+            // 数据回显：读取之前保存的备注和文件
+            const existingData = odmCustomData[styleName] || { remark: '', files: [] };
             document.getElementById('customRemark').value = existingData.remark;
-            // 注意：出于安全限制，input[type="file"] 的值无法通过 JS 回显，但可以通过 UI 提示用户已上传过文件。
+            
+            // 将保存的文件克隆到临时数组，渲染列表
+            currentModalFiles = [...existingData.files];
+            renderFileList();
             
             document.getElementById('customModal').classList.add('active');
         }
 
-        // 2. 关闭定制弹窗
+        // 2. 关闭定制弹窗 (不保存更改)
         function closeCustomModal() {
             document.getElementById('customModal').classList.remove('active');
+            currentModalFiles = []; // 清空临时数组
         }
 
         // 3. 保存定制内容并更新标识
         function saveCustomization() {
             const remark = document.getElementById('customRemark').value.trim();
-            const fileInput = document.getElementById('customFile');
-            const hasFile = fileInput.files.length > 0;
+            const hasFile = currentModalFiles.length > 0;
 
-            // 保存到全局对象
+            // 将文本和文件数组存入全局对象
             odmCustomData[currentEditingStyle] = {
                 remark: remark,
-                hasFile: hasFile
-                // 实际提交表单时，你需要从 fileInput 中读取文件并用 FormData 上传
+                files: [...currentModalFiles] // 保存真正的 File 对象数组
             };
 
-            // 获取该卡片的标识节点
+            // 更新卡片上的 UI 标识
             const safeId = currentEditingStyle.replace(/\s+/g, '-');
             const badgeEl = document.getElementById(`badge-${safeId}`);
-
-            // 如果用户填了字或传了图，就显示标识；否则隐藏标识
             if (remark !== '' || hasFile) {
                 badgeEl.classList.add('active');
             } else {
                 badgeEl.classList.remove('active');
             }
 
-            // 更新右侧汇总侧边栏 (可选增强体验)
+            // 更新右侧侧边栏汇总
             const sumStyleEl = document.getElementById('sum-style');
             if (remark !== '' || hasFile) {
                 sumStyleEl.innerHTML = `${currentEditingStyle} <span style="color:var(--primary-color); font-size:11px;">(含定制修改)</span>`;
@@ -1070,6 +1140,106 @@
 
             closeCustomModal();
         }
+
+        // --- 附件上传核心逻辑 ---
+
+        // 格式化文件大小
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024, sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // 获取文件后缀类型用于展示不同颜色的图标
+        function getFileExt(filename) {
+            return filename.split('.').pop().toLowerCase();
+        }
+
+        // 渲染文件列表 UI
+        function renderFileList() {
+            const listContainer = document.getElementById('customFileList');
+            listContainer.innerHTML = ''; // 清空旧列表
+
+            currentModalFiles.forEach((file, index) => {
+                const ext = getFileExt(file.name);
+                let iconClass = '';
+                if (['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext)) iconClass = 'img';
+                else if (ext === 'pdf') iconClass = 'pdf';
+                else if (['ai', 'eps'].includes(ext)) iconClass = 'ai';
+
+                const html = `
+                    <div class="file-item">
+                        <div class="file-info">
+                            <div class="file-icon ${iconClass}">${ext.substring(0, 3)}</div>
+                            <div class="file-details">
+                                <span class="file-name" title="${file.name}">${file.name}</span>
+                                <span class="file-size">${formatBytes(file.size)}</span>
+                            </div>
+                        </div>
+                        <button class="file-remove" onclick="removeModalFile(${index})" title="移除文件">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+                `;
+                listContainer.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        // 删除单个文件
+        function removeModalFile(index) {
+            currentModalFiles.splice(index, 1);
+            renderFileList();
+        }
+
+        // 统一处理新加入的文件 (检查大小并合并)
+        function handleFilesAdded(files) {
+            const newFiles = Array.from(files);
+            let alertMsg = '';
+
+            newFiles.forEach(file => {
+                // 1. 检查大小
+                if (file.size > MAX_FILE_SIZE) {
+                    alertMsg += `文件 "${file.name}" 超过20MB限制，已被忽略。\n`;
+                    return;
+                }
+                // 2. 避免同名文件重复添加 (简单的业务校验)
+                const isDuplicate = currentModalFiles.some(existing => existing.name === file.name && existing.size === file.size);
+                if (!isDuplicate) {
+                    currentModalFiles.push(file);
+                }
+            });
+
+            if (alertMsg) alert(alertMsg);
+            renderFileList();
+        }
+
+        // --- 绑定事件：点击选择文件 ---
+        document.getElementById('customFile').addEventListener('change', function(e) {
+            handleFilesAdded(e.target.files);
+            this.value = ''; // 清空 input 的值，确保下次选同一个文件依然能触发 change 事件
+        });
+
+        // --- 绑定事件：拖拽文件 ---
+        const dropzone = document.getElementById('customDropzone');
+        
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault(); // 必须阻止默认行为，否则无法触发 drop
+            dropzone.classList.add('dragover');
+        });
+
+        dropzone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('dragover');
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('dragover');
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                handleFilesAdded(e.dataTransfer.files);
+            }
+        });
 
         // --- 2. 弹窗与多图轮播逻辑 ---
         let currentModalImages = [];

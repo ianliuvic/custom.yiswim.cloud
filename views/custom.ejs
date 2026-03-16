@@ -639,8 +639,26 @@
                 const gridContainer = document.getElementById(`grid-${catId}`);
 
                 catStyles.forEach(style => {
-                    // 【关键修复】：只取图片数组里的第 0 项作为外部卡片的封面图片
-                    const coverImg = (style.image_urls && style.image_urls.length > 0) ? style.image_urls[0] : '/images/default-bag.jpg';
+                    // 【新增：根据规则对图片数组进行排序】
+                    if (style.image_urls && style.image_urls.length > 0) {
+                        style.image_urls.sort((a, b) => {
+                            // 1. 取出URL最后的文件名部分 (通过 .pop())
+                            // 2. 用正则 /_\d+\.\w+$/ 匹配并去掉最后的 "_数字.后缀" (例如 _1.webp)
+                            const keyA = a.split('/').pop().replace(/_\d+\.\w+$/, '');
+                            const keyB = b.split('/').pop().replace(/_\d+\.\w+$/, '');
+                            
+                            // 3. 根据剩下的字符串进行字母/数字顺序对比
+                            if (keyA === keyB) {
+                                // 如果剩下的部分完全一样，则回退到用完整的原链接对比，保证排序稳定性
+                                return a.localeCompare(b);
+                            }
+                            return keyA.localeCompare(keyB);
+                        });
+                    }
+
+                    // 排序完成后，原数组的顺序已被改变，此时获取的第 [0] 项就是排序最靠前的封面图
+                    const coverImg = (style.image_urls && style.image_urls.length > 0) ? style.image_urls[0] : '';
+                    // 传入弹窗的 styleJson 也会自动包含已经排好序的图片数组
                     const styleJson = JSON.stringify(style).replace(/"/g, '&quot;');
                     
                     const cardHtml = `

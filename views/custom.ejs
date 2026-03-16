@@ -214,6 +214,36 @@
         .cat-pane.active { display: block; }
         .sub-pane { display: none; animation: fadeIn 0.3s; }
         .sub-pane.active { display: block; }
+
+        /* --- 1. 新增定制按钮 (在详情按钮下方) --- */
+        .customize-btn { 
+            position: absolute; top: 52px; right: 12px; /* 位于 details-btn 下方 */
+            width: 32px; height: 32px; 
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); color: #64748b; 
+            z-index: 5; opacity: 0; visibility: hidden; transform: scale(0.8); transition: all 0.3s ease; 
+        }
+        .option-item:hover .customize-btn, .option-item.selected .customize-btn { opacity: 1; visibility: visible; transform: scale(1); }
+        .customize-btn:hover { background: var(--primary-color); color: #fff; }
+        
+        /* --- 2. 卡片上的定制标识 (默认隐藏) --- */
+        .custom-badge {
+            display: none; /* 有数据时通过 JS 改为 inline-block */
+            font-size: 10px; font-weight: 600; color: var(--primary-color);
+            background: #fff0f0; padding: 2px 6px; border-radius: 12px;
+            margin-left: 6px; vertical-align: middle; letter-spacing: 0.5px;
+        }
+        .custom-badge.active { display: inline-block; animation: fadeIn 0.3s ease; }
+        
+        /* --- 3. 弹窗内的操作按钮 --- */
+        .modal-footer {
+            margin-top: 20px; display: flex; justify-content: flex-end; gap: 12px;
+        }
+        .modal-footer button { padding: 10px 24px; font-size: 13px; }
+        .btn-outline { background: #fff; color: #64748b; border: 1px solid #e2e8f0; }
+        .btn-outline:hover { background: #f8fafc; color: var(--text-main); }
+
     </style>
 
 
@@ -581,6 +611,31 @@
         </div>
     </div>
 
+    <!-- 轻定制弹窗 (Custom Modal) -->
+    <div class="modal-overlay" id="customModal">
+        <div class="modal-content" style="max-width: 540px;">
+            <div class="modal-header">
+                <h3>款式轻定制 <span id="customModalTarget" style="font-size: 13px; font-weight: normal; color: #94a3b8; margin-left: 10px;"></span></h3>
+                <button class="modal-close" onclick="closeCustomModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 13px; color: #64748b; margin-top: 0; margin-bottom: 15px;">请描述您对该款式的版型修改要求，或上传参考图稿。</p>
+                
+                <textarea id="customRemark" placeholder="例如：肩带加宽至2cm、后背改交叉带、罩杯容量加深等..." style="width: 100%; height: 100px; padding: 15px; border: 1px solid #e2e8f0; border-radius: 8px; font-family: inherit; font-size: 13px; box-sizing: border-box; resize: vertical; margin-bottom: 20px; transition: border 0.3s;"></textarea>
+                
+                <div class="premium-upload-box" style="padding: 25px 20px;">
+                    <p style="margin: 0 0 8px; font-size: 13px; color: var(--text-main); font-weight: 500;">📎 上传参考图或工艺单</p>
+                    <input type="file" id="customFile" multiple class="custom-file-input">
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-outline" onclick="closeCustomModal()">取消</button>
+                    <button type="button" id="saveCustomBtn" onclick="saveCustomization()">保存定制需求</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- 脚本逻辑 -->
     <script>
         // --- 0. 页面加载与数据拉取 ---
@@ -659,14 +714,23 @@
                     const styleJson = JSON.stringify(style).replace(/"/g, '&quot;');
                     
                     const cardHtml = `
-                        <div class="option-item style-item" onclick="selectOdmStyle('${style.name}', this)">
-                            <div class="details-btn" onclick="event.stopPropagation(); openDetailModal(${styleJson})" title="查看多图详情">
+                        <!-- 卡片需加一个特定 ID 方便后续挂载标识 -->
+                        <div class="option-item style-item" id="card-${style.name.replace(/\s+/g, '-')}" onclick="selectOdmStyle('${style.name}', this)">
+                            
+                            <!-- 1. 原有的放大镜按钮 -->
+                            <div class="details-btn" onclick="event.stopPropagation(); openDetailModal(${styleJson})" title="查看图片">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                             </div>
-                            <!-- 这里使用提取出来的 coverImg -->
+                            
+                            <!-- 2. 新增的轻定制按钮 -->
+                            <div class="customize-btn" onclick="event.stopPropagation(); openCustomModal('${style.name}', this.closest('.option-item'))" title="版型轻定制">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                            </div>
+
                             <img src="${coverImg}" class="option-img" loading="lazy">
                             <div class="option-info">
-                                <h4>${style.name}</h4>
+                                <!-- 3. 标题旁预留定制标识 -->
+                                <h4>${style.name} <span class="custom-badge" id="badge-${style.name.replace(/\s+/g, '-')}">✨ 已定制</span></h4>
                                 <p style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${style.description || '精选款式'}</p>
                             </div>
                         </div>
@@ -689,6 +753,66 @@
             document.getElementById('sum-style').innerText = name;
             document.querySelectorAll('.style-item').forEach(item => item.classList.remove('selected'));
             el.classList.add('selected');
+        }
+
+        // 全局对象，用于存储每个 ODM 款式的轻定制数据
+        let odmCustomData = {};
+        let currentEditingStyle = '';
+
+        // 1. 打开定制弹窗
+        function openCustomModal(styleName, cardEl) {
+            // 自动选中该卡片
+            selectOdmStyle(styleName, cardEl);
+            
+            currentEditingStyle = styleName;
+            document.getElementById('customModalTarget').innerText = `(${styleName})`;
+            
+            // 回显已有的数据（如果之前填过）
+            const existingData = odmCustomData[styleName] || { remark: '' };
+            document.getElementById('customRemark').value = existingData.remark;
+            // 注意：出于安全限制，input[type="file"] 的值无法通过 JS 回显，但可以通过 UI 提示用户已上传过文件。
+            
+            document.getElementById('customModal').classList.add('active');
+        }
+
+        // 2. 关闭定制弹窗
+        function closeCustomModal() {
+            document.getElementById('customModal').classList.remove('active');
+        }
+
+        // 3. 保存定制内容并更新标识
+        function saveCustomization() {
+            const remark = document.getElementById('customRemark').value.trim();
+            const fileInput = document.getElementById('customFile');
+            const hasFile = fileInput.files.length > 0;
+
+            // 保存到全局对象
+            odmCustomData[currentEditingStyle] = {
+                remark: remark,
+                hasFile: hasFile
+                // 实际提交表单时，你需要从 fileInput 中读取文件并用 FormData 上传
+            };
+
+            // 获取该卡片的标识节点
+            const safeId = currentEditingStyle.replace(/\s+/g, '-');
+            const badgeEl = document.getElementById(`badge-${safeId}`);
+
+            // 如果用户填了字或传了图，就显示标识；否则隐藏标识
+            if (remark !== '' || hasFile) {
+                badgeEl.classList.add('active');
+            } else {
+                badgeEl.classList.remove('active');
+            }
+
+            // 更新右侧汇总侧边栏 (可选增强体验)
+            const sumStyleEl = document.getElementById('sum-style');
+            if (remark !== '' || hasFile) {
+                sumStyleEl.innerHTML = `${currentEditingStyle} <span style="color:var(--primary-color); font-size:11px;">(含定制修改)</span>`;
+            } else {
+                sumStyleEl.innerText = currentEditingStyle;
+            }
+
+            closeCustomModal();
         }
 
         // --- 2. 弹窗与多图轮播逻辑 ---

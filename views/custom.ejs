@@ -119,7 +119,12 @@
             cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); color: #64748b; 
             z-index: 5; opacity: 0; visibility: hidden; transform: scale(0.8); transition: all 0.3s ease; 
         }
-        .option-item:hover .details-btn { opacity: 1; visibility: visible; transform: scale(1); }
+        .option-item:hover .details-btn,
+            .option-item.selected .details-btn { 
+                opacity: 1; 
+                visibility: visible; 
+                transform: scale(1); 
+            }
         .details-btn:hover { background: var(--primary-color); color: #fff; }
     
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; backdrop-filter: blur(4px); }

@@ -693,6 +693,10 @@
 
                 // 将对应分类的款式放入容器
                 const catStyles = styles.filter(s => s.category === cat);
+                catStyles.sort((a, b) => {
+                            return a.name.localeCompare(b.name, 'zh-CN', { numeric: true });
+                        });
+
                 const gridContainer = document.getElementById(`grid-${catId}`);
 
                 catStyles.forEach(style => {

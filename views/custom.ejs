@@ -488,7 +488,7 @@
                         
                             <div class="oem-upload-section" style="margin-bottom: 25px;">
                                 <h4 class="oem-title">3. 补充说明 (Design Remarks)</h4>
-                                <textarea id="oem-remark" class="oem-textarea" style="height: 100px;" placeholder="请详细描述您的修改要求或特定工艺要求..." spellcheck="false"></textarea>
+                                <textarea id="oem-remark" class="oem-textarea" style="height: 100px;" placeholder="请详细描述您的修改要求或特定工艺要求..." spellcheck="false" oninput="updateCombinedStyleSummary()"></textarea>
                             </div>
                         
                             <div style="background: #fff; border-radius: 12px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px;">
@@ -1039,25 +1039,44 @@
                     if (el) el.classList.add('selected');
                 }
             }
-            updateOdmSummary();
+            updateCombinedStyleSummary();
         }
 
-        function updateOdmSummary() {
+        // --- 新增函数，替换掉旧的 updateOdmSummary ---
+        function updateCombinedStyleSummary() {
             const sumStyleEl = document.getElementById('sum-style');
-            if (selectedOdmStyles.length === 0) {
-                sumStyleEl.innerText = '未选择';
-                return;
+            let html = '';
+        
+            // 1. 处理 ODM 部分
+            if (selectedOdmStyles.length > 0) {
+                html += `<div style="margin-bottom:8px;"><strong>ODM款式 (${selectedOdmStyles.length}):</strong><br>`;
+                html += selectedOdmStyles.map(name => {
+                    const custom = odmCustomData[name];
+                    const hasCustom = custom && (custom.remark !== '' || custom.files.length > 0);
+                    return `<span style="font-size: 11px; color: #64748b; display: block;">- ${name}${hasCustom ? ' <span style="color:var(--primary-color)">(已定制)</span>' : ''}</span>`;
+                }).join('');
+                html += `</div>`;
             }
-            
-            let html = `<div style="text-align: right;">已选 <strong style="color:var(--primary-color); font-size:15px;">${selectedOdmStyles.length}</strong> 款<br>`;
-            const namesHtml = selectedOdmStyles.map(name => {
-                const custom = odmCustomData[name];
-                const hasCustom = custom && (custom.remark !== '' || custom.files.length > 0);
-                return `<span style="font-size: 11.5px; color: #64748b; display: block; margin-top: 5px;">- ${name} ${hasCustom ? '<span style="color:var(--primary-color); font-weight:600;">(含定制)</span>' : ''}</span>`;
-            }).join('');
-            html += namesHtml + '</div>';
-            
-            sumStyleEl.innerHTML = html;
+        
+            // 2. 处理 OEM 部分 (判断是否有文件或备注)
+            const hasOemFiles = oemFilesData.tech.length > 0 || oemFilesData.ref.length > 0;
+            const oemRemark = document.getElementById('oem-remark').value.trim();
+            if (hasOemFiles || oemRemark !== '') {
+                html += `<div style="border-top: 1px dashed #e2e8f0; padding-top: 8px;">`;
+                html += `<strong style="color:var(--primary-color);">OEM 自主设计包:</strong><br>`;
+                if (hasOemFiles) {
+                    html += `<span style="font-size: 11px; color: #64748b;">已上传: ${oemFilesData.ref.length}参考图 / ${oemFilesData.tech.length}工艺单</span>`;
+                } else {
+                    html += `<span style="font-size: 11px; color: #64748b;">(仅文字说明)</span>`;
+                }
+                html += `</div>`;
+            }
+        
+            if (html === '') {
+                sumStyleEl.innerText = '未选择';
+            } else {
+                sumStyleEl.innerHTML = `<div style="text-align: right; line-height: 1.4;">${html}</div>`;
+            }
         }
 
         // ==========================================
@@ -1088,7 +1107,7 @@
             const badgeEl = document.getElementById(`badge-${safeId}`);
             if (badgeEl) badgeEl.classList.toggle('active', remark !== '' || hasFile);
             
-            updateOdmSummary(); 
+            updateCombinedStyleSummary(); 
             closeCustomModal();
         }
 
@@ -1165,6 +1184,7 @@
                 }
             });
             input.value = ''; 
+            updateCombinedStyleSummary();
         }
 
         function addOemPreviewItem(type, src, fileName, index, isImage, ext = '') {
@@ -1194,6 +1214,7 @@
                     reader.readAsDataURL(file);
                 } else { addOemPreviewItem(type, null, file.name, idx, false, file.name.split('.').pop().toUpperCase()); }
             });
+            updateCombinedStyleSummary();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -1209,18 +1230,18 @@
             });
         });
 
+        // --- 修改后 ---
         function toggleStyleMode(mode) {
             const list = document.getElementById('existing-styles'), upload = document.getElementById('custom-upload');
             const odmBtn = document.getElementById('mode-odm'), oemBtn = document.getElementById('mode-oem');
             if(mode === 'existing') {
                 list.classList.remove('hidden'); upload.classList.add('hidden');
                 odmBtn.classList.add('active'); oemBtn.classList.remove('active');
-                updateOdmSummary(); 
             } else {
                 list.classList.add('hidden'); upload.classList.remove('hidden');
                 oemBtn.classList.add('active'); odmBtn.classList.remove('active');
-                document.getElementById('sum-style').innerText = 'OEM 自定义开发';
             }
+            updateCombinedStyleSummary(); // 统一调用新的汇总函数
         }
 
         // ==========================================

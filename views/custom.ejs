@@ -491,26 +491,31 @@
                             </div>
                         
                             <!-- 3. 底部功能栏 -->
-                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; background: #fff; border: 1px solid #f1f5f9; border-radius: 12px;">
-                                <div style="display: flex; gap: 20px;">
-                                    <label class="oem-checkbox-label">
-                                        <input type="checkbox" id="oem-physical" onchange="togglePhysicalInfo(this.checked)"> 需寄送样衣
-                                    </label>
-                                    <label class="oem-checkbox-label">
-                                        <input type="checkbox" id="oem-nda" checked> NDA 设计保护
-                                    </label>
-                                </div>
-                                
-                                <div id="oem-address-info" class="hidden" style="display: flex; align-items: center; gap: 10px; font-size: 12px; color: #64748b;">
-                                    <span>📍 寄至东莞定制中心，单号：</span>
-                                    <input type="text" class="oem-input-mini" style="width: 150px; background: #f8fafc;" placeholder="填写单号">
-                                </div>
-                        
-                                <div style="display: flex; align-items: center; gap: 6px; color: #16a34a; font-size: 11px; font-weight: 500;">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                                    加密传输中
-                                </div>
+                            <div style="padding: 15px 20px; background: #fff; border: 1px solid #f1f5f9; border-radius: 12px; display: flex; flex-direction: column; gap: 12px;">
+    
+                            <!-- 第1行：Checkbox -->
+                            <div>
+                                <label class="oem-checkbox-label" style="margin: 0; padding: 0;">
+                                    <input type="checkbox" id="oem-physical" onchange="togglePhysicalInfo(this.checked)"> 需寄送样衣
+                                </label>
                             </div>
+                            
+                            <!-- 第2行：展开的地址信息区 (在其下方，勾选后显示) -->
+                            <div id="oem-address-info" class="hidden" style="background: #f8fafc; padding: 12px 15px; border-radius: 8px; border: 1px dashed #cbd5e1; display: flex; align-items: center; gap: 10px; font-size: 12px; color: #64748b; transition: all 0.3s;">
+                                <span>📍 寄至东莞定制中心，物流单号：</span>
+                                <input type="text" class="oem-input-mini" style="width: 200px; background: #fff;" placeholder="填写单号">
+                            </div>
+                        
+                            <!-- 分割线 -->
+                            <div style="height: 1px; background: #f1f5f9; margin: 2px 0;"></div>
+                        
+                            <!-- 第3行：加密传输区域 (放在最下面) -->
+                            <div style="display: flex; align-items: center; gap: 6px; color: #16a34a; font-size: 11px; font-weight: 500;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                数据端到端加密传输中
+                            </div>
+                            
+                        </div>
                         </div>
                     </div>
 
@@ -1287,7 +1292,7 @@
             oemFilesData = { tech: [], ref: [] };
             document.getElementById('oemRefPreview').innerHTML = ''; document.getElementById('oemTechPreview').innerHTML = '';
             document.getElementById('oem-remark').value = '';
-            document.getElementById('oem-physical').checked = false; togglePhysicalInfo(false); document.getElementById('oem-nda').checked = true;
+            document.getElementById('oem-physical').checked = false; togglePhysicalInfo(false);
             const oemAddr = document.querySelector('#oem-address-info input'); if(oemAddr) oemAddr.value = '';
 
             // 2. 重置面料

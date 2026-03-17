@@ -1201,7 +1201,7 @@
 
         function addOemPreviewItem(type, src, fileName, index, isImage, ext = '') {
             const grid = document.getElementById(`oem${type.charAt(0).toUpperCase() + type.slice(1)}Preview`);
-            const previewContent = isImage ? `<img src="${src}" alt="预览">` : `
+            const previewContent = isImage ? `<img src="${src}" alt="预览" style="cursor: zoom-in;" data-name="${fileName}" onclick="openOemPreview(this.src, this.getAttribute('data-name'))">` : `
                 <div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#f1f5f9; color:#64748b;">
                     <span style="font-size:10px; font-weight:800; margin-bottom:2px;">${ext}</span>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
@@ -1213,6 +1213,29 @@
                     <button type="button" class="oem-preview-remove" onclick="removeOemFile('${type}', ${index})">&times;</button>
                 </div>
             `);
+        }
+
+        // --- 新增函数 ---
+        function openOemPreview(clickedSrc, fileName) {
+            // 1. 抓取当前已上传的所有 OEM 图片，形成画廊，支持左右滑动
+            const allImgs = document.querySelectorAll('.oem-preview-item img');
+            const imageUrls = Array.from(allImgs).map(img => img.src);
+            
+            // 2. 找到当前点击的图片在画廊中的索引
+            const startIndex = imageUrls.indexOf(clickedSrc);
+            
+            // 3. 复用现有的产品详情弹窗
+            openDetailModal({
+                name: 'OEM 附件预览',
+                image_urls: imageUrls,
+                description: `当前查看文件：<strong style="color:var(--primary-color);">${fileName || '未知文件'}</strong><br>您可以在此预览所有已上传的 OEM 图片附件。`
+            });
+            
+            // 4. 覆盖默认的索引(默认是0)，让轮播图直接定位到点击的这张图
+            if (startIndex !== -1) {
+                currentImageIndex = startIndex;
+                renderModalCarousel(); 
+            }
         }
 
         function removeOemFile(type, index) {

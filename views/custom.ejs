@@ -275,7 +275,7 @@
         /* =========================================================
            6. 切换器与导航
            ========================================================= */
-        .mode-switcher { display: inline-flex; background: #f1f5f9; padding: 4px; border-radius: 8px; margin-bottom: 30px; }
+        .mode-switcher { display: inline-flex; background: #f1f5f9; padding: 4px; border-radius: 8px; }
         .mode-option { padding: 8px 24px; font-size: 13px; font-weight: 500; color: #64748b; cursor: pointer; border-radius: 6px; transition: all 0.25s ease; }
         .mode-option.active { background: #fff; color: var(--primary-color); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .category-nav { display: flex; gap: 35px; margin-bottom: 30px; border-bottom: 1px solid #f1f5f9; padding-bottom: 2px; overflow-x: auto; }
@@ -439,9 +439,19 @@
                     <div class="step-content" id="step-1">
                         <div class="step-desc">请选择定制模式：从现有库中挑选 (ODM) 或 上传自主设计包 (OEM)。</div>
                         
-                        <div class="mode-switcher">
-                            <div class="mode-option active" id="mode-odm" onclick="toggleStyleMode('existing')">现有款式 (ODM)</div>
-                            <div class="mode-option" id="mode-oem" onclick="toggleStyleMode('custom')">自主设计 (OEM)</div>
+                        <!-- --- 修改后 --- -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px;">
+                            <div class="mode-switcher" style="margin-bottom: 0;"> <!-- 移除原有 margin-bottom -->
+                                <div class="mode-option active" id="mode-odm" onclick="toggleStyleMode('existing')">现有款式 (ODM)</div>
+                                <div class="mode-option" id="mode-oem" onclick="toggleStyleMode('custom')">自主设计 (OEM)</div>
+                            </div>
+                            
+                            <button type="button" class="clear-all-btn" onclick="clearCurrentMode()" title="仅清空当前模式的选择">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;">
+                                    <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                                清空当前选择
+                            </button>
                         </div>
 
                         <!-- 动态生成的 ODM 区域 -->
@@ -1468,6 +1478,40 @@
         // 6. 全局数据重置与清理
         // ==========================================
         function updateSummaryVolume(text) { document.getElementById('sum-volume').innerText = text; }
+
+        // --- 新增函数 ---
+        function clearCurrentMode() {
+            const isOdmActive = document.getElementById('mode-odm').classList.contains('active');
+            
+            if (isOdmActive) {
+                // 仅清除 ODM 逻辑
+                if (selectedOdmStyles.length === 0) return;
+                if (!confirm('确定要清空所有已选的 ODM 款式及轻定制要求吗？')) return;
+                
+                selectedOdmStyles = [];
+                odmCustomData = {};
+                document.querySelectorAll('.style-item').forEach(item => item.classList.remove('selected'));
+                document.querySelectorAll('.custom-badge').forEach(badge => badge.classList.remove('active'));
+                
+            } else {
+                // 仅清除 OEM 逻辑
+                const hasOemData = oemFilesData.tech.length > 0 || oemFilesData.ref.length > 0 || document.getElementById('oem-remark').value.trim() !== '' || document.getElementById('oem-physical').checked;
+                if (!hasOemData) return;
+                if (!confirm('确定要清空当前的 OEM 设计包（含上传文件与备注）吗？')) return;
+                
+                oemFilesData = { tech: [], ref: [] };
+                document.getElementById('oemRefPreview').innerHTML = '';
+                document.getElementById('oemTechPreview').innerHTML = '';
+                document.getElementById('oem-remark').value = '';
+                document.getElementById('oem-physical').checked = false;
+                togglePhysicalInfo(false);
+                const addrInput = document.querySelector('#oem-address-info input');
+                if (addrInput) addrInput.value = '';
+            }
+            
+            // 同步更新右侧汇总
+            updateCombinedStyleSummary();
+        }
 
         function clearAllSelections() {
             if (!confirm('确定要清空所有已选配置并重头开始吗？')) return;

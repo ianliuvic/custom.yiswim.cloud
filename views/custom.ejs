@@ -508,12 +508,12 @@
                                 
                             </div>
                             
-                            <!-- 5. 独立在外部的加密传输提示 -->
-                            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 6px; color: #16a34a; font-size: 11px; font-weight: 500; padding-right: 5px;">
+                            <!-- 5. 独立在外部的NDA提示 -->
+                            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 6px; color: #64748b; font-size: 12px; font-weight: 500; padding-right: 5px; cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='#64748b'" onclick="openNdaModal()">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                                 </svg>
-                                数据端到端加密传输中
+                                <span>所有设计均受 <span style="text-decoration: underline; text-underline-offset: 3px;">保密协议 (NDA)</span> 严格保护</span>
                             </div>
                             
                         </div>
@@ -911,6 +911,42 @@
         </div>
     </div>
 
+    <!-- ==========================================
+         保密协议 (NDA) 弹窗
+         ========================================== -->
+    <div class="modal-overlay" id="ndaModal">
+        <div class="modal-content modal-md" style="max-width: 580px; padding: 0;">
+            <div class="custom-modal-header" style="background: #f8fafc;">
+                <h3 style="font-size: 18px; display: flex; align-items: center; gap: 10px;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    商业保密协议 (Non-Disclosure Agreement)
+                </h3>
+                <button class="modal-close-abs" onclick="closeNdaModal()" style="top:22px; right:25px; background: #fff;">&times;</button>
+            </div>
+            <div class="custom-modal-body" style="padding: 35px 40px; max-height: 60vh; overflow-y: auto;">
+                <p style="font-size: 13.5px; color: #475569; line-height: 1.8; margin-top: 0; margin-bottom: 20px;">
+                    <strong>第一条 保密内容与范围</strong><br>
+                    乙方同意对甲方提供的所有设计稿、图纸、样衣、品牌信息、工艺单及尚未公开的商业计划严格保密。未经甲方明确书面许可，绝不向任何第三方（包括且不限于工厂外包商、竞争对手及公众媒体）透露。
+                </p>
+                <p style="font-size: 13.5px; color: #475569; line-height: 1.8; margin-bottom: 20px;">
+                    <strong>第二条 知识产权归属</strong><br>
+                    甲方上传的所有设计资料及产生的衍生版型，其全部知识产权及商业版权均完全归甲方所有。乙方仅将上述资料用于甲方指定的产品打样及大货生产环节。
+                </p>
+                <p style="font-size: 13.5px; color: #475569; line-height: 1.8; margin-bottom: 20px;">
+                    <strong>第三条 数据销毁与违约责任</strong><br>
+                    若双方合作终止，乙方有义务应甲方要求彻底销毁系统内的相关设计数据。如乙方违反上述保密约定，需全额赔偿由此给甲方造成的一切直接商业损失及法务成本。
+                </p>
+                <div style="background: #fbfcfd; padding: 15px; border-radius: 8px; border: 1px dashed #cbd5e1; font-size: 12px; color: #94a3b8; margin-top: 30px; line-height: 1.6;">
+                    * 声明：在您点击“提交定制需求”时，即代表双方自动缔结并生效上述保密条款。<br>
+                    * 后续进入大货生产环节前，可根据您的企业合规要求，另行签署具有实体法律效力的纸质版/电子签章版 NDA 协议。
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 20px 40px 30px; margin-top: 0; border-top: none;">
+                <button type="button" style="background:var(--primary-color); color:#fff; border:none; width: 100%; padding: 14px; font-size: 15px; box-shadow: 0 4px 12px rgba(170, 0, 0, 0.15);" onclick="closeNdaModal()">我已了解</button>
+            </div>
+        </div>
+    </div>
+
     <!-- =========================================================================
          核心 JavaScript 逻辑 (已去重、整合并优化)
          ========================================================================= -->
@@ -1153,6 +1189,14 @@
                 document.getElementById('sum-style').innerText = 'OEM 自定义开发';
             }
         }
+
+        // ==========================================
+        // 保密协议 (NDA) 弹窗逻辑
+        // ==========================================
+        function openNdaModal() { document.getElementById('ndaModal').classList.add('active'); }
+        function closeNdaModal() { document.getElementById('ndaModal').classList.remove('active'); }
+        document.getElementById('ndaModal').addEventListener('click', function(e) { if(e.target === this) closeNdaModal(); });
+
 
         // ==========================================
         // 4. 多图轮播弹窗

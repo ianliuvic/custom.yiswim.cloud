@@ -547,6 +547,74 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* =========================================================
+           10. 商业需求评估卡片样式 (Step 5)
+           ========================================================= */
+        .profile-section { margin-bottom: 35px; }
+        .profile-title { 
+            font-size: 14px; font-weight: 700; color: var(--text-main); 
+            margin: 0 0 15px; display: flex; align-items: center; gap: 6px; 
+            letter-spacing: 0.3px;
+        }
+        .profile-title .required { color: #ef4444; font-weight: normal; }
+        .profile-title .optional { color: #94a3b8; font-size: 12px; font-weight: normal; }
+        
+        /* 网格与点选卡片 */
+        .radio-card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .radio-card-grid.grid-4 { grid-template-columns: repeat(4, 1fr); }
+        
+        .radio-card { display: block; cursor: pointer; height: 100%; }
+        .radio-card input { display: none; }
+        .radio-card .card-content { 
+            border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px 16px; 
+            background: #fff; transition: all 0.25s ease; height: 100%; box-sizing: border-box;
+            position: relative; overflow: hidden;
+        }
+        .radio-card:hover .card-content { border-color: #cbd5e1; background: #f8fafc; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+        
+        /* 选中状态 */
+        .radio-card input:checked + .card-content { 
+            border-color: var(--primary-color); 
+            background: #fffafb; 
+            box-shadow: 0 0 0 1px var(--primary-color), 0 4px 12px rgba(170, 0, 0, 0.08); 
+            transform: translateY(-2px);
+        }
+        
+        /* 选中时的右上角小勾 (可选装饰) */
+        .radio-card input:checked + .card-content::after {
+            content: '✓'; position: absolute; top: 10px; right: 12px;
+            color: var(--primary-color); font-size: 14px; font-weight: bold;
+        }
+
+        .radio-card .card-content h5 { margin: 0 0 6px; font-size: 14px; color: var(--text-main); font-weight: 600; }
+        .radio-card .card-content p { margin: 0; font-size: 12px; color: var(--text-light); line-height: 1.5; }
+        .radio-card input:checked + .card-content h5 { color: var(--primary-color); }
+        
+        /* 表单输入组 */
+        .flex-row { display: flex; gap: 30px; }
+        .flex-half { flex: 1; }
+        
+        .input-group { display: flex; flex-direction: column; gap: 15px; }
+        .input-group input, .input-group select, #final_remark {
+            width: 100%; padding: 12px 14px; border: 1px solid #e2e8f0; border-radius: 8px;
+            font-family: inherit; font-size: 13px; color: var(--text-main); 
+            box-sizing: border-box; transition: all 0.3s ease; background: #fdfdfd;
+        }
+        .input-group input:focus, .input-group select:focus, #final_remark:focus {
+            outline: none; border-color: var(--primary-color); background: #fff;
+            box-shadow: 0 0 0 3px rgba(170, 0, 0, 0.05);
+        }
+        #final_remark { height: 120px; resize: vertical; }
+
+        /* 移动端适配 */
+        @media (max-width: 900px) {
+            .radio-card-grid, .radio-card-grid.grid-4 { grid-template-columns: 1fr 1fr; }
+            .flex-row { flex-direction: column; gap: 20px; }
+        }
+        @media (max-width: 600px) {
+            .radio-card-grid, .radio-card-grid.grid-4 { grid-template-columns: 1fr; }
+        }
+
     </style>
 
 
@@ -911,11 +979,109 @@
                     </div>
 
                     <!-- ==========================================
-                         步骤 5: 确认
+                         步骤 5: 商业需求评估 (Project Profile)
                          ========================================== -->
                     <div class="step-content hidden" id="step-5">
-                        <div class="step-desc">请最后核对右侧的需求清单。如有其他特殊说明（如尺码配比、混装要求等），请在下方留言。</div>
-                        <textarea style="width:100%; height:150px; padding:15px; border:1px solid var(--border-color); font-family:inherit; border-radius:4px; box-sizing:border-box;" placeholder="请输入整体订单备注..."></textarea>
+                        <div class="step-desc">
+                            为了给您提供最准确的打样方案与初步报价评估，请大致描绘您的商业规划。具体细节将在样衣确认后最终敲定。
+                        </div>
+
+                        <!-- 1. 项目阶段 -->
+                        <div class="profile-section">
+                            <h4 class="profile-title">A. 当前项目所处阶段 <span class="required">*</span></h4>
+                            <div class="radio-card-grid">
+                                <label class="radio-card">
+                                    <input type="radio" name="project_stage" value="concept" checked>
+                                    <div class="card-content">
+                                        <h5>概念预研</h5>
+                                        <p>仅询价/了解可行性，暂无图纸</p>
+                                    </div>
+                                </label>
+                                <label class="radio-card">
+                                    <input type="radio" name="project_stage" value="planning">
+                                    <div class="card-content">
+                                        <h5>筹备阶段</h5>
+                                        <p>计划 1-2 个月内启动打样</p>
+                                    </div>
+                                </label>
+                                <label class="radio-card">
+                                    <input type="radio" name="project_stage" value="urgent">
+                                    <div class="card-content">
+                                        <h5>紧急落地</h5>
+                                        <p>资料已备齐，需尽快安排头版</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 2. 首单规模 -->
+                        <div class="profile-section">
+                            <h4 class="profile-title">B. 首单规模预估 (单款) <span class="required">*</span></h4>
+                            <div class="radio-card-grid grid-4">
+                                <label class="radio-card">
+                                    <input type="radio" name="est_volume" value="sample_only" checked onchange="updateSummaryVolume('仅开发样衣')">
+                                    <div class="card-content">
+                                        <h5>仅开发样衣</h5>
+                                        <p>暂无大货计划</p>
+                                    </div>
+                                </label>
+                                <label class="radio-card">
+                                    <input type="radio" name="est_volume" value="small_batch" onchange="updateSummaryVolume('试水小单 (100-300)')">
+                                    <div class="card-content">
+                                        <h5>试水小单</h5>
+                                        <p>100 - 300 件</p>
+                                    </div>
+                                </label>
+                                <label class="radio-card">
+                                    <input type="radio" name="est_volume" value="standard" onchange="updateSummaryVolume('常规起订 (300-1000)')">
+                                    <div class="card-content">
+                                        <h5>常规起订</h5>
+                                        <p>300 - 1000 件</p>
+                                    </div>
+                                </label>
+                                <label class="radio-card">
+                                    <input type="radio" name="est_volume" value="bulk" onchange="updateSummaryVolume('深度合作 (1000+)')">
+                                    <div class="card-content">
+                                        <h5>深度合作</h5>
+                                        <p>1000 件以上</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 3. 颜色/尺码 与 市场/预算 (左右两列排版) -->
+                        <div class="profile-section flex-row">
+                            <div class="flex-half">
+                                <h4 class="profile-title">C. 颜色与尺码广度</h4>
+                                <div class="input-group">
+                                    <input type="number" id="plan_colors" placeholder="计划开发几个颜色？ (如: 3)">
+                                    <select id="plan_sizes">
+                                        <option value="">请选择尺码跨度...</option>
+                                        <option value="regular">常规跨度 (如 S-XL, 共4个码)</option>
+                                        <option value="extended">包含大码/特体 (如 XS-3XL, 共7个码)</option>
+                                        <option value="custom">定制特殊尺码配比</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="flex-half">
+                                <h4 class="profile-title">D. 目标市场与预算 <span class="optional">(选填)</span></h4>
+                                <div class="input-group">
+                                    <select id="target_market">
+                                        <option value="">品牌定位 / 目标消费群...</option>
+                                        <option value="mass">大众性价比 (Mass Market)</option>
+                                        <option value="premium">中高端轻奢 (Premium)</option>
+                                        <option value="luxury">顶级高定 (Luxury / Designer)</option>
+                                    </select>
+                                    <input type="text" id="target_price" placeholder="期望出厂价 (Target FOB) 如: $15">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. 补充说明 -->
+                        <div class="profile-section" style="margin-bottom: 0;">
+                            <h4 class="profile-title">E. 补充说明 (Remarks)</h4>
+                            <textarea id="final_remark" placeholder="请输入您的其他特殊要求，如特定的环保认证标准、特殊的独立站发货包装要求等..."></textarea>
+                        </div>
                     </div>
 
                 </form>
@@ -964,6 +1130,9 @@
             </div>
 
             <div class="summary-row"><span class="label">交付方式</span><span class="value" id="sum-shipping">未选择</span></div>
+            <!-- 新增商业规模展示 -->
+            <div class="summary-row" style="margin-top: 20px;"><span class="label">意向规模</span><span class="value" id="sum-volume" style="color:var(--primary-color);">仅开发样衣</span></div>
+
 
             <div style="margin-top: 50px; padding: 20px; background: #fff; border: 1px solid var(--border-color); font-size: 13px; line-height: 1.6;">
                 <strong>注意事项：</strong><br><br>
@@ -1529,6 +1698,29 @@
             container.querySelectorAll('.option-item').forEach(item => item.classList.remove('selected'));
             event.currentTarget.classList.add('selected');
         }
+
+        // Step 5: 更新右侧汇总栏的规模状态
+        function updateSummaryVolume(text) {
+            document.getElementById('sum-volume').innerText = text;
+        }
+
+        // 找到您之前写的 clearAllSelections 函数，将 "5. 重置最终备注" 部分替换为：
+        // 5. 重置商业需求评估 (Step 5)
+        const stageRadio = document.querySelector('input[name="project_stage"][value="concept"]');
+        if (stageRadio) stageRadio.checked = true;
+        
+        const volumeRadio = document.querySelector('input[name="est_volume"][value="sample_only"]');
+        if (volumeRadio) {
+            volumeRadio.checked = true;
+            updateSummaryVolume('仅开发样衣');
+        }
+
+        document.getElementById('plan_colors').value = '';
+        document.getElementById('plan_sizes').value = '';
+        document.getElementById('target_market').value = '';
+        document.getElementById('target_price').value = '';
+        document.getElementById('final_remark').value = '';
+
 
         function toggleStyleMode(mode) {
             const list = document.getElementById('existing-styles');

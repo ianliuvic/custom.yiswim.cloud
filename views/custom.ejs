@@ -976,57 +976,57 @@
          核心 JavaScript 逻辑 (已去重、整合并优化)
          ========================================================================= -->
     <script>
-        // =========================================================================
-        // 1. 全局状态管理 (Global State)
-        // =========================================================================
+        /* =========================================================================
+           1. 全局状态变量 (Global States)
+           ========================================================================= */
         let currentStep = 1;
         const totalSteps = 5;
         const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
-
-        // 款式数据
-        let selectedOdmStyles = [];      // 存储已选 ODM 款式名称
-        let odmCustomData = {};          // 存储 ODM 的轻定制备注和附件 { "款名": {remark:"", files:[]} }
-        let oemFilesData = { tech: [], ref: [] }; // 存储 OEM 的文件对象
-
-        // 面料数据
-        let activeFabricCat = 'main';
+    
+        // 款式定义数据 (Step 1)
+        let selectedOdmStyles = [];      // 已选 ODM 款式名数组
+        let odmCustomData = {};          // ODM 定制备注与文件 { "款名": {remark: "", files: []} }
+        let oemFilesData = { tech: [], ref: [] }; // OEM 上传的文件对象
+        
+        // 面料材质数据 (Step 2)
+        let activeFabricCat = 'main';    // 当前操作 'main' 或 'lining'
         let fabricSelection = { 
             main: { name: '', mode: 'solid', colors: [], remark: '' }, 
             lining: { name: '', mode: 'solid', colors: [], remark: '' } 
         };
-
-        // 辅料与物流数据
+    
+        // 品牌辅料数据 (Step 3)
         let bagConfig = { material: '未选材质', size: '未选尺寸', print: '未选印刷' };
-        
-        // 临时变量 (用于弹窗交互)
-        let currentEditingStyle = ''; 
-        let currentModalFiles = [];
-        let currentModalImages = []; 
-        let currentImageIndex = 0;
-
-        // =========================================================================
-        // 2. 初始化与数据加载
-        // =========================================================================
+    
+        // 弹窗交互临时变量
+        let currentEditingStyle = '';    // 当前正在进行轻定制的款名
+        let currentModalFiles = [];      // 弹窗中临时存储的待保存文件
+        let currentModalImages = [];     // 详情弹窗轮播图数组
+        let currentImageIndex = 0;       // 详情弹窗当前图片索引
+    
+        /* =========================================================================
+           2. 初始化与核心监听 (Lifecycle & Listeners)
+           ========================================================================= */
         document.addEventListener('DOMContentLoaded', async () => {
-            // 初始化数据加载
+            // A. 异步加载款式与包装袋数据
             try {
                 const response = await fetch('/api/get-data');
                 const result = await response.json();
                 if (result.success && result.data) {
-                    if(result.data.bags) renderBags(result.data.bags);
                     if(result.data.odm_styles) renderOdmStyles(result.data.odm_styles);
+                    if(result.data.bags) renderBags(result.data.bags);
                 }
             } catch (error) { 
-                console.error('加载款式数据失败:', error); 
+                console.error('数据初始化失败:', error); 
             }
-
-            // 绑定 OEM 备注实时汇总监听
+    
+            // B. 监听 OEM 备注实时同步到右侧边栏
             const oemRemarkEl = document.getElementById('oem-remark');
             if (oemRemarkEl) {
                 oemRemarkEl.addEventListener('input', updateStylesSummary);
             }
-
-            // 绑定 OEM 拖拽上传监听
+    
+            // C. 绑定 OEM 拖拽上传区域逻辑
             ['Tech', 'Ref'].forEach(type => {
                 const zone = document.getElementById(`oem${type}Dropzone`);
                 if(!zone) return;
@@ -1034,25 +1034,34 @@
                 zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
                 zone.addEventListener('drop', (e) => {
                     e.preventDefault(); zone.classList.remove('dragover');
-                    if(e.dataTransfer.files?.length) handleOemFiles({ files: e.dataTransfer.files }, type.toLowerCase());
+                    if(e.dataTransfer.files?.length) {
+                        handleOemFiles({ files: e.dataTransfer.files }, type.toLowerCase());
+                    }
                 });
             });
+    
+            // D. 监听全局点击关闭弹窗 (点击遮罩层)
+            window.onclick = function(event) {
+                if (event.target.classList.contains('modal-overlay')) {
+                    event.target.classList.remove('active');
+                }
+            };
         });
-
-        // =========================================================================
-        // 3. Step 1: 款式定义逻辑 (ODM + OEM)
-        // =========================================================================
-        
-        // 渲染 ODM 列表
+    
+        /* =========================================================================
+           3. Step 1: 款式定义逻辑 (ODM + OEM)
+           ========================================================================= */
+    
+        // 3.1 渲染 ODM 款式卡片
         function renderOdmStyles(styles) {
             const navContainer = document.getElementById('odm-category-nav');
             const contentContainer = document.getElementById('odm-content-container');
             if (!styles || styles.length === 0) return;
-
+    
             const categories = [...new Set(styles.map(s => s.category).filter(Boolean))];
             navContainer.innerHTML = ''; 
             contentContainer.innerHTML = '';
-
+    
             categories.forEach((cat, index) => {
                 const isActive = index === 0 ? 'active' : '';
                 const catId = `cat-${cat.replace(/\s+/g, '-')}`;
@@ -1078,22 +1087,22 @@
                             <img src="${coverImg}" class="option-img" loading="lazy">
                             <div class="option-info">
                                 <h4>${style.name} <span class="custom-badge" id="badge-${safeName}">✨ 已定制</span></h4>
-                                <p>${style.description || '精选款式'}</p>
+                                <p style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${style.description || '精选款式'}</p>
                             </div>
                         </div>`;
                     gridContainer.insertAdjacentHTML('beforeend', cardHtml);
                 });
             });
         }
-
+    
         function switchCategory(catId, el) {
             document.querySelectorAll('#odm-category-nav .cat-item').forEach(item => item.classList.remove('active')); 
             el.classList.add('active');
             document.querySelectorAll('#odm-content-container .cat-pane').forEach(pane => pane.classList.remove('active')); 
             document.getElementById(catId).classList.add('active');
         }
-
-        // ODM 多选逻辑
+    
+        // 3.2 ODM 多选切换逻辑
         function selectOdmStyle(name, el, forceSelect = false) {
             const index = selectedOdmStyles.indexOf(name);
             if (forceSelect) {
@@ -1110,8 +1119,8 @@
             }
             updateStylesSummary();
         }
-
-        // OEM 面板切换 (不清除数据)
+    
+        // 3.3 OEM 面板显示逻辑 (不清除数据)
         function toggleStyleMode(mode) {
             const list = document.getElementById('existing-styles');
             const upload = document.getElementById('custom-upload');
@@ -1127,11 +1136,13 @@
             }
             updateStylesSummary();
         }
-
-        // OEM 文件处理
+    
+        // 3.4 OEM 附件上传预览逻辑
         function handleOemFiles(input, type) {
             Array.from(input.files).forEach(file => {
                 if (file.size > MAX_FILE_SIZE) { alert(`文件 ${file.name} 超过 20MB`); return; }
+                if (oemFilesData[type].some(f => f.name === file.name && f.size === file.size)) return;
+                
                 oemFilesData[type].push(file);
                 const fileIndex = oemFilesData[type].length - 1;
                 if (file.type.startsWith('image/')) {
@@ -1146,22 +1157,23 @@
             if(input.id) document.getElementById(input.id).value = ''; 
             updateStylesSummary();
         }
-
+    
         function addOemPreviewItem(type, src, fileName, index, isImage, ext = '') {
             const grid = document.getElementById(`oem${type.charAt(0).toUpperCase() + type.slice(1)}Preview`);
-            const previewContent = isImage ? `<img src="${src}">` : `
+            const previewContent = isImage ? `<img src="${src}" alt="预览">` : `
                 <div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#f1f5f9; color:#64748b;">
-                    <span style="font-size:10px; font-weight:800;">${ext}</span>
+                    <span style="font-size:10px; font-weight:800; margin-bottom:2px;">${ext}</span>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
                 </div>`;
             grid.insertAdjacentHTML('beforeend', `
                 <div class="oem-preview-item" id="oem-preview-${type}-${index}">
                     ${previewContent}
+                    <div style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.4); color:#fff; font-size:8px; padding:2px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${fileName}</div>
                     <button type="button" class="oem-preview-remove" onclick="removeOemFile('${type}', ${index})">&times;</button>
                 </div>
             `);
         }
-
+    
         function removeOemFile(type, index) {
             oemFilesData[type].splice(index, 1);
             const grid = document.getElementById(`oem${type.charAt(0).toUpperCase() + type.slice(1)}Preview`);
@@ -1175,46 +1187,54 @@
             });
             updateStylesSummary();
         }
-
+    
         function togglePhysicalInfo(isVisible) {
             const infoBox = document.getElementById('oem-address-info');
             isVisible ? infoBox.classList.remove('hidden') : infoBox.classList.add('hidden');
         }
-
-        // =========================================================================
-        // 4. Step 2 & 3: 面料、辅料与汇总更新 (Fabric, Trims & Summary)
-        // =========================================================================
-        
-        // 全局款式汇总逻辑 (ODM + OEM)
+    
+        /* =========================================================================
+           4. 全局汇总统筹 (The Master Summary)
+           ========================================================================= */
         function updateStylesSummary() {
             const sumStyleEl = document.getElementById('sum-style');
             let html = '';
-
+    
+            // 1. 处理 ODM
             if (selectedOdmStyles.length > 0) {
                 html += `<div style="text-align: right; margin-bottom: 8px;">`;
-                html += `<strong style="color:var(--primary-color); font-size:13px;">已选 ODM (${selectedOdmStyles.length}款)</strong>`;
+                html += `<strong style="color:var(--primary-color); font-size:13px; letter-spacing: 0.5px;">已选 ODM (${selectedOdmStyles.length}款)</strong>`;
                 selectedOdmStyles.forEach(name => {
                     const custom = odmCustomData[name];
-                    const hasC = custom && (custom.remark !== '' || custom.files.length > 0);
-                    html += `<div style="font-size: 11.5px; color: #64748b; margin-top: 4px;">- ${name} ${hasC ? '<span style="color:var(--primary-color); font-weight:600;">(含定制)</span>' : ''}</div>`;
+                    const hasCustom = custom && (custom.remark !== '' || custom.files.length > 0);
+                    html += `<div style="font-size: 11.5px; color: #64748b; margin-top: 4px;">- ${name} ${hasCustom ? '<span style="color:var(--primary-color); font-weight:600;">(含定制)</span>' : ''}</div>`;
                 });
                 html += `</div>`;
             }
-
+    
+            // 2. 处理 OEM
             const hasOemFiles = oemFilesData.tech.length > 0 || oemFilesData.ref.length > 0;
-            const oemRemark = document.getElementById('oem-remark') ? document.getElementById('oem-remark').value.trim() : '';
+            const oemRemarkEl = document.getElementById('oem-remark');
+            const oemRemark = oemRemarkEl ? oemRemarkEl.value.trim() : '';
+            
             if (hasOemFiles || oemRemark !== '') {
-                if (selectedOdmStyles.length > 0) html += `<div style="border-top: 1px dashed #e2e8f0; margin: 8px 0;"></div>`;
+                if (selectedOdmStyles.length > 0) {
+                    html += `<div style="border-top: 1px dashed #e2e8f0; margin: 8px 0;"></div>`;
+                }
                 html += `<div style="text-align: right;">`;
-                html += `<strong style="color:#1e293b; font-size:13px;">自主设计 OEM</strong>`;
+                html += `<strong style="color:#1e293b; font-size:13px; letter-spacing: 0.5px;">自主设计 OEM</strong>`;
                 html += `<div style="font-size: 11.5px; color: #64748b; margin-top: 4px;">- 附件: ${oemFilesData.tech.length + oemFilesData.ref.length} 份文件</div>`;
-                if (oemRemark !== '') html += `<div style="font-size: 11.5px; color: #94a3b8; font-style: italic;">- 已填写备注说明</div>`;
+                if (oemRemark !== '') {
+                    html += `<div style="font-size: 11.5px; color: #94a3b8; font-style: italic; margin-top: 2px;">- 已填写备注说明</div>`;
+                }
                 html += `</div>`;
             }
-            sumStyleEl.innerHTML = html === '' ? '未选择' : html;
+            sumStyleEl.innerHTML = (html === '') ? '未选择' : html;
         }
-
-        // 面料选择逻辑
+    
+        /* =========================================================================
+           5. Step 2: 面料材质 (Fabric Configurator)
+           ========================================================================= */
         function switchFabricCat(cat, el) {
             activeFabricCat = cat;
             el.parentNode.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
@@ -1223,122 +1243,173 @@
             document.getElementById(`fabric-pane-${cat}`).classList.add('active');
             document.getElementById('fabric-config-panel').classList.add('hidden');
         }
-
+    
         function selectFabric(name, el, cat) {
             document.getElementById(`fabric-pane-${cat}`).querySelectorAll('.fabric-item').forEach(item => item.classList.remove('selected'));
             el.classList.add('selected');
-            document.getElementById('fabric-config-panel').classList.remove('hidden');
+            
+            const arrow = document.getElementById('config-arrow');
+            const panel = document.getElementById('fabric-config-panel');
+            panel.classList.remove('hidden');
+            
+            // 动态计算小三角指向
+            const rect = el.getBoundingClientRect();
+            const parentRect = el.parentNode.parentNode.getBoundingClientRect();
+            arrow.style.left = `${rect.left - parentRect.left + (rect.width / 2) - 8}px`;
+    
             fabricSelection[cat].name = name; 
             fabricSelection[cat].colors = [];
+            
+            // 重置色盘视觉
             document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.remove('selected'));
             document.getElementById('selected-colors-text').innerText = '未选择颜色';
             document.getElementById('selected-fabric-display').innerText = `${cat === 'main' ? '主面料' : '里料'}：${name}`;
             updateFabricSummary();
         }
-
+    
+        function switchFabricMode(mode) {
+            fabricSelection[activeFabricCat].mode = mode;
+            document.getElementById('mode-solid').classList.toggle('active', mode === 'solid');
+            document.getElementById('mode-print').classList.toggle('active', mode === 'print');
+            document.getElementById('fabric-solid-area').classList.toggle('hidden', mode !== 'solid');
+            document.getElementById('fabric-print-area').classList.toggle('hidden', mode !== 'print');
+            updateFabricSummary();
+        }
+    
         function toggleColor(colorName, el) {
             const arr = fabricSelection[activeFabricCat].colors;
             const idx = arr.indexOf(colorName);
-            if (idx > -1) { arr.splice(idx, 1); el.classList.remove('selected'); } 
-            else { arr.push(colorName); el.classList.add('selected'); }
+            if (idx > -1) {
+                arr.splice(idx, 1); el.classList.remove('selected');
+            } else {
+                arr.push(colorName); el.classList.add('selected');
+            }
             const textEl = document.getElementById('selected-colors-text');
-            textEl.innerText = arr.length === 0 ? '未选择颜色' : `已选: ${arr.join(', ')}`;
+            textEl.innerText = arr.length === 0 ? '未选择颜色' : `已选颜色 (${arr.length})：${arr.join(', ')}`;
             updateFabricSummary();
         }
-
+    
         function updateFabricSummary() {
             const buildText = (c) => {
                 const conf = fabricSelection[c];
                 if (!conf.name) return '未选';
-                return conf.colors.length === 0 ? `${conf.name}` : `${conf.name} (${conf.colors.length}色)`;
+                if (conf.mode === 'print') return `${conf.name} (定制印花)`;
+                return conf.colors.length === 0 ? `${conf.name} (待选色)` : `${conf.name} (${conf.colors.length}色)`;
             };
-            document.getElementById('sum-fabric').innerHTML = `<div>面: ${buildText('main')}</div><div>里: ${buildText('lining')}</div>`;
+            document.getElementById('sum-fabric').innerHTML = `
+                <div style="font-size:12px; margin-bottom:4px; color:var(--text-main);">面: ${buildText('main')}</div>
+                <div style="font-size:12px; color:var(--text-main);">里: ${buildText('lining')}</div>`;
         }
-
-        // 辅料切换逻辑
+    
+        /* =========================================================================
+           6. Step 3: 品牌辅料 (Trims & Packaging)
+           ========================================================================= */
         function switchSubTab(paneId, el) {
             document.querySelectorAll('.sub-pane, .sub-tab').forEach(x => x.classList.remove('active'));
             document.getElementById(`pane-${paneId}`).classList.add('active');
             el.classList.add('active');
         }
-
+    
         function toggleTrim(category, isNeeded) {
             const contentBox = document.getElementById(`content-${category}`);
             const summaryText = document.getElementById(`sum-trim-${category}`);
             if (isNeeded) {
                 contentBox.classList.remove('hidden');
-                if (category !== 'bag') { summaryText.innerText = '已开启'; summaryText.style.color = 'var(--primary-color)'; }
-                else { updateBagSummary(); }
+                if (category !== 'bag') {
+                    summaryText.innerText = '已开启'; summaryText.style.color = 'var(--primary-color)'; summaryText.style.fontWeight = 'bold';
+                } else { updateBagSummary(); }
             } else {
                 contentBox.classList.add('hidden');
-                summaryText.innerText = '不需要'; summaryText.style.color = '#666';
+                summaryText.innerText = '不需要'; summaryText.style.color = '#666'; summaryText.style.fontWeight = 'normal';
             }
         }
-
+    
+        function renderBags(bags) {
+            const container = document.getElementById('bag-list-container');
+            if(!container) return;
+            container.innerHTML = ''; 
+            bags.forEach(bag => {
+                const coverImg = (bag.image_urls && bag.image_urls.length > 0) ? bag.image_urls[0] : '';
+                const bagJson = JSON.stringify(bag).replace(/"/g, '&quot;');
+                container.insertAdjacentHTML('beforeend', `
+                    <div class="option-item bag-material" onclick="onBagClick(${bagJson}, this)">
+                        <div class="details-btn" onclick="event.stopPropagation(); openDetailModal(${bagJson})"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div>
+                        <img src="${coverImg}" class="option-img" loading="lazy">
+                        <div class="option-info"><h4>${bag.name}</h4><p>${bag.description || '包装'}</p></div>
+                    </div>`);
+            });
+        }
+    
         function onBagClick(bag, el) {
             bagConfig.material = bag.name;
             document.querySelectorAll('.bag-material').forEach(x => x.classList.remove('selected'));
             el.classList.add('selected');
-            renderBagSizes(bag.sizes);
-            updateBagSummary();
-        }
-
-        function renderBagSizes(sizes) {
-            const container = document.getElementById('bag-size-container');
-            container.innerHTML = sizes.map(s => `
+            
+            // 渲染对应尺寸
+            const sizeContainer = document.getElementById('bag-size-container');
+            sizeContainer.innerHTML = (bag.sizes || []).map(s => `
                 <div class="option-item bag-size" onclick="selectBagAttr('size', '${s}', this)">
-                    <div style="height:60px; background:#f8fafc; display:flex; align-items:center; justify-content:center; font-weight:bold;">${s}</div>
+                    <div style="height: 80px; background: #fafafa; display: flex; align-items:center; justify-content:center; font-weight:bold;">${s}</div>
                     <div class="option-info"><h4>${s} cm</h4></div>
                 </div>`).join('');
-            container.insertAdjacentHTML('beforeend', `<div class="option-item bag-size" onclick="selectBagAttr('size', '自定义', this)"><div style="height:60px; background:#f8fafc; display:flex; align-items:center; justify-content:center;">?x?</div><div class="option-info"><h4>自定义</h4></div></div>`);
+            sizeContainer.insertAdjacentHTML('beforeend', `<div class="option-item bag-size" onclick="selectBagAttr('size', '自定义', this)"><div style="height:80px; background:#fafafa; display:flex; align-items:center; justify-content:center;">自定义</div><div class="option-info"><h4>特殊尺寸</h4></div></div>`);
+            
+            bagConfig.size = '未选尺寸';
+            updateBagSummary();
         }
-
-        function selectBagAttr(type, val, el) {
-            bagConfig[type] = val;
-            el.parentNode.querySelectorAll('.option-item').forEach(x => x.classList.remove('selected'));
+    
+        function selectBagAttr(attrType, displayName, el) {
+            bagConfig[attrType] = displayName;
+            document.getElementById('content-bag').querySelectorAll(`.bag-${attrType}`).forEach(item => item.classList.remove('selected'));
             el.classList.add('selected');
             updateBagSummary();
         }
-
+    
         function updateBagSummary() {
             const st = document.getElementById('sum-trim-bag');
             st.innerText = `${bagConfig.material} | ${bagConfig.size} | ${bagConfig.print}`;
-            st.style.color = 'var(--primary-color)';
+            st.style.color = 'var(--primary-color)'; st.style.fontWeight = 'bold';
         }
-
-        // =========================================================================
-        // 5. 弹窗交互逻辑 (Details, Custom, NDA)
-        // =========================================================================
-        
-        // NDA 弹窗
+    
+        /* =========================================================================
+           7. 弹窗控制 (Modals & Carousel)
+           ========================================================================= */
+    
+        // 7.1 NDA 弹窗
         function openNdaModal() { document.getElementById('ndaModal').classList.add('active'); }
         function closeNdaModal() { document.getElementById('ndaModal').classList.remove('active'); }
-
-        // 产品大图弹窗 (Carousel)
+    
+        // 7.2 详情轮播弹窗
         function openDetailModal(itemData) {
-            document.getElementById('modalTitle').innerText = itemData.name || '产品详情';
+            document.getElementById('modalTitle').innerText = itemData.name || '详情';
             currentModalImages = itemData.image_urls || [];
-            if(typeof itemData.image_urls === 'string') currentModalImages = [itemData.image_urls];
+            if(typeof currentModalImages === 'string') currentModalImages = [currentModalImages];
             currentImageIndex = 0;
             renderModalCarousel();
-            document.getElementById('modalDesc').innerHTML = `<p>${itemData.description || '暂无说明'}</p>`;
+            document.getElementById('modalDesc').innerHTML = `<div style="background:#f8fafc; padding:15px; border-radius:8px;">${itemData.description || '暂无详细描述'}</div>`;
             document.getElementById('detailModal').classList.add('active');
         }
-
+    
         function renderModalCarousel() {
+            const carouselBox = document.getElementById('modalCarousel');
             const imgEl = document.getElementById('modalImg');
             const dotsEl = document.getElementById('carousel-dots');
-            if (!currentModalImages.length) return;
+            if (!currentModalImages.length) { carouselBox.style.display='none'; return; }
+            carouselBox.style.display='flex';
             imgEl.src = currentModalImages[currentImageIndex];
+            
+            const showBtn = currentModalImages.length > 1;
+            document.getElementById('carousel-prev').style.display = showBtn ? 'flex' : 'none';
+            document.getElementById('carousel-next').style.display = showBtn ? 'flex' : 'none';
             dotsEl.innerHTML = currentModalImages.map((_, i) => `<div class="carousel-dot ${i===currentImageIndex?'active':''}" onclick="currentImageIndex=${i};renderModalCarousel()"></div>`).join('');
         }
-
+    
         function carouselMove(n) {
             currentImageIndex = (currentImageIndex + n + currentModalImages.length) % currentModalImages.length;
             renderModalCarousel();
         }
-
-        // ODM 轻定制弹窗
+    
+        // 7.3 ODM 轻定制弹窗
         function openCustomModal(styleName, cardEl) {
             selectOdmStyle(styleName, cardEl, true); 
             currentEditingStyle = styleName;
@@ -1349,7 +1420,7 @@
             renderFileList();
             document.getElementById('customModal').classList.add('active');
         }
-
+    
         function saveCustomization() {
             const remark = document.getElementById('customRemark').value.trim();
             odmCustomData[currentEditingStyle] = { remark: remark, files: [...currentModalFiles] };
@@ -1357,48 +1428,67 @@
             const badgeEl = document.getElementById(`badge-${safeId}`);
             if (badgeEl) badgeEl.classList.toggle('active', remark !== '' || currentModalFiles.length > 0);
             updateStylesSummary();
-            closeCustomModal();
+            document.getElementById('customModal').classList.remove('active');
         }
-
+    
         function renderFileList() {
-            const list = document.getElementById('customFileList');
-            list.innerHTML = currentModalFiles.map((f, i) => `
+            const container = document.getElementById('customFileList');
+            container.innerHTML = currentModalFiles.map((file, i) => `
                 <div class="file-item">
-                    <span class="file-name">${f.name}</span>
+                    <div class="file-info"><div class="file-name">${file.name}</div></div>
                     <button class="file-remove" onclick="currentModalFiles.splice(${i},1);renderFileList()">&times;</button>
                 </div>`).join('');
         }
-
-        function closeCustomModal() { document.getElementById('customModal').classList.remove('active'); }
-        function closeDetailModal() { document.getElementById('detailModal').classList.remove('active'); }
-
-        // =========================================================================
-        // 6. 导航、重置与提交 (Steps, Reset & Nav)
-        // =========================================================================
+    
+        // 绑定轻定制文件上传
+        const customFileInput = document.getElementById('customFile');
+        if(customFileInput) {
+            customFileInput.addEventListener('change', (e) => {
+                Array.from(e.target.files).forEach(f => {
+                    if(f.size <= MAX_FILE_SIZE) currentModalFiles.push(f);
+                });
+                renderFileList();
+                e.target.value = '';
+            });
+        }
+    
+        /* =========================================================================
+           8. 流程导航与重置 (Navigation & Step Control)
+           ========================================================================= */
         function changeStep(n) {
             document.getElementById(`step-${currentStep}`).classList.add('hidden');
             document.getElementById(`step-${currentStep}-label`).classList.remove('active');
             currentStep += n;
             document.getElementById(`step-${currentStep}`).classList.remove('hidden');
             document.getElementById(`step-${currentStep}-label`).classList.add('active');
+            
             document.getElementById('prevBtn').disabled = (currentStep === 1);
-            document.getElementById('nextBtn').innerText = (currentStep === totalSteps) ? '确认并提交' : '继续下一步';
+            const nextBtn = document.getElementById('nextBtn');
+            if (currentStep === totalSteps) {
+                nextBtn.innerText = '确认并提交定制需求';
+                nextBtn.style.background = '#16a34a'; // 绿色表示完成
+            } else {
+                nextBtn.innerText = '继续下一步';
+                nextBtn.style.background = 'var(--primary-color)';
+            }
             document.querySelector('.config-scroll-area').scrollTop = 0;
         }
-
-        function updateSummaryVolume(text) { document.getElementById('sum-volume').innerText = text; }
-
-        function clearAllSelections() {
-            if (!confirm('确定要清空所有配置吗？')) return;
-            location.reload(); // 最简单的清空方式，确保所有状态重置
+    
+        function selectItem(category, displayName) {
+            document.getElementById(`sum-${category}`).innerText = displayName;
+            document.getElementById(`step-${currentStep}`).querySelectorAll('.option-item').forEach(item => item.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
         }
-
-        // 通用弹窗关闭监听
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal-overlay')) {
-                event.target.classList.remove('active');
+    
+        function updateSummaryVolume(text) { 
+            document.getElementById('sum-volume').innerText = text; 
+        }
+    
+        function clearAllSelections() {
+            if (confirm('确定要清空所有已选配置并重新开始吗？')) {
+                location.reload(); 
             }
-        };
+        }
     </script>
 </body>
 </html>

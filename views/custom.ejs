@@ -448,19 +448,8 @@
 
                         <!-- OEM 自主设计模块 -->
                         <div id="custom-upload" class="hidden" style="animation: fadeIn 0.4s ease;">
-                            <!-- 1. 顶部简洁品类栏 -->
-                            <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 12px 20px; border-radius: 10px; border: 1px solid #f1f5f9; margin-bottom: 25px;">
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <div style="width: 8px; height: 8px; background: var(--primary-color); border-radius: 50%;"></div>
-                                    <span style="font-size: 14px; font-weight: 600; color: var(--text-main);">选择定制品类</span>
-                                </div>
-                                <select class="oem-input-mini" id="oem-category">
-                                    <option value="">正在加载品类...</option>
-                                    <option value="Other">其他 (Other)</option>
-                                </select>
-                            </div>
 
-                            <!-- 2. 并排上传区 -->
+                            <!-- 1. 并排上传区 -->
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px; align-items: start;">
                                 <!-- A. 灵感参考图 -->
                                 <div class="oem-upload-section">
@@ -495,13 +484,13 @@
                                 </div>
                             </div>
                         
-                            <!-- 3. 文字描述区 -->
+                            <!-- 2. 文字描述区 -->
                             <div class="oem-upload-section" style="margin-bottom: 25px;">
                                 <h4 class="oem-title">3. 补充说明 (Design Remarks)</h4>
                                 <textarea id="oem-remark" class="oem-textarea" style="height: 80px;" placeholder="请详细描述您的修改要求或特定工艺要求..."></textarea>
                             </div>
                         
-                            <!-- 4. 底部功能栏 -->
+                            <!-- 3. 底部功能栏 -->
                             <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; background: #fff; border: 1px solid #f1f5f9; border-radius: 12px;">
                                 <div style="display: flex; gap: 20px;">
                                     <label class="oem-checkbox-label">
@@ -941,20 +930,6 @@
             if (!styles || styles.length === 0) { navContainer.innerHTML = '<p style="color:#999;font-size:12px;">暂无款式数据</p>'; return; }
 
             const categories = [...new Set(styles.map(s => s.category).filter(Boolean))];
-
-            // 联动 OEM 品类下拉框
-            const oemCategorySelect = document.getElementById('oem-category');
-            if (oemCategorySelect) {
-                oemCategorySelect.innerHTML = '<option value="">请选择品类 (Category)...</option>';
-                categories.forEach(cat => {
-                    const option = document.createElement('option');
-                    option.value = cat; option.textContent = cat;
-                    oemCategorySelect.appendChild(option);
-                });
-                const otherOption = document.createElement('option');
-                otherOption.value = 'Other'; otherOption.textContent = '其他款式 (Other Categories)';
-                oemCategorySelect.appendChild(otherOption);
-            }
             
             navContainer.innerHTML = ''; contentContainer.innerHTML = '';
             categories.forEach((cat, index) => {
@@ -1311,7 +1286,7 @@
             
             oemFilesData = { tech: [], ref: [] };
             document.getElementById('oemRefPreview').innerHTML = ''; document.getElementById('oemTechPreview').innerHTML = '';
-            document.getElementById('oem-remark').value = ''; document.getElementById('oem-category').value = '';
+            document.getElementById('oem-remark').value = '';
             document.getElementById('oem-physical').checked = false; togglePhysicalInfo(false); document.getElementById('oem-nda').checked = true;
             const oemAddr = document.querySelector('#oem-address-info input'); if(oemAddr) oemAddr.value = '';
 

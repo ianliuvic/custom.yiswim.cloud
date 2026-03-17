@@ -540,12 +540,24 @@
         .oem-input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(170, 0, 0, 0.05); }
         
         .oem-section-title { font-size: 14px; font-weight: 700; color: var(--text-main); margin: 0 0 12px; }
-        .oem-upload-card { background: #fff; border: 1px solid #f1f5f9; padding: 15px; border-radius: 12px; }
         
         @keyframes slideDown {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        .oem-checkbox-label {
+            display: flex; align-items: center; gap: 10px; font-size: 13px; 
+            color: #475569; font-weight: 500; cursor: pointer; padding: 8px 0;
+        }
+        .oem-checkbox-label input[type="checkbox"] {
+            width: 16px; height: 16px; accent-color: var(--primary-color);
+        }
+        .oem-upload-card { 
+            background: #fff; border: 1px solid #f1f5f9; padding: 20px; border-radius: 12px; 
+            transition: all 0.3s; 
+        }
+        .oem-upload-card:hover { border-color: #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
 
         /* =========================================================
            10. 商业需求评估卡片样式 (Step 5)
@@ -666,85 +678,82 @@
                         </div>
 
                         <!-- ==========================================
-                             重构后的 OEM 自主设计区域 (Step 1)
+                             优化后的 OEM 自主设计区域 (Step 1)
                              ========================================== -->
                         <div id="custom-upload" class="hidden" style="animation: fadeIn 0.4s ease;">
-                            <!-- 1. 核心生产参数 -->
-                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 30px;">
-                                <div class="oem-form-group">
-                                    <label class="oem-label">产品品类 (Category)</label>
-                                    <select class="oem-input" id="oem-category">
-                                        <option value="">请选择品类...</option>
-                                        <option value="Activewear">运动内衣 / 瑜伽服</option>
-                                        <option value="Swimwear">泳装 / 冲浪服</option>
-                                        <option value="Leggings">瑜伽裤 / 运动裤</option>
-                                        <option value="Hoodies">卫衣 / 外套</option>
-                                        <option value="Other">其他定制品类</option>
-                                    </select>
-                                </div>
-                                <div class="oem-form-group">
-                                    <label class="oem-label">预计总起订量 (Target Qty)</label>
-                                    <input type="number" class="oem-input" id="oem-qty" placeholder="例如: 100">
-                                </div>
-                                <div class="oem-form-group">
-                                    <label class="oem-label">计划颜色数 (Colorways)</label>
-                                    <input type="number" class="oem-input" id="oem-colors" placeholder="例如: 3">
-                                </div>
-                            </div>
-                        
-                            <!-- 2. 分类上传区 (并列设计) -->
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
-                                <!-- A. 核心设计稿 -->
-                                <div class="oem-upload-card">
-                                    <h4 class="oem-section-title">核心设计文件 (Design / Tech Pack)</h4>
-                                    <div class="premium-upload-box" style="padding: 25px 15px;" id="oemTechDropzone" onclick="document.getElementById('oemTechFile').click()">
-                                        <p style="font-size: 13px; color: var(--text-main); font-weight: 600; margin-bottom: 5px;">📎 点击或拖拽上传</p>
-                                        <p style="font-size: 11px; color: var(--text-light);">工艺单、AI 矢量图、主图</p>
-                                        <input type="file" id="oemTechFile" multiple class="hidden" onchange="handleOemFiles(this, 'tech')">
+                            
+                            <!-- 1. 品类选择 (动态同步 ODM 分类) -->
+                            <div style="background: #fbfcfd; border: 1px solid #f1f5f9; padding: 25px; border-radius: 16px; margin-bottom: 25px;">
+                                <div style="display: flex; align-items: center; gap: 20px;">
+                                    <div style="flex: 1;">
+                                        <h4 class="oem-section-title" style="margin-bottom: 8px;">1. 选择定制品类 (Select Category)</h4>
+                                        <p style="font-size: 12px; color: #94a3b8; margin: 0;">请选择您要开发的服装品类，以便我们为您分配最专业的版师。</p>
                                     </div>
-                                    <div id="oemTechList" class="file-list-container"></div>
-                                </div>
-                        
-                                <!-- B. 细节参考图 -->
-                                <div class="oem-upload-card">
-                                    <h4 class="oem-section-title">细节参考与灵感 (Reference / Photos)</h4>
-                                    <div class="premium-upload-box" style="padding: 25px 15px;" id="oemRefDropzone" onclick="document.getElementById('oemRefFile').click()">
-                                        <p style="font-size: 13px; color: var(--text-main); font-weight: 600; margin-bottom: 5px;">🖼️ 点击或拖拽上传</p>
-                                        <p style="font-size: 11px; color: var(--text-light);">工艺参考、局部细节、面料感</p>
-                                        <input type="file" id="oemRefFile" multiple class="hidden" onchange="handleOemFiles(this, 'ref')">
+                                    <div style="flex: 1;">
+                                        <select class="oem-input" id="oem-category" style="height: 48px; font-size: 14px; font-weight: 500; border-color: #e2e8f0; cursor: pointer;">
+                                            <option value="">正在加载品类...</option>
+                                            <!-- 由 JS 动态填充 -->
+                                            <option value="Other">其他 (Other)</option>
+                                        </select>
                                     </div>
-                                    <div id="oemRefList" class="file-list-container"></div>
                                 </div>
                             </div>
                         
-                            <!-- 3. 物理样衣与备注 -->
-                            <div style="background: #f8fafc; border-radius: 12px; padding: 25px; border: 1px solid #f1f5f9; margin-bottom: 30px;">
-                                <div style="display: flex; align-items: center; gap: 25px; margin-bottom: 20px;">
-                                    <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-main); font-weight: 600; cursor: pointer;">
-                                        <input type="checkbox" id="oem-physical" onchange="togglePhysicalInfo(this.checked)"> 我将寄送物理样板 (Send Sample)
-                                    </label>
-                                    <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-main); font-weight: 600; cursor: pointer;">
-                                        <input type="checkbox" id="oem-nda" checked> 签署保密协议 (NDA Protection)
-                                    </label>
+                            <!-- 2. 文件上传与备注 (左右并列布局) -->
+                            <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 25px; margin-bottom: 25px; align-items: start;">
+                                
+                                <!-- 左侧：分类文件格 -->
+                                <div style="display: flex; flex-direction: column; gap: 20px;">
+                                    <div class="oem-upload-card">
+                                        <h4 class="oem-section-title">2. 设计稿与工艺单 (Tech Pack)</h4>
+                                        <div class="premium-upload-box" style="padding: 20px;" id="oemTechDropzone" onclick="document.getElementById('oemTechFile').click()">
+                                            <p style="font-size: 13px; color: var(--text-main); font-weight: 600; margin: 0;">📎 点击或拖拽上传核心设计文件</p>
+                                            <input type="file" id="oemTechFile" multiple class="hidden" onchange="handleOemFiles(this, 'tech')">
+                                        </div>
+                                        <div id="oemTechList" class="file-list-container"></div>
+                                    </div>
+                        
+                                    <div class="oem-upload-card">
+                                        <h4 class="oem-section-title">3. 细节参考与灵感 (Inspiration)</h4>
+                                        <div class="premium-upload-box" style="padding: 20px;" id="oemRefDropzone" onclick="document.getElementById('oemRefFile').click()">
+                                            <p style="font-size: 13px; color: var(--text-main); font-weight: 600; margin: 0;">🖼️ 点击或拖拽上传参考细节图</p>
+                                            <input type="file" id="oemRefFile" multiple class="hidden" onchange="handleOemFiles(this, 'ref')">
+                                        </div>
+                                        <div id="oemRefList" class="file-list-container"></div>
+                                    </div>
                                 </div>
                         
-                                <!-- 样衣寄送地址 (默认隐藏) -->
-                                <div id="oem-address-info" class="hidden" style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px; animation: slideDown 0.3s ease;">
-                                    <p style="font-size: 12px; color: #64748b; margin: 0 0 10px;">请将样板寄送至：<strong>广东省东莞市虎门镇红绣定制中心 1F (收件人：定制部 138xxx)</strong></p>
-                                    <input type="text" class="oem-input" style="height: 36px;" placeholder="请输入您的寄回快递单号 (追踪用)...">
+                                <!-- 右侧：样衣寄送、NDA 与 备注 -->
+                                <div style="display: flex; flex-direction: column; gap: 20px;">
+                                    <div style="background: #fff; border: 1px solid #f1f5f9; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+                                        <h4 class="oem-section-title">4. 交付选项与备注</h4>
+                                        
+                                        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+                                            <label class="oem-checkbox-label">
+                                                <input type="checkbox" id="oem-physical" onchange="togglePhysicalInfo(this.checked)"> 寄送物理样衣 (Send Sample)
+                                            </label>
+                                            <label class="oem-checkbox-label">
+                                                <input type="checkbox" id="oem-nda" checked> 签署保密协议 (NDA)
+                                            </label>
+                                        </div>
+                        
+                                        <div id="oem-address-info" class="hidden" style="background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 15px; font-size: 12px; color: #64748b; line-height: 1.6;">
+                                            📍 <strong>寄送至：</strong>东莞市虎门镇红绣定制中心 (收件人：定制部 138xxx)<br>
+                                            <input type="text" class="oem-input" style="height: 32px; margin-top: 8px; font-size: 11px;" placeholder="填写快递单号...">
+                                        </div>
+                        
+                                        <textarea id="oem-remark" class="oem-input" style="height: 120px; resize: none;" placeholder="在此输入其他关于自主设计的特殊需求..."></textarea>
+                                    </div>
+                        
+                                    <!-- NDA 承诺卡片 -->
+                                    <div style="background: #f0fdf4; border: 1px solid #dcfce7; padding: 15px; border-radius: 10px; display: flex; gap: 10px; align-items: flex-start;">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                        <p style="margin: 0; font-size: 11px; color: #166534; line-height: 1.4;"><strong>NDA 隐私保护：</strong>您的所有上传文件均受商业秘密协议保护，仅供打样报价评估使用。</p>
+                                    </div>
                                 </div>
-                        
-                                <h4 class="oem-section-title">其他特殊要求 (OEM Remarks)</h4>
-                                <textarea id="oem-remark" class="oem-input" style="height: 100px; resize: vertical;" placeholder="请详细说明您的修改要求、面料成分偏好、特定针法等..."></textarea>
-                            </div>
-                        
-                            <!-- NDA 提示 -->
-                            <div style="display: flex; align-items: center; gap: 10px; color: #16a34a; font-size: 12px; background: #f0fdf4; padding: 12px 15px; border-radius: 8px;">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                                <span>您的设计受到 NDA 严格保护，仅用于本次生产评估，未经授权严禁泄露。</span>
                             </div>
                         </div>
-                    </div>
+
 
                     <!-- ==========================================
                          步骤 2: 面料与里料
@@ -1254,6 +1263,27 @@
 
             // 提取去重后的分类数组
             const categories = [...new Set(styles.map(s => s.category).filter(Boolean))];
+
+            // 【新增】同步 OEM 模块的品类下拉框
+            const oemCategorySelect = document.getElementById('oem-category');
+            if (oemCategorySelect) {
+                // 保留第一个默认空选项
+                oemCategorySelect.innerHTML = '<option value="">请选择品类 (Category)...</option>';
+                
+                // 动态添加来自 API 的分类
+                categories.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat;
+                    option.textContent = cat;
+                    oemCategorySelect.appendChild(option);
+                });
+                
+                // 最后追加一个“其他”选项
+                const otherOption = document.createElement('option');
+                otherOption.value = 'Other';
+                otherOption.textContent = '其他款式 (Other Categories)';
+                oemCategorySelect.appendChild(otherOption);
+            }
             
             navContainer.innerHTML = '';
             contentContainer.innerHTML = '';

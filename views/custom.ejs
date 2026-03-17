@@ -445,100 +445,86 @@
                          步骤 1: 款式定义
                          ========================================== -->
                     <div class="step-content" id="step-1">
-                        <div class="step-desc">您可以从我们的现有库中挑选多款，也可以同时上传您的自主设计。我们将为您统一评估。</div>
-    
-                        <!-- 模块一：ODM 区域 -->
-                        <div style="margin-bottom: 40px; border: 1px solid #f1f5f9; border-radius: 12px; padding: 25px; background: #fff;">
-                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
-                                <span style="background: var(--primary-color); color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">A</span>
-                                <h3 style="margin: 0; font-size: 16px; color: var(--text-main);">从现有库中挑选 (ODM Styles)</h3>
-                            </div>
-                            <div id="existing-styles">
-                                <div class="category-nav" id="odm-category-nav"></div>
-                                <div id="odm-content-container"></div>
-                            </div>
-                        </div>
-                    
-                        <!-- 分割线 -->
-                        <div style="text-align: center; margin: 30px 0; position: relative;">
-                            <hr style="border: none; border-top: 1px dashed #e2e8f0;">
-                            <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #fff; padding: 0 20px; color: #cbd5e1; font-size: 12px; letter-spacing: 1px;">OR / AND</span>
+                        <div class="step-desc">请选择定制模式：从现有库中挑选 (ODM) 或 上传自主设计包 (OEM)。</div>
+                        
+                        <div class="mode-switcher">
+                            <div class="mode-option active" id="mode-odm" onclick="toggleStyleMode('existing')">现有款式 (ODM)</div>
+                            <div class="mode-option" id="mode-oem" onclick="toggleStyleMode('custom')">自主设计 (OEM)</div>
                         </div>
 
-                        <!-- 模块二：OEM 区域 -->
-                        <div style="border: 1px solid #f1f5f9; border-radius: 12px; padding: 25px; background: #fff;">
-                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
-                                <span style="background: #64748b; color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">B</span>
-                                <h3 style="margin: 0; font-size: 16px; color: var(--text-main);">上传自主设计稿 (OEM Design)</h3>
-                            </div>
+                        <!-- 动态生成的 ODM 区域 -->
+                        <div id="existing-styles">
+                            <div class="category-nav" id="odm-category-nav"><p style="font-size:12px; color:#999;">正在加载款式数据...</p></div>
+                            <div id="odm-content-container"></div>
+                        </div>
 
-                            <!-- OEM 自主设计模块 -->
-                            <div id="custom-upload" class="hidden" style="animation: fadeIn 0.4s ease;">
-    
-                                <!-- 1. 并排上传区 -->
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px; align-items: start;">
-                                    <!-- A. 灵感参考图 -->
-                                    <div class="oem-upload-section">
-                                        <div class="oem-section-header">
-                                            <h4 class="oem-title">1. 参考图与灵感 (Inspiration)</h4>
-                                            <span class="oem-subtitle">请上传款式参考图或草图 (仅限图片)</span>
-                                        </div>
-                                        <div class="oem-dropzone" id="oemRefDropzone" onclick="document.getElementById('oemRefFile').click()">
-                                            <div style="text-align: center;">
-                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                                                <p style="margin-top: 8px; font-size: 12px; color: #64748b;">拖拽或点击上传图片</p>
-                                            </div>
-                                            <input type="file" id="oemRefFile" accept="image/*" multiple class="hidden" onchange="handleOemFiles(this, 'ref')">
-                                        </div>
-                                        <div id="oemRefPreview" class="oem-image-preview-grid"></div>
+                        <!-- OEM 自主设计模块 -->
+                        <div id="custom-upload" class="hidden" style="animation: fadeIn 0.4s ease;">
+
+                            <!-- 1. 并排上传区 -->
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px; align-items: start;">
+                                <!-- A. 灵感参考图 -->
+                                <div class="oem-upload-section">
+                                    <div class="oem-section-header">
+                                        <h4 class="oem-title">1. 参考图与灵感 (Inspiration)</h4>
+                                        <span class="oem-subtitle">请上传款式参考图或草图 (仅限图片)</span>
                                     </div>
-                            
-                                    <!-- B. 工艺单/设计稿 -->
-                                    <div class="oem-upload-section">
-                                        <div class="oem-section-header">
-                                            <h4 class="oem-title">2. 工艺单/设计稿 (Tech Pack)</h4>
-                                            <span class="oem-subtitle">支持图片、PDF、AI、EPS 等格式</span>
+                                    <div class="oem-dropzone" id="oemRefDropzone" onclick="document.getElementById('oemRefFile').click()">
+                                        <div style="text-align: center;">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                            <p style="margin-top: 8px; font-size: 12px; color: #64748b;">拖拽或点击上传图片</p>
                                         </div>
-                                        <div class="oem-dropzone" id="oemTechDropzone" onclick="document.getElementById('oemTechFile').click()">
-                                            <div style="text-align: center;">
-                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                                                <p style="margin-top: 8px; font-size: 12px; color: #64748b;">拖拽或点击上传工艺文件</p>
-                                            </div>
-                                            <input type="file" id="oemTechFile" multiple class="hidden" onchange="handleOemFiles(this, 'tech')">
+                                        <input type="file" id="oemRefFile" accept="image/*" multiple class="hidden" onchange="handleOemFiles(this, 'ref')">
+                                    </div>
+                                    <div id="oemRefPreview" class="oem-image-preview-grid"></div>
+                                </div>
+                        
+                                <!-- B. 工艺单/设计稿 -->
+                                <div class="oem-upload-section">
+                                    <div class="oem-section-header">
+                                        <h4 class="oem-title">2. 工艺单/设计稿 (Tech Pack)</h4>
+                                        <span class="oem-subtitle">支持图片、PDF、AI、EPS 等格式</span>
+                                    </div>
+                                    <div class="oem-dropzone" id="oemTechDropzone" onclick="document.getElementById('oemTechFile').click()">
+                                        <div style="text-align: center;">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                            <p style="margin-top: 8px; font-size: 12px; color: #64748b;">拖拽或点击上传工艺文件</p>
                                         </div>
-                                        <div id="oemTechPreview" class="oem-image-preview-grid"></div>
+                                        <input type="file" id="oemTechFile" multiple class="hidden" onchange="handleOemFiles(this, 'tech')">
+                                    </div>
+                                    <div id="oemTechPreview" class="oem-image-preview-grid"></div>
+                                </div>
+                            </div>
+                        
+                            <!-- 2. 文字描述区 -->
+                            <div class="oem-upload-section" style="margin-bottom: 25px;">
+                                <h4 class="oem-title">3. 补充说明 (Design Remarks)</h4>
+                                <textarea id="oem-remark" class="oem-textarea" style="height: 100px;" placeholder="请详细描述您的修改要求或特定工艺要求..."></textarea>
+                            </div>
+                        
+                            <!-- 4. 寄送样衣功能栏 -->
+                            <div style="background: #fff; border-radius: 12px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px;">
+                                
+                                <!-- Checkbox -->
+                                <div>
+                                    <label class="oem-checkbox-label" style="margin: 0; padding: 0;">
+                                        <input type="checkbox" id="oem-physical" onchange="togglePhysicalInfo(this.checked)"> 需寄送实体样衣进行打版参考
+                                    </label>
+                                </div>
+                                
+                                <!-- 展开的地址信息区 (勾选后显示在下方，两行布局) -->
+                                <div id="oem-address-info" class="hidden" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed #cbd5e1; display: flex; flex-direction: column; gap: 10px; font-size: 12.5px; color: #475569; transition: all 0.3s;">
+                                    <div style="display: flex; align-items: flex-start; gap: 6px; line-height: 1.5;">
+                                        <span style="font-size: 14px;">📍</span>
+                                        <span><strong>收件地址：</strong>广东省东莞市虎门镇红绣服饰定制中心 (收件人：版房主管 138-0000-0000)</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 10px; margin-top: 4px;">
+                                        <span style="font-weight: 500;">物流单号：</span>
+                                        <input type="text" class="oem-input-mini" style="flex: 1; max-width: 300px; background: #fff;" placeholder="请在此输入您的寄件快递单号，以便我们查收...">
                                     </div>
                                 </div>
-                            
-                                <!-- 2. 文字描述区 -->
-                                <div class="oem-upload-section" style="margin-bottom: 25px;">
-                                    <h4 class="oem-title">3. 补充说明 (Design Remarks)</h4>
-                                    <textarea id="oem-remark" class="oem-textarea" style="height: 100px;" placeholder="请详细描述您的修改要求或特定工艺要求..."></textarea>
-                                </div>
-                            
-                                <!-- 4. 寄送样衣功能栏 -->
-                                <div style="background: #fff; border-radius: 12px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px;">
-                                    
-                                    <!-- Checkbox -->
-                                    <div>
-                                        <label class="oem-checkbox-label" style="margin: 0; padding: 0;">
-                                            <input type="checkbox" id="oem-physical" onchange="togglePhysicalInfo(this.checked)"> 需寄送实体样衣进行打版参考
-                                        </label>
-                                    </div>
-                                    
-                                    <!-- 展开的地址信息区 (勾选后显示在下方，两行布局) -->
-                                    <div id="oem-address-info" class="hidden" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed #cbd5e1; display: flex; flex-direction: column; gap: 10px; font-size: 12.5px; color: #475569; transition: all 0.3s;">
-                                        <div style="display: flex; align-items: flex-start; gap: 6px; line-height: 1.5;">
-                                            <span style="font-size: 14px;">📍</span>
-                                            <span><strong>收件地址：</strong>广东省东莞市虎门镇红绣服饰定制中心 (收件人：版房主管 138-0000-0000)</span>
-                                        </div>
-                                        <div style="display: flex; align-items: center; gap: 10px; margin-top: 4px;">
-                                            <span style="font-weight: 500;">物流单号：</span>
-                                            <input type="text" class="oem-input-mini" style="flex: 1; max-width: 300px; background: #fff;" placeholder="请在此输入您的寄件快递单号，以便我们查收...">
-                                        </div>
-                                    </div>
-                                    
-                                </div>
+                                
+                            </div>
                             
                             <!-- 5. 独立在外部的NDA提示 -->
                             <div style="display: flex; justify-content: flex-end; padding-right: 5px; margin-top: 8px;">
@@ -555,7 +541,6 @@
                                 </div>
                             </div>
 
-                        </div>
                         </div>
                     </div>
 

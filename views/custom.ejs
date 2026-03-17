@@ -18,19 +18,21 @@
             --bg-sidebar: #fafafa;
         }
     
+        /* 优化：移除不必要的 !important，规范全屏 Flex 布局 */
         body {
-            height: 100vh !important; width: 100vw !important; overflow: hidden !important; 
-            display: flex !important; flex-direction: column !important;
-            justify-content: flex-start !important; align-items: stretch !important;
-            margin: 0 !important; padding: 0 !important; background-color: #fff !important;
+            height: 100vh; width: 100vw; overflow: hidden; 
+            display: flex; flex-direction: column;
+            justify-content: flex-start; align-items: stretch;
+            margin: 0; padding: 0; background-color: #fff;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             -webkit-font-smoothing: antialiased;
         }
     
         /* 滚动条美化 */
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     
         /* 顶部导航 */
         .site-header {
@@ -48,18 +50,18 @@
         /* =========================================================
            2. 核心框架布局 (Stepper, Scroll, Buttons)
            ========================================================= */
-        .config-main { flex: 1; display: flex; flex-direction: column; height: 100%; border-right: 1px solid #f1f5f9; position: relative; }
+        .config-main { flex: 1; display: flex; flex-direction: column; height: 100%; border-right: 1px solid #f1f5f9; position: relative; overflow: hidden; }
         
-        .stepper { padding: 20px 40px 0; display: flex; gap: 20px; background: #fff; z-index: 10; }
+        .stepper { padding: 20px 40px 0; display: flex; gap: 20px; background: #fff; z-index: 10; flex-shrink: 0; }
         .step { flex: 1; padding-bottom: 12px; border-bottom: 2px solid #f1f5f9; font-size: 11px; color: #cbd5e1; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s; }
         .step.active { border-bottom-color: var(--primary-color); color: var(--primary-color); font-weight: 700; }
     
-        .config-scroll-area { flex: 1; overflow-y: auto; padding: 30px 45px 40px; box-sizing: border-box; }
-        .button-group { padding: 15px 45px; background: #fff; border-top: 1px solid #f1f5f9; display: flex; gap: 15px; z-index: 10; }
+        .config-scroll-area { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 30px 45px 40px; box-sizing: border-box; }
+        .button-group { padding: 15px 45px; background: #fff; border-top: 1px solid #f1f5f9; display: flex; gap: 15px; z-index: 10; flex-shrink: 0; }
         
         .summary-sidebar { width: 340px; min-width: 340px; background-color: var(--bg-sidebar); padding: 35px; overflow-y: auto; height: 100%; box-sizing: border-box; }
         
-        .site-footer { height: var(--footer-height); min-height: var(--footer-height); background: #fff; border-top: 1px solid #f1f5f9; padding: 0 30px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #94a3b8; z-index: 100; box-sizing: border-box; letter-spacing: 0.5px; }
+        .site-footer { height: var(--footer-height); min-height: var(--footer-height); background: #fff; border-top: 1px solid #f1f5f9; padding: 0 30px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #94a3b8; z-index: 100; box-sizing: border-box; letter-spacing: 0.5px; flex-shrink: 0; }
     
         /* =========================================================
            3. ODM 款式网格与卡片 (电商大气风格)
@@ -80,6 +82,7 @@
             position: relative; 
             border-radius: 8px; 
             overflow: hidden; 
+            transition: all 0.3s ease;
         }
     
         .option-item:hover { 
@@ -93,7 +96,6 @@
             outline: 1px solid var(--primary-color); 
         }
 
-        /* 新增：多选打钩标记 */
         .option-item.style-item.selected::before {
             content: '✓';
             position: absolute; top: 10px; left: 10px;
@@ -105,7 +107,6 @@
             animation: fadeIn 0.2s ease;
         }
     
-        /* 电商 3:4 图片比例 */
         .option-img { 
             width: 100%; 
             aspect-ratio: 3 / 4; 
@@ -117,12 +118,12 @@
         }
         .option-item:hover .option-img { transform: scale(1.06); }
     
-        .option-info { padding: 16px 18px; }
+        .option-info { padding: 16px 18px; position: relative; z-index: 2; background: inherit; }
         .option-info h4 { margin: 0 0 6px; font-size: 15px; color: var(--text-main); font-weight: 600; letter-spacing: 0.3px; }
         .option-info p { margin: 0; font-size: 12px; color: var(--text-light); line-height: 1.5; }
     
         /* =========================================================
-           4. 优化后的弹窗 (Modal) - 现代大气风格
+           4. 弹窗 (Modal) - 现代大气风格
         ========================================================= */
         .details-btn { 
             position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; 
@@ -135,7 +136,6 @@
         .option-item.selected .details-btn { opacity: 1; visibility: visible; transform: scale(1); }
         .details-btn:hover { background: var(--primary-color); color: #fff; }
     
-        /* 弹窗遮罩 */
         .modal-overlay { 
             position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
             background: rgba(15, 23, 42, 0.65); 
@@ -154,15 +154,9 @@
         }
         .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
     
-        /* --- 产品详情弹窗 (左右分栏) --- */
-        .modal-content.modal-lg {
-            width: 100%; max-width: 960px; height: 600px; flex-direction: row;
-        }
+        .modal-content.modal-lg { width: 100%; max-width: 960px; height: 600px; flex-direction: row; }
     
-        .modal-gallery-side {
-            flex: 1.3; background: #f1f5f9; position: relative;
-            display: flex; align-items: center; justify-content: center; overflow: hidden;
-        }
+        .modal-gallery-side { flex: 1.3; background: #f1f5f9; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .modal-carousel { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
         .modal-carousel img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.5s ease; }
     
@@ -189,7 +183,6 @@
         .modal-header-simple { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
         .modal-header-simple h3 { margin: 0; font-size: 24px; color: var(--text-main); font-weight: 700; letter-spacing: -0.5px; line-height: 1.2; }
         
-        /* 全局关闭按钮 */
         .modal-close-abs {
             position: absolute; top: 20px; right: 20px; z-index: 50;
             width: 36px; height: 36px; min-width: 36px; min-height: 36px; 
@@ -203,7 +196,6 @@
         .modal-desc { font-size: 14px; color: #475569; line-height: 1.7; flex: 1; }
         .modal-desc div[style*="background:#f9f9f9"] { background: #f8fafc !important; border-radius: 12px !important; padding: 20px !important; border: 1px solid #f1f5f9; }
     
-        /* --- 轻定制弹窗 (中幅垂直) --- */
         .modal-content.modal-md { width: 100%; max-width: 640px; padding: 0; }
         .custom-modal-header { padding: 30px 35px 20px; border-bottom: 1px solid #f1f5f9; }
         .custom-modal-header h3 { margin: 0; font-size: 20px; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
@@ -238,7 +230,6 @@
             .carousel-btn { width: 36px; height: 36px; font-size: 14px; }
         }
 
-        /* --- 文件上传列表样式 --- */
         .file-list-container { margin-top: 15px; display: flex; flex-direction: column; gap: 10px; max-height: 200px; overflow-y: auto; }
         .file-item {
             display: flex; align-items: center; justify-content: space-between; padding: 10px 15px;
@@ -262,7 +253,7 @@
         .file-remove:hover { background: #fee2e2; color: #ef4444; }
 
         /* =========================================================
-           5. 面料配置台 (Fabric Configurator)
+           5. 面料配置台 
            ========================================================= */
         .sub-tabs { display: flex; gap: 30px; border-bottom: 2px solid #f1f5f9; margin-bottom: 30px; overflow-x: auto; }
         .sub-tab { padding: 12px 0; cursor: pointer; font-size: 13px; color: #94a3b8; font-weight: 600; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.3s; white-space: nowrap; }
@@ -282,7 +273,7 @@
         #fabric-remark:focus { outline: none; border-color: var(--primary-color); }
     
         /* =========================================================
-           6. 切换器与导航 (SaaS 极简风)
+           6. 切换器与导航
            ========================================================= */
         .mode-switcher { display: inline-flex; background: #f1f5f9; padding: 4px; border-radius: 8px; margin-bottom: 30px; }
         .mode-option { padding: 8px 24px; font-size: 13px; font-weight: 500; color: #64748b; cursor: pointer; border-radius: 6px; transition: all 0.25s ease; }
@@ -349,7 +340,7 @@
         .btn-outline:hover { background: #f8fafc; color: var(--text-main); }
 
         /* =========================================================
-           10. OEM 模块与商业需求评估 (Step 1 & 5)
+           10. OEM 模块与商业需求评估
            ========================================================= */
         .oem-input-mini { padding: 6px 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 13px; color: var(--text-main); transition: all 0.3s; }
         .oem-input-mini:focus { outline: none; border-color: var(--primary-color); }
@@ -382,7 +373,6 @@
         .oem-checkbox-label { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #475569; font-weight: 500; cursor: pointer; padding: 8px 0; }
         .oem-checkbox-label input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--primary-color); }
 
-        /* Step 5 商业卡片 */
         .profile-section { margin-bottom: 35px; }
         .profile-title { font-size: 14px; font-weight: 700; color: var(--text-main); margin: 0 0 15px; display: flex; align-items: center; gap: 6px; letter-spacing: 0.3px; }
         .profile-title .required { color: #ef4444; font-weight: normal; }
@@ -408,6 +398,8 @@
         }
         .input-group input:focus, .input-group select:focus, #final_remark:focus { outline: none; border-color: var(--primary-color); background: #fff; box-shadow: 0 0 0 3px rgba(170, 0, 0, 0.05); }
         #final_remark { height: 120px; resize: vertical; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         @media (max-width: 900px) {
             .radio-card-grid, .radio-card-grid.grid-4 { grid-template-columns: 1fr 1fr; }
@@ -440,7 +432,7 @@
             </nav>
 
             <div class="config-scroll-area">
-                <form id="configForm">
+                <form id="configForm" onsubmit="event.preventDefault();">
                     <!-- ==========================================
                          步骤 1: 款式定义
                          ========================================== -->
@@ -460,8 +452,6 @@
 
                         <!-- OEM 自主设计模块 -->
                         <div id="custom-upload" class="hidden" style="animation: fadeIn 0.4s ease;">
-
-                            <!-- 1. 并排上传区 -->
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px; align-items: start;">
                                 <!-- A. 灵感参考图 -->
                                 <div class="oem-upload-section">
@@ -496,23 +486,17 @@
                                 </div>
                             </div>
                         
-                            <!-- 2. 文字描述区 -->
                             <div class="oem-upload-section" style="margin-bottom: 25px;">
                                 <h4 class="oem-title">3. 补充说明 (Design Remarks)</h4>
-                                <textarea id="oem-remark" class="oem-textarea" style="height: 100px;" placeholder="请详细描述您的修改要求或特定工艺要求..."></textarea>
+                                <textarea id="oem-remark" class="oem-textarea" style="height: 100px;" placeholder="请详细描述您的修改要求或特定工艺要求..." spellcheck="false"></textarea>
                             </div>
                         
-                            <!-- 4. 寄送样衣功能栏 -->
                             <div style="background: #fff; border-radius: 12px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px;">
-                                
-                                <!-- Checkbox -->
                                 <div>
                                     <label class="oem-checkbox-label" style="margin: 0; padding: 0;">
                                         <input type="checkbox" id="oem-physical" onchange="togglePhysicalInfo(this.checked)"> 需寄送实体样衣进行打版参考
                                     </label>
                                 </div>
-                                
-                                <!-- 展开的地址信息区 (勾选后显示在下方，两行布局) -->
                                 <div id="oem-address-info" class="hidden" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed #cbd5e1; display: flex; flex-direction: column; gap: 10px; font-size: 12.5px; color: #475569; transition: all 0.3s;">
                                     <div style="display: flex; align-items: flex-start; gap: 6px; line-height: 1.5;">
                                         <span style="font-size: 14px;">📍</span>
@@ -520,27 +504,22 @@
                                     </div>
                                     <div style="display: flex; align-items: center; gap: 10px; margin-top: 4px;">
                                         <span style="font-weight: 500;">物流单号：</span>
-                                        <input type="text" class="oem-input-mini" style="flex: 1; max-width: 300px; background: #fff;" placeholder="请在此输入您的寄件快递单号，以便我们查收...">
+                                        <input type="text" class="oem-input-mini" style="flex: 1; max-width: 300px; background: #fff;" placeholder="请在此输入您的寄件快递单号，以便我们查收..." autocomplete="off">
                                     </div>
                                 </div>
-                                
                             </div>
                             
-                            <!-- 5. 独立在外部的NDA提示 -->
                             <div style="display: flex; justify-content: flex-end; padding-right: 5px; margin-top: 8px;">
                                 <div style="display: inline-flex; align-items: center; gap: 6px; color: #64748b; font-size: 12px; font-weight: 500; cursor: pointer; transition: color 0.2s;" 
                                      onmouseover="this.style.color='var(--primary-color)'" 
                                      onmouseout="this.style.color='#64748b'" 
                                      onclick="openNdaModal()">
-                                    
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                                     </svg>
                                     <span>所有设计均受 <span style="text-decoration: underline; text-underline-offset: 3px;">保密协议 (NDA)</span> 严格保护</span>
-                                    
                                 </div>
                             </div>
-
                         </div>
                     </div>
 
@@ -555,7 +534,6 @@
                             <div class="sub-tab" onclick="switchFabricCat('lining', this)">里料 (Lining)</div>
                         </div>
 
-                        <!-- 1. 主面料选择区 -->
                         <div id="fabric-pane-main" class="fabric-pane active">
                             <div class="option-grid">
                                 <div class="option-item fabric-item" onclick="selectFabric('Matte Nylon', this, 'main')">
@@ -571,7 +549,6 @@
                             </div>
                         </div>
 
-                        <!-- 2. 里料选择区 -->
                         <div id="fabric-pane-lining" class="fabric-pane">
                             <div class="option-grid">
                                 <div class="option-item fabric-item" onclick="selectFabric('Power Mesh', this, 'lining')">
@@ -585,7 +562,6 @@
                             </div>
                         </div>
 
-                        <!-- 3. 动态配置面板 -->
                         <div id="fabric-config-panel" class="fabric-config-panel hidden">
                             <div id="config-arrow" class="config-arrow"></div>
                             <div class="config-header">
@@ -616,7 +592,7 @@
                             </div>
                             <div class="fabric-notes-area">
                                 <h4 style="font-size: 13px; margin: 0 0 10px; color: var(--text-main);">拼色说明与参考附件 (可选)</h4>
-                                <textarea id="fabric-remark" placeholder="请详细描述您的色彩分布或附件说明..." style="width:100%; height:80px; padding:10px; border:1px solid #ddd; border-radius:4px; font-family:inherit; font-size:13px; box-sizing:border-box; resize:vertical;"></textarea>
+                                <textarea id="fabric-remark" placeholder="请详细描述您的色彩分布或附件说明..." style="width:100%; height:80px; padding:10px; border:1px solid #ddd; border-radius:4px; font-family:inherit; font-size:13px; box-sizing:border-box; resize:vertical;" spellcheck="false"></textarea>
                             </div>
                         </div>
                     </div>
@@ -733,7 +709,7 @@
                             </div>
                             <div id="content-other" class="placeholder-box hidden">
                                 <p style="margin-bottom: 10px; color:#333;">请输入特殊要求（如特定拉链、反光条等）：</p>
-                                <textarea style="width:100%; height:100px; padding:10px; border:1px solid #ccc; font-family:inherit;"></textarea>
+                                <textarea style="width:100%; height:100px; padding:10px; border:1px solid #ccc; font-family:inherit;" spellcheck="false"></textarea>
                             </div>
                         </div>
                     </div>
@@ -752,12 +728,11 @@
                     </div>
 
                     <!-- ==========================================
-                         步骤 5: 商业需求评估 (Project Profile)
+                         步骤 5: 商业需求评估
                          ========================================== -->
                     <div class="step-content hidden" id="step-5">
                         <div class="step-desc">为了给您提供最准确的打样方案与初步报价评估，请大致描绘您的商业规划。具体细节将在样衣确认后最终敲定。</div>
 
-                        <!-- 1. 项目阶段 -->
                         <div class="profile-section">
                             <h4 class="profile-title">A. 当前项目所处阶段 <span class="required">*</span></h4>
                             <div class="radio-card-grid">
@@ -776,7 +751,6 @@
                             </div>
                         </div>
 
-                        <!-- 2. 首单规模 -->
                         <div class="profile-section">
                             <h4 class="profile-title">B. 首单规模预估 (单款) <span class="required">*</span></h4>
                             <div class="radio-card-grid grid-4">
@@ -799,7 +773,6 @@
                             </div>
                         </div>
 
-                        <!-- 3. 颜色/尺码 与 市场/预算 (左右两列排版) -->
                         <div class="profile-section flex-row">
                             <div class="flex-half">
                                 <h4 class="profile-title">C. 颜色与尺码广度</h4>
@@ -822,23 +795,23 @@
                                         <option value="premium">中高端轻奢 (Premium)</option>
                                         <option value="luxury">顶级高定 (Luxury / Designer)</option>
                                     </select>
-                                    <input type="text" id="target_price" placeholder="期望出厂价 (Target FOB) 如: $15">
+                                    <input type="text" id="target_price" placeholder="期望出厂价 (Target FOB) 如: $15" autocomplete="off">
                                 </div>
                             </div>
                         </div>
 
-                        <!-- 4. 补充说明 -->
                         <div class="profile-section" style="margin-bottom: 0;">
                             <h4 class="profile-title">E. 补充说明 (Remarks)</h4>
-                            <textarea id="final_remark" placeholder="请输入您的其他特殊要求，如特定的环保认证标准、特殊的独立站发货包装要求等..."></textarea>
+                            <textarea id="final_remark" placeholder="请输入您的其他特殊要求，如特定的环保认证标准、特殊的独立站发货包装要求等..." spellcheck="false"></textarea>
                         </div>
                     </div>
                 </form>
             </div>
 
             <div class="button-group">
-                <button type="button" id="prevBtn" onclick="changeStep(-1)" disabled>返回上一步</button>
-                <button type="button" id="nextBtn" onclick="changeStep(1)">继续下一步</button>
+                <!-- 优化：移除内联 onclick，改用下方 JS 绑定 -->
+                <button type="button" id="prevBtn" disabled>返回上一步</button>
+                <button type="button" id="nextBtn">继续下一步</button>
             </div>
         </main>
 
@@ -885,7 +858,7 @@
         © 2026 红绣服饰 (Hongxiu Clothing). All Rights Reserved. | 专属定制 · 品质追踪
     </footer>
 
-    <!-- 详情弹窗 -->
+    <!-- 弹窗部分保持原样 -->
     <div class="modal-overlay" id="detailModal">
         <div class="modal-content modal-lg">
             <button class="modal-close-abs" id="closeModalBtn">&times;</button>
@@ -908,7 +881,6 @@
         </div>
     </div>
 
-    <!-- 轻定制弹窗 -->
     <div class="modal-overlay" id="customModal">
         <div class="modal-content modal-md">
             <div class="custom-modal-header">
@@ -917,7 +889,7 @@
             </div>
             <div class="custom-modal-body">
                 <label style="display:block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 10px;">定制需求描述</label>
-                <textarea id="customRemark" placeholder="请详细描述您的版型修改要求。&#10;例如：肩带加宽至2cm、后背改交叉带、罩杯容量加深等..."></textarea>
+                <textarea id="customRemark" placeholder="请详细描述您的版型修改要求。&#10;例如：肩带加宽至2cm、后背改交叉带、罩杯容量加深等..." spellcheck="false"></textarea>
                 
                 <label style="display:block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 10px;">参考附件</label>
                 <div class="premium-upload-row" id="customDropzone" onclick="document.getElementById('customFile').click()">
@@ -936,9 +908,6 @@
         </div>
     </div>
 
-    <!-- ==========================================
-         保密协议 (NDA) 弹窗
-         ========================================== -->
     <div class="modal-overlay" id="ndaModal">
         <div class="modal-content modal-md" style="max-width: 580px; padding: 0;">
             <div class="custom-modal-header" style="background: #f8fafc;">
@@ -973,18 +942,29 @@
     </div>
 
     <!-- =========================================================================
-         核心 JavaScript 逻辑 (已去重、整合并优化)
+         核心 JavaScript 逻辑
          ========================================================================= -->
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             try {
+                // 仅作展示用途，若本地无 /api/get-data，控制台会报错但不影响UI
                 const response = await fetch('/api/get-data');
                 const result = await response.json();
                 if (result.success && result.data) {
                     if(result.data.bags) renderBags(result.data.bags);
                     if(result.data.odm_styles) renderOdmStyles(result.data.odm_styles);
                 }
-            } catch (error) { console.error('加载数据失败:', error); }
+            } catch (error) { console.warn('加载数据API未就绪，使用静态展示框架:', error); }
+        });
+
+        // 绑定底部按钮事件
+        document.getElementById('prevBtn').addEventListener('click', () => changeStep(-1));
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            if (currentStep === totalSteps) {
+                submitForm(); // 触发最终提交
+            } else {
+                changeStep(1);
+            }
         });
 
         // ==========================================
@@ -1048,23 +1028,20 @@
             const index = selectedOdmStyles.indexOf(name);
             
             if (forceSelect) {
-                // 如果是强制选中（如点击了"定制"按钮）
                 if (index === -1) selectedOdmStyles.push(name);
                 if (el) el.classList.add('selected');
             } else {
-                // 正常的点击切换 (Toggle)
                 if (index > -1) {
-                    selectedOdmStyles.splice(index, 1); // 取消选中
+                    selectedOdmStyles.splice(index, 1); 
                     if (el) el.classList.remove('selected');
                 } else {
-                    selectedOdmStyles.push(name); // 加入选中
+                    selectedOdmStyles.push(name); 
                     if (el) el.classList.add('selected');
                 }
             }
             updateOdmSummary();
         }
 
-        // 更新右侧边栏的款式汇总
         function updateOdmSummary() {
             const sumStyleEl = document.getElementById('sum-style');
             if (selectedOdmStyles.length === 0) {
@@ -1072,7 +1049,6 @@
                 return;
             }
             
-            // 拼装多选提示与详情
             let html = `<div style="text-align: right;">已选 <strong style="color:var(--primary-color); font-size:15px;">${selectedOdmStyles.length}</strong> 款<br>`;
             const namesHtml = selectedOdmStyles.map(name => {
                 const custom = odmCustomData[name];
@@ -1085,14 +1061,14 @@
         }
 
         // ==========================================
-        // 2. ODM 轻定制 (Modal) 附件上传逻辑
+        // 2. ODM 轻定制 (Modal)
         // ==========================================
         let odmCustomData = {}; let currentEditingStyle = ''; let currentModalFiles = [];
-        let selectedOdmStyles = []; // 新增：用于存储多选的款式名称数组
+        let selectedOdmStyles = []; 
         const MAX_FILE_SIZE = 20 * 1024 * 1024;
 
         function openCustomModal(styleName, cardEl) {
-            selectOdmStyle(styleName, cardEl, true); // 改动：传入 true 强制选中
+            selectOdmStyle(styleName, cardEl, true); 
             currentEditingStyle = styleName;
             document.getElementById('customModalTarget').innerText = `(${styleName})`;
             const existingData = odmCustomData[styleName] || { remark: '', files: [] };
@@ -1112,7 +1088,7 @@
             const badgeEl = document.getElementById(`badge-${safeId}`);
             if (badgeEl) badgeEl.classList.toggle('active', remark !== '' || hasFile);
             
-            updateOdmSummary(); // 改动：直接调用更新汇总函数
+            updateOdmSummary(); 
             closeCustomModal();
         }
 
@@ -1162,7 +1138,7 @@
         }
 
         // ==========================================
-        // 3. OEM 自主设计模块 (全格式图文混合版)
+        // 3. OEM 自主设计模块
         // ==========================================
         let oemFilesData = { tech: [], ref: [] }; 
 
@@ -1239,7 +1215,7 @@
             if(mode === 'existing') {
                 list.classList.remove('hidden'); upload.classList.add('hidden');
                 odmBtn.classList.add('active'); oemBtn.classList.remove('active');
-                updateOdmSummary(); // 改动：切回 ODM 时重新渲染已选多款
+                updateOdmSummary(); 
             } else {
                 list.classList.add('hidden'); upload.classList.remove('hidden');
                 oemBtn.classList.add('active'); odmBtn.classList.remove('active');
@@ -1248,7 +1224,7 @@
         }
 
         // ==========================================
-        // 保密协议 (NDA) 弹窗逻辑
+        // 保密协议 (NDA) 弹窗
         // ==========================================
         function openNdaModal() { document.getElementById('ndaModal').classList.add('active'); }
         function closeNdaModal() { document.getElementById('ndaModal').classList.remove('active'); }
@@ -1286,14 +1262,70 @@
         // ==========================================
         let currentStep = 1; const totalSteps = 5;
         function changeStep(n) {
-            document.getElementById(`step-${currentStep}`).classList.add('hidden'); document.getElementById(`step-${currentStep}-label`).classList.remove('active');
+            // 隐藏当前步骤
+            document.getElementById(`step-${currentStep}`).classList.add('hidden'); 
+            document.getElementById(`step-${currentStep}-label`).classList.remove('active');
+            
+            // 更新当前步数
             currentStep += n;
-            document.getElementById(`step-${currentStep}`).classList.remove('hidden'); document.getElementById(`step-${currentStep}-label`).classList.add('active');
-            document.getElementById('prevBtn').disabled = (currentStep === 1);
+            
+            // 显示新步骤
+            document.getElementById(`step-${currentStep}`).classList.remove('hidden'); 
+            document.getElementById(`step-${currentStep}-label`).classList.add('active');
+            
+            // 按钮状态更新
+            const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
-            if (currentStep === totalSteps) { nextBtn.innerText = '确认并提交定制需求'; nextBtn.style.backgroundColor = '#27ae60'; nextBtn.style.borderColor = '#27ae60'; } 
-            else { nextBtn.innerText = '继续下一步'; nextBtn.style.backgroundColor = 'var(--primary-color)'; nextBtn.style.borderColor = 'var(--primary-color)'; }
+            
+            prevBtn.disabled = (currentStep === 1);
+            
+            if (currentStep === totalSteps) { 
+                nextBtn.innerText = '确认并提交定制需求'; 
+                nextBtn.style.backgroundColor = '#27ae60'; 
+                nextBtn.style.borderColor = '#27ae60'; 
+            } else { 
+                nextBtn.innerText = '继续下一步'; 
+                nextBtn.style.backgroundColor = 'var(--primary-color)'; 
+                nextBtn.style.borderColor = 'var(--primary-color)'; 
+            }
+            
+            // 回到顶部
             document.querySelector('.config-scroll-area').scrollTop = 0;
+        }
+
+        // --- 最终表单提交出口 (新增) ---
+        function submitForm() {
+            // 此处可以收集之前定义在全局变量中的所有数据
+            const finalData = {
+                odmStyles: selectedOdmStyles,
+                odmCustomizations: odmCustomData,
+                oemFiles: oemFilesData, // 注意：实际上传时需用 FormData 包装 file 对象
+                oemRemark: document.getElementById('oem-remark').value,
+                oemPhysicalSample: document.getElementById('oem-physical').checked,
+                fabric: fabricSelection,
+                trimConfig: bagConfig, // 可扩充其它辅料收集
+                projectStage: document.querySelector('input[name="project_stage"]:checked').value,
+                estVolume: document.querySelector('input[name="est_volume"]:checked').value,
+                planColors: document.getElementById('plan_colors').value,
+                planSizes: document.getElementById('plan_sizes').value,
+                targetMarket: document.getElementById('target_market').value,
+                targetPrice: document.getElementById('target_price').value,
+                finalRemark: document.getElementById('final_remark').value
+            };
+
+            console.log("即将提交的数据总览: ", finalData);
+            
+            // 模拟提交效果
+            const nextBtn = document.getElementById('nextBtn');
+            nextBtn.innerText = '正在提交...';
+            nextBtn.disabled = true;
+
+            setTimeout(() => {
+                alert("提交成功！需求编号已生成，业务经理将尽快与您联系。");
+                // TODO: 在这里编写实际的 fetch/axios 提交到后端的逻辑
+                // 成功后可执行页面跳转或重置页面
+                // window.location.href = '/success';
+            }, 800);
         }
 
         function selectItem(category, displayName) {
@@ -1385,7 +1417,7 @@
             if (!confirm('确定要清空所有已选配置并重头开始吗？')) return;
 
             // 1. 重置 ODM/OEM
-            selectedOdmStyles = []; // 新增：清空多选数组
+            selectedOdmStyles = []; 
             document.querySelectorAll('.style-item').forEach(item => item.classList.remove('selected'));
             document.getElementById('sum-style').innerText = '未选择';
             odmCustomData = {}; currentEditingStyle = '';

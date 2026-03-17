@@ -487,31 +487,32 @@
                             <!-- 2. 文字描述区 -->
                             <div class="oem-upload-section" style="margin-bottom: 25px;">
                                 <h4 class="oem-title">3. 补充说明 (Design Remarks)</h4>
-                                <textarea id="oem-remark" class="oem-textarea" style="height: 80px;" placeholder="请详细描述您的修改要求或特定工艺要求..."></textarea>
+                                <textarea id="oem-remark" class="oem-textarea" style="height: 100px;" placeholder="请详细描述您的修改要求或特定工艺要求..."></textarea>
                             </div>
                         
-                            <!-- 3. 底部功能栏 -->
-                            <div style="padding: 15px 20px; background: #fff; border: 1px solid #f1f5f9; border-radius: 12px; display: flex; flex-direction: column; gap: 12px;">
-    
-                            <!-- 第1行：Checkbox -->
-                            <div>
-                                <label class="oem-checkbox-label" style="margin: 0; padding: 0;">
-                                    <input type="checkbox" id="oem-physical" onchange="togglePhysicalInfo(this.checked)"> 需寄送样衣
-                                </label>
+                            <!-- 4. 寄送样衣功能栏 -->
+                            <div style="padding: 15px 20px; background: #fff; border: 1px solid #f1f5f9; border-radius: 12px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px;">
+                                
+                                <!-- Checkbox -->
+                                <div>
+                                    <label class="oem-checkbox-label" style="margin: 0; padding: 0;">
+                                        <input type="checkbox" id="oem-physical" onchange="togglePhysicalInfo(this.checked)"> 需寄送实体样衣进行打版参考
+                                    </label>
+                                </div>
+                                
+                                <!-- 展开的地址信息区 (勾选后显示在下方) -->
+                                <div id="oem-address-info" class="hidden" style="background: #f8fafc; padding: 12px 15px; border-radius: 8px; border: 1px dashed #cbd5e1; display: flex; align-items: center; gap: 10px; font-size: 12px; color: #64748b; transition: all 0.3s;">
+                                    <span>📍 寄至东莞定制中心，物流单号：</span>
+                                    <input type="text" class="oem-input-mini" style="width: 200px; background: #fff;" placeholder="填写单号">
+                                </div>
+                                
                             </div>
                             
-                            <!-- 第2行：展开的地址信息区 (在其下方，勾选后显示) -->
-                            <div id="oem-address-info" class="hidden" style="background: #f8fafc; padding: 12px 15px; border-radius: 8px; border: 1px dashed #cbd5e1; display: flex; align-items: center; gap: 10px; font-size: 12px; color: #64748b; transition: all 0.3s;">
-                                <span>📍 寄至东莞定制中心，物流单号：</span>
-                                <input type="text" class="oem-input-mini" style="width: 200px; background: #fff;" placeholder="填写单号">
-                            </div>
-                        
-                            <!-- 分割线 -->
-                            <div style="height: 1px; background: #f1f5f9; margin: 2px 0;"></div>
-                        
-                            <!-- 第3行：加密传输区域 (放在最下面) -->
-                            <div style="display: flex; align-items: center; gap: 6px; color: #16a34a; font-size: 11px; font-weight: 500;">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            <!-- 5. 独立在外部的加密传输提示 -->
+                            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 6px; color: #16a34a; font-size: 11px; font-weight: 500; padding-right: 5px;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                </svg>
                                 数据端到端加密传输中
                             </div>
                             

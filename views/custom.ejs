@@ -623,11 +623,16 @@
                                 <div id="selected-colors-text" style="font-size: 12px; color: #999; margin-top: 10px; font-weight: 500;">未选择颜色</div>
                             </div>
                             <div id="fabric-print-area" class="hidden">
-                                <div class="premium-upload-box">
-                                    <p style="margin: 0 0 10px; color: var(--text-main); font-size: 14px; font-weight: 500;">上传您的印花图案 (Allover Print)</p>
-                                    <p style="color: #888; font-size: 12px; margin-bottom: 15px;">支持无缝拼接图 (AI, EPS, TIFF, 高清JPG)。</p>
-                                    <input type="file" multiple class="custom-file-input">
+                                <div class="premium-upload-box" id="printDropzone" onclick="document.getElementById('printFile').click()" style="padding: 30px 20px;">
+                                    <div style="margin-bottom: 12px;">
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                                    </div>
+                                    <p style="margin: 0 0 6px; color: var(--text-main); font-size: 14px; font-weight: 600;">上传定制印花图案 (Allover Print)</p>
+                                    <p style="color: #94a3b8; font-size: 12px; margin-bottom: 0;">支持无缝拼接图 (AI, EPS, TIFF, 高清JPG)</p>
+                                    <input type="file" id="printFile" multiple class="hidden" onchange="handlePrintFiles(this.files)">
                                 </div>
+                                <!-- 印花图片预览网格 -->
+                                <div id="printPreviewGrid" class="oem-image-preview-grid" style="margin-top: 15px; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));"></div>
                             </div>
                             <div class="fabric-notes-area">
                                 <h4 style="font-size: 13px; margin: 0 0 10px; color: var(--text-main);">拼色说明与参考附件 (可选)</h4>
@@ -1592,6 +1597,8 @@
 
                     document.getElementById('fabric-remark').value = config.remark || '';
                     renderFabricFileList(config.files || []); // 切换 Tab 时恢复附件列表
+
+                    renderPrintPreview(config.prints || []); // 切换 Tab 时恢复印花预览
                     
                     setTimeout(() => {
                         const arrow = document.getElementById('config-arrow');
@@ -1603,6 +1610,55 @@
             } else {
                 panel.classList.add('hidden');
             }
+        }
+
+        // 处理印花文件上传
+        function handlePrintFiles(files) {
+            if(!activeFabricCat || !fabricSelection[activeFabricCat].activeName) return;
+            const config = fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName];
+            
+            Array.from(files).forEach(file => {
+                if (file.size > 20 * 1024 * 1024) { alert(`印花文件 ${file.name} 超过 20MB`); return; }
+                if (!config.prints.some(f => f.name === file.name && f.size === file.size)) {
+                    config.prints.push(file);
+                }
+            });
+            renderPrintPreview(config.prints);
+        }
+
+        // 渲染印花预览
+        function renderPrintPreview(files) {
+            const grid = document.getElementById('printPreviewGrid');
+            grid.innerHTML = '';
+            files.forEach((file, index) => {
+                const isImage = file.type.startsWith('image/');
+                const ext = file.name.split('.').pop().toUpperCase();
+                
+                if (isImage) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        grid.insertAdjacentHTML('beforeend', `
+                            <div class="oem-preview-item" style="width:100px;">
+                                <img src="${e.target.result}" onclick="openOemPreview(this.src, '${file.name}')" style="cursor:zoom-in;">
+                                <button type="button" class="oem-preview-remove" onclick="removePrintFile(${index})">&times;</button>
+                            </div>`);
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    grid.insertAdjacentHTML('beforeend', `
+                        <div class="oem-preview-item" style="width:100px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; flex-direction:column;">
+                            <span style="font-size:10px; font-weight:800; color:#64748b;">${ext}</span>
+                            <button type="button" class="oem-preview-remove" onclick="removePrintFile(${index})">&times;</button>
+                        </div>`);
+                }
+            });
+        }
+
+        // 移除印花文件
+        function removePrintFile(index) {
+            const config = fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName];
+            config.prints.splice(index, 1);
+            renderPrintPreview(config.prints);
         }
 
         // 处理面料附件上传
@@ -1703,7 +1759,7 @@
             // 3. 数据层：记录当前选中的面料名称，若无缓存则初始化它的配置
             selection.activeName = name; 
             if (!selection.configs[name]) {
-                selection.configs[name] = { mode: 'solid', colors: [], remark: '', files: [] }; // 增加 files 数组
+                selection.configs[name] = { mode: 'solid', colors: [], remark: '', files: [], prints: [] }; // 增加 prints
             }
             const config = selection.configs[name];
             
@@ -1725,6 +1781,7 @@
 
             document.getElementById('fabric-remark').value = config.remark; 
             renderFabricFileList(config.files || []); // 恢复附件列表显示
+            renderPrintPreview(config.prints || []); // 恢复印花预览
             
             updateFabricSummary();
         }

@@ -264,7 +264,7 @@
         .sub-tab.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
         .fabric-pane { display: none; }
         .fabric-pane.active { display: block; animation: fadeIn 0.4s ease; }
-        .fabric-config-panel { margin-top: 30px; padding: 30px; background: #fbfcfd; border: 1px solid #f1f5f9; border-radius: 12px; position: relative; }
+        .fabric-config-panel { grid-column: 1 / -1; margin-top: 0; padding: 30px; background: #fbfcfd; border: 1px solid #f1f5f9; border-radius: 12px; position: relative; }
         .config-arrow { position: absolute; top: -9px; left: 40px; width: 16px; height: 16px; background: #fbfcfd; border-top: 1px solid #f1f5f9; border-left: 1px solid #f1f5f9; transform: rotate(45deg); transition: left 0.4s ease; z-index: 1; }
         .config-header { margin-bottom: 20px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
         .config-header h4 { margin: 0; font-size: 16px; color: var(--text-main); }
@@ -1461,21 +1461,48 @@
         }
 
         function selectFabric(name, el, catId) {
-            // 清除同级分类下的选中状态
+            // 1. 清除同级分类下的选中状态
             document.getElementById(catId).querySelectorAll('.fabric-item').forEach(item => item.classList.remove('selected')); 
             el.classList.add('selected');
             
-            const arrow = document.getElementById('config-arrow');
             const panel = document.getElementById('fabric-config-panel');
+            const gridContainer = document.getElementById(`grid-${catId}`);
             
-            // 展示配置台，并动态计算小箭头的位置
+            // 2. 找到当前点击卡片所在行的最后一个元素
+            let insertBeforeNode = null;
+            let currentElement = el.nextElementSibling;
+            
+            while (currentElement) {
+                // 如果在遍历时碰到面板本身，跳过
+                if (currentElement.id === 'fabric-config-panel') {
+                    currentElement = currentElement.nextElementSibling;
+                    continue;
+                }
+                // 如果元素的 offsetTop 大于当前点击元素，说明它换行了
+                if (currentElement.offsetTop > el.offsetTop) {
+                    insertBeforeNode = currentElement;
+                    break;
+                }
+                currentElement = currentElement.nextElementSibling;
+            }
+
+            // 3. 将面板 DOM 插入到当前行的下方
+            if (insertBeforeNode) {
+                gridContainer.insertBefore(panel, insertBeforeNode);
+            } else {
+                gridContainer.appendChild(panel);
+            }
+            
             panel.classList.remove('hidden'); 
-            const containerLeft = document.getElementById('fabric-panes-container').getBoundingClientRect().left;
-            arrow.style.left = `${el.getBoundingClientRect().left - containerLeft + (el.getBoundingClientRect().width / 2) - 8}px`;
             
-            // 重置并记录选择
+            // 4. 动态计算小箭头的位置 (利用绝对屏幕坐标计算相对偏移，最精确)
+            const arrow = document.getElementById('config-arrow');
+            const arrowPos = el.getBoundingClientRect().left - panel.getBoundingClientRect().left + (el.getBoundingClientRect().width / 2) - 8;
+            arrow.style.left = `${arrowPos}px`;
+            
+            // 5. 重置并记录选择
             fabricSelection[catId].name = name; 
-            fabricSelection[catId].colors =[];
+            fabricSelection[catId].colors = [];
             
             document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.remove('selected'));
             const textEl = document.getElementById('selected-colors-text'); 

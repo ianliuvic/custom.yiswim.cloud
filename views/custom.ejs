@@ -1723,7 +1723,6 @@
             if (isOdmActive) {
                 // 仅清除 ODM 逻辑
                 if (selectedOdmStyles.length === 0) return;
-                if (!confirm('确定要清空所有已选的 ODM 款式及轻定制要求吗？')) return;
                 
                 selectedOdmStyles = [];
                 odmCustomData = {};
@@ -1817,7 +1816,6 @@
             if (fabricSelection[activeFabricCat].name === '') return; // 已经是空的不执行
             
             const catName = fabricSelection[activeFabricCat].originalCatName;
-            if (!confirm(`确定要清空 [${catName}] 的选择吗？`)) return;
 
             // 1. 重置当前分类的数据
             fabricSelection[activeFabricCat].name = '';

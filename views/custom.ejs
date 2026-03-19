@@ -1583,12 +1583,29 @@
                         const arrow = document.getElementById('config-arrow');
                         const arrowPos = selectedEl.getBoundingClientRect().left - panel.getBoundingClientRect().left + (selectedEl.getBoundingClientRect().width / 2) - 8;
                         arrow.style.left = `${arrowPos}px`;
-                        panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        scrollToPanelHeader();
                     }, 50);
                 }
             } else {
                 panel.classList.add('hidden');
             }
+        }
+
+        // 新增：精确控制滚动，使配置面板的 header 位于视图中上部
+        function scrollToPanelHeader() {
+            setTimeout(() => {
+                const scrollArea = document.querySelector('.config-scroll-area');
+                const panel = document.getElementById('fabric-config-panel');
+                const header = panel.querySelector('.config-header');
+                
+                if (scrollArea && header && !panel.classList.contains('hidden')) {
+                    const scrollAreaRect = scrollArea.getBoundingClientRect();
+                    const headerRect = header.getBoundingClientRect();
+                    // 计算距离：让 header 停留在距离滚动容器顶部 80px 的位置（偏中上部）
+                    const scrollAmount = headerRect.top - scrollAreaRect.top - 80;
+                    scrollArea.scrollBy({ top: scrollAmount, behavior: 'smooth' });
+                }
+            }, 80); // 确保 DOM 已完全展开并重新排版
         }
 
         function selectFabric(name, el, catId) {
@@ -1599,7 +1616,7 @@
             if (selection.activeName === name) {
                 panel.classList.toggle('hidden');
                 if (!panel.classList.contains('hidden')) {
-                    setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
+                    scrollToPanelHeader();
                     const arrow = document.getElementById('config-arrow');
                     const arrowPos = el.getBoundingClientRect().left - panel.getBoundingClientRect().left + (el.getBoundingClientRect().width / 2) - 8;
                     arrow.style.left = `${arrowPos}px`;
@@ -1624,7 +1641,7 @@
             else gridContainer.appendChild(panel);
             
             panel.classList.remove('hidden'); 
-            setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
+            scrollToPanelHeader();
             
             const arrow = document.getElementById('config-arrow');
             const arrowPos = el.getBoundingClientRect().left - panel.getBoundingClientRect().left + (el.getBoundingClientRect().width / 2) - 8;

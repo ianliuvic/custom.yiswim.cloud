@@ -264,8 +264,35 @@
         .sub-tab.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
         .fabric-pane { display: none; }
         .fabric-pane.active { display: block; animation: fadeIn 0.4s ease; }
-        .fabric-config-panel { grid-column: 1 / -1; margin-top: 0; padding: 30px; background: #fbfcfd; border: 1px solid #f1f5f9; border-radius: 12px; position: relative; }
-        .config-arrow { position: absolute; top: -9px; left: 40px; width: 16px; height: 16px; background: #fbfcfd; border-top: 1px solid #f1f5f9; border-left: 1px solid #f1f5f9; transform: rotate(45deg); transition: left 0.4s ease; z-index: 1; }
+        .fabric-config-panel { 
+            grid-column: 1 / -1; 
+            margin-top: 10px; 
+            margin-bottom: 10px; 
+            padding: 30px; 
+            background: #fffcfc; /* 显眼的微红暖色背景 */
+            border: 1px solid #fecaca; /* 红色系边框 */
+            border-radius: 12px; 
+            position: relative; 
+            box-shadow: 0 10px 25px rgba(170, 0, 0, 0.06); /* 带有主色调的阴影 */
+            animation: panelSlideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .config-arrow { 
+            position: absolute; 
+            top: -9px; 
+            left: 40px; 
+            width: 16px; 
+            height: 16px; 
+            background: #fffcfc; /* 与面板背景色保持一致 */
+            border-top: 1px solid #fecaca; 
+            border-left: 1px solid #fecaca; 
+            transform: rotate(45deg); 
+            transition: left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); 
+            z-index: 1; 
+        }
+        @keyframes panelSlideDown { 
+            from { opacity: 0; transform: translateY(-10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
         .config-header { margin-bottom: 20px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
         .config-header h4 { margin: 0; font-size: 16px; color: var(--text-main); }
         .color-palette { display: flex; flex-wrap: wrap; gap: 12px; }

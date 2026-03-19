@@ -1422,6 +1422,11 @@
                     const coverImg = (fabric.image_urls && fabric.image_urls.length > 0) ? fabric.image_urls[0] : '';
                     const fabricJson = JSON.stringify(fabric).replace(/"/g, '&quot;');
                     
+                    // 解析 composition 和 gsm 数组，组装副标题文本
+                    const compStr = (fabric.composition && fabric.composition.length > 0) ? fabric.composition[0] : '';
+                    const gsmStr = (fabric.gsm && fabric.gsm.length > 0) ? fabric.gsm[0] + 'g' : '';
+                    const subText = [compStr, gsmStr].filter(Boolean).join(' | ') || '精选定制材质';
+                    
                     const cardHtml = `
                         <div class="option-item fabric-item" onclick="selectFabric('${fabric.name}', this, '${catId}')">
                             <div class="details-btn" onclick="event.stopPropagation(); openDetailModal(${fabricJson})" title="查看详情">
@@ -1430,7 +1435,7 @@
                             ${coverImg ? `<img src="${coverImg}" class="option-img" loading="lazy">` : `<div style="height:140px; background:#f8fafc; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:12px;">[暂无预览图]</div>`}
                             <div class="option-info">
                                 <h4>${fabric.name}</h4>
-                                <p style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${fabric.description || '精选定制材质'}</p>
+                                <p style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${subText}">${subText}</p>
                             </div>
                         </div>`;
                     gridContainer.insertAdjacentHTML('beforeend', cardHtml);

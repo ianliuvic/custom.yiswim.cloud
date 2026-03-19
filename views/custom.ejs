@@ -537,40 +537,15 @@
                          步骤 2: 面料与里料
                          ========================================== -->
                     <div class="step-content hidden" id="step-2">
-                        <div class="step-desc">请分别选择主面料与贴身里料。选中后在下方配置台中定义颜色或印花。</div>
+                        <div class="step-desc">请分别选择对应部位的面料材质。选中后在下方配置台中定义颜色或印花。</div>
                         
-                        <div class="sub-tabs" style="margin-bottom: 20px;">
-                            <div class="sub-tab active" onclick="switchFabricCat('main', this)">主面料 (Main Fabric)</div>
-                            <div class="sub-tab" onclick="switchFabricCat('lining', this)">里料 (Lining)</div>
+                        <!-- 动态生成的 Sub-tabs -->
+                        <div class="sub-tabs" id="fabric-sub-tabs" style="margin-bottom: 20px;">
+                            <p style="font-size:12px; color:#999;">正在加载面料数据...</p>
                         </div>
 
-                        <div id="fabric-pane-main" class="fabric-pane active">
-                            <div class="option-grid">
-                                <div class="option-item fabric-item" onclick="selectFabric('Matte Nylon', this, 'main')">
-                                    <div class="details-btn" onclick="event.stopPropagation(); openDetailModal({name:'Matte Nylon', description:'80% 尼龙, 20% 氨纶。哑光质感，高弹舒适，经典首选。'})" title="查看详情"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div>
-                                    <div style="height:140px; background:#2c3e50;"></div>
-                                    <div class="option-info"><h4>Matte Nylon</h4><p>190G · 经典哑光</p></div>
-                                </div>
-                                <div class="option-item fabric-item" onclick="selectFabric('Ribbed Fabric', this, 'main')">
-                                    <div class="details-btn" onclick="event.stopPropagation(); openDetailModal({name:'Ribbed Fabric', description:'复古坑条面料，极佳质感与视觉修身效果。'})" title="查看详情"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div>
-                                    <div style="height:140px; background:repeating-linear-gradient(90deg, #d2b48c, #d2b48c 2px, #cdaa7d 2px, #cdaa7d 4px);"></div>
-                                    <div class="option-info"><h4>Ribbed Texture</h4><p>复古坑条 · 极佳质感</p></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="fabric-pane-lining" class="fabric-pane">
-                            <div class="option-grid">
-                                <div class="option-item fabric-item" onclick="selectFabric('Power Mesh', this, 'lining')">
-                                    <div style="height:140px; background:radial-gradient(#ddd 1px, transparent 0); background-size: 4px 4px;"></div>
-                                    <div class="option-info"><h4>Power Mesh</h4><p>强力塑形网 · 透气支撑</p></div>
-                                </div>
-                                <div class="option-item fabric-item" onclick="selectFabric('Nude Microfiber', this, 'lining')">
-                                    <div style="height:140px; background:#f1d5c1;"></div>
-                                    <div class="option-info"><h4>Microfiber</h4><p>超细纤维 · 裸感亲肤</p></div>
-                                </div>
-                            </div>
-                        </div>
+                        <!-- 动态生成的 面料面板 (将原来的主面料、里料面板替换为这一个容器) -->
+                        <div id="fabric-panes-container"></div>
 
                         <div id="fabric-config-panel" class="fabric-config-panel hidden">
                             <div id="config-arrow" class="config-arrow"></div>
@@ -578,6 +553,7 @@
                                 <h4 id="selected-fabric-display">配置选项</h4>
                                 <span id="config-type-tag" style="font-size: 11px; padding: 2px 8px; border-radius: 10px; background: #eee; color: #666;">面料</span>
                             </div>
+                            <!-- 下面的模式切换和颜色选择器保持原样不变 -->
                             <div class="mode-switcher" style="margin-bottom: 20px;">
                                 <div class="mode-option active" id="mode-solid" onclick="switchFabricMode('solid')">纯色 (Solid)</div>
                                 <div class="mode-option" id="mode-print" onclick="switchFabricMode('print')">定制印花 (Print)</div>
@@ -963,6 +939,7 @@
                 if (result.success && result.data) {
                     if(result.data.bags) renderBags(result.data.bags);
                     if(result.data.odm_styles) renderOdmStyles(result.data.odm_styles);
+                    if(result.data.fabrics) renderFabrics(result.data.fabrics); // 【新增这行】
                 }
             } catch (error) { console.warn('加载数据API未就绪，使用静态展示框架:', error); }
         });
@@ -1400,43 +1377,147 @@
             event.currentTarget.classList.add('selected');
         }
 
-        let fabricSelection = { main: { name: '', mode: 'solid', colors: [], remark: '' }, lining: { name: '', mode: 'solid', colors: [], remark: '' } }, activeFabricCat = 'main';
-        function switchFabricCat(cat, el) {
-            activeFabricCat = cat; el.parentNode.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active')); el.classList.add('active');
-            document.querySelectorAll('.fabric-pane').forEach(p => p.classList.remove('active')); document.getElementById(`fabric-pane-${cat}`).classList.add('active');
+        // ==========================================
+        // 动态面料渲染与联动逻辑
+        // ==========================================
+        let fabricSelection = {}; 
+        let activeFabricCat = '';
+
+        function renderFabrics(fabrics) {
+            const tabsContainer = document.getElementById('fabric-sub-tabs');
+            const panesContainer = document.getElementById('fabric-panes-container');
+            
+            if (!fabrics || fabrics.length === 0) { 
+                tabsContainer.innerHTML = '<p style="color:#999;font-size:12px;">暂无面料数据</p>'; 
+                return; 
+            }
+
+            // 1. 获取所有不重复的面料分类 (Category)
+            const categories =[...new Set(fabrics.map(f => f.category).filter(Boolean))];
+            
+            tabsContainer.innerHTML = '';
+            panesContainer.innerHTML = '';
+            fabricSelection = {};
+
+            // 2. 动态生成 Tabs 和 Panes
+            categories.forEach((cat, index) => {
+                const catId = `fabric-cat-${index}`; // 使用 index 避免类名中的特殊字符问题
+                const isActive = index === 0 ? 'active' : '';
+                if (index === 0) activeFabricCat = catId; 
+
+                // 初始化该分类的选中状态数据结构
+                fabricSelection[catId] = { name: '', mode: 'solid', colors:[], remark: '', originalCatName: cat };
+
+                // 插入 Tab
+                tabsContainer.insertAdjacentHTML('beforeend', `<div class="sub-tab ${isActive}" onclick="switchFabricCat('${catId}', this)">${cat}</div>`);
+
+                // 插入 Pane 和 Grid
+                panesContainer.insertAdjacentHTML('beforeend', `<div id="${catId}" class="fabric-pane ${isActive}"><div class="option-grid" id="grid-${catId}"></div></div>`);
+
+                const catFabrics = fabrics.filter(f => f.category === cat);
+                const gridContainer = document.getElementById(`grid-${catId}`);
+
+                // 3. 填充当前分类下的面料卡片
+                catFabrics.forEach(fabric => {
+                    const coverImg = (fabric.image_urls && fabric.image_urls.length > 0) ? fabric.image_urls[0] : '';
+                    const fabricJson = JSON.stringify(fabric).replace(/"/g, '&quot;');
+                    
+                    const cardHtml = `
+                        <div class="option-item fabric-item" onclick="selectFabric('${fabric.name}', this, '${catId}')">
+                            <div class="details-btn" onclick="event.stopPropagation(); openDetailModal(${fabricJson})" title="查看详情">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            </div>
+                            ${coverImg ? `<img src="${coverImg}" class="option-img" loading="lazy">` : `<div style="height:140px; background:#f8fafc; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:12px;">[暂无预览图]</div>`}
+                            <div class="option-info">
+                                <h4>${fabric.name}</h4>
+                                <p style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${fabric.description || '精选定制材质'}</p>
+                            </div>
+                        </div>`;
+                    gridContainer.insertAdjacentHTML('beforeend', cardHtml);
+                });
+            });
+
+            updateFabricSummary();
+        }
+
+        function switchFabricCat(catId, el) {
+            activeFabricCat = catId; 
+            el.parentNode.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active')); 
+            el.classList.add('active');
+            
+            document.querySelectorAll('#fabric-panes-container .fabric-pane').forEach(p => p.classList.remove('active')); 
+            document.getElementById(catId).classList.add('active');
+            
             document.getElementById('fabric-config-panel').classList.add('hidden');
         }
-        function selectFabric(name, el, cat) {
-            document.getElementById(`fabric-pane-${cat}`).querySelectorAll('.fabric-item').forEach(item => item.classList.remove('selected')); el.classList.add('selected');
-            const arrow = document.getElementById('config-arrow'), panel = document.getElementById('fabric-config-panel');
-            panel.classList.remove('hidden'); arrow.style.left = `${el.getBoundingClientRect().left - el.parentNode.parentNode.getBoundingClientRect().left + (el.getBoundingClientRect().width / 2) - 8}px`;
-            fabricSelection[cat].name = name; fabricSelection[cat].colors = [];
+
+        function selectFabric(name, el, catId) {
+            // 清除同级分类下的选中状态
+            document.getElementById(catId).querySelectorAll('.fabric-item').forEach(item => item.classList.remove('selected')); 
+            el.classList.add('selected');
+            
+            const arrow = document.getElementById('config-arrow');
+            const panel = document.getElementById('fabric-config-panel');
+            
+            // 展示配置台，并动态计算小箭头的位置
+            panel.classList.remove('hidden'); 
+            const containerLeft = document.getElementById('fabric-panes-container').getBoundingClientRect().left;
+            arrow.style.left = `${el.getBoundingClientRect().left - containerLeft + (el.getBoundingClientRect().width / 2) - 8}px`;
+            
+            // 重置并记录选择
+            fabricSelection[catId].name = name; 
+            fabricSelection[catId].colors =[];
+            
             document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.remove('selected'));
-            const textEl = document.getElementById('selected-colors-text'); textEl.innerText = '未选择颜色'; textEl.style.color = '#999';
-            document.getElementById('selected-fabric-display').innerText = `${cat === 'main' ? '主面料' : '里料'}配置：${name}`;
-            document.getElementById('config-type-tag').innerText = cat === 'main' ? 'MAIN FABRIC' : 'LINING';
+            const textEl = document.getElementById('selected-colors-text'); 
+            textEl.innerText = '未选择颜色'; textEl.style.color = '#999';
+            
+            document.getElementById('selected-fabric-display').innerText = `${fabricSelection[catId].originalCatName}：${name}`;
+            document.getElementById('config-type-tag').innerText = fabricSelection[catId].originalCatName;
+            
             updateFabricSummary();
         }
+
         function switchFabricMode(mode) {
+            if(!activeFabricCat || !fabricSelection[activeFabricCat]) return;
             fabricSelection[activeFabricCat].mode = mode;
-            document.getElementById('mode-solid').classList.toggle('active', mode === 'solid'); document.getElementById('mode-print').classList.toggle('active', mode === 'print');
-            document.getElementById('fabric-solid-area').classList.toggle('hidden', mode !== 'solid'); document.getElementById('fabric-print-area').classList.toggle('hidden', mode !== 'print');
+            document.getElementById('mode-solid').classList.toggle('active', mode === 'solid'); 
+            document.getElementById('mode-print').classList.toggle('active', mode === 'print');
+            document.getElementById('fabric-solid-area').classList.toggle('hidden', mode !== 'solid'); 
+            document.getElementById('fabric-print-area').classList.toggle('hidden', mode !== 'print');
             updateFabricSummary();
         }
+
         function toggleColor(colorName, el) {
+            if(!activeFabricCat || !fabricSelection[activeFabricCat]) return;
             const arr = fabricSelection[activeFabricCat].colors, idx = arr.indexOf(colorName);
             if (idx > -1) { arr.splice(idx, 1); el.classList.remove('selected'); } else { arr.push(colorName); el.classList.add('selected'); }
             const textEl = document.getElementById('selected-colors-text');
             if (arr.length === 0) { textEl.innerText = '未选择颜色'; textEl.style.color = '#999'; } else { textEl.innerText = `已选颜色 (${arr.length})：${arr.join(', ')}`; textEl.style.color = 'var(--primary-color)'; }
             updateFabricSummary();
         }
+
         function updateFabricSummary() {
-            const buildText = (catStr) => {
-                const conf = fabricSelection[catStr];
-                if (!conf.name) return '未选'; if (conf.mode === 'print') return `${conf.name} (定制印花)`;
-                return conf.colors.length === 0 ? `${conf.name} (待选色)` : `${conf.name} (${conf.colors.length}色)`;
-            };
-            document.getElementById('sum-fabric').innerHTML = `<div style="font-size:12px; margin-bottom:4px; color:var(--text-main);">面: ${buildText('main')}</div><div style="font-size:12px; color:var(--text-main);">里: ${buildText('lining')}</div>`;
+            let html = '';
+            let hasSelection = false;
+            
+            for (const key in fabricSelection) {
+                const conf = fabricSelection[key];
+                const catName = conf.originalCatName;
+                let statusText = '未选';
+                
+                if (conf.name) {
+                    hasSelection = true;
+                    if (conf.mode === 'print') {
+                        statusText = `${conf.name} (定制印花)`;
+                    } else {
+                        statusText = conf.colors.length === 0 ? `${conf.name} (待选色)` : `${conf.name} (${conf.colors.length}色)`;
+                    }
+                }
+                html += `<div style="font-size:12px; margin-bottom:4px; color:var(--text-main); text-align:right;">${catName}: ${statusText}</div>`;
+            }
+            
+            document.getElementById('sum-fabric').innerHTML = hasSelection ? html : '未选';
         }
 
         function switchSubTab(paneId, el) {
@@ -1531,12 +1612,22 @@
             const oemAddr = document.querySelector('#oem-address-info input'); if(oemAddr) oemAddr.value = '';
 
             // 2. 重置面料
-            fabricSelection = { main: { name: '', mode: 'solid', colors: [], remark: '' }, lining: { name: '', mode: 'solid', colors: [], remark: '' } };
+            for (let key in fabricSelection) {
+                fabricSelection[key].name = '';
+                fabricSelection[key].mode = 'solid';
+                fabricSelection[key].colors = [];
+                fabricSelection[key].remark = '';
+            }
             document.querySelectorAll('.fabric-item, .color-swatch').forEach(item => item.classList.remove('selected'));
             document.getElementById('fabric-config-panel').classList.add('hidden'); 
             const textEl = document.getElementById('selected-colors-text'); textEl.innerText = '未选择颜色'; textEl.style.color = '#999';
             document.getElementById('fabric-remark').value = '';
-            document.getElementById('sum-fabric').innerHTML = `<div style="font-size:12px; margin-bottom:4px; color:var(--text-main);">面: 未选</div><div style="font-size:12px; color:var(--text-main);">里: 未选</div>`;
+            
+            let resetHtml = '';
+            for (let key in fabricSelection) {
+                resetHtml += `<div style="font-size:12px; margin-bottom:4px; color:var(--text-main); text-align:right;">${fabricSelection[key].originalCatName}: 未选</div>`;
+            }
+            document.getElementById('sum-fabric').innerHTML = resetHtml || '未选';
 
             // 3. 重置辅料
             ['metal', 'bag', 'hangtag', 'label', 'hygiene', 'other'].forEach(category => {

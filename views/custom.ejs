@@ -109,12 +109,16 @@
     
         .option-img { 
             width: 100%; 
-            aspect-ratio: 3 / 4; 
+            aspect-ratio: 1 / 1; /* 默认为正方形 */
             object-fit: cover; 
             object-position: top; 
             background: #fdfdfd; 
             display: block;
             transition: transform 0.6s ease;
+        }
+        /* 仅 ODM 款式卡片保持 3:4 比例 */
+        .style-item .option-img { 
+            aspect-ratio: 3 / 4; 
         }
         .option-item:hover .option-img { transform: scale(1.06); }
     
@@ -1432,7 +1436,7 @@
                             <div class="details-btn" onclick="event.stopPropagation(); openDetailModal(${fabricJson})" title="查看详情">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                             </div>
-                            ${coverImg ? `<img src="${coverImg}" class="option-img" loading="lazy">` : `<div style="height:140px; background:#f8fafc; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:12px;">[暂无预览图]</div>`}
+                            ${coverImg ? `<img src="${coverImg}" class="option-img" loading="lazy">` : `<div style="width:100%; aspect-ratio:1/1; background:#f8fafc; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:12px;">[暂无预览图]</div>`}
                             <div class="option-info">
                                 <h4>${fabric.name}</h4>
                                 <p style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${subText}">${subText}</p>
@@ -1539,8 +1543,11 @@
         function renderBags(bags) {
             const container = document.getElementById('bag-list-container'); container.innerHTML = ''; 
             bags.forEach(bag => {
-                const coverImg = (bag.image_urls && bag.image_urls.length > 0) ? bag.image_urls[0] : '/images/default-bag.jpg', bagJson = JSON.stringify(bag).replace(/"/g, '&quot;');
-                container.insertAdjacentHTML('beforeend', `<div class="option-item bag-material" onclick="onBagClick(${bagJson}, this)"><div class="details-btn" onclick="event.stopPropagation(); openDetailModal(${bagJson})" title="查看详情"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div><img src="${coverImg}" class="option-img" loading="lazy"><div class="option-info"><h4>${bag.name}</h4><p>${bag.description || '优质定制包装'}</p></div></div>`);
+                // 如果没有图，直接显示占位 div，确保比例为 1:1
+                const imgHtml = (bag.image_urls && bag.image_urls.length > 0) 
+                    ? `<img src="${bag.image_urls[0]}" class="option-img" loading="lazy">`
+                    : `<div style="width:100%; aspect-ratio:1/1; background:#f8fafc; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:12px;">[暂无预览图]</div>`;
+                container.insertAdjacentHTML('beforeend', `<div class="option-item bag-material" onclick="onBagClick(${bagJson}, this)"><div class="details-btn" onclick="event.stopPropagation(); openDetailModal(${bagJson})" title="查看详情"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div>${imgHtml}<div class="option-info"><h4>${bag.name}</h4><p>${bag.description || '优质定制包装'}</p></div></div>`);
             });
         }
         function onBagClick(bag, el) { selectBagAttr('material', bag.name, el); renderBagSizes(bag.sizes); bagConfig.size = '未选尺寸'; updateBagSummary(); }

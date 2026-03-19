@@ -654,8 +654,11 @@
                             <div class="fabric-notes-area">
                                 <h4 style="font-size: 13px; margin: 0 0 10px; color: var(--text-main);">拼色说明与参考附件 (可选)</h4>
                                 
-                                <!-- 新增：面料附件上传区域 -->
-                                <div class="premium-upload-row" id="fabricDropzone" onclick="document.getElementById('fabricFile').click()" style="padding: 12px 18px; margin-bottom: 12px; background: #fff;">
+                                <!-- 1. 文本输入区域 (移到了上方) -->
+                                <textarea id="fabric-remark" placeholder="请详细描述您的拼色方案、色彩分布部位或特殊修改要求..." style="width:100%; height:80px; padding:10px; border:1px solid #ddd; border-radius:4px; font-family:inherit; font-size:13px; box-sizing:border-box; resize:vertical; margin-bottom:15px;" spellcheck="false" oninput="if(activeFabricCat && fabricSelection[activeFabricCat] && fabricSelection[activeFabricCat].activeName) fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName].remark = this.value;"></textarea>
+                                
+                                <!-- 2. 附件上传区域 (移到了下方) -->
+                                <div class="premium-upload-row" id="fabricDropzone" onclick="document.getElementById('fabricFile').click()" style="padding: 12px 18px; background: #fff;">
                                     <div class="upload-label-group">
                                         <span class="upload-label-main" style="font-size: 13px;">上传参考图或工艺附件</span>
                                         <span class="upload-label-sub">支持图片、PDF、AI (Max 20MB)</span>
@@ -663,9 +666,7 @@
                                     <input type="file" id="fabricFile" multiple class="hidden" onchange="handleFabricFiles(this.files)"> 
                                     <button type="button" class="btn-outline" style="padding: 5px 12px; font-size: 11px; pointer-events: none;">选择文件</button>
                                 </div>
-                                <div id="fabricFileList" class="file-list-container" style="margin-bottom: 15px;"></div>
-
-                                <textarea id="fabric-remark" ...></textarea>
+                                <div id="fabricFileList" class="file-list-container"></div>
                             </div>
 
                         </div>

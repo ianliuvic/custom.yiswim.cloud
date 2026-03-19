@@ -1504,6 +1504,11 @@
                     else gridContainer.appendChild(panel);
                     
                     panel.classList.remove('hidden');
+
+                    // 新增：切换 Tab 恢复面板时也自动滚动对齐
+                    setTimeout(() => {
+                        panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 100);
                     
                     // 恢复标题、类型和模式状态
                     document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：${selection.name}`;
@@ -1573,6 +1578,14 @@
             }
             
             panel.classList.remove('hidden'); 
+
+            // --- 新增：滚动到页面中间的逻辑 ---
+            setTimeout(() => {
+                panel.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' // 将面板对齐到滚动容器的中心
+                });
+            }, 50); // 延迟一小会儿确保面板已插入并渲染
             
             // 4. 动态计算小箭头的位置 (利用绝对屏幕坐标计算相对偏移，最精确)
             const arrow = document.getElementById('config-arrow');

@@ -618,7 +618,7 @@
                             </div>
                             <div class="fabric-notes-area">
                                 <h4 style="font-size: 13px; margin: 0 0 10px; color: var(--text-main);">拼色说明与参考附件 (可选)</h4>
-                                <textarea id="fabric-remark" placeholder="请详细描述您的色彩分布或附件说明..." style="width:100%; height:80px; padding:10px; border:1px solid #ddd; border-radius:4px; font-family:inherit; font-size:13px; box-sizing:border-box; resize:vertical;" spellcheck="false" oninput="if(activeFabricCat && fabricSelection[activeFabricCat]) fabricSelection[activeFabricCat].remark = this.value;"></textarea>
+                                <textarea id="fabric-remark" placeholder="请详细描述您的色彩分布或附件说明..." style="width:100%; height:80px; padding:10px; border:1px solid #ddd; border-radius:4px; font-family:inherit; font-size:13px; box-sizing:border-box; resize:vertical;" spellcheck="false" oninput="if(activeFabricCat && fabricSelection[activeFabricCat] && fabricSelection[activeFabricCat].activeName) fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName].remark = this.value;"></textarea>
                             </div>
                         </div>
                     </div>
@@ -1445,8 +1445,8 @@
                 const isActive = index === 0 ? 'active' : '';
                 if (index === 0) activeFabricCat = catId; 
 
-                // 初始化该分类的选中状态数据结构
-                fabricSelection[catId] = { name: '', mode: 'solid', colors:[], remark: '', originalCatName: cat };
+                // 初始化该分类的缓存数据结构：包含当前活跃名字 activeName 和各面料的独立配置 configs
+                fabricSelection[catId] = { activeName: '', originalCatName: cat, configs: {} };
 
                 // 插入 Tab (改用 mode-option 样式)
                 tabsContainer.insertAdjacentHTML('beforeend', `<div class="mode-option ${isActive}" onclick="switchFabricCat('${catId}', this)">${cat}</div>`);
@@ -1497,10 +1497,11 @@
             const panel = document.getElementById('fabric-config-panel');
             const selection = fabricSelection[catId];
             
-            if (selection && selection.name) {
+                        if (selection && selection.activeName) {
                 const selectedEl = document.getElementById(catId).querySelector('.fabric-item.selected');
+                const config = selection.configs[selection.activeName];
+                
                 if (selectedEl) {
-                    // 将面板移动回当前网格
                     const gridContainer = document.getElementById(`grid-${catId}`);
                     let insertBeforeNode = null;
                     let currentElement = selectedEl.nextElementSibling;
@@ -1513,40 +1514,32 @@
                     else gridContainer.appendChild(panel);
                     
                     panel.classList.remove('hidden');
-
-                    // 新增：切换 Tab 恢复面板时也自动滚动对齐
-                    setTimeout(() => {
-                        panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 100);
                     
-                    // 恢复标题、类型和模式状态
-                    document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：${selection.name}`;
+                    document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：${selection.activeName}`;
                     document.getElementById('config-type-tag').innerText = selection.originalCatName;
                     
-                    document.getElementById('mode-solid').classList.toggle('active', selection.mode === 'solid'); 
-                    document.getElementById('mode-print').classList.toggle('active', selection.mode === 'print');
-                    document.getElementById('fabric-solid-area').classList.toggle('hidden', selection.mode !== 'solid'); 
-                    document.getElementById('fabric-print-area').classList.toggle('hidden', selection.mode !== 'print');
+                    document.getElementById('mode-solid').classList.toggle('active', config.mode === 'solid'); 
+                    document.getElementById('mode-print').classList.toggle('active', config.mode === 'print');
+                    document.getElementById('fabric-solid-area').classList.toggle('hidden', config.mode !== 'solid'); 
+                    document.getElementById('fabric-print-area').classList.toggle('hidden', config.mode !== 'print');
                     
-                    // 恢复颜色多选 UI
                     document.querySelectorAll('.color-swatch').forEach(sw => {
-                        if (selection.colors.some(c => sw.title.startsWith(c))) sw.classList.add('selected');
+                        if (config.colors.some(c => sw.title.startsWith(c))) sw.classList.add('selected');
                         else sw.classList.remove('selected');
                     });
                     
                     const textEl = document.getElementById('selected-colors-text');
-                    if (selection.colors.length === 0) { textEl.innerText = '未选择颜色'; textEl.style.color = '#999'; } 
-                    else { textEl.innerText = `已选颜色 (${selection.colors.length})：${selection.colors.join(', ')}`; textEl.style.color = 'var(--primary-color)'; }
+                    if (config.colors.length === 0) { textEl.innerText = '未选择颜色'; textEl.style.color = '#999'; } 
+                    else { textEl.innerText = `已选颜色 (${config.colors.length})：${config.colors.join(', ')}`; textEl.style.color = 'var(--primary-color)'; }
                     
-                    // 恢复备注输入框
-                    document.getElementById('fabric-remark').value = selection.remark || '';
+                    document.getElementById('fabric-remark').value = config.remark || '';
                     
-                    // 延迟计算箭头位置确保 DOM 渲染完成
                     setTimeout(() => {
                         const arrow = document.getElementById('config-arrow');
                         const arrowPos = selectedEl.getBoundingClientRect().left - panel.getBoundingClientRect().left + (selectedEl.getBoundingClientRect().width / 2) - 8;
                         arrow.style.left = `${arrowPos}px`;
-                    }, 10);
+                        panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 50);
                 }
             } else {
                 panel.classList.add('hidden');
@@ -1554,73 +1547,78 @@
         }
 
         function selectFabric(name, el, catId) {
-            // 1. 清除同级分类下的选中状态
+            const panel = document.getElementById('fabric-config-panel');
+            const selection = fabricSelection[catId];
+            
+            // 1. 如果点击的是已选中的卡片，则切换面板显示/隐藏
+            if (selection.activeName === name) {
+                panel.classList.toggle('hidden');
+                if (!panel.classList.contains('hidden')) {
+                    setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
+                    const arrow = document.getElementById('config-arrow');
+                    const arrowPos = el.getBoundingClientRect().left - panel.getBoundingClientRect().left + (el.getBoundingClientRect().width / 2) - 8;
+                    arrow.style.left = `${arrowPos}px`;
+                }
+                return; // 仅切换显示，不清理数据
+            }
+
+            // 2. 切换到新的卡片
             document.getElementById(catId).querySelectorAll('.fabric-item').forEach(item => item.classList.remove('selected')); 
             el.classList.add('selected');
             
-            const panel = document.getElementById('fabric-config-panel');
+            // 移动面板DOM到当前行下方
             const gridContainer = document.getElementById(`grid-${catId}`);
-            
-            // 2. 找到当前点击卡片所在行的最后一个元素
             let insertBeforeNode = null;
             let currentElement = el.nextElementSibling;
-            
             while (currentElement) {
-                // 如果在遍历时碰到面板本身，跳过
-                if (currentElement.id === 'fabric-config-panel') {
-                    currentElement = currentElement.nextElementSibling;
-                    continue;
-                }
-                // 如果元素的 offsetTop 大于当前点击元素，说明它换行了
-                if (currentElement.offsetTop > el.offsetTop) {
-                    insertBeforeNode = currentElement;
-                    break;
-                }
+                if (currentElement.id === 'fabric-config-panel') { currentElement = currentElement.nextElementSibling; continue; }
+                if (currentElement.offsetTop > el.offsetTop) { insertBeforeNode = currentElement; break; }
                 currentElement = currentElement.nextElementSibling;
             }
-
-            // 3. 将面板 DOM 插入到当前行的下方
-            if (insertBeforeNode) {
-                gridContainer.insertBefore(panel, insertBeforeNode);
-            } else {
-                gridContainer.appendChild(panel);
-            }
+            if (insertBeforeNode) gridContainer.insertBefore(panel, insertBeforeNode);
+            else gridContainer.appendChild(panel);
             
             panel.classList.remove('hidden'); 
-
-            // --- 新增：滚动到页面中间的逻辑 ---
-            setTimeout(() => {
-                panel.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'center' // 将面板对齐到滚动容器的中心
-                });
-            }, 50); // 延迟一小会儿确保面板已插入并渲染
+            setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
             
-            // 4. 动态计算小箭头的位置 (利用绝对屏幕坐标计算相对偏移，最精确)
             const arrow = document.getElementById('config-arrow');
             const arrowPos = el.getBoundingClientRect().left - panel.getBoundingClientRect().left + (el.getBoundingClientRect().width / 2) - 8;
             arrow.style.left = `${arrowPos}px`;
             
-            // 5. 重置并记录选择
-            fabricSelection[catId].name = name; 
-            fabricSelection[catId].colors = [];
-            fabricSelection[catId].remark = ''; // 新增：数据层清空备注
+            // 3. 数据层：记录当前选中的面料名称，若无缓存则初始化它的配置
+            selection.activeName = name; 
+            if (!selection.configs[name]) {
+                selection.configs[name] = { mode: 'solid', colors: [], remark: '' };
+            }
+            const config = selection.configs[name];
             
-            document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.remove('selected'));
+            // 4. UI层：恢复该面料专属的缓存数据
+            document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：${name}`;
+            document.getElementById('config-type-tag').innerText = selection.originalCatName;
+            
+            document.getElementById('mode-solid').classList.toggle('active', config.mode === 'solid'); 
+            document.getElementById('mode-print').classList.toggle('active', config.mode === 'print');
+            document.getElementById('fabric-solid-area').classList.toggle('hidden', config.mode !== 'solid'); 
+            document.getElementById('fabric-print-area').classList.toggle('hidden', config.mode !== 'print');
+
+            document.querySelectorAll('.color-swatch').forEach(sw => {
+                if (config.colors.some(c => sw.title.startsWith(c))) sw.classList.add('selected');
+                else sw.classList.remove('selected');
+            });
+            
             const textEl = document.getElementById('selected-colors-text'); 
-            textEl.innerText = '未选择颜色'; textEl.style.color = '#999';
-            document.getElementById('fabric-remark').value = ''; // 新增：UI层清空文本框
+            if (config.colors.length === 0) { textEl.innerText = '未选择颜色'; textEl.style.color = '#999'; }
+            else { textEl.innerText = `已选颜色 (${config.colors.length})：${config.colors.join(', ')}`; textEl.style.color = 'var(--primary-color)'; }
             
-            document.getElementById('selected-fabric-display').innerText = `${fabricSelection[catId].originalCatName}：${name}`;
-            document.getElementById('config-type-tag').innerText = fabricSelection[catId].originalCatName;
+            document.getElementById('fabric-remark').value = config.remark; 
             
             updateFabricSummary();
-
         }
 
         function switchFabricMode(mode) {
-            if(!activeFabricCat || !fabricSelection[activeFabricCat]) return;
-            fabricSelection[activeFabricCat].mode = mode;
+            if(!activeFabricCat || !fabricSelection[activeFabricCat] || !fabricSelection[activeFabricCat].activeName) return;
+            const config = fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName];
+            config.mode = mode;
             document.getElementById('mode-solid').classList.toggle('active', mode === 'solid'); 
             document.getElementById('mode-print').classList.toggle('active', mode === 'print');
             document.getElementById('fabric-solid-area').classList.toggle('hidden', mode !== 'solid'); 
@@ -1629,8 +1627,9 @@
         }
 
         function toggleColor(colorName, el) {
-            if(!activeFabricCat || !fabricSelection[activeFabricCat]) return;
-            const arr = fabricSelection[activeFabricCat].colors, idx = arr.indexOf(colorName);
+            if(!activeFabricCat || !fabricSelection[activeFabricCat] || !fabricSelection[activeFabricCat].activeName) return;
+            const config = fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName];
+            const arr = config.colors, idx = arr.indexOf(colorName);
             if (idx > -1) { arr.splice(idx, 1); el.classList.remove('selected'); } else { arr.push(colorName); el.classList.add('selected'); }
             const textEl = document.getElementById('selected-colors-text');
             if (arr.length === 0) { textEl.innerText = '未选择颜色'; textEl.style.color = '#999'; } else { textEl.innerText = `已选颜色 (${arr.length})：${arr.join(', ')}`; textEl.style.color = 'var(--primary-color)'; }
@@ -1642,16 +1641,17 @@
             let hasSelection = false;
             
             for (const key in fabricSelection) {
-                const conf = fabricSelection[key];
-                const catName = conf.originalCatName;
+                const selection = fabricSelection[key];
+                const catName = selection.originalCatName;
                 let statusText = '未选';
                 
-                if (conf.name) {
+                if (selection.activeName) {
                     hasSelection = true;
-                    if (conf.mode === 'print') {
-                        statusText = `${conf.name} (定制印花)`;
+                    const config = selection.configs[selection.activeName];
+                    if (config.mode === 'print') {
+                        statusText = `${selection.activeName} (定制印花)`;
                     } else {
-                        statusText = conf.colors.length === 0 ? `${conf.name} (待选色)` : `${conf.name} (${conf.colors.length}色)`;
+                        statusText = config.colors.length === 0 ? `${selection.activeName} (待选色)` : `${selection.activeName} (${config.colors.length}色)`;
                     }
                 }
                 html += `<div style="font-size:12px; margin-bottom:4px; color:var(--text-main); text-align:right;">${catName}: ${statusText}</div>`;
@@ -1768,10 +1768,8 @@
 
             // 2. 重置面料
             for (let key in fabricSelection) {
-                fabricSelection[key].name = '';
-                fabricSelection[key].mode = 'solid';
-                fabricSelection[key].colors = [];
-                fabricSelection[key].remark = '';
+                fabricSelection[key].activeName = '';
+                fabricSelection[key].configs = {};
             }
             document.querySelectorAll('.fabric-item, .color-swatch').forEach(item => item.classList.remove('selected'));
             document.getElementById('fabric-config-panel').classList.add('hidden'); 
@@ -1818,8 +1816,8 @@
             const catName = fabricSelection[activeFabricCat].originalCatName;
 
             // 1. 重置当前分类的数据
-            fabricSelection[activeFabricCat].name = '';
-            fabricSelection[activeFabricCat].mode = 'solid';
+            fabricSelection[activeFabricCat].activeName = '';
+            fabricSelection[activeFabricCat].configs = {};
             fabricSelection[activeFabricCat].colors = [];
             fabricSelection[activeFabricCat].remark = '';
 

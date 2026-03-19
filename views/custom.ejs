@@ -582,7 +582,7 @@
                             </div>
                             <div class="fabric-notes-area">
                                 <h4 style="font-size: 13px; margin: 0 0 10px; color: var(--text-main);">拼色说明与参考附件 (可选)</h4>
-                                <textarea id="fabric-remark" placeholder="请详细描述您的色彩分布或附件说明..." style="width:100%; height:80px; padding:10px; border:1px solid #ddd; border-radius:4px; font-family:inherit; font-size:13px; box-sizing:border-box; resize:vertical;" spellcheck="false"></textarea>
+                                <textarea id="fabric-remark" placeholder="请详细描述您的色彩分布或附件说明..." style="width:100%; height:80px; padding:10px; border:1px solid #ddd; border-radius:4px; font-family:inherit; font-size:13px; box-sizing:border-box; resize:vertical;" spellcheck="false" oninput="if(activeFabricCat && fabricSelection[activeFabricCat]) fabricSelection[activeFabricCat].remark = this.value;"></textarea>
                             </div>
                         </div>
                     </div>
@@ -1457,7 +1457,59 @@
             document.querySelectorAll('#fabric-panes-container .fabric-pane').forEach(p => p.classList.remove('active')); 
             document.getElementById(catId).classList.add('active');
             
-            document.getElementById('fabric-config-panel').classList.add('hidden');
+            // 检查新切换的分类是否已有选中的面料，如有则恢复面板
+            const panel = document.getElementById('fabric-config-panel');
+            const selection = fabricSelection[catId];
+            
+            if (selection && selection.name) {
+                const selectedEl = document.getElementById(catId).querySelector('.fabric-item.selected');
+                if (selectedEl) {
+                    // 将面板移动回当前网格
+                    const gridContainer = document.getElementById(`grid-${catId}`);
+                    let insertBeforeNode = null;
+                    let currentElement = selectedEl.nextElementSibling;
+                    while (currentElement) {
+                        if (currentElement.id === 'fabric-config-panel') { currentElement = currentElement.nextElementSibling; continue; }
+                        if (currentElement.offsetTop > selectedEl.offsetTop) { insertBeforeNode = currentElement; break; }
+                        currentElement = currentElement.nextElementSibling;
+                    }
+                    if (insertBeforeNode) gridContainer.insertBefore(panel, insertBeforeNode);
+                    else gridContainer.appendChild(panel);
+                    
+                    panel.classList.remove('hidden');
+                    
+                    // 恢复标题、类型和模式状态
+                    document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：${selection.name}`;
+                    document.getElementById('config-type-tag').innerText = selection.originalCatName;
+                    
+                    document.getElementById('mode-solid').classList.toggle('active', selection.mode === 'solid'); 
+                    document.getElementById('mode-print').classList.toggle('active', selection.mode === 'print');
+                    document.getElementById('fabric-solid-area').classList.toggle('hidden', selection.mode !== 'solid'); 
+                    document.getElementById('fabric-print-area').classList.toggle('hidden', selection.mode !== 'print');
+                    
+                    // 恢复颜色多选 UI
+                    document.querySelectorAll('.color-swatch').forEach(sw => {
+                        if (selection.colors.some(c => sw.title.startsWith(c))) sw.classList.add('selected');
+                        else sw.classList.remove('selected');
+                    });
+                    
+                    const textEl = document.getElementById('selected-colors-text');
+                    if (selection.colors.length === 0) { textEl.innerText = '未选择颜色'; textEl.style.color = '#999'; } 
+                    else { textEl.innerText = `已选颜色 (${selection.colors.length})：${selection.colors.join(', ')}`; textEl.style.color = 'var(--primary-color)'; }
+                    
+                    // 恢复备注输入框
+                    document.getElementById('fabric-remark').value = selection.remark || '';
+                    
+                    // 延迟计算箭头位置确保 DOM 渲染完成
+                    setTimeout(() => {
+                        const arrow = document.getElementById('config-arrow');
+                        const arrowPos = selectedEl.getBoundingClientRect().left - panel.getBoundingClientRect().left + (selectedEl.getBoundingClientRect().width / 2) - 8;
+                        arrow.style.left = `${arrowPos}px`;
+                    }, 10);
+                }
+            } else {
+                panel.classList.add('hidden');
+            }
         }
 
         function selectFabric(name, el, catId) {
@@ -1503,15 +1555,18 @@
             // 5. 重置并记录选择
             fabricSelection[catId].name = name; 
             fabricSelection[catId].colors = [];
+            fabricSelection[catId].remark = ''; // 新增：数据层清空备注
             
             document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.remove('selected'));
             const textEl = document.getElementById('selected-colors-text'); 
             textEl.innerText = '未选择颜色'; textEl.style.color = '#999';
+            document.getElementById('fabric-remark').value = ''; // 新增：UI层清空文本框
             
             document.getElementById('selected-fabric-display').innerText = `${fabricSelection[catId].originalCatName}：${name}`;
             document.getElementById('config-type-tag').innerText = fabricSelection[catId].originalCatName;
             
             updateFabricSummary();
+
         }
 
         function switchFabricMode(mode) {

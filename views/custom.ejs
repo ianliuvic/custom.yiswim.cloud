@@ -2116,18 +2116,17 @@
             if (currentStep !== 1) changeStep(1 - currentStep); 
         }
 
-        // --- 新增：清空当前面料分类的选择 ---
+                // --- 新增：清空当前面料分类的选择 ---
         function clearCurrentFabric() {
             if (!activeFabricCat || !fabricSelection[activeFabricCat]) return;
-            if (fabricSelection[activeFabricCat].name === '') return; // 已经是空的不执行
+            if (fabricSelection[activeFabricCat].activeName === '') return; // 修正：判断 activeName
             
             const catName = fabricSelection[activeFabricCat].originalCatName;
+            if (!confirm(`确定要清空 [${catName}] 的选择吗？`)) return; // 建议加上防误触提示
 
-            // 1. 重置当前分类的数据
+            // 1. 重置当前分类的数据 (colors和remark已经在清空configs时连带清空了)
             fabricSelection[activeFabricCat].activeName = '';
             fabricSelection[activeFabricCat].configs = {};
-            fabricSelection[activeFabricCat].colors = [];
-            fabricSelection[activeFabricCat].remark = '';
 
             // 2. 更新 UI：取消卡片选中状态，隐藏配置面板
             document.getElementById(activeFabricCat).querySelectorAll('.fabric-item').forEach(item => item.classList.remove('selected'));

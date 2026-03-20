@@ -1871,7 +1871,7 @@
             const config = selection.configs[name];
 
             // --- 关键修改：如果是定制找样，切换面板内部显示 ---
-            const standardArea = [document.querySelector('.mode-switcher'), document.getElementById('fabric-solid-area'), document.getElementById('fabric-print-area')];
+            const standardArea = [document.getElementById('fabric-mode-switcher'), document.getElementById('fabric-solid-area'), document.getElementById('fabric-print-area')];
             const customForm = document.getElementById('fabric-custom-sourcing-form');
 
             if (isCustomSourcing) {

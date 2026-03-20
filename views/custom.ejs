@@ -665,19 +665,45 @@
                             
                             <!-- 新增：定制找样专属表单 (默认隐藏) -->
                             <div id="fabric-custom-sourcing-form" class="hidden" style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px dashed #e2e8f0;">
-                                <div class="fabric-config-row" style="display: flex; gap: 20px; margin-bottom: 15px;">
-                                    <div class="fabric-config-col" style="flex: 1;">
+                                
+                                <!-- 1. 需求描述区 -->
+                                <label style="display:block; font-size:13px; font-weight:600; color:var(--text-main); margin-bottom:8px;">面料需求描述</label>
+                                <textarea id="custom-fabric-desc" placeholder="请详细描述您需要的面料质感、特性（如：冰丝感、高弹、抗菌、防泼水、起皱肌理等）..." class="oem-textarea" style="height: 70px; margin-bottom: 15px;" oninput="updateCustomFabricData()"></textarea>
+
+                                <!-- 2. 参数输入区 (三列布局，增加 box-sizing 和 min-width 防止粘连) -->
+                                <div class="fabric-config-row" style="display: flex; gap: 20px; margin-bottom: 15px; width: 100%;">
+                                    <div class="fabric-config-col" style="flex: 1; min-width: 0;">
                                         <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">预期成分 (Composition)</label>
-                                        <input type="text" id="custom-fabric-comp" placeholder="例: 80% Nylon 20% Spandex" class="oem-input-mini" style="width:100%;" oninput="updateCustomFabricData()">
+                                        <input type="text" id="custom-fabric-comp" placeholder="例: 80% Nylon 20% Spandex" class="oem-input-mini" style="width:100%; box-sizing: border-box;" oninput="updateCustomFabricData()">
                                     </div>
-                                    <div class="fabric-config-col" style="flex: 1;">
+                                    <div class="fabric-config-col" style="flex: 1; min-width: 0;">
                                         <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">预期克重 (GSM)</label>
-                                        <input type="text" id="custom-fabric-gsm" placeholder="例: 220g" class="oem-input-mini" style="width:100%;" oninput="updateCustomFabricData()">
+                                        <input type="text" id="custom-fabric-gsm" placeholder="例: 220g" class="oem-input-mini" style="width:100%; box-sizing: border-box;" oninput="updateCustomFabricData()">
+                                    </div>
+                                    <div class="fabric-config-col" style="flex: 1; min-width: 0;">
+                                        <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">希望颜色 (Color)</label>
+                                        <input type="text" id="custom-fabric-color" placeholder="例: Pantone 19-4052 或 海军蓝" class="oem-input-mini" style="width:100%; box-sizing: border-box;" oninput="updateCustomFabricData()">
                                     </div>
                                 </div>
-                                <label class="oem-checkbox-label" style="font-size:12px; margin: 0;">
-                                    <input type="checkbox" id="custom-fabric-physical" onchange="updateCustomFabricData()"> 我将寄送实物面料/样衣供开发对色 (需联系业务员)
-                                </label>
+
+                                <!-- 3. 寄样选项与地址展开区 -->
+                                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 5px;">
+                                    <div>
+                                        <label class="oem-checkbox-label" style="margin: 0; padding: 0;">
+                                            <input type="checkbox" id="custom-fabric-physical" onchange="updateCustomFabricData()"> 我将寄送实物面料/样衣供开发对色与质检
+                                        </label>
+                                    </div>
+                                    <div id="custom-fabric-address-info" class="hidden" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed #cbd5e1; display: flex; flex-direction: column; gap: 10px; font-size: 12.5px; color: #475569; transition: all 0.3s;">
+                                        <div style="display: flex; align-items: flex-start; gap: 6px; line-height: 1.5;">
+                                            <span style="font-size: 14px;">📍</span>
+                                            <span><strong>收件地址：</strong>广东省东莞市虎门镇红绣服饰定制中心 (收件人：面料开发部 138-0000-0000)</span>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 10px; margin-top: 4px;">
+                                            <span style="font-weight: 500;">物流单号：</span>
+                                            <input type="text" id="custom-fabric-tracking" class="oem-input-mini" style="flex: 1; max-width: 300px; background: #fff; box-sizing: border-box;" placeholder="寄件快递单号 (选填)..." autocomplete="off" oninput="updateCustomFabricData()">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- 下面的模式切换和颜色选择器保持原样不变 -->
@@ -1691,9 +1717,14 @@
                         if(customForm) customForm.classList.remove('hidden');
                         
                         // 恢复定制表单数据
+                        document.getElementById('custom-fabric-desc').value = config.customDesc || '';
                         document.getElementById('custom-fabric-comp').value = config.comp || '';
                         document.getElementById('custom-fabric-gsm').value = config.gsm || '';
+                        document.getElementById('custom-fabric-color').value = config.colorReq || '';
                         document.getElementById('custom-fabric-physical').checked = config.physical || false;
+                        document.getElementById('custom-fabric-tracking').value = config.trackingNo || '';
+                        
+                        document.getElementById('custom-fabric-address-info').classList.toggle('hidden', !config.physical);
                     } else {
                         // 如果是标准卡片：显示标准选项，隐藏定制表单
                         document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：${selection.activeName}`;
@@ -1878,11 +1909,11 @@
             // 3. 数据初始化与 UI 切换
             selection.activeName = name; 
             if (!selection.configs[name]) {
-                selection.configs[name] = { mode: isCustomSourcing ? 'custom' : 'solid', colors: [], remark: '', files: [], prints: [], comp: '', gsm: '', physical: false };
+                // 新增 customDesc, colorReq, trackingNo
+                selection.configs[name] = { mode: isCustomSourcing ? 'custom' : 'solid', colors: [], remark: '', files: [], prints: [], customDesc: '', comp: '', gsm: '', colorReq: '', physical: false, trackingNo: '' };
             }
             const config = selection.configs[name];
 
-            // --- 关键修改：如果是定制找样，切换面板内部显示 ---
             const standardArea = [document.getElementById('fabric-mode-switcher'), document.getElementById('fabric-solid-area'), document.getElementById('fabric-print-area')];
             const customForm = document.getElementById('fabric-custom-sourcing-form');
 
@@ -1890,15 +1921,22 @@
                 standardArea.forEach(area => area?.classList.add('hidden'));
                 customForm.classList.remove('hidden');
                 document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：定制开发/全球找样`;
+                
                 // 恢复表单数据
+                document.getElementById('custom-fabric-desc').value = config.customDesc || '';
                 document.getElementById('custom-fabric-comp').value = config.comp || '';
                 document.getElementById('custom-fabric-gsm').value = config.gsm || '';
+                document.getElementById('custom-fabric-color').value = config.colorReq || '';
                 document.getElementById('custom-fabric-physical').checked = config.physical || false;
+                document.getElementById('custom-fabric-tracking').value = config.trackingNo || '';
+                
+                // 根据 checkbox 状态展示地址信息框
+                document.getElementById('custom-fabric-address-info').classList.toggle('hidden', !config.physical);
+
             } else {
                 standardArea.forEach(area => area?.classList.remove('hidden'));
                 customForm.classList.add('hidden');
                 document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：${name}`;
-                // 恢复标准模式逻辑 (Solid/Print切换)
                 switchFabricMode(config.mode); 
             }
 
@@ -1948,13 +1986,23 @@
             updateFabricSummary();
         }
 
-        // 实时同步定制表单数据到缓存
+        // 实时同步定制表单数据到缓存，并处理地址栏展开
         function updateCustomFabricData() {
             if(!activeFabricCat || !fabricSelection[activeFabricCat].activeName) return;
             const config = fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName];
+            
+            // 保存所有新字段
+            config.customDesc = document.getElementById('custom-fabric-desc').value;
             config.comp = document.getElementById('custom-fabric-comp').value;
             config.gsm = document.getElementById('custom-fabric-gsm').value;
+            config.colorReq = document.getElementById('custom-fabric-color').value;
             config.physical = document.getElementById('custom-fabric-physical').checked;
+            config.trackingNo = document.getElementById('custom-fabric-tracking').value;
+            
+            // 控制寄样地址栏显示/隐藏
+            const infoBox = document.getElementById('custom-fabric-address-info');
+            config.physical ? infoBox.classList.remove('hidden') : infoBox.classList.add('hidden');
+            
             updateFabricSummary();
         }
 

@@ -1270,31 +1270,31 @@
                             </div>
                             
                             <div id="content-label" class="hidden" style="animation: fadeIn 0.4s ease;">
-                                <!-- 1. 架构选择 -->
+                                <!-- 1. 架构选择 (已删除 A 大标题) -->
                                 <div class="attr-section" style="margin-bottom: 25px;">
-                                    <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 标签配置模式 (Configuration)</h4>
                                     <div class="mode-switcher" style="margin-left: 13px;">
                                         <div class="mode-option active" id="label-mode-combined" onclick="switchLabelMode('combined')">集成合一标 (推荐)</div>
                                         <div class="mode-option" id="label-mode-split" onclick="switchLabelMode('split')">品牌标与水洗标分开</div>
                                     </div>
                                 </div>
-
-                                <!-- 2. 全局材质选择 (唯一) -->
+                                
+                                <!-- 2. 全局材质选择 (B 改为 A) -->
                                 <div class="attr-section" style="margin-bottom: 25px;">
-                                    <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 统一标签材质 (Unified Material)</h4>
+                                    <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 统一标签材质 (Unified Material)</h4>
                                     <div class="option-grid" id="label-unified-material-grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-left: 13px;">
                                         <!-- 由 JS 渲染材质卡片 -->
                                     </div>
                                 </div>
-
+                                
                                 <!-- 3. 动态详细配置区 (尺寸、缝制、内容、上传) -->
                                 <div id="label-dynamic-details" style="margin-left: 13px;">
                                     <!-- 根据模式动态生成 1 个或 2 个区块 -->
                                 </div>
-
-                                <!-- 4. 交互式位置选择 -->
+                                
+                                <!-- 4. 交互式位置选择 (原错版的 B 保持为 B) -->
                                 <div class="attr-section" style="margin-bottom: 35px;">
                                     <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 安装位置定位 (Placement)</h4>
+
                                     <div class="placement-container">
                                         <div class="swimwear-map" id="placement-map">
                                             <!-- SVG 示意图 -->
@@ -2606,21 +2606,19 @@
             const container = document.getElementById('label-dynamic-details');
             if(!container) return;
             container.innerHTML = '';
-
-            // --- 新增：将合规提示移入此处，确保用户能看到 ---
+            
+            // 增加合规提示 (前面步骤沟通保留的)
             const complianceNotice = `
                 <div class="metal-notice" style="margin-bottom: 20px; color: #ef4444; background: #fff1f2; padding: 10px; border-radius: 6px; font-size:12px;">
                     <strong>⚠️ 合规提醒：</strong>请确保内容包含产地(Made in China)、纤维成分及洗涤图标。
                 </div>`;
             container.insertAdjacentHTML('beforeend', complianceNotice);
-            // ------------------------------------------
-            
+        
             const isSplit = labelConfig.mode === 'split';
-            // 定义需要生成的区块
             const configs = isSplit ? 
                 [{ key: 'brand', title: '1. 品牌主标详细配置' }, { key: 'care', title: '2. 水洗成分标详细配置' }] : 
                 [{ key: 'brand', title: '集成合一标详细配置' }];
-
+        
             configs.forEach(conf => {
                 const data = labelConfig.sections[conf.key];
                 const isTagless = labelConfig.material === '无感烫印标';
@@ -2629,51 +2627,53 @@
                     <div class="brand-custom-box" style="margin-bottom: 25px; background: #fff; border: 1px solid #e2e8f0;">
                         <h4 style="font-size: 13px; color: var(--primary-color); margin-bottom: 15px; border-bottom: 1px dashed #f1f5f9; padding-bottom: 10px;">${conf.title}</h4>
                         
-                        <!-- 尺寸与缝制卡片 (仅在非烫印时显示) -->
-                        <div class="${isTagless ? 'hidden' : ''}" style="margin-bottom: 20px;">
-                            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px; align-items: start;">
-                                <div>
-                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">标签尺寸 (长x宽)</label>
-                                    <input type="text" class="oem-input-mini" style="width:100%" placeholder="如: 2x5cm" value="${data.size}" oninput="labelConfig.sections.${conf.key}.size = this.value; updateLabelSummary()">
-                                </div>
-                                <div>
-                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">缝制方式 (选择图示)</label>
-                                    <div class="sewing-grid">
-                                        ${sewingMethods.map(m => `
-                                            <div class="sewing-card ${data.method === m.name ? 'selected' : ''}" onclick="selectSewingMethod('${conf.key}', '${m.name}', this)">
-                                                <span class="sewing-name">${m.name}</span>
-                                                <span class="sewing-desc">${m.desc}</span>
-                                            </div>
-                                        `).join('')}
-                                    </div>
+                        <!-- 1. 尺寸与缝制卡片 (分行显示) -->
+                        <div class="${isTagless ? 'hidden' : ''}" style="margin-bottom: 25px;">
+                            <div style="margin-bottom: 15px;">
+                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">标签尺寸 (长x宽)</label>
+                                <input type="text" class="oem-input-mini" style="width: 240px;" placeholder="如: 2x5cm" value="${data.size}" oninput="labelConfig.sections.${conf.key}.size = this.value; updateLabelSummary()">
+                            </div>
+                            <div>
+                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">缝制方式 (选择图示)</label>
+                                <div class="sewing-grid">
+                                    ${sewingMethods.map(m => `
+                                        <div class="sewing-card ${data.method === m.name ? 'selected' : ''}" onclick="selectSewingMethod('${conf.key}', '${m.name}', this)">
+                                            <span class="sewing-name">${m.name}</span>
+                                            <span class="sewing-desc">${m.desc}</span>
+                                        </div>
+                                    `).join('')}
                                 </div>
                             </div>
                         </div>
-
-                        <!-- 内容录入与上传 -->
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                            <div>
+        
+                        <!-- 2. 内容录入与上传 (同一行且等高) -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: stretch; margin-bottom: 20px;">
+                            <div style="display: flex; flex-direction: column;">
                                 <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">标签文字内容 (成分、产地等)</label>
-                                <textarea class="oem-textarea" style="height:110px; font-size:12px;" placeholder="请在此输入标签需要印刷或织出来的文字..." oninput="labelConfig.sections.${conf.key}.text = this.value; updateLabelSummary()">${data.text}</textarea>
+                                <textarea class="oem-textarea" style="flex: 1; min-height: 100px; font-size:12px; resize: none;" placeholder="请在此输入标签需要印刷或织出来的文字..." oninput="labelConfig.sections.${conf.key}.text = this.value; updateLabelSummary()">${data.text}</textarea>
                             </div>
-                            <div>
+                            <div style="display: flex; flex-direction: column;">
                                 <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">上传设计稿 / Logo</label>
-                                <div class="premium-upload-row upload-row-sm" onclick="document.getElementById('file-${conf.key}').click()">
+                                <div class="premium-upload-row upload-row-sm" style="margin-bottom: 10px;" onclick="document.getElementById('file-${conf.key}').click()">
                                     <div class="upload-label-group"><span id="name-${conf.key}" style="font-size:11px; color:#94a3b8;">${data.files.length > 0 ? '已选 '+data.files.length+' 个文件' : '选择 AI / PDF / PNG'}</span></div>
                                     <input type="file" id="file-${conf.key}" class="hidden" multiple onchange="handleLabelSectionFiles(this, '${conf.key}')">
-                                    <button type="button" class="btn-outline" style="padding:2px 8px; font-size:10px;">浏览</button>
+                                    <button type="button" class="btn-outline" style="padding:2px 8px; font-size:10px; height:24px; pointer-events:none;">浏览</button>
                                 </div>
-                                <div id="preview-${conf.key}" class="oem-image-preview-grid" style="margin-top:10px;"></div>
-                                
-                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin: 15px 0 8px;">补充说明</label>
-                                <textarea class="oem-textarea" style="height:60px; font-size:12px;" placeholder="其他特殊要求..." oninput="labelConfig.sections.${conf.key}.remark = this.value; updateLabelSummary()">${data.remark}</textarea>
+                                <div id="preview-${conf.key}" class="oem-image-preview-grid" style="min-height: 60px; margin-top: 0; align-content: start;"></div>
                             </div>
+                        </div>
+                        
+                        <!-- 3. 补充说明 (下一行，占满宽度) -->
+                        <div>
+                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">补充说明 (选填)</label>
+                            <textarea class="oem-textarea" style="width: 100%; height:60px; font-size:12px;" placeholder="其他特殊要求，如：要求使用环保回收纱线制作标签..." oninput="labelConfig.sections.${conf.key}.remark = this.value; updateLabelSummary()">${data.remark}</textarea>
                         </div>
                     </div>`;
                 container.insertAdjacentHTML('beforeend', html);
-                renderLabelSectionPreviews(conf.key); // 恢复该区块的预览图
+                renderLabelSectionPreviews(conf.key);
             });
         }
+
 
         // 4. 辅助选择函数
         function selectSewingMethod(sectionKey, methodName, el) {

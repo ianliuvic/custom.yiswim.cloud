@@ -3941,56 +3941,68 @@
             updateLogisticsSummary();
         }
         
-        // 2. 更新汇总函数
+        // 2. 超强容错的汇总函数
         function updateLogisticsSummary() {
             const sumEl = document.getElementById('sum-shipping');
-            
+            if (!sumEl) return;
+        
             if (currentDeliveryMode === 'sample') {
-                // 读取目的地（这个下拉框还在，不会报错）
-                const dest = document.getElementById('sample-destination')?.value || '待定国';
+                // 目的地安全读取
+                const destEl = document.getElementById('sample-destination');
+                const dest = destEl ? (destEl.value || '待定国') : '待定国';
                 
-                // 【核心修复】计算动态表格中的数据，而不是读取已被删除的旧 ID
                 let totalItems = 0;
                 let validRowsCount = 0;
                 
-                // 遍历动态数组计算总件数
                 if (typeof sampleRows !== 'undefined' && sampleRows.length > 0) {
                     sampleRows.forEach(row => {
-                        if (row.style) validRowsCount++; // 统计已选款式的行数
+                        if (row.style && row.style !== "") validRowsCount++;
                         totalItems += parseInt(row.qty) || 0;
                     });
                 }
         
+                // 快递方式安全读取 (增加默认值防止 split 报错)
+                const carrier = (sampleConfig && sampleConfig.carrier) ? sampleConfig.carrier.split(' ')[0] : '待定';
+        
                 let intentText = '';
-                if (typeof sampleConfig !== 'undefined' && sampleConfig.needBulkQuote) {
-                    const qty = document.getElementById('sample-intent-qty')?.value;
-                    const qtyText = qty ? `${qty}件` : '数量待定';
-                    intentText = `<br><span style="font-size:10px; color:var(--primary-color);">评估大货: ${qtyText} | ${sampleConfig.intentTerm} | ${sampleConfig.intentMethod.split(' ')[0]}</span>`;
+                if (sampleConfig && sampleConfig.needBulkQuote) {
+                    const qtyEl = document.getElementById('sample-intent-qty');
+                    const qtyText = (qtyEl && qtyEl.value) ? `${qtyEl.value}件` : '数量待定';
+                    const term = sampleConfig.intentTerm || 'DDP';
+                    const method = sampleConfig.intentMethod ? sampleConfig.intentMethod.split(' ')[0] : '海运';
+                    intentText = `<br><span style="font-size:10px; color:var(--primary-color);">评估大货: ${qtyText} | ${term} | ${method}</span>`;
                 }
         
-                // 更新侧边栏 UI
                 sumEl.innerHTML = `
                     <div style="text-align:right;">
                         <span style="color:var(--text-main); font-weight:700;">打样阶段 (${dest})</span><br>
-                        <span style="font-size:11px; color:#64748b;">清单: ${validRowsCount}项 / 共${totalItems}件 | 快递: ${sampleConfig.carrier.split(' ')[0]}</span>
+                        <span style="font-size:11px; color:#64748b;">清单: ${validRowsCount}项 / 共${totalItems}件 | 快递: ${carrier}</span>
                         ${intentText}
                     </div>
                 `;
                 
             } else {
-                // 大货模式的逻辑保持不变 (因为大货的 HTML 输入框我们没有删)
-                const dest = document.getElementById('bulk-destination')?.value || '待定国';
-                const styles = document.getElementById('bulk-style-count')?.value || '0';
-                const qty = document.getElementById('bulk-qty-per-style')?.value || '0';
-                const sizeRange = document.getElementById('bulk-size-range')?.value.split(' ')[0] || '待定尺码';
+                // 大货模式安全读取
+                const destEl = document.getElementById('bulk-destination');
+                const dest = destEl ? (destEl.value || '待定国') : '待定国';
                 
-                const term = bulkLogisticsConfig.term.split(' ')[0];
+                const stylesEl = document.getElementById('bulk-style-count');
+                const styles = stylesEl ? (stylesEl.value || '0') : '0';
+                
+                const qtyEl = document.getElementById('bulk-qty-per-style');
+                const qty = qtyEl ? (qtyEl.value || '0') : '0';
+                
+                const sizeEl = document.getElementById('bulk-size-range');
+                const sizeRange = (sizeEl && sizeEl.value) ? sizeEl.value.split(' ')[0] : '待定尺码';
+                
+                const term = (bulkLogisticsConfig && bulkLogisticsConfig.term) ? bulkLogisticsConfig.term.split(' ')[0] : 'DDP';
+                const method = (bulkLogisticsConfig && bulkLogisticsConfig.method) ? bulkLogisticsConfig.method : '海运';
                 
                 sumEl.innerHTML = `
                     <div style="text-align:right;">
                         <span style="color:var(--primary-color); font-weight:700;">大货订单 (${dest})</span><br>
                         <span style="font-size:11px; color:#64748b;">${styles}款 x ${qty}件 | ${sizeRange}</span><br>
-                        <span style="font-size:10px; color:#94a3b8;">${term} | ${bulkLogisticsConfig.method}</span>
+                        <span style="font-size:10px; color:#94a3b8;">${term} | ${method}运</span>
                     </div>
                 `;
             }
@@ -4018,10 +4030,17 @@
             renderSampleTable();
         }
         
-        // 删除一行
+        // 1. 完善后的删除行逻辑
         function removeSampleRow(index) {
-            if (sampleRows.length <= 1) return; // 至少保留一行
-            sampleRows.splice(index, 1);
+            if (sampleRows.length > 1) {
+                // 如果有多行，正常删除
+                sampleRows.splice(index, 1);
+            } else {
+                // 【优化】如果只剩最后一行，点击删除则重置该行数据
+                sampleRows[0] = { style: '', type: '初版样 (Proto)', size: 'M', qty: 1, desc: '' };
+                // 同时手动重置一下 OEM 数量（可选）
+                // document.getElementById('oem-style-count').value = 0;
+            }
             renderSampleTable();
         }
         
@@ -4084,21 +4103,23 @@
             updateLogisticsSummary();
         }
         
-        // 实时更新数组数据
+        // 3. 确保款式数据更新时的健壮性
         function updateRowData(index, field, value) {
-            // 检查是否有完全重复的行 (款式、类型、尺码均相同)
-            if (field === 'style' || field === 'type' || field === 'size') {
+            if (!sampleRows[index]) return;
+        
+            // 查重逻辑优化：只有当款式不为空时才校验重复
+            if (value !== "" && (field === 'style' || field === 'type' || field === 'size')) {
                 const isDuplicate = sampleRows.some((row, i) => {
                     if (i === index) return false;
                     let checkStyle = (field === 'style' ? value : row.style);
                     let checkType = (field === 'type' ? value : row.type);
                     let checkSize = (field === 'size' ? value : row.size);
-                    return row.style === checkStyle && row.type === checkType && row.size === checkSize;
+                    return checkStyle !== "" && row.style === checkStyle && row.type === checkType && row.size === checkSize;
                 });
         
                 if (isDuplicate) {
-                    alert("清单中已存在完全相同的打样配置 (款式、类型、尺码均一致)，请直接修改数量。");
-                    renderSampleTable(); // 强制刷回原值
+                    alert("清单中已存在完全相同的打样配置。");
+                    renderSampleTable(); 
                     return;
                 }
             }

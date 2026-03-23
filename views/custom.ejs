@@ -439,6 +439,43 @@
         .btn-outline { background: #fff; color: #64748b; border: 1px solid #e2e8f0; }
         .btn-outline:hover { background: #f8fafc; color: var(--text-main); }
 
+        /* 金属饰品专属样式 */
+        .metal-finish-grid { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
+        .finish-item { cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; transition: all 0.3s; }
+        .finish-swatch { 
+            width: 46px; height: 46px; border-radius: 50%; border: 2px solid #fff; 
+            box-shadow: 0 0 0 1px #e2e8f0; transition: all 0.3s; position: relative;
+        }
+        .finish-item:hover .finish-swatch { transform: scale(1.1); box-shadow: 0 0 0 1px var(--primary-color); }
+        .finish-item.selected .finish-swatch { box-shadow: 0 0 0 2px var(--primary-color); transform: scale(1.1); }
+        .finish-item.selected .finish-swatch::after {
+            content: '✓'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 18px; font-weight: bold; text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+        .finish-label { font-size: 11px; color: #64748b; font-weight: 500; }
+        .finish-item.selected .finish-label { color: var(--primary-color); font-weight: 700; }
+
+        /* 金属颜色渐变定义 */
+        .bg-gold { background: linear-gradient(135deg, #e6be8a 0%, #f7e1ad 50%, #ccac70 100%); }
+        .bg-silver { background: linear-gradient(135deg, #cfd1d3 0%, #e2e4e5 50%, #a9abad 100%); }
+        .bg-rose { background: linear-gradient(135deg, #e29a86 0%, #f4c2b3 50%, #d4836f 100%); }
+        .bg-gunmetal { background: linear-gradient(135deg, #434343 0%, #6d6d6d 50%, #2b2b2b 100%); }
+        .bg-black { background: #1a1a1a; }
+
+        .metal-category-card {
+            padding: 15px !important; display: flex; align-items: center; gap: 12px;
+        }
+        .metal-category-card .icon-box {
+            width: 40px; height: 40px; background: #f8fafc; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center; color: #94a3b8;
+        }
+        .metal-category-card.selected .icon-box { background: #fff; color: var(--primary-color); }
+        
+        .brand-custom-box {
+            background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px; padding: 25px;
+            margin-top: 15px; animation: fadeIn 0.4s ease;
+        }
+
         /* =========================================================
            10. OEM 模块与商业需求评估
            ========================================================= */
@@ -771,7 +808,90 @@
                                     <label><input type="radio" name="need_metal" value="yes" onchange="toggleTrim('metal', true)"> 是 (Yes)</label>
                                 </div>
                             </div>
-                            <div id="content-metal" class="placeholder-box hidden"><p>此处未来将展示：金色调节扣、银色Logo铭牌等图片选项。</p></div>
+                            <div id="content-metal" class="hidden" style="animation: fadeIn 0.4s ease;">
+                                <!-- 1. 全局电镀色调 -->
+                                <div class="attr-section" style="margin-bottom: 35px;">
+                                    <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 硬件电镀色调 (Finish Color)</h4>
+                                    <div class="metal-finish-grid" id="metal-finish-container">
+                                        <div class="finish-item selected" onclick="selectMetalAttr('finish', '亮金色 (Shiny Gold)', this)">
+                                            <div class="finish-swatch bg-gold"></div><span class="finish-label">亮金色</span>
+                                        </div>
+                                        <div class="finish-item" onclick="selectMetalAttr('finish', '亮银色 (Shiny Silver)', this)">
+                                            <div class="finish-swatch bg-silver"></div><span class="finish-label">亮银色</span>
+                                        </div>
+                                        <div class="finish-item" onclick="selectMetalAttr('finish', '玫瑰金 (Rose Gold)', this)">
+                                            <div class="finish-swatch bg-rose"></div><span class="finish-label">玫瑰金</span>
+                                        </div>
+                                        <div class="finish-item" onclick="selectMetalAttr('finish', '枪黑色 (Gunmetal)', this)">
+                                            <div class="finish-swatch bg-gunmetal"></div><span class="finish-label">枪黑色</span>
+                                        </div>
+                                        <div class="finish-item" onclick="selectMetalAttr('finish', '哑光黑 (Matte Black)', this)">
+                                            <div class="finish-swatch bg-black"></div><span class="finish-label">哑光黑</span>
+                                        </div>
+                                    </div>
+                                </div>
+    
+                                <!-- 2. 功能分类多选 -->
+                                <div class="attr-section" style="margin-bottom: 35px;">
+                                    <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 需要的金属件类型 (Categories)</h4>
+                                    <p style="font-size: 12px; color: #94a3b8; margin-bottom: 15px; margin-left: 13px;">请勾选本款式涉及的五金件，打版师将为您匹配最佳规格。</p>
+                                    <div class="option-grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px;">
+                                        <div class="option-item metal-category-card" onclick="toggleMetalCategory('调节扣/环', this)">
+                                            <div class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/></svg></div>
+                                            <div class="option-info" style="padding:0"><h4>调节扣/连接环</h4></div>
+                                        </div>
+                                        <div class="option-item metal-category-card" onclick="toggleMetalCategory('金属拉链', this)">
+                                            <div class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 2v20M17 2v20M7 8h10M7 14h10"/></svg></div>
+                                            <div class="option-info" style="padding:0"><h4>金属拉链</h4></div>
+                                        </div>
+                                        <div class="option-item metal-category-card" onclick="toggleMetalCategory('按扣/工字扣', this)">
+                                            <div class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="10"/></svg></div>
+                                            <div class="option-info" style="padding:0"><h4>按扣/工字扣</h4></div>
+                                        </div>
+                                        <div class="option-item metal-category-card" onclick="toggleMetalCategory('装饰链条', this)">
+                                            <div class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
+                                            <div class="option-info" style="padding:0"><h4>装饰链条</h4></div>
+                                        </div>
+                                    </div>
+                                </div>
+    
+                                <!-- 3. 品牌刻字定制 -->
+                                <div class="attr-section" style="margin-bottom: 35px;">
+                                    <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 品牌专属 Logo 定制 (Branding)</h4>
+                                    <div style="margin-left: 13px;">
+                                        <label class="oem-checkbox-label">
+                                            <input type="checkbox" id="metal-logo-needed" onchange="toggleMetalLogoSection(this.checked)"> 是否需要开模定制带有品牌 Logo 的金属件？
+                                        </label>
+                                        
+                                        <div id="metal-logo-config" class="brand-custom-box hidden">
+                                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                                <div>
+                                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">定制类型</label>
+                                                    <select class="oem-input-mini" style="width:100%" onchange="updateMetalSummary()">
+                                                        <option value="Logo金属牌">Logo 金属小吊牌/铭牌</option>
+                                                        <option value="Logo拉链头">定制 Logo 拉链头</option>
+                                                        <option value="Logo调节扣">Logo 刻字调节扣</option>
+                                                    </select>
+                                                </div>
+                                                <div>
+                                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">上传 Logo 文件 (AI/PDF/PNG)</label>
+                                                    <input type="file" class="oem-input-mini" style="width:100%; padding:5px;" onchange="updateMetalSummary()">
+                                                </div>
+                                            </div>
+                                            <textarea class="oem-textarea" style="height:60px; margin-top:15px; font-size:12px;" placeholder="描述定制要求（如：1cm长方形，刻字填黑...）" oninput="updateMetalSummary()"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+    
+                                <!-- 4. 自由上传找样 -->
+                                <div class="attr-section">
+                                    <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">D. 特殊款式找样 (Sourcing)</h4>
+                                    <div class="premium-upload-box" style="margin-left: 13px; padding: 25px;">
+                                        <p style="font-size: 13px; color: var(--text-main); margin-bottom: 10px;">有特定的参考图？上传图片，我们为您寻找相同款式</p>
+                                        <input type="file" multiple class="custom-file-input">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div id="pane-bag" class="sub-pane">
@@ -2039,6 +2159,53 @@
             else { contentBox.classList.add('hidden'); summaryText.innerText = '不需要'; summaryText.style.color = '#666'; summaryText.style.fontWeight = 'normal'; }
         }
 
+        // ==========================================
+        // 金属饰品逻辑
+        // ==========================================
+        let metalConfig = {
+            finish: '亮金色 (Shiny Gold)',
+            categories: [],
+            logoCustom: false
+        };
+
+        function selectMetalAttr(attrType, value, el) {
+            metalConfig[attrType] = value;
+            const container = el.parentNode;
+            container.querySelectorAll('.finish-item').forEach(item => item.classList.remove('selected'));
+            el.classList.add('selected');
+            updateMetalSummary();
+        }
+
+        function toggleMetalCategory(catName, el) {
+            const index = metalConfig.categories.indexOf(catName);
+            if (index > -1) {
+                metalConfig.categories.splice(index, 1);
+                el.classList.remove('selected');
+            } else {
+                metalConfig.categories.push(catName);
+                el.classList.add('selected');
+            }
+            updateMetalSummary();
+        }
+
+        function toggleMetalLogoSection(isNeeded) {
+            metalConfig.logoCustom = isNeeded;
+            const configBox = document.getElementById('metal-logo-config');
+            isNeeded ? configBox.classList.remove('hidden') : configBox.classList.add('hidden');
+            updateMetalSummary();
+        }
+
+        function updateMetalSummary() {
+            const st = document.getElementById('sum-trim-metal');
+            const colorPart = metalConfig.finish.split(' ')[0];
+            const catsPart = metalConfig.categories.length > 0 ? metalConfig.categories.length + '类件' : '未选类型';
+            const logoPart = metalConfig.logoCustom ? '需开模Logo' : '无需Logo';
+            
+            st.innerHTML = `<div style="text-align:right;">${colorPart} | ${catsPart}<br><span style="font-size:10px; opacity:0.8;">${logoPart}</span></div>`;
+            st.style.color = 'var(--primary-color)';
+            st.style.fontWeight = 'bold';
+        }
+
         let bagConfig = { material: '未选材质', size: '未选尺寸', print: '未选印刷' };
         function renderBags(bags) {
             const container = document.getElementById('bag-list-container'); container.innerHTML = ''; 
@@ -2158,6 +2325,16 @@
             });
             bagConfig = { material: '未选材质', size: '未选尺寸', print: '未选印刷' };
             document.querySelectorAll('.bag-material, .bag-size, .bag-print').forEach(item => item.classList.remove('selected'));
+            // 重置金属饰品
+            metalConfig = { finish: '亮金色 (Shiny Gold)', categories: [], logoCustom: false };
+            document.querySelectorAll('.finish-item').forEach(item => item.classList.remove('selected'));
+            document.querySelectorAll('.finish-item')[0].classList.add('selected'); // 默认选第一个
+            document.querySelectorAll('.metal-category-card').forEach(item => item.classList.remove('selected'));
+            document.getElementById('metal-logo-needed').checked = false;
+            document.getElementById('metal-logo-config').classList.add('hidden');
+            document.getElementById('sum-trim-metal').innerText = '不需要';
+            document.getElementById('sum-trim-metal').style.color = '#666';
+            document.getElementById('sum-trim-metal').style.fontWeight = 'normal';
             if(document.getElementById('bag-design-file')) document.getElementById('bag-design-file').value = '';
 
             // 4. 重置物流

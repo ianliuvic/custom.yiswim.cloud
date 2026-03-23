@@ -1152,6 +1152,25 @@
                                             <div class="shape-desc">Logo形状等<br><span style="color:#f59e0b; font-weight:bold;">需开刀模 (MOQ 5000起)</span></div>
                                         </div>
                                     </div>
+                                    
+                                    <!-- 新增：自定义尺寸说明与特殊异形上传区 -->
+                                    <div style="margin-left: 13px; margin-top: 20px; padding-top: 20px; border-top: 1px dashed #e2e8f0;">
+                                        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; align-items: flex-start;">
+                                            <div>
+                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">补充尺寸说明 / 异形要求 (选填)</label>
+                                                <textarea id="hangtag-shape-remark" class="oem-textarea" style="height:38px; min-height:38px; font-size:12px;" placeholder="如：需要特定尺寸 4.5x10cm，或者圆角处理..." oninput="updateHangtagSummary()"></textarea>
+                                            </div>
+                                            <div>
+                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">刀模图/异形参考 (选填)</label>
+                                                <div class="premium-upload-row upload-row-sm" onclick="document.getElementById('hangtagShapeFile').click()">
+                                                    <div class="upload-label-group"><span id="hangtagShapeFileName" class="upload-label-main" style="font-size:12px; color:#94a3b8;">上传参考文件</span></div>
+                                                    <input type="file" id="hangtagShapeFile" class="hidden" multiple onchange="handleHangtagFiles(this, 'shape')"> 
+                                                    <button type="button" class="btn-outline" style="padding:2px 8px; font-size:10px; height:24px; pointer-events:none;">浏览</button>
+                                                </div>
+                                                <div id="hangtagShapePreview" class="oem-image-preview-grid" style="margin-top:10px;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- C. 吊粒与挂绳 -->
@@ -1204,7 +1223,7 @@
                                                 <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">设计稿/Logo上传 (正面)</label>
                                                 <div class="premium-upload-row upload-row-sm" onclick="document.getElementById('hangtagDesignFile').click()">
                                                     <div class="upload-label-group"><span id="hangtagFileName" class="upload-label-main" style="font-size:12px; color:#94a3b8;">选择矢量文件 (AI/PDF)</span></div>
-                                                    <input type="file" id="hangtagDesignFile" class="hidden" multiple onchange="handleHangtagFiles(this)"> 
+                                                    <input type="file" id="hangtagDesignFile" class="hidden" multiple onchange="handleHangtagFiles(this, 'design')"> 
                                                     <button type="button" class="btn-outline" style="padding:2px 8px; font-size:10px; height:24px; pointer-events:none;">浏览</button>
                                                 </div>
                                                 <div id="hangtagPreview" class="oem-image-preview-grid" style="margin-top:10px;"></div>
@@ -1216,9 +1235,11 @@
                                                     <option value="固定信息印刷">仅印固定信息 (网址、洗涤图标等)</option>
                                                     <option value="双面均为空白">双面空白无印</option>
                                                 </select>
-                                                <textarea id="hangtag-remark" class="oem-textarea" style="height:60px; margin-top:10px; font-size:12px;" placeholder="其他排版或打孔备注..." oninput="updateHangtagSummary()"></textarea>
                                             </div>
                                         </div>
+                                        
+                                        <!-- 移出 grid，占据整行 -->
+                                        <textarea id="hangtag-remark" class="oem-textarea" style="height:60px; margin-top:20px; font-size:12px; width:100%; box-sizing:border-box;" placeholder="排版或打孔细节备注（例如：Logo居中、需打金银扣眼...）" oninput="updateHangtagSummary()"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -2459,7 +2480,8 @@
             stringMat: '通用塑料吊粒',
             stringColor: '白色',
             crafts: [],
-            designFiles: []
+            designFiles: [],
+            shapeFiles: [] // 新增形状参考文件组
         };
 
         function selectHangtagAttr(attrType, value, el) {
@@ -2507,30 +2529,34 @@
             }
         }
 
-        function handleHangtagFiles(input) {
+        function handleHangtagFiles(input, type) {
             const files = Array.from(input.files);
+            const targetArray = type === 'design' ? hangtagConfig.designFiles : hangtagConfig.shapeFiles;
+            
             files.forEach(file => {
                 if (file.size > 20 * 1024 * 1024) { showToast(`文件 ${file.name} 超过 20MB`, 'error'); return; }
-                if (!hangtagConfig.designFiles.some(f => f.name === file.name && f.size === file.size)) {
-                    hangtagConfig.designFiles.push(file);
+                if (!targetArray.some(f => f.name === file.name && f.size === file.size)) {
+                    targetArray.push(file);
                 }
             });
 
-            const nameEl = document.getElementById('hangtagFileName');
-            if (hangtagConfig.designFiles.length > 0) {
-                nameEl.innerText = hangtagConfig.designFiles.length === 1 ? hangtagConfig.designFiles[0].name : `已选 ${hangtagConfig.designFiles.length} 个文件`;
+            const nameEl = document.getElementById(type === 'design' ? 'hangtagFileName' : 'hangtagShapeFileName');
+            if (targetArray.length > 0) {
+                nameEl.innerText = targetArray.length === 1 ? targetArray[0].name : `已选 ${targetArray.length} 个文件`;
                 nameEl.style.color = 'var(--text-main)';
             }
             
-            renderHangtagPreviews();
+            renderHangtagPreviews(type);
             updateHangtagSummary();
             input.value = '';
         }
 
-        function renderHangtagPreviews() {
-            const grid = document.getElementById('hangtagPreview');
+        function renderHangtagPreviews(type) {
+            const grid = document.getElementById(type === 'design' ? 'hangtagPreview' : 'hangtagShapePreview');
+            const targetArray = type === 'design' ? hangtagConfig.designFiles : hangtagConfig.shapeFiles;
             grid.innerHTML = '';
-            hangtagConfig.designFiles.forEach((file, index) => {
+            
+            targetArray.forEach((file, index) => {
                 const isImage = file.type.startsWith('image/');
                 const ext = file.name.split('.').pop().toUpperCase();
                 let content = isImage 
@@ -2540,22 +2566,24 @@
                 grid.insertAdjacentHTML('beforeend', `
                     <div class="oem-preview-item" style="width:60px; height:60px;">
                         ${content}
-                        <button type="button" class="oem-preview-remove" onclick="removeHangtagFile(${index})">&times;</button>
+                        <button type="button" class="oem-preview-remove" onclick="removeHangtagFile(${index}, '${type}')">&times;</button>
                     </div>
                 `);
             });
         }
 
-        function removeHangtagFile(index) {
-            hangtagConfig.designFiles.splice(index, 1);
-            const nameEl = document.getElementById('hangtagFileName');
-            if (hangtagConfig.designFiles.length > 0) {
-                nameEl.innerText = hangtagConfig.designFiles.length === 1 ? hangtagConfig.designFiles[0].name : `已选 ${hangtagConfig.designFiles.length} 个文件`;
+        function removeHangtagFile(index, type) {
+            const targetArray = type === 'design' ? hangtagConfig.designFiles : hangtagConfig.shapeFiles;
+            targetArray.splice(index, 1);
+            
+            const nameEl = document.getElementById(type === 'design' ? 'hangtagFileName' : 'hangtagShapeFileName');
+            if (targetArray.length > 0) {
+                nameEl.innerText = targetArray.length === 1 ? targetArray[0].name : `已选 ${targetArray.length} 个文件`;
             } else {
-                nameEl.innerText = '选择矢量文件 (AI/PDF)';
+                nameEl.innerText = type === 'design' ? '选择矢量文件 (AI/PDF)' : '上传参考文件';
                 nameEl.style.color = '#94a3b8';
             }
-            renderHangtagPreviews();
+            renderHangtagPreviews(type);
             updateHangtagSummary();
         }
 
@@ -3057,7 +3085,7 @@
             if(document.getElementById('bag-design-file')) document.getElementById('bag-design-file').value = '';
 
             // 重置吊牌
-            hangtagConfig = { material: '经典白卡 (350g/500g)', shape: '标准修长型 (约 4x9cm)', stringMat: '通用塑料吊粒', stringColor: '白色', crafts: [], designFiles: [] };
+            hangtagConfig = { material: '经典白卡 (350g/500g)', shape: '标准修长型 (约 4x9cm)', stringMat: '通用塑料吊粒', stringColor: '白色', crafts: [], designFiles: [], shapeFiles: [] };
             document.querySelectorAll('#content-hangtag .metal-item, #content-hangtag .hangtag-shape-card, #content-hangtag .hangtag-string-mat, #content-hangtag .string-color-swatch, #content-hangtag .chip').forEach(item => item.classList.remove('selected'));
             // 恢复默认选中
             document.querySelectorAll('#content-hangtag .metal-item')[0]?.classList.add('selected');
@@ -3066,8 +3094,12 @@
             document.querySelectorAll('#content-hangtag .string-color-swatch')[0]?.classList.add('selected');
             document.getElementById('hangtagFileName').innerText = '选择矢量文件 (AI/PDF)';
             document.getElementById('hangtagFileName').style.color = '#94a3b8';
+            document.getElementById('hangtagShapeFileName').innerText = '上传参考文件';
+            document.getElementById('hangtagShapeFileName').style.color = '#94a3b8';
             document.getElementById('hangtagPreview').innerHTML = '';
+            document.getElementById('hangtagShapePreview').innerHTML = '';
             document.getElementById('hangtag-remark').value = '';
+            document.getElementById('hangtag-shape-remark').value = '';
 
             // 4. 重置物流
             document.querySelectorAll('#step-4 .option-item').forEach(item => item.classList.remove('selected'));

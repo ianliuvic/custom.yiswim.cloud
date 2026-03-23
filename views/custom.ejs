@@ -1539,6 +1539,52 @@
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                                         添加新打样项
                                     </button>
+
+                                    <!-- 1. 动态收费预警 (默认隐藏) -->
+                                    <div id="sample-qty-warning" class="hidden" style="margin-top: 15px; background: #fff1f2; border: 1px solid #fecaca; padding: 12px 15px; border-radius: 8px; display: flex; align-items: center; gap: 10px; color: #e11d48; font-size: 12.5px; animation: fadeIn 0.3s;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                                        <span><strong>收费提醒：</strong> 检测到单款样衣数量超过 2 件。由于打样涉及独立开机与手工制作，超过 2 件将被视作“小批量开发”，会产生额外的样板费支出，请知悉。</span>
+                                    </div>
+                                    
+                                    <!-- 2. 打样专业指南看板 -->
+                                    <div class="attr-section" style="margin-top: 35px; background: #fbfcfd; border: 1px solid #f1f5f9; border-radius: 12px; padding: 25px;">
+                                        <h4 style="font-size: 14px; margin-bottom: 20px; color: #1e293b; display: flex; align-items: center; gap: 8px;">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line><circle cx="12" cy="12" r="10"></circle></svg>
+                                            打样规格与专业建议 (Sampling Guide)
+                                        </h4>
+                                        
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 25px;">
+                                            <!-- 样衣类型说明 -->
+                                            <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #f1f5f9;">
+                                                <h5 style="font-size: 13px; color: var(--primary-color); margin: 0 0 10px;">🧪 样衣类型说明</h5>
+                                                <ul style="padding: 0; margin: 0; list-style: none; font-size: 12px; line-height: 1.6; color: #64748b;">
+                                                    <li style="margin-bottom: 8px;"><strong style="color: #475569;">初版样 (Proto):</strong> 确认款式比例与基本版型。面料、颜色通常可用替代料，重点看版型是否符合预期。</li>
+                                                    <li style="margin-bottom: 8px;"><strong style="color: #475569;">修改样 (Fit):</strong> 针对初样试穿后的修正。重点检查运动舒适度、包裹感及细节调整。</li>
+                                                    <li><strong style="color: #475569;">产前样 (PP):</strong> 封样标准。必须使用大货正确的面料、颜色及所有品牌辅料，作为大货生产的唯一参考标准。</li>
+                                                </ul>
+                                            </div>
+                                    
+                                            <!-- 尺码选择建议 -->
+                                            <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #f1f5f9;">
+                                                <h5 style="font-size: 13px; color: var(--primary-color); margin: 0 0 10px;">📏 尺码选择建议</h5>
+                                                <ul style="padding: 0; margin: 0; list-style: none; font-size: 12px; line-height: 1.6; color: #64748b;">
+                                                    <li style="margin-bottom: 8px;">• 建议打样选择您的<strong style="color: #475569;">基准尺码 (Base Size)</strong>。对于欧美市场，通常选择 <strong style="color: #475569;">M 码 (US 6-8)</strong> 进行版型验证最为科学。</li>
+                                                    <li>• 如果您的款式包含极小码或超大码，建议在 PP 样阶段加打一件最大/最小码以核对放码比例。</li>
+                                                </ul>
+                                            </div>
+                                    
+                                            <!-- 数量设置说明 -->
+                                            <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #f1f5f9;">
+                                                <h5 style="font-size: 13px; color: var(--primary-color); margin: 0 0 10px;">🔢 数量设置说明</h5>
+                                                <ul style="padding: 0; margin: 0; list-style: none; font-size: 12px; line-height: 1.6; color: #64748b;">
+                                                    <li style="margin-bottom: 8px;">• <strong style="color: #475569;">1 件：</strong> 仅用于内部核对或拍摄样片。</li>
+                                                    <li style="margin-bottom: 8px;">• <strong style="color: #475569;">2 件 (推荐)：</strong> 一件寄送给您进行试穿/拍摄，一件由红绣版房留底，作为后续沟通和修改的实物对照。</li>
+                                                    <li>• <strong style="color: #475569;">>2 件：</strong> 涉及商务样或小批量派发，样板成本会大幅增加。</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                     
@@ -4076,7 +4122,9 @@
             for (let i = 1; i <= oemCount; i++) {
                 styleOptionsHtml += `<option value="OEM-第 ${i} 款">OEM-第 ${i} 款</option>`;
             }
-        
+
+            let hasHighQty = false; // 标记是否存在数量 > 2 的行
+
             tbody.innerHTML = '';
             sampleRows.forEach((row, index) => {
                 const tr = document.createElement('tr');
@@ -4117,9 +4165,23 @@
                     row.style = ""; // 如果款式被删了，重置数据
                     styleSelect.value = "";
                 }
-                
+
+                if (parseInt(row.qty) > 2) {
+                    hasHighQty = true;
+                }
+
                 tbody.appendChild(tr);
             });
+
+            // 处理收费预警的显示/隐藏
+            const warningEl = document.getElementById('sample-qty-warning');
+            if (warningEl) {
+                if (hasHighQty) {
+                    warningEl.classList.remove('hidden');
+                } else {
+                    warningEl.classList.add('hidden');
+                }
+            }
             updateLogisticsSummary();
         }
         

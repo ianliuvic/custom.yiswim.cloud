@@ -4363,43 +4363,23 @@
         function closeFeeStandardModal() { document.getElementById('feeStandardModal').classList.remove('active'); }
 
         // 3. 确保款式数据更新时的健壮性
-        // 实时更新数组数据并严格检查重复
+        // 实时更新数组数据（已移除重复行限制）
         function updateRowData(index, field, value) {
             if (!sampleRows[index]) return;
         
-            // 1. 如果修改的是三个标识列之一，先进行安全校验
-            if (field === 'style' || field === 'type' || field === 'size') {
-                
-                // 创建一个包含最新修改值的“虚拟行”快照
-                const testRow = { ...sampleRows[index], [field]: value };
+            // 1. 直接保存修改的数据，不再进行查重比对
+            sampleRows[index][field] = value;
         
-                // 只有当款式确实有值时，才进行查重比对
-                if (testRow.style && testRow.style.trim() !== "") {
-                    
-                    const isDuplicate = sampleRows.some((row, i) => {
-                        if (i === index) return false; // 不和自己这行比
-                        
-                        // 统一去除首尾空格进行比对，防止因输入空格导致漏判
-                        const s1 = (row.style || '').trim();
-                        const s2 = (testRow.style || '').trim();
-                        const t1 = (row.type || '').trim();
-                        const t2 = (testRow.type || '').trim();
-                        const z1 = (row.size || '').trim();
-                        const z2 = (testRow.size || '').trim();
-        
-                        // 只有当三者完全一模一样时，才判定为重复
-                        return (s1 === s2 && t1 === t2 && z1 === z2);
-                    });
-        
-                    if (isDuplicate) {
-                        alert("⚠️ 冲突拦截：\n清单中已存在完全相同的打样配置（款式、类型、尺码均一致）。\n\n请修改当前行的尺码/类型，或直接在已有行上增加数量。");
-                        
-                        // 校验不通过，强行重绘表格，将 UI 上的错误输入刷回原本的正确值
-                        renderSampleTable(); 
-                        return; // 终止函数，阻断脏数据保存
-                    }
-                }
+            // 2. 触发后续更新
+            // 如果修改的是数量，需要重绘表格以触发布板费预警（数量>2件）
+            if (field === 'qty') {
+                renderSampleTable(); 
+            } else {
+                // 其他字段修改（如款式、尺码、描述等）只需更新汇总和费用
+                calculateSampleCost();
+                updateLogisticsSummary();
             }
+        }
         
             // 2. 校验通过，正式保存数据到数组
             sampleRows[index][field] = value;

@@ -1327,43 +1327,45 @@
                             </div>
                         
                             <div id="content-hygiene" class="hidden" style="animation: fadeIn 0.4s ease;">
-                                <!-- A. 材质与形状选择 -->
+                                <!-- A. 材质与形状选择 (垂直排列，内部选项水平排列) -->
                                 <div class="attr-section" style="margin-bottom: 30px;">
-                                    <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 材质与剪裁规格 (Material & Shape)</h4>
-                                    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 30px; margin-left: 13px;">
-                                        <!-- 材质 -->
+                                    <h4 style="font-size: 14px; margin-bottom: 20px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 材质与剪裁规格 (Material & Shape)</h4>
+                                    <div style="margin-left: 13px; display: flex; flex-direction: column; gap: 25px;">
+                                        
+                                        <!-- 第一行：选择材质 (水平排列) -->
                                         <div>
-                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:10px;">选择材质</label>
-                                            <div class="option-grid" style="grid-template-columns: 1fr 1fr; gap: 15px;">
-                                                <div class="option-item hygiene-mat selected" style="padding: 15px;" onclick="selectHygieneAttr('material', '透明 PET (标准)', this)">
-                                                    <div style="height:40px; background:rgba(200,220,255,0.2); border-radius:4px; margin-bottom:8px; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:10px;">[ 透明材质 ]</div>
-                                                    <h4 style="font-size:13px; margin:0;">透明 PET</h4>
-                                                    <p style="font-size:10px; margin:2px 0 0;">经典防潮，高性价比</p>
+                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:12px;">1. 选择贴纸材质</label>
+                                            <div style="display: flex; gap: 15px;">
+                                                <div class="option-item hygiene-mat selected" style="flex: 1; max-width: 260px; padding: 15px;" onclick="selectHygieneAttr('material', '透明 PET (标准)', this)">
+                                                    <div style="height:40px; background:rgba(200,220,255,0.15); border-radius:6px; margin-bottom:10px; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:10px;">[ 透明 PET ]</div>
+                                                    <h4 style="font-size:13px; margin:0;">透明 PET (标准)</h4>
+                                                    <p style="font-size:11px; margin:4px 0 0; color:#94a3b8;">防潮耐用，出货极快</p>
                                                 </div>
-                                                <div class="option-item hygiene-mat" style="padding: 15px;" onclick="selectHygieneAttr('material', '环保哑光纸', this)">
-                                                    <div class="eco-badge">ECO</div>
-                                                    <div style="height:40px; background:#f1f5f9; border-radius:4px; margin-bottom:8px; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:10px;">[ 哑光纸质 ]</div>
+                                                <div class="option-item hygiene-mat" style="flex: 1; max-width: 260px; padding: 15px;" onclick="selectHygieneAttr('material', '环保哑光纸', this)">
+                                                    <div class="eco-badge" style="top:10px; right:10px;">ECO</div>
+                                                    <div style="height:40px; background:#f8fafc; border: 1px dashed #e2e8f0; border-radius:6px; margin-bottom:10px; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:10px;">[ 哑光纸质 ]</div>
                                                     <h4 style="font-size:13px; margin:0;">环保哑光纸</h4>
-                                                    <p style="font-size:10px; margin:2px 0 0;">触感高级，100%可降解</p>
+                                                    <p style="font-size:11px; margin:4px 0 0; color:#94a3b8;">100%可降解，触感高级</p>
                                                 </div>
                                             </div>
                                         </div>
-                                        <!-- 形状 -->
+                        
+                                        <!-- 第二行：适用剪裁 (水平排列，修复无法选中问题) -->
                                         <div>
-                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:10px;">适用剪裁</label>
-                                            <div style="display: flex; flex-direction: column; gap: 10px;">
-                                                <div class="radio-card">
-                                                    <input type="radio" name="hygiene_shape" value="universal" checked onclick="selectHygieneAttr('shape', '通用葫芦形', this)">
-                                                    <div class="card-content" style="padding: 12px 15px;">
-                                                        <h5 style="font-size: 13px;">通用葫芦形 (Universal)</h5>
-                                                        <p style="font-size: 11px;">适配 95% 泳裤款式（连体、三角裤等）</p>
+                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:12px;">2. 适配底裤剪裁</label>
+                                            <div style="display: flex; gap: 15px;">
+                                                <div class="radio-card" style="flex: 1; max-width: 260px;" onclick="selectHygieneAttr('shape', '通用葫芦形', this)">
+                                                    <input type="radio" name="hygiene_shape" value="universal" checked>
+                                                    <div class="card-content" style="padding: 15px;">
+                                                        <h5 style="font-size: 13px; margin-bottom: 6px;">通用葫芦形</h5>
+                                                        <p style="font-size: 11px;">适配 95% 连体/三角款式</p>
                                                     </div>
                                                 </div>
-                                                <div class="radio-card">
-                                                    <input type="radio" name="hygiene_shape" value="thong" onclick="selectHygieneAttr('shape', '丁字裤窄形', this)">
-                                                    <div class="card-content" style="padding: 12px 15px;">
-                                                        <h5 style="font-size: 13px;">丁字裤窄形 (Thong/T-Back)</h5>
-                                                        <p style="font-size: 11px;">极窄裆部专用，宽度仅 2-3cm</p>
+                                                <div class="radio-card" style="flex: 1; max-width: 260px;" onclick="selectHygieneAttr('shape', '丁字裤窄形', this)">
+                                                    <input type="radio" name="hygiene_shape" value="thong">
+                                                    <div class="card-content" style="padding: 15px;">
+                                                        <h5 style="font-size: 13px; margin-bottom: 6px;">丁字裤窄形</h5>
+                                                        <p style="font-size: 11px;">T-Back/高叉极窄裆部专用</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -2656,15 +2658,20 @@
         function selectHygieneAttr(attrType, value, el) {
             hygieneConfig[attrType] = value;
             
-            // UI 选中切换
             if (attrType === 'material') {
+                // 处理材质项的选中态 (option-item)
                 el.parentNode.querySelectorAll('.hygiene-mat').forEach(item => item.classList.remove('selected'));
+                el.classList.add('selected');
+            } else if (attrType === 'shape') {
+                // 处理形状项 (radio-card 修复逻辑)
+                // 1. 强制选中内部的单选框
+                const radio = el.querySelector('input[type="radio"]');
+                if (radio) radio.checked = true;
+                
+                // 2. 无需手动加 selected 类，因为 CSS 中已有 input:checked + .card-content 的样式
             } else if (attrType === 'service') {
+                // 处理交付服务 (chip)
                 el.parentNode.querySelectorAll('.chip').forEach(item => item.classList.remove('selected'));
-            }
-            // Shape 是通过 radio-card 触发的，其样式会自动通过 input:checked 改变，
-            // 但我们需要手动处理非 radio 结构的 el (如果使用了自定义 card)
-            if (el.classList.contains('option-item') || el.classList.contains('chip')) {
                 el.classList.add('selected');
             }
             

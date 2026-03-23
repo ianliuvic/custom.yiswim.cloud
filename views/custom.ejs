@@ -1488,7 +1488,6 @@
                     <div class="step-content hidden" id="step-4">
                         <div class="step-desc">请定义当前的交付阶段。新客户建议先进行打样，老客户可直接规划大货物流。</div>
                     
-                        <!-- 1. 顶层模式切换器 (与 ODM/OEM 保持一致) -->
                         <div class="mode-switcher" style="margin-bottom: 30px;">
                             <div class="mode-option active" id="delivery-mode-sample" onclick="switchDeliveryMode('sample')">打样开发 (Sampling)</div>
                             <div class="mode-option" id="delivery-mode-bulk" onclick="switchDeliveryMode('bulk')">大货下单 (Bulk)</div>
@@ -1498,9 +1497,47 @@
                              分支 A: 打样模式 (Sample Mode)
                              ========================================== -->
                         <div id="pane-delivery-sample" style="animation: fadeIn 0.4s ease;">
-                            <!-- A. 样品接收 -->
+                            
+                            <!-- 【新增】A. 打样范围与规格 (Sample Scope) -->
                             <div class="attr-section" style="margin-bottom: 35px;">
-                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 样品接收配置 (Sample Shipping)</h4>
+                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 打样范围与规格 (Sample Scope)</h4>
+                                <div style="margin-left: 13px;">
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 20px;">
+                                        <div>
+                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">1. 开发款式总数 (Total Styles)</label>
+                                            <div style="display: flex; align-items: center; gap: 10px;">
+                                                <input type="number" id="sample-style-count" class="oem-input-mini" style="width: 120px;" placeholder="如: 3" oninput="updateLogisticsSummary()">
+                                                <span style="font-size: 11px; color: #94a3b8;">套/款 (基于第一步款式)</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">2. 每款打样件数 (Qty per Style)</label>
+                                            <div style="display: flex; align-items: center; gap: 10px;">
+                                                <input type="number" id="sample-qty-per-style" class="oem-input-mini" style="width: 120px;" value="1" oninput="updateLogisticsSummary()">
+                                                <span style="font-size: 11px; color: #94a3b8;">件 (如需自己留底可填2)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                                        <div>
+                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">3. 样衣制作阶段 (Sample Stage)</label>
+                                            <select id="sample-stage" class="oem-input-mini" style="width: 100%; height: 38px;" onchange="updateLogisticsSummary()">
+                                                <option value="初版样 (Proto)">初版样 (Proto) - 核对基础版型与尺寸</option>
+                                                <option value="试穿样 (Fit)">试穿样 (Fit) - 上身测试与调整细节</option>
+                                                <option value="产前样 (PP)">产前样 (PP) - 确认最终大货面辅料</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">4. 打样基准尺码 (Base Size)</label>
+                                            <input type="text" id="sample-base-size" class="oem-input-mini" style="width: 100%; height: 38px;" placeholder="例如: M 或 US 6" oninput="updateLogisticsSummary()">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    
+                            <!-- B. 样品接收 (原 A) -->
+                            <div class="attr-section" style="margin-bottom: 35px;">
+                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 样品接收配置 (Sample Shipping)</h4>
                                 <div style="margin-left: 13px; display: grid; grid-template-columns: 1fr 1.5fr; gap: 40px; align-items: start;">
                                     <div>
                                         <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:10px;">样品接收目的地</label>
@@ -1523,10 +1560,10 @@
                                     </div>
                                 </div>
                             </div>
-                    
-                            <!-- B. 大货意向 (样式与 A 保持一致) -->
+
+                            <!-- C. 大货意向 (原 B，保持之前的垂直布局不变) -->
                             <div class="attr-section">
-                                <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 评估大货预估价 (Bulk Quote Intent)</h4>
+                                <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 评估大货预估价 (Bulk Quote Intent)</h4>
                                 <div style="margin-left: 13px;">
                                     <label class="oem-checkbox-label" style="margin-bottom: 20px;">
                                         <input type="checkbox" id="sample-need-bulk-quote" onchange="toggleSampleBulkIntent(this.checked)"> 是的，请基于我的大货意向核算单价
@@ -1596,8 +1633,51 @@
                              分支 B: 大货模式 (Bulk Mode)
                              ========================================== -->
                         <div id="pane-delivery-bulk" class="hidden" style="animation: fadeIn 0.4s ease;">
+                            
+                            <!-- 【新增】A. 大货生产规模 (Bulk Scope) -->
                             <div class="attr-section" style="margin-bottom: 35px;">
-                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 目的地与交货条款 (Bulk Logistics)</h4>
+                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 大货生产规模 (Bulk Scope)</h4>
+                                <div style="margin-left: 13px;">
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 20px;">
+                                        <div>
+                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">1. 生产款式总数 (Total Styles)</label>
+                                            <input type="number" id="bulk-style-count" class="oem-input-mini" style="width: 100%; height:38px;" placeholder="如: 3" oninput="updateLogisticsSummary()">
+                                        </div>
+                                        <div>
+                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">2. 单款单色预估数量 (Qty per Style/Color)</label>
+                                            <div style="display: flex; align-items: center; gap: 10px;">
+                                                <input type="number" id="bulk-qty-per-style" class="oem-input-mini" style="flex:1; height:38px;" placeholder="如: 300" oninput="updateLogisticsSummary()">
+                                                <span style="font-size: 11px; color: #94a3b8;">件/套</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                                        <div>
+                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">3. 尺码跨度 (Size Range)</label>
+                                            <select id="bulk-size-range" class="oem-input-mini" style="width: 100%; height: 38px;" onchange="updateLogisticsSummary()">
+                                                <option value="">请选择尺码跨度...</option>
+                                                <option value="常规 (XS-L)">常规跨度 (XS-L, 共4个码)</option>
+                                                <option value="加宽 (XXS-XXL)">加宽跨度 (XXS-XXL, 共6个码)</option>
+                                                <option value="大码优先 (L-4XL)">大码/特体优先 (L-4XL)</option>
+                                                <option value="自定义">自定义跨度 (后续提供)</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">4. 尺码配比方式 (Size Ratio)</label>
+                                            <select id="bulk-size-ratio" class="oem-input-mini" style="width: 100%; height: 38px;" onchange="updateLogisticsSummary()">
+                                                <option value="">请选择配比方式...</option>
+                                                <option value="正态分布">正态分布 (如 S:M:L:XL = 1:2:2:1)</option>
+                                                <option value="均码等比">均码等比 (如 1:1:1:1)</option>
+                                                <option value="后续提供明细单">后续提供具体的配比尺码表</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    
+                            <!-- B. 目的地与交货条款 (原 A) -->
+                            <div class="attr-section" style="margin-bottom: 35px;">
+                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 目的地与交货条款 (Bulk Logistics)</h4>
                                 <div style="margin-left: 13px;">
                                     <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 15px;">
                                         <label style="font-size:12px; font-weight:600; color:#475569;">大货目的地：</label>
@@ -1618,7 +1698,7 @@
                             </div>
                             
                             <div class="attr-section">
-                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 运输与装箱规则 (Shipping & Packing)</h4>
+                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 运输与装箱规则 (Shipping & Packing)</h4>
                                 <div style="margin-left: 13px;">
                                     <div class="option-grid" style="grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px;">
                                         <div class="option-item bulk-method" onclick="selectBulkLogistics('method', 'Express', this)"><div class="option-info"><h4>国际快递</h4><p>3-5天 (最快)</p></div></div>
@@ -3845,11 +3925,15 @@
         }
         
         // 2. 更新汇总函数
+        // 在原有的 JS 块中替换 updateLogisticsSummary 函数
         function updateLogisticsSummary() {
             const sumEl = document.getElementById('sum-shipping');
             
             if (currentDeliveryMode === 'sample') {
                 const dest = document.getElementById('sample-destination').value || '待定国';
+                const styles = document.getElementById('sample-style-count').value || '0';
+                const stage = document.getElementById('sample-stage').value.split(' ')[0];
+                const baseSize = document.getElementById('sample-base-size').value || '基准码';
                 
                 let intentText = '';
                 if (sampleConfig.needBulkQuote) {
@@ -3860,21 +3944,48 @@
         
                 sumEl.innerHTML = `
                     <div style="text-align:right;">
-                        <span style="color:var(--text-main); font-weight:700;">打样阶段 (${dest})</span><br>
-                        <span style="font-size:11px; color:#64748b;">快递: ${sampleConfig.carrier.split(' ')[0]}</span>
+                        <span style="color:var(--text-main); font-weight:700;">打样 (${stage}) -> ${dest}</span><br>
+                        <span style="font-size:11px; color:#64748b;">${styles} 款 | ${baseSize} | 快递: ${sampleConfig.carrier.split(' ')[0]}</span>
                         ${intentText}
                     </div>
                 `;
             } else {
                 const dest = document.getElementById('bulk-destination').value || '待定国';
+                const styles = document.getElementById('bulk-style-count').value || '0';
+                const qty = document.getElementById('bulk-qty-per-style').value || '0';
+                const sizeRange = document.getElementById('bulk-size-range').value.split(' ')[0] || '待定尺码';
+                
                 const term = bulkLogisticsConfig.term.split(' ')[0];
+                
                 sumEl.innerHTML = `
                     <div style="text-align:right;">
-                        <span style="color:var(--primary-color); font-weight:700;">大货订单 (${dest})</span><br>
-                        <span style="font-size:11px; color:#64748b;">${term} | ${bulkLogisticsConfig.method}</span>
+                        <span style="color:var(--primary-color); font-weight:700;">大货订单 -> ${dest}</span><br>
+                        <span style="font-size:11px; color:#64748b;">${styles}款 x ${qty}件 | ${sizeRange}</span><br>
+                        <span style="font-size:10px; color:#94a3b8;">${term} | ${bulkLogisticsConfig.method}</span>
                     </div>
                 `;
             }
+        }
+        
+        // 附加一个小联动功能：当切换模式时，尝试自动读取已选的款式数量
+        function switchDeliveryMode(mode) {
+            currentDeliveryMode = mode;
+            document.querySelectorAll('#step-4 .mode-option').forEach(opt => opt.classList.remove('active'));
+            document.getElementById(`delivery-mode-${mode}`).classList.add('active');
+            
+            document.getElementById('pane-delivery-sample').classList.toggle('hidden', mode !== 'sample');
+            document.getElementById('pane-delivery-bulk').classList.toggle('hidden', mode !== 'bulk');
+            
+            // 【智能化联动】自动填入第一步选择的 ODM 款式数量
+            if (selectedOdmStyles && selectedOdmStyles.length > 0) {
+                if (mode === 'sample' && !document.getElementById('sample-style-count').value) {
+                    document.getElementById('sample-style-count').value = selectedOdmStyles.length;
+                } else if (mode === 'bulk' && !document.getElementById('bulk-style-count').value) {
+                    document.getElementById('bulk-style-count').value = selectedOdmStyles.length;
+                }
+            }
+            
+            updateLogisticsSummary();
         }
 
 

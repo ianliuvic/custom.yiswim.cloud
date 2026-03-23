@@ -1483,17 +1483,133 @@
                     </div>
 
                     <!-- ==========================================
-                         步骤 4: 物流
+                         步骤 4: 物流与交付 (Logistics & Packaging)
                          ========================================== -->
                     <div class="step-content hidden" id="step-4">
-                        <div class="step-desc">请选择首选的交付与物流方式。最终费用将在确认具体起订量后核算。</div>
-                        <div class="option-grid">
-                            <div class="option-item" onclick="selectItem('shipping', 'Air Express (DHL/FedEx)')">
-                                <div style="height:100px; background:#f0f0f0; display:flex; align-items:center; justify-content:center; color:#aaa; border-bottom:1px solid var(--border-color);">[空运标志]</div>
-                                <div class="option-info"><h4>Air Express</h4><p>空运快线 5-7 天</p></div>
+                        <div class="step-desc">请规划大货的交付路径与入仓标准。准确的物流配置有助于我们为您核算最精确的 DDP/FOB 落地成本 (Landed Cost)。</div>
+                    
+                        <!-- A. 目的地与贸易条款 -->
+                        <div class="attr-section" style="margin-bottom: 35px;">
+                            <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 目的地与交货条款 (Destination & Incoterms)</h4>
+                            <div style="margin-left: 13px;">
+                                <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 15px;">
+                                    <label style="font-size:12px; font-weight:600; color:#475569;">大货最终目的地 (Country/Region)：</label>
+                                    <select id="logistics-destination" class="oem-input-mini" style="width: 280px; height: 38px;" onchange="updateLogisticsSummary()">
+                                        <option value="">请选择主要目的国...</option>
+                                        <option value="北美 (US/CA)">🇺🇸🇨🇦 北美 (美国 / 加拿大)</option>
+                                        <option value="欧洲 (EU/UK)">🇪🇺🇬🇧 欧洲 (欧盟 / 英国)</option>
+                                        <option value="澳洲 (AU/NZ)">🇦🇺🇳🇿 澳洲 (澳大利亚 / 新西兰)</option>
+                                        <option value="东南亚/中东">🌏 东南亚 / 中东</option>
+                                        <option value="中国大陆">🇨🇳 中国大陆 (内销/保税仓)</option>
+                                        <option value="多国分发">🌍 多国拆分发货 (后续提供明细)</option>
+                                    </select>
+                                </div>
+                    
+                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:12px;">意向报价与交货条款 (Incoterms)</label>
+                                <div class="radio-card-grid">
+                                    <label class="radio-card">
+                                        <input type="radio" name="trade_term" value="DDP" checked onclick="selectLogisticsAttr('term', 'DDP 双清包税到门')">
+                                        <div class="card-content">
+                                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                                                <h5 style="margin:0; font-size:14px;">DDP / DDU</h5>
+                                                <span style="font-size:10px; background:#dcfce7; color:#166534; padding:2px 6px; border-radius:4px;">最省心推荐</span>
+                                            </div>
+                                            <p style="font-size:11px; color:#64748b;">双清关包税派送到门 (或亚马逊FBA仓)，红绣承担全段头程物流，客户坐等收货。</p>
+                                        </div>
+                                    </label>
+                                    <label class="radio-card">
+                                        <input type="radio" name="trade_term" value="FOB" onclick="selectLogisticsAttr('term', 'FOB 离岸/港口交货')">
+                                        <div class="card-content">
+                                            <h5 style="margin-bottom:6px; font-size:14px;">FOB / CIF</h5>
+                                            <p style="font-size:11px; color:#64748b;">工厂负责将货物送至深圳/广州/香港指定港口或由红绣代订海空运舱位，客户自理清关。</p>
+                                        </div>
+                                    </label>
+                                    <label class="radio-card">
+                                        <input type="radio" name="trade_term" value="EXW" onclick="selectLogisticsAttr('term', 'EXW 工厂交货')">
+                                        <div class="card-content">
+                                            <h5 style="margin-bottom:6px; font-size:14px;">EXW 工厂交货</h5>
+                                            <p style="font-size:11px; color:#64748b;">出厂裸价。客户自行安排货代卡车来东莞红绣工厂提货，适合有成熟成熟供应链体系的品牌。</p>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <!-- B. 头程物流方式 -->
+                        <div class="attr-section" style="margin-bottom: 35px;">
+                            <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 期望的头程物流方式 (Shipping Method)</h4>
+                            <div class="option-grid" style="grid-template-columns: repeat(3, 1fr); gap: 20px; margin-left: 13px;">
+                                <div class="option-item logistics-method" onclick="selectLogisticsAttr('method', 'Air Express (国际快递)', this)">
+                                    <div class="option-img-alt" style="height: 80px; background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);">
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="1.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                                    </div>
+                                    <div class="option-info" style="text-align: center; padding: 12px;">
+                                        <h4 style="font-size: 13px;">国际快递 (Express)</h4>
+                                        <p style="font-size: 11px;">DHL / FedEx / UPS<br><span style="color:#ef4444; font-weight:600;">3-5 天</span> | 运费最高，适合紧急补单</p>
+                                    </div>
+                                </div>
+                                <div class="option-item logistics-method" onclick="selectLogisticsAttr('method', 'Air Freight (空运专线)', this)">
+                                    <div class="option-img-alt" style="height: 80px; background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);">
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21.5 4c0 0-2 .5-3.5 2L14.5 9.5 6.3 7.7 4 9.3l6.5 4.4L7 17.2 4.4 16.5 3 17.5l3.2 2.8L9 23.5l1-1.4-.7-2.6 3.5-3.5 4.4 6.5 1.6-2.3z"/></svg>
+                                    </div>
+                                    <div class="option-info" style="text-align: center; padding: 12px;">
+                                        <h4 style="font-size: 13px;">空运专线 (Air Freight)</h4>
+                                        <p style="font-size: 11px;">空派到门 / 卡航<br><span style="color:#f59e0b; font-weight:600;">8-15 天</span> | 综合性价比高</p>
+                                    </div>
+                                </div>
+                                <div class="option-item logistics-method selected" onclick="selectLogisticsAttr('method', 'Sea Freight (海运快船)', this)">
+                                    <div class="option-img-alt" style="height: 80px; background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);">
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="1.5"><path d="M2 22h20M2 17l2.5-3L7 17l2.5-3L12 17l2.5-3L17 17l2.5-3L22 17"/><path d="M4 14V4h12v10"/><path d="M16 4h4v10"/></svg>
+                                    </div>
+                                    <div class="option-info" style="text-align: center; padding: 12px;">
+                                        <h4 style="font-size: 13px;">海运快船 (Sea Freight)</h4>
+                                        <p style="font-size: 11px;">美森快船 / 普船派送<br><span style="color:#3b82f6; font-weight:600;">20-40 天</span> | 运费最低，大货标配</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="metal-notice" style="margin: 12px 0 0 13px;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                如果是 EXW 条款，无需选择此项，由您的货代决定。
+                            </div>
+                        </div>
+                    
+                        <!-- C. 装箱与入仓标准 -->
+                        <div class="attr-section" style="margin-bottom: 20px;">
+                            <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 大货装箱与打包规则 (Packing Rules)</h4>
+                            <div style="margin-left: 13px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px;">
+                                
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 25px;">
+                                    <div>
+                                        <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:10px;">单件入袋方式</label>
+                                        <select id="logistics-single-pack" class="oem-input-mini" style="width:100%; height:38px;" onchange="updateLogisticsSummary()">
+                                            <option value="独立包装(常规)">✅ 独立包装：每件装入指定包装袋 (常规电商)</option>
+                                            <option value="混装(环保)">♻️ 环保混装：不套塑料袋，打捆入箱 (线下实体/环保要求)</option>
+                                            <option value="带衣架装箱">👗 带衣架平铺入箱 (体积大，运费高)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:10px;">外箱配比规则 (Carton Assortment)</label>
+                                        <select id="logistics-carton-rule" class="oem-input-mini" style="width:100%; height:38px;" onchange="updateLogisticsSummary()">
+                                            <option value="独色独码(Solid)">📦 独色独码：一箱只有同颜色同尺码 (Solid Color/Size)</option>
+                                            <option value="混色混码(Assorted)">🔀 混色混码：按指定比例混合装箱 (Assorted 配比装)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                    
+                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:12px;">附加入仓合规服务 (Value-added Services)</label>
+                                <div class="chip-container" style="margin-bottom: 20px;">
+                                    <div class="chip logistics-addon" onclick="toggleLogisticsAddon('贴 UPC/SKU 条码贴纸', this)">单件贴 UPC/SKU 条码贴纸</div>
+                                    <div class="chip logistics-addon" onclick="toggleLogisticsAddon('亚马逊 FBA 外箱标', this)">代贴亚马逊 FBA 外箱标签</div>
+                                    <div class="chip logistics-addon" onclick="toggleLogisticsAddon('防潮内膜袋/干燥剂', this)">加塞防潮内膜袋/干燥剂</div>
+                                    <div class="chip logistics-addon" onclick="toggleLogisticsAddon('限制外箱毛重(如<15kg)', this)">限制单箱毛重上限 (如 <15kg)</div>
+                                </div>
+                    
+                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">特殊包装与物流备注 (Remarks)</label>
+                                <textarea id="logistics-remark" class="oem-textarea" style="height:65px; font-size:12px;" placeholder="如有特殊入仓要求（如：不使用黄色胶带封箱、外箱需印制指定 Shipping Mark 唛头等），请在此详细说明..." oninput="updateLogisticsSummary()"></textarea>
                             </div>
                         </div>
                     </div>
+
 
                     <!-- ==========================================
                          步骤 5: 商业需求评估
@@ -3656,6 +3772,62 @@
         }
 
         // ==========================================
+        // 物流与交付逻辑 (Logistics & Packaging)
+        // ==========================================
+        let logisticsConfig = {
+            term: 'DDP 双清包税到门',
+            method: 'Sea Freight (海运快船)',
+            addons: []
+        };
+        
+        function selectLogisticsAttr(attrType, value, el) {
+            logisticsConfig[attrType] = value;
+            
+            // 如果是点击选项卡片 (头程物流)
+            if (attrType === 'method' && el) {
+                el.parentNode.querySelectorAll('.logistics-method').forEach(item => item.classList.remove('selected'));
+                el.classList.add('selected');
+            }
+            
+            updateLogisticsSummary();
+        }
+        
+        function toggleLogisticsAddon(addon, el) {
+            const index = logisticsConfig.addons.indexOf(addon);
+            if (index > -1) { 
+                logisticsConfig.addons.splice(index, 1); 
+                el.classList.remove('selected'); 
+            } else { 
+                logisticsConfig.addons.push(addon); 
+                el.classList.add('selected'); 
+            }
+            updateLogisticsSummary();
+        }
+        
+        function updateLogisticsSummary() {
+            const sumEl = document.getElementById('sum-shipping');
+            
+            const dest = document.getElementById('logistics-destination').value || '待定目的地';
+            const singlePack = document.getElementById('logistics-single-pack').value.split('：')[0].replace(/[^\u4e00-\u9fa5a-zA-Z()]/g, '');
+            const cartonRule = document.getElementById('logistics-carton-rule').value.split('：')[0].replace(/[^\u4e00-\u9fa5a-zA-Z()]/g, '');
+            
+            // 提取术语核心词 (DDP, FOB, EXW)
+            const termCore = logisticsConfig.term.split(' ')[0];
+            // 提取物流方式核心词
+            const methodCore = logisticsConfig.method.split(' ')[0];
+            
+            let addonText = logisticsConfig.addons.length > 0 ? `<br><span style="font-size:10px; color:#10b981;">+${logisticsConfig.addons.length}项附加入仓服务</span>` : '';
+        
+            sumEl.innerHTML = `
+                <div style="text-align:right; line-height:1.4;">
+                    <span style="font-weight:700; color:var(--text-main);">${dest} | ${termCore}</span><br>
+                    <span style="font-size:11px; color:#64748b;">${methodCore} | ${singlePack} | ${cartonRule}</span>
+                    ${addonText}
+                </div>
+            `;
+        }
+
+        // ==========================================
         // 6. 全局数据重置与清理
         // ==========================================
         function updateSummaryVolume(text) { document.getElementById('sum-volume').innerText = text; }
@@ -3780,8 +3952,21 @@
             document.getElementById('labelPreviewGrid').innerHTML = '';
 
             // 4. 重置物流
-            document.querySelectorAll('#step-4 .option-item').forEach(item => item.classList.remove('selected'));
-            document.getElementById('sum-shipping').innerText = '未选择';
+            document.getElementById('logistics-destination').value = '';
+            document.querySelector('input[name="trade_term"][value="DDP"]').checked = true;
+            document.getElementById('logistics-single-pack').selectedIndex = 0;
+            document.getElementById('logistics-carton-rule').selectedIndex = 0;
+            document.getElementById('logistics-remark').value = '';
+            
+            document.querySelectorAll('.logistics-method').forEach((item, idx) => {
+                if(idx === 2) item.classList.add('selected'); // 默认选中海运
+                else item.classList.remove('selected');
+            });
+            
+            document.querySelectorAll('.logistics-addon').forEach(item => item.classList.remove('selected'));
+            
+            logisticsConfig = { term: 'DDP 双清包税到门', method: 'Sea Freight (海运快船)', addons: [] };
+            updateLogisticsSummary();
 
             // 5. 重置商业评估 (Step 5)
             const stageRadio = document.querySelector('input[name="project_stage"][value="concept"]');

@@ -1486,71 +1486,83 @@
                          步骤 4: 交付规划 (Delivery Planning)
                          ========================================== -->
                     <div class="step-content hidden" id="step-4">
-                        <div class="step-desc">请根据您当前的进度选择交付规划。新客户建议先进行“打样开发”，成熟品牌可直接定义“大货物流”。</div>
+                        <div class="step-desc">请定义当前的交付阶段。新客户建议先进行打样，老客户可直接规划大货物流。</div>
                     
-                        <!-- 顶层模式切换器 -->
-                        <div style="display: flex; justify-content: center; margin-bottom: 30px;">
-                            <div class="mode-switcher" style="padding: 6px; background: #f1f5f9; border-radius: 12px;">
-                                <div class="mode-option active" id="delivery-mode-sample" onclick="switchDeliveryMode('sample')" style="padding: 10px 30px; font-size: 14px;">🧪 仅需打样 (Sampling Only)</div>
-                                <div class="mode-option" id="delivery-mode-bulk" onclick="switchDeliveryMode('bulk')" style="padding: 10px 30px; font-size: 14px;">📦 大货下单 (Bulk Production)</div>
-                            </div>
+                        <!-- 1. 顶层模式切换器 (与 ODM/OEM 保持一致) -->
+                        <div class="mode-switcher" style="margin-bottom: 30px;">
+                            <div class="mode-option active" id="delivery-mode-sample" onclick="switchDeliveryMode('sample')">打样开发 (Sampling)</div>
+                            <div class="mode-option" id="delivery-mode-bulk" onclick="switchDeliveryMode('bulk')">大货下单 (Bulk)</div>
                         </div>
                     
                         <!-- ==========================================
-                             分支 A: 仅需打样 (Sample Mode)
+                             分支 A: 打样模式 (Sample Mode)
                              ========================================== -->
                         <div id="pane-delivery-sample" style="animation: fadeIn 0.4s ease;">
-                            <div class="attr-section" style="margin-bottom: 30px;">
-                                <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 样品寄送配置 (Sample Shipping)</h4>
-                                <div style="margin-left: 13px; display: grid; grid-template-columns: 1fr 1.2fr; gap: 30px; align-items: start;">
+                            <!-- A. 样品接收 -->
+                            <div class="attr-section" style="margin-bottom: 35px;">
+                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 样品接收配置 (Sample Shipping)</h4>
+                                <div style="margin-left: 13px; display: grid; grid-template-columns: 1fr 1.5fr; gap: 40px; align-items: start;">
                                     <div>
-                                        <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:10px;">样品接收国 (Destination)</label>
+                                        <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:10px;">样品接收目的地</label>
                                         <select id="sample-destination" class="oem-input-mini" style="width: 100%; height: 38px;" onchange="updateLogisticsSummary()">
-                                            <option value="">选择国家...</option>
+                                            <option value="">请选择国家...</option>
                                             <option value="美国">🇺🇸 美国 (USA)</option>
                                             <option value="欧洲">🇪🇺 欧洲 (Europe)</option>
                                             <option value="澳洲">🇦🇺 澳洲 (Australia)</option>
                                             <option value="中国大陆">🇨🇳 中国 (Mainland China)</option>
                                             <option value="其他">🌐 其他地区</option>
                                         </select>
-                                        <div class="metal-notice" style="margin-top: 10px;">* 样品通常通过国际快递寄送，时效约 3-5 天。</div>
                                     </div>
                                     <div>
-                                        <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:10px;">首选样品快递 (Carrier)</label>
+                                        <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:10px;">首选样品快递</label>
                                         <div class="chip-container">
                                             <div class="chip selected" onclick="selectSampleAttr('carrier', 'DHL/FedEx (红绣代办)', this)">DHL / FedEx (推荐)</div>
-                                            <div class="chip" onclick="selectSampleAttr('carrier', '使用我的快递账号 (到付)', this)">使用我的账号 (到付)</div>
-                                            <div class="chip" onclick="selectSampleAttr('carrier', '国内顺丰/物流', this)">顺丰速运 (仅限国内)</div>
+                                            <div class="chip" onclick="selectSampleAttr('carrier', '快递账号到付', this)">使用客户账号 (到付)</div>
+                                            <div class="chip" onclick="selectSampleAttr('carrier', '国内顺丰', this)">顺丰速运 (仅限国内)</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                     
-                            <!-- 针对打样客户的“大货报价意向”勾选 -->
-                            <div class="attr-section" style="background: #fbfcfd; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 25px;">
-                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
-                                    <h4 style="font-size: 14px; margin: 0; color: #1e293b;">B. 需评估大货预估价？ (Optional Bulk Quote)</h4>
-                                    <label class="oem-checkbox-label" style="font-weight: 700; color: var(--primary-color);">
+                            <!-- B. 大货意向 (样式与 A 保持一致) -->
+                            <div class="attr-section">
+                                <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 评估大货预估价 (Bulk Quote Intent)</h4>
+                                <div style="margin-left: 13px;">
+                                    <label class="oem-checkbox-label" style="margin-bottom: 20px;">
                                         <input type="checkbox" id="sample-need-bulk-quote" onchange="toggleSampleBulkIntent(this.checked)"> 是的，请基于我的大货意向核算单价
                                     </label>
-                                </div>
-                                
-                                <div id="sample-bulk-intent-fields" class="hidden" style="animation: fadeIn 0.3s; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-                                    <p style="font-size: 12px; color: #64748b; margin-bottom: 15px;">请提供您的基本物流目标，这有助于我们为您计算含税单价：</p>
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                                        <div>
-                                            <label style="font-size:11px; font-weight:600; color:#475569;">预期大货条款</label>
-                                            <select id="sample-intent-term" class="oem-input-mini" style="width:100%;" onchange="updateLogisticsSummary()">
-                                                <option value="DDP (包税到门)">DDP (双清包税到门)</option>
-                                                <option value="FOB (港口交货)">FOB (离岸港口交货)</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label style="font-size:11px; font-weight:600; color:#475569;">主要发货方式</label>
-                                            <select id="sample-intent-method" class="oem-input-mini" style="width:100%;" onchange="updateLogisticsSummary()">
-                                                <option value="Sea Freight (海运)">海运快船 (经济首选)</option>
-                                                <option value="Air Freight (空运)">空运专线 (时效优先)</option>
-                                            </select>
+                                    
+                                    <!-- 优化后的意向选择区域 -->
+                                    <div id="sample-bulk-intent-fields" class="hidden" style="animation: fadeIn 0.3s; padding: 20px; background: #fbfcfd; border-radius: 12px; border: 1px solid #f1f5f9;">
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                                            <!-- 预期大货条款 (卡片式单选) -->
+                                            <div>
+                                                <label style="display:block; font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">预期交货条款 (Incoterms)</label>
+                                                <div style="display: flex; gap: 10px;">
+                                                    <div class="sewing-card selected" style="flex:1; padding:10px;" onclick="selectSampleAttr('intentTerm', 'DDP (包税到门)', this)">
+                                                        <span style="font-size:13px; display:block;">DDP</span>
+                                                        <span style="font-size:10px; opacity:0.7; font-weight:normal;">双清包税到门</span>
+                                                    </div>
+                                                    <div class="sewing-card" style="flex:1; padding:10px;" onclick="selectSampleAttr('intentTerm', 'FOB (港口交货)', this)">
+                                                        <span style="font-size:13px; display:block;">FOB</span>
+                                                        <span style="font-size:10px; opacity:0.7; font-weight:normal;">离岸港口交货</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- 主要发货方式 (卡片式单选) -->
+                                            <div>
+                                                <label style="display:block; font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">预期发货方式 (Shipping)</label>
+                                                <div style="display: flex; gap: 10px;">
+                                                    <div class="sewing-card selected" style="flex:1; padding:10px;" onclick="selectSampleAttr('intentMethod', 'Sea Freight (海运)', this)">
+                                                        <span style="font-size:13px; display:block;">Sea</span>
+                                                        <span style="font-size:10px; opacity:0.7; font-weight:normal;">海运 (经济型)</span>
+                                                    </div>
+                                                    <div class="sewing-card" style="flex:1; padding:10px;" onclick="selectSampleAttr('intentMethod', 'Air Freight (空运)', this)">
+                                                        <span style="font-size:13px; display:block;">Air</span>
+                                                        <span style="font-size:10px; opacity:0.7; font-weight:normal;">空运 (时效型)</span>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1558,17 +1570,16 @@
                         </div>
                     
                         <!-- ==========================================
-                             分支 B: 大货模式 (Bulk Mode - 沿用之前的高级逻辑)
+                             分支 B: 大货模式 (Bulk Mode)
                              ========================================== -->
                         <div id="pane-delivery-bulk" class="hidden" style="animation: fadeIn 0.4s ease;">
-                            <div class="attr-section" style="margin-bottom: 30px;">
-                                <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 目的地与交货条款 (Bulk Logistics)</h4>
-                                <!-- 这里放置你之前那套目的地、DDP/FOB、物流方式、装箱规则的代码 -->
+                            <div class="attr-section" style="margin-bottom: 35px;">
+                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 目的地与交货条款 (Bulk Logistics)</h4>
                                 <div style="margin-left: 13px;">
                                     <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 15px;">
                                         <label style="font-size:12px; font-weight:600; color:#475569;">大货目的地：</label>
                                         <select id="bulk-destination" class="oem-input-mini" style="width: 280px; height: 38px;" onchange="updateLogisticsSummary()">
-                                            <option value="">选择大货目的国...</option>
+                                            <option value="">请选择国家...</option>
                                             <option value="美国">🇺🇸 美国</option>
                                             <option value="欧洲">🇪🇺 欧洲</option>
                                             <option value="澳洲">🇦🇺 澳洲</option>
@@ -1576,24 +1587,24 @@
                                         </select>
                                     </div>
                                     <div class="radio-card-grid">
-                                        <label class="radio-card"><input type="radio" name="bulk_trade_term" value="DDP" checked onclick="selectBulkLogistics('term', 'DDP 双清包税', this)"><div class="card-content"><h5>DDP / DDU</h5><p>包税到门，适合跨境电商</p></div></label>
-                                        <label class="radio-card"><input type="radio" name="bulk_trade_term" value="FOB" onclick="selectBulkLogistics('term', 'FOB 离岸交货', this)"><div class="card-content"><h5>FOB / CIF</h5><p>指定港口交货，自理清关</p></div></label>
+                                        <label class="radio-card"><input type="radio" name="bulk_trade_term" value="DDP" checked onclick="selectBulkLogistics('term', 'DDP 双清包税', this)"><div class="card-content" style="padding:15px;"><h5>DDP / DDU</h5><p>包税到门，适合跨境电商</p></div></label>
+                                        <label class="radio-card"><input type="radio" name="bulk_trade_term" value="FOB" onclick="selectBulkLogistics('term', 'FOB 离岸交货', this)"><div class="card-content" style="padding:15px;"><h5>FOB / CIF</h5><p>指定港口交货，自理清关</p></div></label>
+                                        <label class="radio-card"><input type="radio" name="bulk_trade_term" value="EXW" onclick="selectBulkLogistics('term', 'EXW 工厂交货', this)"><div class="card-content" style="padding:15px;"><h5>EXW</h5><p>工厂交货，自理物流</p></div></label>
                                     </div>
                                 </div>
                             </div>
                             
-                            <div class="attr-section" style="margin-bottom: 30px;">
-                                <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 头程物流与装箱 (Shipping & Packing)</h4>
+                            <div class="attr-section">
+                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 运输与装箱规则 (Shipping & Packing)</h4>
                                 <div style="margin-left: 13px;">
                                     <div class="option-grid" style="grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px;">
-                                        <div class="option-item bulk-method" onclick="selectBulkLogistics('method', 'Air Express', this)"><div class="option-info"><h4>国际快递</h4><p>3-5天</p></div></div>
-                                        <div class="option-item bulk-method" onclick="selectBulkLogistics('method', 'Air Freight', this)"><div class="option-info"><h4>空运专线</h4><p>8-15天</p></div></div>
-                                        <div class="option-item bulk-method selected" onclick="selectBulkLogistics('method', 'Sea Freight', this)"><div class="option-info"><h4>海运快船</h4><p>25-40天</p></div></div>
+                                        <div class="option-item bulk-method" onclick="selectBulkLogistics('method', 'Express', this)"><div class="option-info"><h4>国际快递</h4><p>3-5天 (最快)</p></div></div>
+                                        <div class="option-item bulk-method" onclick="selectBulkLogistics('method', 'Air', this)"><div class="option-info"><h4>空运专线</h4><p>8-15天 (均衡)</p></div></div>
+                                        <div class="option-item bulk-method selected" onclick="selectBulkLogistics('method', 'Sea', this)"><div class="option-info"><h4>海运快船</h4><p>25-40天 (最省)</p></div></div>
                                     </div>
-                                    <!-- 装箱规则简单化处理以保持篇幅 -->
                                     <div style="background:#f8fafc; padding:20px; border-radius:12px; display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-                                        <div><label style="font-size:11px; font-weight:600;">入袋方式</label><select id="bulk-pack-rule" class="oem-input-mini" style="width:100%;" onchange="updateLogisticsSummary()"><option>独立包装</option><option>环保混装</option></select></div>
-                                        <div><label style="font-size:11px; font-weight:600;">外箱规则</label><select id="bulk-carton-rule" class="oem-input-mini" style="width:100%;" onchange="updateLogisticsSummary()"><option>独色独码</option><option>混色混码</option></select></div>
+                                        <div><label style="font-size:11px; font-weight:700; color:#94a3b8; margin-bottom:8px; display:block;">单件入袋方式</label><select id="bulk-pack-rule" class="oem-input-mini" style="width:100%;" onchange="updateLogisticsSummary()"><option>独立包装 (Individual)</option><option>环保混装 (Bulk)</option></select></div>
+                                        <div><label style="font-size:11px; font-weight:700; color:#94a3b8; margin-bottom:8px; display:block;">外箱装箱规则</label><select id="bulk-carton-rule" class="oem-input-mini" style="width:100%;" onchange="updateLogisticsSummary()"><option>独色独码 (Solid)</option><option>混色混码 (Assorted)</option></select></div>
                                     </div>
                                 </div>
                             </div>
@@ -3762,15 +3773,19 @@
         }
 
         // ==========================================
-        // 步骤 4: 交付逻辑分流 (Logistics Switch)
+        // 步骤 4: 交付逻辑 (物流与报价规划)
         // ==========================================
-        let currentDeliveryMode = 'sample'; // 'sample' 或 'bulk'
-        let sampleConfig = { carrier: 'DHL/FedEx (红绣代办)', needBulkQuote: false };
-        let bulkLogisticsConfig = { term: 'DDP 双清包税', method: 'Sea Freight' };
+        let currentDeliveryMode = 'sample';
+        let sampleConfig = { 
+            carrier: 'DHL/FedEx (红绣代办)', 
+            needBulkQuote: false,
+            intentTerm: 'DDP (包税到门)',
+            intentMethod: 'Sea Freight (海运)'
+        };
+        let bulkLogisticsConfig = { term: 'DDP 双清包税', method: 'Sea' };
         
         function switchDeliveryMode(mode) {
             currentDeliveryMode = mode;
-            // UI 切换
             document.querySelectorAll('#step-4 .mode-option').forEach(opt => opt.classList.remove('active'));
             document.getElementById(`delivery-mode-${mode}`).classList.add('active');
             
@@ -3782,8 +3797,11 @@
         
         function selectSampleAttr(attr, value, el) {
             sampleConfig[attr] = value;
-            el.parentNode.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+            // 通用处理：清空同级选中态并标记当前选中
+            const siblings = el.parentNode.children;
+            for (let sibling of siblings) sibling.classList.remove('selected');
             el.classList.add('selected');
+            
             updateLogisticsSummary();
         }
         
@@ -3807,26 +3825,27 @@
             
             if (currentDeliveryMode === 'sample') {
                 const dest = document.getElementById('sample-destination').value || '待定国';
-                const intentText = sampleConfig.needBulkQuote ? '<br><span style="font-size:10px; color:var(--primary-color);">+含大货单价评估</span>' : '';
+                const intentText = sampleConfig.needBulkQuote ? 
+                    `<br><span style="font-size:10px; color:var(--primary-color);">评估大货: ${sampleConfig.intentTerm} | ${sampleConfig.intentMethod.split(' ')[0]}</span>` : '';
                 sumEl.innerHTML = `
                     <div style="text-align:right;">
-                        <span style="color:var(--text-main); font-weight:700;">打样开发 (${dest})</span><br>
-                        <span style="font-size:11px; color:#64748b;">样品物流: ${sampleConfig.carrier}</span>
+                        <span style="color:var(--text-main); font-weight:700;">打样阶段 (${dest})</span><br>
+                        <span style="font-size:11px; color:#64748b;">快递: ${sampleConfig.carrier.split(' ')[0]}</span>
                         ${intentText}
                     </div>
                 `;
             } else {
-                const dest = document.getElementById('bulk-destination').value || '待定目的地';
-                const pack = document.getElementById('bulk-pack-rule').value;
+                const dest = document.getElementById('bulk-destination').value || '待定国';
+                const term = bulkLogisticsConfig.term.split(' ')[0];
                 sumEl.innerHTML = `
                     <div style="text-align:right;">
                         <span style="color:var(--primary-color); font-weight:700;">大货订单 (${dest})</span><br>
-                        <span style="font-size:11px; color:#64748b;">${bulkLogisticsConfig.term} | ${bulkLogisticsConfig.method}</span><br>
-                        <span style="font-size:10px; color:#94a3b8;">${pack} | 指定外箱规则</span>
+                        <span style="font-size:11px; color:#64748b;">${term} | ${bulkLogisticsConfig.method}运</span>
                     </div>
                 `;
             }
         }
+
 
         // ==========================================
         // 6. 全局数据重置与清理

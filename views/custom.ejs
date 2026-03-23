@@ -578,6 +578,47 @@
             font-weight: 600; box-shadow: 0 2px 4px rgba(170, 0, 0, 0.05);
         }
 
+        /* 统一大货表格内所有控件的高度 */
+        .bulk-table-input {
+            width: 100%;
+            height: 80px !important; /* 固定高度，确保对齐 */
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 13px;
+            box-sizing: border-box;
+            outline: none;
+            transition: all 0.2s;
+            background: #fff;
+            display: block;
+        }
+        
+        /* 针对下拉框和输入框的垂直居中处理 */
+        select.bulk-table-input {
+            line-height: 1.5;
+        }
+        
+        /* 针对明细文本框的特殊处理 */
+        textarea.bulk-table-input {
+            resize: none; /* 禁止用户手动拉伸 */
+            overflow: hidden; /* 隐藏滚动条 */
+            line-height: 1.6;
+            padding-top: 8px;
+        }
+        
+        .bulk-table-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(170, 0, 0, 0.05);
+        }
+        
+        /* 调整表格单元格对齐方式 */
+        #bulk-logic-table td {
+            vertical-align: middle;
+            padding: 12px 15px;
+        }
+
+
         /* =========================================================
            10. OEM 模块与商业需求评估
            ========================================================= */
@@ -4337,11 +4378,10 @@
             const odmStyles = (typeof selectedOdmStyles !== 'undefined') ? selectedOdmStyles : [];
             const oemCount = parseInt(document.getElementById('bulk-oem-style-count')?.value) || 0;
         
-            // 生成下拉选项 (复用逻辑)
             let styleOptionsHtml = `<option value="">-- 请选择款式 --</option>`;
             odmStyles.forEach(name => {
                 const val = `ODM: ${name}`;
-                styleOptionsHtml += `<option value="${val}" ${bulkRows.some(r => r.style === val) ? '' : ''}>${val}</option>`;
+                styleOptionsHtml += `<option value="${val}">${val}</option>`;
             });
             for (let i = 1; i <= oemCount; i++) {
                 const val = `OEM-第 ${i} 款`;
@@ -4352,32 +4392,44 @@
             bulkRows.forEach((row, index) => {
                 const tr = document.createElement('tr');
                 
-                // 动态构建下拉框字符串并处理选中态
+                // 处理选中态
                 let currentOptions = styleOptionsHtml.replace(`value="${row.style}"`, `value="${row.style}" selected`);
         
                 tr.innerHTML = `
                     <td>
-                        <select onchange="updateBulkRowData(${index}, 'style', this.value)">
+                        <select class="bulk-table-input" onchange="updateBulkRowData(${index}, 'style', this.value)">
                             ${currentOptions}
                         </select>
                     </td>
                     <td>
-                        <input type="number" value="${row.qty}" min="0" onchange="validateMOQ(${index}, this.value)" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        <input type="number" class="bulk-table-input" value="${row.qty}" min="0" 
+                               onchange="validateMOQ(${index}, this.value)" 
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                     </td>
                     <td>
-                        <textarea class="bulk-size-textarea" placeholder="例：&#10;S: 20&#10;M: 50&#10;L: 30" oninput="updateBulkRowData(${index}, 'sizeDetail', this.value)">${row.sizeDetail}</textarea>
+                        <textarea class="bulk-table-input" placeholder="例：&#10;S: 20&#10;M: 50&#10;L: 30" 
+                                  oninput="updateBulkRowData(${index}, 'sizeDetail', this.value)">${row.sizeDetail}</textarea>
                     </td>
                     <td>
-                        <input type="text" value="${row.desc}" placeholder="备注颜色等" oninput="updateBulkRowData(${index}, 'desc', this.value)">
+                        <input type="text" class="bulk-table-input" value="${row.desc}" placeholder="备注颜色等" 
+                               oninput="updateBulkRowData(${index}, 'desc', this.value)">
                     </td>
                     <td style="text-align:center;">
-                        <button type="button" class="btn-remove-row" onclick="removeBulkRow(${index})">&times;</button>
+                        <button type="button" style="width: 100%; border: none; color: var(--primary-color); padding: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; background: #fffafb; font-size: 13px; font-weight: 600; cursor: pointer;" onclick="addBulkRow()">
+                            <!-- 优化后的 "+" 图标 -->
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            添加款式生产项
+                        </button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
             updateLogisticsSummary();
         }
+
         
         // 3. 起订量(MOQ)校验逻辑
         function validateMOQ(index, value) {

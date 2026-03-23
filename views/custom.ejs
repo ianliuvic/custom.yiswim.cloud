@@ -1533,59 +1533,63 @@
                                     </label>
                                     
                                     <!-- 优化后的意向选择区域 -->
-                                    <div id="sample-bulk-intent-fields" class="hidden" style="animation: fadeIn 0.3s; padding: 20px; background: #fbfcfd; border-radius: 12px; border: 1px solid #f1f5f9;">
+                                    <div id="sample-bulk-intent-fields" class="hidden" style="animation: fadeIn 0.3s; padding: 25px; background: #fbfcfd; border-radius: 12px; border: 1px solid #f1f5f9;">
                                         
-                                        <!-- 第一行：大货数量 与 发货方式 -->
-                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 20px;">
-                                            <!-- 预估数量 -->
-                                            <div>
-                                                <label style="display:flex; align-items:center; justify-content:space-between; font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">
-                                                    <span>预估大货数量 (Qty)</span>
-                                                    <span style="font-size:10px; color:#f59e0b; font-weight:normal; text-transform:none;">*用于估算运费</span>
-                                                </label>
-                                                <div style="display: flex; align-items: center; gap: 10px;">
-                                                    <input type="number" id="sample-intent-qty" class="oem-input-mini" style="flex: 1; height: 38px; font-size: 14px;" placeholder="例如: 500" oninput="updateLogisticsSummary()">
-                                                    <span style="font-size: 12px; color: #64748b; font-weight: 500;">件/套</span>
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;">
+                                            
+                                            <!-- 左列：大货数量 (上) + 发货方式 (下) -->
+                                            <div style="display: flex; flex-direction: column; gap: 25px;">
+                                                <!-- 1. 预估数量 -->
+                                                <div>
+                                                    <label style="display:flex; align-items:center; justify-content:space-between; font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">
+                                                        <span>预估大货数量 (Qty)</span>
+                                                        <span style="font-size:10px; color:#f59e0b; font-weight:normal; text-transform:none;">*用于估算运费</span>
+                                                    </label>
+                                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                                        <input type="number" id="sample-intent-qty" class="oem-input-mini" style="flex: 1; height: 38px; font-size: 14px;" placeholder="例如: 500" oninput="updateLogisticsSummary()">
+                                                        <span style="font-size: 12px; color: #64748b; font-weight: 500;">件/套</span>
+                                                    </div>
+                                                </div>
+                                    
+                                                <!-- 2. 预期发货方式 -->
+                                                <div>
+                                                    <label style="display:block; font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">预期发货方式 (Shipping)</label>
+                                                    <div style="display: flex; gap: 10px;">
+                                                        <div class="sewing-card selected" style="flex:1; padding:10px;" onclick="selectSampleAttr('intentMethod', 'Sea Freight (海运)', this)">
+                                                            <span style="font-size:13px; display:block;">Sea</span>
+                                                            <span style="font-size:10px; opacity:0.7; font-weight:normal;">海运 (经济型)</span>
+                                                        </div>
+                                                        <div class="sewing-card" style="flex:1; padding:10px;" onclick="selectSampleAttr('intentMethod', 'Air Freight (空运)', this)">
+                                                            <span style="font-size:13px; display:block;">Air</span>
+                                                            <span style="font-size:10px; opacity:0.7; font-weight:normal;">空运 (时效型)</span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                     
-                                            <!-- 主要发货方式 -->
+                                            <!-- 右列：交货条款 (2x2 网格对齐) -->
                                             <div>
-                                                <label style="display:block; font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">预期发货方式 (Shipping)</label>
-                                                <div style="display: flex; gap: 10px;">
-                                                    <div class="sewing-card selected" style="flex:1; padding:10px;" onclick="selectSampleAttr('intentMethod', 'Sea Freight (海运)', this)">
-                                                        <span style="font-size:13px; display:block;">Sea</span>
-                                                        <span style="font-size:10px; opacity:0.7; font-weight:normal;">海运 (经济型)</span>
+                                                <label style="display:block; font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">预期交货条款 (Incoterms)</label>
+                                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                                                    <div class="sewing-card selected" style="padding:10px;" onclick="selectSampleAttr('intentTerm', 'DDP', this)">
+                                                        <span style="font-size:13px; display:block;">DDP</span>
+                                                        <span style="font-size:10px; opacity:0.7; font-weight:normal;">双清包税</span>
                                                     </div>
-                                                    <div class="sewing-card" style="flex:1; padding:10px;" onclick="selectSampleAttr('intentMethod', 'Air Freight (空运)', this)">
-                                                        <span style="font-size:13px; display:block;">Air</span>
-                                                        <span style="font-size:10px; opacity:0.7; font-weight:normal;">空运 (时效型)</span>
+                                                    <div class="sewing-card" style="padding:10px;" onclick="selectSampleAttr('intentTerm', 'FOB', this)">
+                                                        <span style="font-size:13px; display:block;">FOB</span>
+                                                        <span style="font-size:10px; opacity:0.7; font-weight:normal;">离岸交货</span>
+                                                    </div>
+                                                    <div class="sewing-card" style="padding:10px;" onclick="selectSampleAttr('intentTerm', 'CIF', this)">
+                                                        <span style="font-size:13px; display:block;">CIF</span>
+                                                        <span style="font-size:10px; opacity:0.7; font-weight:normal;">到岸交货</span>
+                                                    </div>
+                                                    <div class="sewing-card" style="padding:10px;" onclick="selectSampleAttr('intentTerm', 'EXW', this)">
+                                                        <span style="font-size:13px; display:block;">EXW</span>
+                                                        <span style="font-size:10px; opacity:0.7; font-weight:normal;">工厂交货</span>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
                                     
-                                        <!-- 第二行：交货条款 (Incoterms) -->
-                                        <div>
-                                            <label style="display:block; font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">预期交货条款 (Incoterms)</label>
-                                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
-                                                <div class="sewing-card selected" style="padding:10px;" onclick="selectSampleAttr('intentTerm', 'DDP', this)">
-                                                    <span style="font-size:13px; display:block;">DDP</span>
-                                                    <span style="font-size:10px; opacity:0.7; font-weight:normal;">双清包税</span>
-                                                </div>
-                                                <div class="sewing-card" style="padding:10px;" onclick="selectSampleAttr('intentTerm', 'FOB', this)">
-                                                    <span style="font-size:13px; display:block;">FOB</span>
-                                                    <span style="font-size:10px; opacity:0.7; font-weight:normal;">离岸交货</span>
-                                                </div>
-                                                <div class="sewing-card" style="padding:10px;" onclick="selectSampleAttr('intentTerm', 'CIF', this)">
-                                                    <span style="font-size:13px; display:block;">CIF</span>
-                                                    <span style="font-size:10px; opacity:0.7; font-weight:normal;">到岸交货</span>
-                                                </div>
-                                                <div class="sewing-card" style="padding:10px;" onclick="selectSampleAttr('intentTerm', 'EXW', this)">
-                                                    <span style="font-size:13px; display:block;">EXW</span>
-                                                    <span style="font-size:10px; opacity:0.7; font-weight:normal;">工厂交货</span>
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
 

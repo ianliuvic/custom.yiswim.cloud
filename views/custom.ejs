@@ -1711,24 +1711,37 @@
                                         <input type="checkbox" id="sample-need-bulk-quote" onchange="toggleSampleBulkIntent(this.checked)"> 是的，请基于我的大货意向核算单价
                                     </label>
                                     
-                                    <!-- 优化后的意向选择区域：垂直单列布局 -->
+                                    <!-- 优化后的意向选择区域：垂直布局 + 局部网格 -->
                                     <div id="sample-bulk-intent-fields" class="hidden" style="animation: fadeIn 0.3s; padding: 25px; background: #fbfcfd; border-radius: 12px; border: 1px solid #f1f5f9; display: flex; flex-direction: column; gap: 25px;">
                                         
-                                        <!-- 1. 预估大货数量 -->
-                                        <div>
-                                            <label style="display:flex; align-items:center; justify-content: flex-start; gap: 10px; font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">
-                                                <span>1. 预估大货数量 (Estimated Quantity)</span>
-                                                <span style="font-size:10px; color:#f59e0b; font-weight:normal; text-transform:none;">*用于估算运费</span>
-                                            </label>
-                                            <div style="display: flex; align-items: center; gap: 10px;">
-                                                <input type="number" id="sample-intent-qty" class="oem-input-mini" style="width: 200px; height: 38px; font-size: 14px;" placeholder="例如: 500" oninput="updateLogisticsSummary()">
-                                                <span style="font-size: 12px; color: #64748b; font-weight: 500;">件 / 套</span>
+                                        <!-- 第 1 行：数量 (左) + 期望单价 (右) -->
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 600px;">
+                                            <!-- 1. 预估大货数量 -->
+                                            <div>
+                                                <label style="display:flex; align-items:center; gap: 8px; font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">
+                                                    <span>1. 预估大货数量 (Qty)</span>
+                                                </label>
+                                                <div style="display: flex; align-items: center; gap: 10px;">
+                                                    <input type="number" id="sample-intent-qty" class="oem-input-mini" style="flex:1; height: 38px; font-size: 14px;" placeholder="例如: 500" oninput="updateLogisticsSummary()">
+                                                    <span style="font-size: 12px; color: #64748b; font-weight: 500; white-space: nowrap;">件 / 套</span>
+                                                </div>
+                                            </div>
+                                    
+                                            <!-- 2. 期望 EXW 单价 -->
+                                            <div>
+                                                <label style="display:flex; align-items:center; gap: 8px; font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">
+                                                    <span>2. 期望 EXW 单价 (Target Price)</span>
+                                                </label>
+                                                <div style="display: flex; align-items: center; gap: 8px;">
+                                                    <span style="font-size: 15px; color: #94a3b8; font-weight: 600;">$</span>
+                                                    <input type="text" id="sample-intent-price" class="oem-input-mini" style="flex:1; height: 38px; font-size: 14px;" placeholder="如: 12.50 - 15.00" oninput="updateLogisticsSummary()">
+                                                </div>
                                             </div>
                                         </div>
                                     
-                                        <!-- 2. 预期发货方式 -->
+                                        <!-- 3. 预期发货方式 -->
                                         <div>
-                                            <label style="display:block; font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">2. 预期发货方式 (Expected Shipping)</label>
+                                            <label style="display:block; font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">3. 预期发货方式 (Expected Shipping)</label>
                                             <div style="display: flex; gap: 12px; max-width: 420px;">
                                                 <div class="sewing-card selected" style="flex:1; padding:12px;" onclick="selectSampleAttr('intentMethod', 'Sea Freight (海运)', this)">
                                                     <span style="font-size:13px; display:block; font-weight:700;">Sea Freight</span>
@@ -1741,9 +1754,9 @@
                                             </div>
                                         </div>
                                     
-                                        <!-- 3. 预期交货条款 -->
+                                        <!-- 4. 预期交货条款 -->
                                         <div>
-                                            <label style="display:block; font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">3. 预期交货条款 (Expected Incoterms)</label>
+                                            <label style="display:block; font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">4. 预期交货条款 (Expected Incoterms)</label>
                                             <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; max-width: 600px;">
                                                 <div class="sewing-card selected" style="padding:12px; text-align:center;" onclick="selectSampleAttr('intentTerm', 'DDP', this)">
                                                     <span style="font-size:13px; display:block; font-weight:700;">DDP</span>
@@ -1765,6 +1778,7 @@
                                         </div>
                                     
                                     </div>
+
 
 
                                 </div>
@@ -4126,14 +4140,22 @@
         
                 // 快递方式安全读取 (增加默认值防止 split 报错)
                 const carrier = (sampleConfig && sampleConfig.carrier) ? sampleConfig.carrier.split(' ')[0] : '待定';
-        
+
                 let intentText = '';
                 if (sampleConfig && sampleConfig.needBulkQuote) {
+                    // 获取数量
                     const qtyEl = document.getElementById('sample-intent-qty');
                     const qtyText = (qtyEl && qtyEl.value) ? `${qtyEl.value}件` : '数量待定';
+                    
+                    // 【新增】获取目标单价
+                    const priceEl = document.getElementById('sample-intent-price');
+                    const priceText = (priceEl && priceEl.value) ? `(目标 $${priceEl.value})` : '';
+        
                     const term = sampleConfig.intentTerm || 'DDP';
                     const method = sampleConfig.intentMethod ? sampleConfig.intentMethod.split(' ')[0] : '海运';
-                    intentText = `<br><span style="font-size:10px; color:var(--primary-color);">评估大货: ${qtyText} | ${term} | ${method}</span>`;
+                    
+                    // 将单价拼接到汇总文本中
+                    intentText = `<br><span style="font-size:10px; color:var(--primary-color);">评估大货: ${qtyText} ${priceText} | ${term} | ${method}</span>`;
                 }
         
                 sumEl.innerHTML = `

@@ -1891,8 +1891,12 @@
                                                 <!-- JS 动态渲染 -->
                                             </tbody>
                                         </table>
-                                        <button type="button" style="width: 100%; border: none; color: var(--primary-color); padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; background: #fffafb; font-size: 13px; font-weight: 600;" onclick="addBulkRow()">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" cy="5" x2="12" y2="19"></line><line x1="5" cy="12" x2="19" y2="12"></line></svg>
+                                        <button type="button" style="width: 100%; border: none; color: var(--primary-color); padding: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; background: #fffafb; font-size: 13px; font-weight: 600; cursor: pointer;" onclick="addBulkRow()">
+                                            <!-- 优化后的 "+" 图标 -->
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            </svg>
                                             添加款式生产项
                                         </button>
                                     </div>
@@ -4415,14 +4419,7 @@
                                oninput="updateBulkRowData(${index}, 'desc', this.value)">
                     </td>
                     <td style="text-align:center;">
-                        <button type="button" style="width: 100%; border: none; color: var(--primary-color); padding: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; background: #fffafb; font-size: 13px; font-weight: 600; cursor: pointer;" onclick="addBulkRow()">
-                            <!-- 优化后的 "+" 图标 -->
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                            </svg>
-                            添加款式生产项
-                        </button>
+                        <button type="button" class="btn-remove-row" onclick="removeBulkRow(${index})">&times;</button>
                     </td>
                 `;
                 tbody.appendChild(tr);

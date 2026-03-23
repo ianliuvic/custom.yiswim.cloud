@@ -4108,34 +4108,53 @@
             renderSampleTable(); 
         }
         
-        // 核心渲染函数
+        // 核心渲染函数 (修复下拉框状态丢失问题)
         function renderSampleTable() {
             const tbody = document.getElementById('sample-table-body');
             const odmStyles = (typeof selectedOdmStyles !== 'undefined') ? selectedOdmStyles : [];
             const oemCount = parseInt(document.getElementById('oem-style-count').value) || 0;
             
-            // 生成款式选项
-            let styleOptionsHtml = `<option value="">-- 请选择款式 --</option>`;
-            odmStyles.forEach(name => {
-                styleOptionsHtml += `<option value="ODM: ${name}">ODM: ${name}</option>`;
-            });
-            for (let i = 1; i <= oemCount; i++) {
-                styleOptionsHtml += `<option value="OEM-第 ${i} 款">OEM-第 ${i} 款</option>`;
-            }
-
             let hasHighQty = false; // 标记是否存在数量 > 2 的行
-
+        
             tbody.innerHTML = '';
+            
             sampleRows.forEach((row, index) => {
                 const tr = document.createElement('tr');
+                
+                // 【核心修复】直接在拼接字符串时注入 selected 状态
+                let rowStyleOptions = `<option value="">-- 请选择款式 --</option>`;
+                
+                // styleFound 标记：用来检查用户以前选的款式现在还在不在列表里
+                let styleFound = (row.style === ""); 
+        
+                odmStyles.forEach(name => {
+                    const val = `ODM: ${name}`;
+                    const isSelected = (row.style === val);
+                    if (isSelected) styleFound = true;
+                    rowStyleOptions += `<option value="${val}" ${isSelected ? 'selected' : ''}>${val}</option>`;
+                });
+        
+                for (let i = 1; i <= oemCount; i++) {
+                    const val = `OEM-第 ${i} 款`;
+                    const isSelected = (row.style === val);
+                    if (isSelected) styleFound = true;
+                    rowStyleOptions += `<option value="${val}" ${isSelected ? 'selected' : ''}>${val}</option>`;
+                }
+        
+                // 容错机制：如果之前选的款式被删除了（比如在第一步取消勾选），强行重置该行的款式为空
+                if (!styleFound) {
+                    row.style = "";
+                }
+        
+                // 生成整行的 HTML，包含款式和类型的 selected 状态，以及尺码数量的 value
                 tr.innerHTML = `
                     <td>
-                        <select onchange="(${index}, 'style', this.value)">
-                            ${styleOptionsHtml}
+                        <select onchange="updateRowData(${index}, 'style', this.value)">
+                            ${rowStyleOptions}
                         </select>
                     </td>
                     <td>
-                        <select onchange="(${index}, 'type', this.value)">
+                        <select onchange="updateRowData(${index}, 'type', this.value)">
                             <option value="初版样 (Proto)" ${row.type==='初版样 (Proto)'?'selected':''}>初版样 (Proto)</option>
                             <option value="修改/试穿样 (Fit)" ${row.type==='修改/试穿样 (Fit)'?'selected':''}>修改/试穿样 (Fit)</option>
                             <option value="正确/产前样 (PP)" ${row.type==='正确/产前样 (PP)'?'selected':''}>正确/产前样 (PP)</option>
@@ -4155,25 +4174,15 @@
                     </td>
                 `;
                 
-                // 恢复选中的款式
-                const styleSelect = tr.querySelector('select');
-                // 检查之前选的款式是否还在现在的列表中（可能在第一步被删了）
-                const styleExists = [...styleSelect.options].some(opt => opt.value === row.style);
-                if (styleExists) {
-                    styleSelect.value = row.style;
-                } else {
-                    row.style = ""; // 如果款式被删了，重置数据
-                    styleSelect.value = "";
-                }
-
+                // 检查收费预警
                 if (parseInt(row.qty) > 2) {
                     hasHighQty = true;
                 }
-
+        
                 tbody.appendChild(tr);
             });
-
-            // 处理收费预警的显示/隐藏
+        
+            // 处理收费预警框显隐
             const warningEl = document.getElementById('sample-qty-warning');
             if (warningEl) {
                 if (hasHighQty) {
@@ -4182,6 +4191,7 @@
                     warningEl.classList.add('hidden');
                 }
             }
+        
             updateLogisticsSummary();
         }
         

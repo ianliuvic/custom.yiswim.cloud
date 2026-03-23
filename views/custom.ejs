@@ -488,8 +488,20 @@
         .hotspot-label { position: absolute; white-space: nowrap; font-size: 10px; color: #94a3b8; pointer-events: none; opacity: 0; transition: 0.3s; }
         .hotspot:hover .hotspot-label, .hotspot.selected .hotspot-label { opacity: 1; transform: translateY(-18px); color: var(--primary-color); font-weight: bold; }
 
-        /* 标签内容示例框 */
+         /* 标签内容示例框 */
         .content-example-box { background: #f1f5f9; padding: 12px; border-radius: 8px; font-size: 11px; color: #64748b; line-height: 1.6; border-left: 3px solid #cbd5e1; margin-top: 10px; }
+
+        /* 缝制方式卡片样式 */
+        .sewing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-top: 8px; }
+        .sewing-card {
+            padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; cursor: pointer;
+            text-align: center; transition: all 0.2s;
+        }
+        .sewing-card:hover { border-color: var(--primary-color); background: #fffafb; }
+        .sewing-card.selected { border-color: var(--primary-color); background: #fff0f0; color: var(--primary-color); font-weight: 600; box-shadow: 0 2px 4px rgba(170, 0, 0, 0.05); }
+        .sewing-card .sewing-name { font-size: 12px; display: block; }
+        .sewing-card .sewing-desc { font-size: 10px; color: #94a3b8; font-weight: normal; }
+        .sewing-card.selected .sewing-desc { color: var(--primary-color); opacity: 0.8; }        
         /* 吊牌专属高级样式 */
         .hangtag-shape-card {
             display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 15px;
@@ -1270,20 +1282,28 @@
                             
                             <div id="content-label" class="hidden" style="animation: fadeIn 0.4s ease;">
                                 <!-- 1. 架构选择 -->
-                                <div class="attr-section" style="margin-bottom: 30px;">
+                                <div class="attr-section" style="margin-bottom: 25px;">
                                     <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 标签配置模式 (Configuration)</h4>
                                     <div class="mode-switcher" style="margin-left: 13px;">
-                                        <div class="mode-option active" id="label-mode-combined" onclick="switchLabelMode('combined')">集成合一标 (推荐用于泳装)</div>
+                                        <div class="mode-option active" id="label-mode-combined" onclick="switchLabelMode('combined')">集成合一标 (推荐)</div>
                                         <div class="mode-option" id="label-mode-split" onclick="switchLabelMode('split')">品牌标与水洗标分开</div>
                                     </div>
                                 </div>
 
-                                <!-- 2. 材质选择区 (动态生成) -->
-                                <div id="label-sections-container" style="margin-left: 13px;">
-                                    <!-- 此处由 JS 动态生成 [品牌标部分] 和 [水洗标部分] -->
+                                <!-- 2. 全局材质选择 (唯一) -->
+                                <div class="attr-section" style="margin-bottom: 25px;">
+                                    <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 统一标签材质 (Unified Material)</h4>
+                                    <div class="option-grid" id="label-unified-material-grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-left: 13px;">
+                                        <!-- 由 JS 渲染材质卡片 -->
+                                    </div>
                                 </div>
 
-                                <!-- 3. 交互式位置选择 -->
+                                <!-- 3. 动态详细配置区 (尺寸、缝制、内容、上传) -->
+                                <div id="label-dynamic-details" style="margin-left: 13px;">
+                                    <!-- 根据模式动态生成 1 个或 2 个区块 -->
+                                </div>
+
+                                <!-- 4. 交互式位置选择 -->
                                 <div class="attr-section" style="margin-bottom: 35px;">
                                     <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 安装位置定位 (Placement)</h4>
                                     <div class="placement-container">
@@ -2563,69 +2583,51 @@
             }
         }
         // ==========================================
-        // 标签逻辑 (Label)
+        // 标签逻辑 (Label) - 2024 高级重构版
         // ==========================================
         let labelConfig = {
-            mode: 'combined', // combined or split
-            brand: { type: '无感烫印标', size: '', method: '', colors: [] },
-            care: { type: '无感烫印标', size: '', method: '', colors: [] },
+            mode: 'combined', // combined(集成) 或 split(分开)
+            material: '无感烫印标', // 全局统一材质
             placement: '领后中',
-            designFiles: []
+            // 分开存储 brand(主标/集成标) 和 care(水洗标) 的详细数据
+            sections: {
+                brand: { size: '', method: '四边平缝', text: '', files: [], remark: '' },
+                care: { size: '', method: '对折环缝', text: '', files: [], remark: '' }
+            }
         };
 
+        // 预设定义
+        const labelMaterialTypes = [
+            { name: '无感烫印标', desc: '100%无触感, 泳装首选', icon: '⚡' },
+            { name: 'TPE/TPU柔感标', desc: '高弹防水, 亲肤磨砂', icon: '💎' },
+            { name: '柔软缎面标', desc: '丝滑材质, 不刺痛', icon: '🎗️' },
+            { name: '高密织唛标', desc: '经典品牌感, 质感厚实', icon: '🧵' }
+        ];
+
+        const sewingMethods = [
+            { name: '四边平缝', desc: '四周完全固定' },
+            { name: '两头折缝', desc: '左右/上下固定' },
+            { name: '对折环缝', desc: '夹入侧缝/领缝' },
+            { name: '单边吊缝', desc: '易于剪掉' }
+        ];
+
+        // 1. 模式切换 (合一 vs 分开)
         function switchLabelMode(mode) {
             labelConfig.mode = mode;
             document.querySelectorAll('#pane-label .mode-option').forEach(opt => opt.classList.remove('active'));
-            document.getElementById(`label-mode-${mode}`).classList.add('active');
-            renderLabelSections();
+            const activeBtn = document.getElementById(`label-mode-${mode}`);
+            if(activeBtn) activeBtn.classList.add('active');
+            
+            renderLabelDynamicDetails(); // 重新生成下方配置区块
             updateLabelSummary();
         }
 
-        function renderLabelSections() {
-            const container = document.getElementById('label-sections-container');
-            container.innerHTML = '';
-            
-            const sections = labelConfig.mode === 'combined' ? ['集成合一标'] : ['品牌主标', '水洗成分标'];
-            
-            sections.forEach(title => {
-                const key = title.includes('水洗') ? 'care' : 'brand';
-                const sectionHtml = `
-                    <div class="attr-section" style="margin-bottom: 25px;">
-                        <h4 style="font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 12px;">${title} 材质选择</h4>
-                        <div class="option-grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px;">
-                            ${renderLabelCards(key)}
-                        </div>
-                        <div id="${key}-sub-options" class="brand-custom-box hidden" style="margin-top:15px; padding:15px;">
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                                <div>
-                                    <label style="display:block; font-size:11px; font-weight:600; color:#64748b; margin-bottom:5px;">标签尺寸 (长 x 宽 cm)</label>
-                                    <input type="text" class="oem-input-mini" style="width:100%" placeholder="如: 3x5cm" oninput="labelConfig.${key}.size = this.value; updateLabelSummary()">
-                                </div>
-                                <div>
-                                    <label style="display:block; font-size:11px; font-weight:600; color:#64748b; margin-bottom:5px;">缝制方式</label>
-                                    <select class="oem-input-mini" style="width:100%" onchange="labelConfig.${key}.method = this.value; updateLabelSummary()">
-                                        <option value="两头折缝">两头折缝 (左右固定)</option>
-                                        <option value="对折环缝">对折环缝 (通常夹在侧缝)</option>
-                                        <option value="四边平缝">四边平缝 (完全固定)</option>
-                                        <option value="单边吊缝">单边吊缝 (易于剪掉)</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
-                container.insertAdjacentHTML('beforeend', sectionHtml);
-            });
-        }
-
-        function renderLabelCards(key) {
-            const types = [
-                { name: '无感烫印标', desc: '100%无触感, 泳装首选', icon: '⚡' },
-                { name: 'TPE/TPU柔感标', desc: '高弹防水, 亲肤磨砂', icon: '💎' },
-                { name: '柔软缎面标', desc: '丝滑材质, 不刺痛', icon: '🎗️' },
-                { name: '高密织唛标', desc: '经典品牌感, 质感厚实', icon: '🧵' }
-            ];
-            return types.map(t => `
-                <div class="option-item ${labelConfig[key].type === t.name ? 'selected' : ''}" style="padding:12px;" onclick="selectLabelMaterial('${key}', '${t.name}', this)">
+        // 2. 渲染全局统一材质选择
+        function renderLabelUnifiedMaterials() {
+            const grid = document.getElementById('label-unified-material-grid');
+            if(!grid) return;
+            grid.innerHTML = labelMaterialTypes.map(t => `
+                <div class="option-item ${labelConfig.material === t.name ? 'selected' : ''}" style="padding:12px;" onclick="selectLabelMaterial('${t.name}', this)">
                     <div style="font-size:20px; margin-bottom:5px;">${t.icon}</div>
                     <div class="option-info" style="padding:0">
                         <h4 style="font-size:13px;">${t.name}</h4>
@@ -2635,16 +2637,85 @@
             `).join('');
         }
 
-        function selectLabelMaterial(key, type, el) {
-            labelConfig[key].type = type;
+        function selectLabelMaterial(name, el) {
+            labelConfig.material = name;
             el.parentNode.querySelectorAll('.option-item').forEach(card => card.classList.remove('selected'));
             el.classList.add('selected');
+            renderLabelDynamicDetails(); // 材质切换会影响“尺寸和缝制”项的显隐
+            updateLabelSummary();
+        }
+
+        // 3. 核心：动态生成配置区块 (1个或2个)
+        function renderLabelDynamicDetails() {
+            const container = document.getElementById('label-dynamic-details');
+            if(!container) return;
+            container.innerHTML = '';
             
-            // 如果是非印标（烫印标），显示尺寸和缝制选项
-            const subBox = document.getElementById(`${key}-sub-options`);
-            if (type !== '无感烫印标') subBox.classList.remove('hidden');
-            else subBox.classList.add('hidden');
-            
+            const isSplit = labelConfig.mode === 'split';
+            // 定义需要生成的区块
+            const configs = isSplit ? 
+                [{ key: 'brand', title: '1. 品牌主标详细配置' }, { key: 'care', title: '2. 水洗成分标详细配置' }] : 
+                [{ key: 'brand', title: '集成合一标详细配置' }];
+
+            configs.forEach(conf => {
+                const data = labelConfig.sections[conf.key];
+                const isTagless = labelConfig.material === '无感烫印标';
+                
+                const html = `
+                    <div class="brand-custom-box" style="margin-bottom: 25px; background: #fff; border: 1px solid #e2e8f0;">
+                        <h4 style="font-size: 13px; color: var(--primary-color); margin-bottom: 15px; border-bottom: 1px dashed #f1f5f9; padding-bottom: 10px;">${conf.title}</h4>
+                        
+                        <!-- 尺寸与缝制卡片 (仅在非烫印时显示) -->
+                        <div class="${isTagless ? 'hidden' : ''}" style="margin-bottom: 20px;">
+                            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px; align-items: start;">
+                                <div>
+                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">标签尺寸 (长x宽)</label>
+                                    <input type="text" class="oem-input-mini" style="width:100%" placeholder="如: 2x5cm" value="${data.size}" oninput="labelConfig.sections.${conf.key}.size = this.value; updateLabelSummary()">
+                                </div>
+                                <div>
+                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">缝制方式 (选择图示)</label>
+                                    <div class="sewing-grid">
+                                        ${sewingMethods.map(m => `
+                                            <div class="sewing-card ${data.method === m.name ? 'selected' : ''}" onclick="selectSewingMethod('${conf.key}', '${m.name}', this)">
+                                                <span class="sewing-name">${m.name}</span>
+                                                <span class="sewing-desc">${m.desc}</span>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 内容录入与上传 -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div>
+                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">标签文字内容 (成分、产地等)</label>
+                                <textarea class="oem-textarea" style="height:110px; font-size:12px;" placeholder="请在此输入标签需要印刷或织出来的文字..." oninput="labelConfig.sections.${conf.key}.text = this.value; updateLabelSummary()">${data.text}</textarea>
+                            </div>
+                            <div>
+                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">上传设计稿 / Logo</label>
+                                <div class="premium-upload-row upload-row-sm" onclick="document.getElementById('file-${conf.key}').click()">
+                                    <div class="upload-label-group"><span id="name-${conf.key}" style="font-size:11px; color:#94a3b8;">${data.files.length > 0 ? '已选 '+data.files.length+' 个文件' : '选择 AI / PDF / PNG'}</span></div>
+                                    <input type="file" id="file-${conf.key}" class="hidden" multiple onchange="handleLabelSectionFiles(this, '${conf.key}')">
+                                    <button type="button" class="btn-outline" style="padding:2px 8px; font-size:10px;">浏览</button>
+                                </div>
+                                <div id="preview-${conf.key}" class="oem-image-preview-grid" style="margin-top:10px;"></div>
+                                
+                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin: 15px 0 8px;">补充说明</label>
+                                <textarea class="oem-textarea" style="height:60px; font-size:12px;" placeholder="其他特殊要求..." oninput="labelConfig.sections.${conf.key}.remark = this.value; updateLabelSummary()">${data.remark}</textarea>
+                            </div>
+                        </div>
+                    </div>`;
+                container.insertAdjacentHTML('beforeend', html);
+                renderLabelSectionPreviews(conf.key); // 恢复该区块的预览图
+            });
+        }
+
+        // 4. 辅助选择函数
+        function selectSewingMethod(sectionKey, methodName, el) {
+            labelConfig.sections[sectionKey].method = methodName;
+            el.parentNode.querySelectorAll('.sewing-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
             updateLabelSummary();
         }
 
@@ -2655,44 +2726,68 @@
             updateLabelSummary();
         }
 
-        function updateLabelSummary() {
-            const st = document.getElementById('sum-trim-label');
-            const isEnabled = document.querySelector('input[name="need_label"][value="yes"]').checked;
-            if (!isEnabled) {
-                st.innerText = '不需要';
-                st.style.color = '#64748b';
-                st.style.fontWeight = 'normal';
-                return;
-            }
-
-            let summary = labelConfig.mode === 'combined' ? '集成标: ' + labelConfig.brand.type : '分体标模式';
-            const hasFile = labelConfig.designFiles.length > 0 ? '✓' : '×';
+        // 5. 文件上传与预览逻辑 (适配多区块)
+        function handleLabelSectionFiles(input, sectionKey) {
+            const files = Array.from(input.files);
+            const data = labelConfig.sections[sectionKey];
             
-            st.innerHTML = `<div style="text-align:right;">${summary}<br><span style="font-size:10px; opacity:0.8;">位置: ${labelConfig.placement} | 稿件(${hasFile})</span></div>`;
-            st.style.color = 'var(--primary-color)';
-            st.style.fontWeight = 'bold';
+            files.forEach(file => {
+                if (file.size > 20 * 1024 * 1024) { showToast(`文件 ${file.name} 超过 20MB`, 'error'); return; }
+                if (!data.files.some(f => f.name === file.name && f.size === file.size)) {
+                    data.files.push(file);
+                }
+            });
+
+            document.getElementById(`name-${sectionKey}`).innerText = `已选 ${data.files.length} 个文件`;
+            renderLabelSectionPreviews(sectionKey);
+            updateLabelSummary();
+            input.value = '';
         }
 
-        // --- 修复 changeMapType 未定义报错 ---
+        function renderLabelSectionPreviews(sectionKey) {
+            const grid = document.getElementById(`preview-${sectionKey}`);
+            if(!grid) return;
+            grid.innerHTML = '';
+            
+            labelConfig.sections[sectionKey].files.forEach((file, index) => {
+                const isImage = file.type.startsWith('image/');
+                const ext = file.name.split('.').pop().toUpperCase();
+                let content = isImage 
+                    ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')">` 
+                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;">${ext}</div>`;
+
+                grid.insertAdjacentHTML('beforeend', `
+                    <div class="oem-preview-item" style="width:50px; height:50px;">
+                        ${content}
+                        <button type="button" class="oem-preview-remove" onclick="removeLabelSectionFile('${sectionKey}', ${index})">&times;</button>
+                    </div>
+                `);
+            });
+        }
+
+        function removeLabelSectionFile(sectionKey, index) {
+            labelConfig.sections[sectionKey].files.splice(index, 1);
+            const data = labelConfig.sections[sectionKey];
+            document.getElementById(`name-${sectionKey}`).innerText = data.files.length > 0 ? `已选 ${data.files.length} 个文件` : '选择 AI / PDF / PNG';
+            renderLabelSectionPreviews(sectionKey);
+            updateLabelSummary();
+        }
+
+        // 6. 交互式地图切换 (连体/分体)
         function changeMapType(type) {
             const mapContainer = document.getElementById('placement-map');
             const switcher = mapContainer.nextElementSibling.querySelector('.mode-switcher');
             
-            // 1. 更新切换按钮 UI
             switcher.querySelectorAll('.mode-option').forEach(opt => {
                 opt.classList.remove('active');
-                if(opt.getAttribute('onclick').includes(type)) opt.classList.add('active');
+                if(opt.innerText.includes(type === 'onepiece' ? '连体' : '分体')) opt.classList.add('active');
             });
 
-            // 2. 更新底图 (根据类型更换 SVG 路径)
             const mapImg = mapContainer.querySelector('.map-svg');
             const onepieceSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'%3E%3Cpath d='M30,20 Q50,10 70,20 L80,50 Q80,80 50,110 Q20,80 20,50 Z' fill='none' stroke='%23333' stroke-width='1'/%3E%3C/svg%3E";
             const bikiniSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'%3E%3Cpath d='M30,20 Q50,10 70,20 L80,40 Q50,35 20,40 Z M30,70 Q50,60 70,70 L80,90 Q50,115 20,90 Z' fill='none' stroke='%23333' stroke-width='1'/%3E%3C/svg%3E";
-            
             mapImg.src = (type === 'onepiece') ? onepieceSvg : bikiniSvg;
 
-            // 3. 重新渲染对应版型的热点 (Hotspots)
-            // 先移除旧热点
             mapContainer.querySelectorAll('.hotspot').forEach(h => h.remove());
 
             const spots = (type === 'onepiece') ? [
@@ -2708,92 +2803,34 @@
             spots.forEach(s => {
                 const hotspot = document.createElement('div');
                 hotspot.className = 'hotspot';
-                hotspot.style.top = s.top;
-                hotspot.style.left = s.left;
+                hotspot.style.top = s.top; hotspot.style.left = s.left;
                 hotspot.onclick = function() { selectLabelPlacement(s.name, this); };
                 hotspot.innerHTML = `<span class="hotspot-label">${s.name}</span>`;
-                
-                // 如果当前选中的位置和新生成的位置名一致，保持选中状态
                 if(labelConfig.placement === s.name) hotspot.classList.add('selected');
-                
                 mapContainer.appendChild(hotspot);
             });
         }
-        // --- 补充缺失的上传逻辑 ---
-        function handleLabelFiles(input) {
-            const files = Array.from(input.files);
-            files.forEach(file => {
-                // 1. 限制大小 20MB
-                if (file.size > 20 * 1024 * 1024) { 
-                    showToast(`文件 ${file.name} 超过 20MB`, 'error'); 
-                    return; 
-                }
-                // 2. 防止重复
-                if (!labelConfig.designFiles.some(f => f.name === file.name && f.size === file.size)) {
-                    labelConfig.designFiles.push(file);
-                }
-            });
 
-            // 3. 更新界面上的文件名显示
-            const nameEl = document.getElementById('labelFileName');
-            if (labelConfig.designFiles.length > 0) {
-                nameEl.innerText = labelConfig.designFiles.length === 1 
-                    ? labelConfig.designFiles[0].name 
-                    : `已选 ${labelConfig.designFiles.length} 个文件`;
-                nameEl.style.color = 'var(--text-main)';
+        // 7. 汇总更新
+        function updateLabelSummary() {
+            const st = document.getElementById('sum-trim-label');
+            const isEnabled = document.querySelector('input[name="need_label"][value="yes"]').checked;
+            if (!isEnabled) {
+                st.innerText = '不需要';
+                st.style.color = '#64748b'; st.style.fontWeight = 'normal';
+                return;
             }
-            
-            renderLabelPreviews();
-            updateLabelSummary();
-            input.value = ''; // 清空 input 允许重复选择同一文件
+
+            const modeText = labelConfig.mode === 'combined' ? '集成标' : '分体标';
+            const matText = labelConfig.material;
+            const brandFiles = labelConfig.sections.brand.files.length;
+            const careFiles = labelConfig.sections.care.files.length;
+            const fileStatus = (brandFiles + careFiles) > 0 ? '已传稿' : '无稿件';
+
+            st.innerHTML = `<div style="text-align:right;">${modeText} | ${matText}<br><span style="font-size:10px; opacity:0.8;">位置: ${labelConfig.placement} | ${fileStatus}</span></div>`;
+            st.style.color = 'var(--primary-color)'; st.style.fontWeight = 'bold';
         }
 
-        function renderLabelPreviews() {
-            const grid = document.getElementById('labelPreviewGrid');
-            grid.innerHTML = '';
-            
-            labelConfig.designFiles.forEach((file, index) => {
-                const isImage = file.type.startsWith('image/');
-                const ext = file.name.split('.').pop().toUpperCase();
-                let content = '';
-
-                if (isImage) {
-                    // 如果是图片，创建本地预览 URL
-                    const url = URL.createObjectURL(file);
-                    content = `<img src="${url}" onclick="openOemPreview('${url}', '${file.name}')">`;
-                } else {
-                    // 如果是 AI/PDF，显示文件后缀图标
-                    content = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;">${ext}</div>`;
-                }
-
-                grid.insertAdjacentHTML('beforeend', `
-                    <div class="oem-preview-item" style="width:60px; height:60px;">
-                        ${content}
-                        <button type="button" class="oem-preview-remove" onclick="removeLabelFile(${index})">&times;</button>
-                    </div>
-                `);
-            });
-        }
-
-        function removeLabelFile(index) {
-            labelConfig.designFiles.splice(index, 1);
-            
-            const nameEl = document.getElementById('labelFileName');
-            if (labelConfig.designFiles.length > 0) {
-                nameEl.innerText = labelConfig.designFiles.length === 1 
-                    ? labelConfig.designFiles[0].name 
-                    : `已选 ${labelConfig.designFiles.length} 个文件`;
-            } else {
-                nameEl.innerText = '上传标签 Logo 或完整设计稿';
-                nameEl.style.color = '#94a3b8';
-            }
-            
-            renderLabelPreviews();
-            updateLabelSummary();
-        }
-
-        // 初始化加载一次
-        document.addEventListener('DOMContentLoaded', () => { if(currentStep === 3) renderLabelSections(); });
         // ==========================================
         // 吊牌逻辑 (Hangtag)
         // ==========================================

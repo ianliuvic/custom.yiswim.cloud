@@ -1497,47 +1497,54 @@
                              分支 A: 打样模式 (Sample Mode)
                              ========================================== -->
                         <div id="pane-delivery-sample" style="animation: fadeIn 0.4s ease;">
-                            
-                            <!-- 【新增】A. 打样范围与规格 (Sample Scope) -->
+                            <!-- 1. 顶部统计与 OEM 输入 -->
+                            <div class="attr-section" style="margin-bottom: 25px;">
+                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 开发规模确认 (Development Scale)</h4>
+                                <div style="margin-left: 13px; display: flex; gap: 40px; align-items: center; background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #f1f5f9;">
+                                    <!-- ODM 自动识别显示 -->
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <span style="font-size: 13px; color: #64748b;">已选 ODM 款式:</span>
+                                        <span id="odm-count-badge" style="background: var(--primary-color); color: #fff; padding: 2px 10px; border-radius: 20px; font-weight: 700; font-size: 14px;">0</span>
+                                    </div>
+                                    <!-- OEM 数量输入 -->
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <span style="font-size: 13px; color: #64748b;">自主设计 (OEM) 款式数:</span>
+                                        <input type="number" id="oem-style-count" class="oem-input-mini" style="width: 80px; text-align: center;" value="0" min="0" oninput="refreshSampleTableStyles()">
+                                    </div>
+                                    <div style="font-size: 12px; color: #94a3b8;">* 系统将根据以上总数生成打样清单</div>
+                                </div>
+                            </div>
+                        
+                            <!-- 2. 动态打样表格 -->
                             <div class="attr-section" style="margin-bottom: 35px;">
-                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 打样范围与规格 (Sample Scope)</h4>
-                                <div style="margin-left: 13px;">
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 20px;">
-                                        <div>
-                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">1. 开发款式总数 (Total Styles)</label>
-                                            <div style="display: flex; align-items: center; gap: 10px;">
-                                                <input type="number" id="sample-style-count" class="oem-input-mini" style="width: 120px;" placeholder="如: 3" oninput="updateLogisticsSummary()">
-                                                <span style="font-size: 11px; color: #94a3b8;">套/款 (基于第一步款式)</span>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">2. 每款打样件数 (Qty per Style)</label>
-                                            <div style="display: flex; align-items: center; gap: 10px;">
-                                                <input type="number" id="sample-qty-per-style" class="oem-input-mini" style="width: 120px;" value="1" oninput="updateLogisticsSummary()">
-                                                <span style="font-size: 11px; color: #94a3b8;">件 (如需自己留底可填2)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-                                        <div>
-                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">3. 样衣制作阶段 (Sample Stage)</label>
-                                            <select id="sample-stage" class="oem-input-mini" style="width: 100%; height: 38px;" onchange="updateLogisticsSummary()">
-                                                <option value="初版样 (Proto)">初版样 (Proto) - 核对基础版型与尺寸</option>
-                                                <option value="试穿样 (Fit)">试穿样 (Fit) - 上身测试与调整细节</option>
-                                                <option value="产前样 (PP)">产前样 (PP) - 确认最终大货面辅料</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">4. 打样基准尺码 (Base Size)</label>
-                                            <input type="text" id="sample-base-size" class="oem-input-mini" style="width: 100%; height: 38px;" placeholder="例如: M 或 US 6" oninput="updateLogisticsSummary()">
-                                        </div>
-                                    </div>
+                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 详细打样清单 (Sampling List)</h4>
+                                <div style="margin-left: 13px; overflow-x: auto;">
+                                    <table class="sample-table" id="sample-logic-table">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 200px;">对应款式</th>
+                                                <th style="width: 150px;">样衣类型</th>
+                                                <th style="width: 120px;">尺码 (选填/自填)</th>
+                                                <th style="width: 100px;">数量</th>
+                                                <th>需求描述 / 备注</th>
+                                                <th style="width: 60px;">操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="sample-table-body">
+                                            <!-- JS 动态渲染行 -->
+                                        </tbody>
+                                    </table>
+                                    
+                                    <button type="button" class="btn-outline" style="margin-top: 15px; width: 100%; border: 1px dashed var(--primary-color); color: var(--primary-color); padding: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; background: #fffafb;" onclick="addSampleRow()">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                        添加新打样项
+                                    </button>
                                 </div>
                             </div>
                     
-                            <!-- B. 样品接收 (原 A) -->
+                            <!-- C. 样品接收 (原 A) -->
                             <div class="attr-section" style="margin-bottom: 35px;">
-                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 样品接收配置 (Sample Shipping)</h4>
+                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 样品接收配置 (Sample Shipping)</h4>
                                 <div style="margin-left: 13px; display: grid; grid-template-columns: 1fr 1.5fr; gap: 40px; align-items: start;">
                                     <div>
                                         <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:10px;">样品接收目的地</label>
@@ -1561,9 +1568,9 @@
                                 </div>
                             </div>
 
-                            <!-- C. 大货意向 (原 B，保持之前的垂直布局不变) -->
+                            <!-- D. 大货意向 (原 B，保持之前的垂直布局不变) -->
                             <div class="attr-section">
-                                <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 评估大货预估价 (Bulk Quote Intent)</h4>
+                                <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">D. 评估大货预估价 (Bulk Quote Intent)</h4>
                                 <div style="margin-left: 13px;">
                                     <label class="oem-checkbox-label" style="margin-bottom: 20px;">
                                         <input type="checkbox" id="sample-need-bulk-quote" onchange="toggleSampleBulkIntent(this.checked)"> 是的，请基于我的大货意向核算单价
@@ -1628,7 +1635,28 @@
                                 </div>
                             </div>
                         </div>
-                    
+
+                        <!-- 用于尺码自填的 Datalist -->
+                        <datalist id="common-sizes">
+                            <option value="XS">
+                            <option value="S">
+                            <option value="M">
+                            <option value="L">
+                            <option value="XL">
+                            <option value="2XL">
+                            <option value="均码 (OS)">
+                        </datalist>
+                        
+                        <style>
+                            .sample-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; font-size: 13px; }
+                            .sample-table th { background: #f1f5f9; color: #475569; text-align: left; padding: 12px 15px; font-weight: 600; border-bottom: 2px solid #e2e8f0; }
+                            .sample-table td { padding: 10px 15px; border-bottom: 1px solid #f1f5f9; }
+                            .sample-table select, .sample-table input { width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 12px; outline: none; transition: border 0.2s; }
+                            .sample-table select:focus, .sample-table input:focus { border-color: var(--primary-color); }
+                            .btn-remove-row { color: #94a3b8; cursor: pointer; transition: color 0.2s; background: none; border: none; font-size: 18px; }
+                            .btn-remove-row:hover { color: #ef4444; }
+                        </style>
+
                         <!-- ==========================================
                              分支 B: 大货模式 (Bulk Mode)
                              ========================================== -->
@@ -3888,17 +3916,6 @@
         };
         let bulkLogisticsConfig = { term: 'DDP 双清包税', method: 'Sea' };
         
-        function switchDeliveryMode(mode) {
-            currentDeliveryMode = mode;
-            document.querySelectorAll('#step-4 .mode-option').forEach(opt => opt.classList.remove('active'));
-            document.getElementById(`delivery-mode-${mode}`).classList.add('active');
-            
-            document.getElementById('pane-delivery-sample').classList.toggle('hidden', mode !== 'sample');
-            document.getElementById('pane-delivery-bulk').classList.toggle('hidden', mode !== 'bulk');
-            
-            updateLogisticsSummary();
-        }
-        
         function selectSampleAttr(attr, value, el) {
             sampleConfig[attr] = value;
             // 通用处理：清空同级选中态并标记当前选中
@@ -3966,8 +3983,118 @@
                 `;
             }
         }
+
+        let sampleRows = []; // 存储表格数据 [{style:'', type:'', size:'', qty:1, desc:''}]
         
-        // 附加一个小联动功能：当切换模式时，尝试自动读取已选的款式数量
+        // 初始化：Step 4 激活时调用
+        function initSampleTab() {
+            const odmCount = (typeof selectedOdmStyles !== 'undefined') ? selectedOdmStyles.length : 0;
+            document.getElementById('odm-count-badge').innerText = odmCount;
+            
+            if (sampleRows.length === 0) {
+                addSampleRow(); // 默认第一行
+            } else {
+                renderSampleTable();
+            }
+        }
+        
+        // 增加一行
+        function addSampleRow() {
+            const newRow = { style: '', type: '初版样 (Proto)', size: 'M', qty: 1, desc: '' };
+            sampleRows.push(newRow);
+            renderSampleTable();
+        }
+        
+        // 删除一行
+        function removeSampleRow(index) {
+            if (sampleRows.length <= 1) return; // 至少保留一行
+            sampleRows.splice(index, 1);
+            renderSampleTable();
+        }
+        
+        // 当 ODM 或 OEM 数量变化时，刷新款式下拉列表而不重置表格
+        function refreshSampleTableStyles() {
+            renderSampleTable(); 
+        }
+        
+        // 核心渲染函数
+        function renderSampleTable() {
+            const tbody = document.getElementById('sample-table-body');
+            const odmStyles = (typeof selectedOdmStyles !== 'undefined') ? selectedOdmStyles : [];
+            const oemCount = parseInt(document.getElementById('oem-style-count').value) || 0;
+            
+            // 生成款式选项
+            let styleOptionsHtml = `<option value="">-- 请选择款式 --</option>`;
+            odmStyles.forEach(name => {
+                styleOptionsHtml += `<option value="ODM: ${name}">ODM: ${name}</option>`;
+            });
+            for (let i = 1; i <= oemCount; i++) {
+                styleOptionsHtml += `<option value="OEM-第 ${i} 款">OEM-第 ${i} 款</option>`;
+            }
+        
+            tbody.innerHTML = '';
+            sampleRows.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <select onchange="updateRowData(${index}, 'style', this.value)">
+                            ${styleOptionsHtml}
+                        </select>
+                    </td>
+                    <td>
+                        <select onchange="updateRowData(${index}, 'type', this.value)">
+                            <option value="初版样 (Proto)" ${row.type==='初版样 (Proto)'?'selected':''}>初版样 (Proto)</option>
+                            <option value="修改/试穿样 (Fit)" ${row.type==='修改/试穿样 (Fit)'?'selected':''}>修改/试穿样 (Fit)</option>
+                            <option value="正确/产前样 (PP)" ${row.type==='正确/产前样 (PP)'?'selected':''}>正确/产前样 (PP)</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="text" list="common-sizes" value="${row.size}" placeholder="选或填" oninput="updateRowData(${index}, 'size', this.value)">
+                    </td>
+                    <td>
+                        <input type="number" value="${row.qty}" min="1" oninput="updateRowData(${index}, 'qty', this.value)">
+                    </td>
+                    <td>
+                        <input type="text" value="${row.desc}" placeholder="例: 黑色碎花款" oninput="updateRowData(${index}, 'desc', this.value)">
+                    </td>
+                    <td style="text-align:center;">
+                        <button type="button" class="btn-remove-row" onclick="removeSampleRow(${index})">&times;</button>
+                    </td>
+                `;
+                
+                // 恢复选中的款式
+                const styleSelect = tr.querySelector('select');
+                styleSelect.value = row.style;
+                
+                tbody.appendChild(tr);
+            });
+            updateLogisticsSummary();
+        }
+        
+        // 实时更新数组数据
+        function updateRowData(index, field, value) {
+            // 检查是否有完全重复的行 (款式、类型、尺码均相同)
+            if (field === 'style' || field === 'type' || field === 'size') {
+                const isDuplicate = sampleRows.some((row, i) => {
+                    if (i === index) return false;
+                    let checkStyle = (field === 'style' ? value : row.style);
+                    let checkType = (field === 'type' ? value : row.type);
+                    let checkSize = (field === 'size' ? value : row.size);
+                    return row.style === checkStyle && row.type === checkType && row.size === checkSize;
+                });
+        
+                if (isDuplicate) {
+                    alert("清单中已存在完全相同的打样配置 (款式、类型、尺码均一致)，请直接修改数量。");
+                    renderSampleTable(); // 强制刷回原值
+                    return;
+                }
+            }
+        
+            sampleRows[index][field] = value;
+            updateLogisticsSummary();
+        }
+        
+        // 修改 switchDeliveryMode 的触发
         function switchDeliveryMode(mode) {
             currentDeliveryMode = mode;
             document.querySelectorAll('#step-4 .mode-option').forEach(opt => opt.classList.remove('active'));
@@ -3976,18 +4103,9 @@
             document.getElementById('pane-delivery-sample').classList.toggle('hidden', mode !== 'sample');
             document.getElementById('pane-delivery-bulk').classList.toggle('hidden', mode !== 'bulk');
             
-            // 【智能化联动】自动填入第一步选择的 ODM 款式数量
-            if (selectedOdmStyles && selectedOdmStyles.length > 0) {
-                if (mode === 'sample' && !document.getElementById('sample-style-count').value) {
-                    document.getElementById('sample-style-count').value = selectedOdmStyles.length;
-                } else if (mode === 'bulk' && !document.getElementById('bulk-style-count').value) {
-                    document.getElementById('bulk-style-count').value = selectedOdmStyles.length;
-                }
-            }
-            
+            if (mode === 'sample') initSampleTab();
             updateLogisticsSummary();
         }
-
 
         // ==========================================
         // 6. 全局数据重置与清理

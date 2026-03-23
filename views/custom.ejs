@@ -1830,10 +1830,59 @@
                                     <div style="font-size: 12px; color: #94a3b8;">* 系统将基于此总数核算大货生产排期</div>
                                 </div>
                             </div>
-                        
+
+                            <!-- 2. 大货生产清单 -->
+                            <div class="attr-section" style="margin-bottom: 35px;">
+                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 详细生产清单 (Bulk Order List)</h4>
+                                <div style="margin-left: 13px;">
+                                    <div style="border: 1px solid #f1f5f9; border-radius: 12px; overflow: hidden; background: #fff;">
+                                        <table class="sample-table" id="bulk-logic-table" style="border: none; border-bottom: 1px solid #f1f5f9;">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 180px;">对应款式</th>
+                                                    <th style="width: 120px;">总数量</th>
+                                                    <th style="width: 220px;">尺码及数量明细</th>
+                                                    <th>备注 / 描述</th>
+                                                    <th style="width: 60px;">操作</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="bulk-table-body">
+                                                <!-- JS 动态渲染 -->
+                                            </tbody>
+                                        </table>
+                                        <button type="button" style="width: 100%; border: none; color: var(--primary-color); padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; background: #fffafb; font-size: 13px; font-weight: 600;" onclick="addBulkRow()">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" cy="5" x2="12" y2="19"></line><line x1="5" cy="12" x2="19" y2="12"></line></svg>
+                                            添加款式生产项
+                                        </button>
+                                    </div>
+                                    <div class="metal-notice" style="margin-top: 12px; color: #64748b;">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                                        起订量(MOQ)说明：现有款式(ODM)单款单色 <strong>50件</strong> 起订；自主设计(OEM) <strong>100件</strong> 起订。
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <style>
+                                /* 针对大货表格文本框的微调 */
+                                .bulk-size-textarea {
+                                    width: 100%;
+                                    height: 65px; /* 稍微大一些的高度 */
+                                    padding: 8px;
+                                    border: 1px solid #e2e8f0;
+                                    border-radius: 4px;
+                                    font-family: inherit;
+                                    font-size: 12px;
+                                    resize: vertical;
+                                    box-sizing: border-box;
+                                    line-height: 1.4;
+                                }
+                                .bulk-size-textarea:focus { border-color: var(--primary-color); outline: none; background: #fff; }
+                            </style>
+
+
                             <!-- 2. 目的地与交货条款 (原 A 顺延为 B) -->
                             <div class="attr-section" style="margin-bottom: 35px;">
-                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 目的地与交货条款 (Bulk Logistics)</h4>
+                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 目的地与交货条款 (Bulk Logistics)</h4>
                                 <div style="margin-left: 13px;">
                                     <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 15px;">
                                         <label style="font-size:12px; font-weight:600; color:#475569;">大货目的地：</label>
@@ -1855,7 +1904,7 @@
                     
                             <!-- C. 目的地与交货条款 (原 A) -->
                             <div class="attr-section" style="margin-bottom: 35px;">
-                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 目的地与交货条款 (Bulk Logistics)</h4>
+                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">D. 目的地与交货条款 (Bulk Logistics)</h4>
                                 <div style="margin-left: 13px;">
                                     <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 15px;">
                                         <label style="font-size:12px; font-weight:600; color:#475569;">大货目的地：</label>
@@ -2263,6 +2312,12 @@
             });
         
             if (currentDeliveryMode === 'sample') renderSampleTable();
+
+            // 确保大货表格有初始行
+            if (bulkRows.length === 0) addBulkRow();
+            
+            if (currentDeliveryMode === 'sample') renderSampleTable();
+            else renderBulkTable();
         }
 
         // --- 新增函数，替换掉旧的 updateOdmSummary ---
@@ -4233,16 +4288,131 @@
                 const term = (bulkLogisticsConfig && bulkLogisticsConfig.term) ? bulkLogisticsConfig.term.split(' ')[0] : 'DDP';
                 const method = (bulkLogisticsConfig && bulkLogisticsConfig.method) ? bulkLogisticsConfig.method : '海运';
                 
+                // 在 updateLogisticsSummary 里的 bulk 模式分支中：
+                let totalBulkQty = 0;
+                let bulkStylesCount = 0;
+                
+                if (typeof bulkRows !== 'undefined') {
+                    bulkRows.forEach(row => {
+                        if (row.style) {
+                            bulkStylesCount++;
+                            totalBulkQty += (parseInt(row.qty) || 0);
+                        }
+                    });
+                }
+                
                 sumEl.innerHTML = `
                     <div style="text-align:right;">
                         <span style="color:var(--primary-color); font-weight:700;">大货订单 (${dest})</span><br>
-                        <span style="font-size:11px; color:#64748b;">${styles}款 x ${qty}件 | ${sizeRange}</span><br>
-                        <span style="font-size:10px; color:#94a3b8;">${term} | ${method}运</span>
+                        <span style="font-size:11px; color:#64748b;">清单: ${bulkStylesCount}款 / 共${totalBulkQty}件</span><br>
+                        <span style="font-size:10px; color:#94a3b8;">${bulkLogisticsConfig.term} | ${bulkLogisticsConfig.method}</span>
                     </div>
                 `;
             }
         }
 
+        let bulkRows = []; // 存储大货数据 [{style:'', qty:100, sizeDetail:'', desc:''}]
+        
+        // 1. 初始化或增加行
+        function addBulkRow() {
+            // 默认给一个满足最低起订量的初值
+            bulkRows.push({ style: '', qty: 50, sizeDetail: '', desc: '' });
+            renderBulkTable();
+        }
+        
+        function removeBulkRow(index) {
+            if (bulkRows.length > 1) {
+                bulkRows.splice(index, 1);
+            } else {
+                bulkRows[0] = { style: '', qty: 50, sizeDetail: '', desc: '' };
+            }
+            renderBulkTable();
+        }
+        
+        // 2. 核心渲染函数
+        function renderBulkTable() {
+            const tbody = document.getElementById('bulk-table-body');
+            if(!tbody) return;
+        
+            const odmStyles = (typeof selectedOdmStyles !== 'undefined') ? selectedOdmStyles : [];
+            const oemCount = parseInt(document.getElementById('bulk-oem-style-count')?.value) || 0;
+        
+            // 生成下拉选项 (复用逻辑)
+            let styleOptionsHtml = `<option value="">-- 请选择款式 --</option>`;
+            odmStyles.forEach(name => {
+                const val = `ODM: ${name}`;
+                styleOptionsHtml += `<option value="${val}" ${bulkRows.some(r => r.style === val) ? '' : ''}>${val}</option>`;
+            });
+            for (let i = 1; i <= oemCount; i++) {
+                const val = `OEM-第 ${i} 款`;
+                styleOptionsHtml += `<option value="${val}">${val}</option>`;
+            }
+        
+            tbody.innerHTML = '';
+            bulkRows.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                
+                // 动态构建下拉框字符串并处理选中态
+                let currentOptions = styleOptionsHtml.replace(`value="${row.style}"`, `value="${row.style}" selected`);
+        
+                tr.innerHTML = `
+                    <td>
+                        <select onchange="updateBulkRowData(${index}, 'style', this.value)">
+                            ${currentOptions}
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" value="${row.qty}" min="0" onchange="validateMOQ(${index}, this.value)" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                    </td>
+                    <td>
+                        <textarea class="bulk-size-textarea" placeholder="例：&#10;S: 20&#10;M: 50&#10;L: 30" oninput="updateBulkRowData(${index}, 'sizeDetail', this.value)">${row.sizeDetail}</textarea>
+                    </td>
+                    <td>
+                        <input type="text" value="${row.desc}" placeholder="备注颜色等" oninput="updateBulkRowData(${index}, 'desc', this.value)">
+                    </td>
+                    <td style="text-align:center;">
+                        <button type="button" class="btn-remove-row" onclick="removeBulkRow(${index})">&times;</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            updateLogisticsSummary();
+        }
+        
+        // 3. 起订量(MOQ)校验逻辑
+        function validateMOQ(index, value) {
+            const qty = parseInt(value) || 0;
+            const style = bulkRows[index].style;
+            
+            let minAllowed = 50; // 默认按 ODM 算
+            let typeName = "现有款式(ODM)";
+        
+            if (style.startsWith('OEM')) {
+                minAllowed = 100;
+                typeName = "自主设计(OEM)";
+            }
+        
+            if (qty < minAllowed) {
+                alert(`⚠️ 起订量提醒：\n您选择的是 ${typeName}，该类型单款最低起订量为 ${minAllowed} 件。\n\n系统已自动为您调整为最低起订量。`);
+                bulkRows[index].qty = minAllowed;
+            } else {
+                bulkRows[index].qty = qty;
+            }
+            
+            renderBulkTable();
+        }
+        
+        // 4. 更新基础数据
+        function updateBulkRowData(index, field, value) {
+            bulkRows[index][field] = value;
+            
+            // 如果修改的是款式，立刻根据款式类型校验一次当前数量是否达标
+            if (field === 'style') {
+                validateMOQ(index, bulkRows[index].qty);
+            }
+            
+            updateLogisticsSummary();
+        }
 
         let sampleRows = []; // 存储表格数据 [{style:'', type:'', size:'', qty:1, desc:''}]
         

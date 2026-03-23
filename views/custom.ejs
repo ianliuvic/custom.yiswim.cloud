@@ -1556,7 +1556,7 @@
                                         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 25px;">
                                             <!-- 样衣类型说明 -->
                                             <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #f1f5f9;">
-                                                <h5 style="font-size: 13px; color: var(--primary-color); margin: 0 0 10px;">🧪 样衣类型说明</h5>
+                                                <h5 style="font-size: 13px; color: var(--primary-color); margin: 0 0 10px;">样衣类型说明</h5>
                                                 <ul style="padding: 0; margin: 0; list-style: none; font-size: 12px; line-height: 1.6; color: #64748b;">
                                                     <li style="margin-bottom: 8px;"><strong style="color: #475569;">初版样 (Proto):</strong> 确认款式比例与基本版型。面料、颜色通常可用替代料，重点看版型是否符合预期。</li>
                                                     <li style="margin-bottom: 8px;"><strong style="color: #475569;">修改样 (Fit):</strong> 针对初样试穿后的修正。重点检查运动舒适度、包裹感及细节调整。</li>
@@ -1566,7 +1566,7 @@
                                     
                                             <!-- 尺码选择建议 -->
                                             <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #f1f5f9;">
-                                                <h5 style="font-size: 13px; color: var(--primary-color); margin: 0 0 10px;">📏 尺码选择建议</h5>
+                                                <h5 style="font-size: 13px; color: var(--primary-color); margin: 0 0 10px;">尺码选择建议</h5>
                                                 <ul style="padding: 0; margin: 0; list-style: none; font-size: 12px; line-height: 1.6; color: #64748b;">
                                                     <li style="margin-bottom: 8px;">• 建议打样选择您的<strong style="color: #475569;">基准尺码 (Base Size)</strong>。对于欧美市场，通常选择 <strong style="color: #475569;">M 码 (US 6-8)</strong> 进行版型验证最为科学。</li>
                                                     <li>• 如果您的款式包含极小码或超大码，建议在 PP 样阶段加打一件最大/最小码以核对放码比例。</li>
@@ -1575,7 +1575,7 @@
                                     
                                             <!-- 数量设置说明 -->
                                             <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #f1f5f9;">
-                                                <h5 style="font-size: 13px; color: var(--primary-color); margin: 0 0 10px;">🔢 数量设置说明</h5>
+                                                <h5 style="font-size: 13px; color: var(--primary-color); margin: 0 0 10px;">数量设置说明</h5>
                                                 <ul style="padding: 0; margin: 0; list-style: none; font-size: 12px; line-height: 1.6; color: #64748b;">
                                                     <li style="margin-bottom: 8px;">• <strong style="color: #475569;">1 件：</strong> 仅用于内部核对或拍摄样片。</li>
                                                     <li style="margin-bottom: 8px;">• <strong style="color: #475569;">2 件 (推荐)：</strong> 一件寄送给您进行试穿/拍摄，一件由红绣版房留底，作为后续沟通和修改的实物对照。</li>
@@ -4130,19 +4130,19 @@
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>
-                        <select onchange="updateRowData(${index}, 'style', this.value)">
+                        <select onchange="(${index}, 'style', this.value)">
                             ${styleOptionsHtml}
                         </select>
                     </td>
                     <td>
-                        <select onchange="updateRowData(${index}, 'type', this.value)">
+                        <select onchange="(${index}, 'type', this.value)">
                             <option value="初版样 (Proto)" ${row.type==='初版样 (Proto)'?'selected':''}>初版样 (Proto)</option>
                             <option value="修改/试穿样 (Fit)" ${row.type==='修改/试穿样 (Fit)'?'selected':''}>修改/试穿样 (Fit)</option>
                             <option value="正确/产前样 (PP)" ${row.type==='正确/产前样 (PP)'?'selected':''}>正确/产前样 (PP)</option>
                         </select>
                     </td>
                     <td>
-                        <input type="text" list="common-sizes" value="${row.size}" placeholder="选或填" oninput="updateRowData(${index}, 'size', this.value)">
+                        <input type="text" list="common-sizes" value="${row.size}" placeholder="选或填" oninput="(${index}, 'size', this.value)">
                     </td>
                     <td>
                         <input type="number" value="${row.qty}" min="1" oninput="updateRowData(${index}, 'qty', this.value)">
@@ -4186,28 +4186,49 @@
         }
         
         // 3. 确保款式数据更新时的健壮性
+        // 实时更新数组数据并检查重复
         function updateRowData(index, field, value) {
             if (!sampleRows[index]) return;
         
-            // 查重逻辑优化：只有当款式不为空时才校验重复
-            if (value !== "" && (field === 'style' || field === 'type' || field === 'size')) {
-                const isDuplicate = sampleRows.some((row, i) => {
-                    if (i === index) return false;
-                    let checkStyle = (field === 'style' ? value : row.style);
-                    let checkType = (field === 'type' ? value : row.type);
-                    let checkSize = (field === 'size' ? value : row.size);
-                    return checkStyle !== "" && row.style === checkStyle && row.type === checkType && row.size === checkSize;
-                });
+            // 1. 只有修改 款式、类型、尺码 时才需要进行查重校验
+            if (field === 'style' || field === 'type' || field === 'size') {
+                
+                // 构建“如果修改成功后”的目标状态
+                const targetStyle = (field === 'style') ? value : sampleRows[index].style;
+                const targetType = (field === 'type') ? value : sampleRows[index].type;
+                const targetSize = (field === 'size') ? value : sampleRows[index].size;
         
-                if (isDuplicate) {
-                    alert("清单中已存在完全相同的打样配置。");
-                    renderSampleTable(); 
-                    return;
+                // 只有当款式不为空时才校验（允许存在多行空款式行）
+                if (targetStyle !== "") {
+                    const isDuplicate = sampleRows.some((otherRow, i) => {
+                        // 跳过当前正在修改的这一行本身
+                        if (i === index) return false;
+                        
+                        // 核心逻辑：只有 [款式] [类型] [尺码] 三者同时完全相等，才判定为重复
+                        return (
+                            otherRow.style === targetStyle &&
+                            otherRow.type === targetType &&
+                            otherRow.size === targetSize
+                        );
+                    });
+        
+                    if (isDuplicate) {
+                        alert("⚠️ 重复操作：清单中已存在完全相同的配置（款式、类型、尺码均一致）。\n\n请直接在已有行上修改数量，或调整当前行的尺码/类型。");
+                        renderSampleTable(); // 强行将 UI 刷回修改前的值
+                        return;
+                    }
                 }
             }
         
+            // 2. 校验通过，更新内存数据
             sampleRows[index][field] = value;
-            updateLogisticsSummary();
+        
+            // 3. 特殊处理：如果修改的是数量，需要刷新表格以触发布板费预警
+            if (field === 'qty') {
+                renderSampleTable(); 
+            } else {
+                updateLogisticsSummary();
+            }
         }
         
         // 修改 switchDeliveryMode 的触发

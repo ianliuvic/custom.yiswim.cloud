@@ -4380,18 +4380,6 @@
                 updateLogisticsSummary();
             }
         }
-        
-            // 2. 校验通过，正式保存数据到数组
-            sampleRows[index][field] = value;
-        
-            // 3. 触发后续更新 (数量改变时重绘以检查 >2 件的警告，其他字段更新汇总即可)
-            if (field === 'qty') {
-                renderSampleTable(); 
-            } else {
-                calculateSampleCost(); 
-                updateLogisticsSummary();
-            }
-        }
 
         
         // 修改 switchDeliveryMode 的触发

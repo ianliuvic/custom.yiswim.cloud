@@ -2057,6 +2057,11 @@
                 }
             }
             updateCombinedStyleSummary();
+            // 【新增】同步更新 Step-4 的 ODM 数量徽章
+            const badge = document.getElementById('odm-count-badge');
+            if (badge) {
+                badge.innerText = selectedOdmStyles.length;
+            }
         }
 
         // --- 新增函数，替换掉旧的 updateOdmSummary ---
@@ -2364,6 +2369,14 @@
             
             // 回到顶部
             document.querySelector('.config-scroll-area').scrollTop = 0;
+
+            // 【新增】如果进入的是第四步，且处于打样模式，则刷新数据
+            if (currentStep === 4) {
+                if (currentDeliveryMode === 'sample') {
+                    initSampleTab(); // 刷新徽章并重新渲染表格下拉框
+                }
+                updateLogisticsSummary();
+            }
         }
 
         // --- 最终表单提交出口 (新增) ---
@@ -4096,7 +4109,14 @@
                 
                 // 恢复选中的款式
                 const styleSelect = tr.querySelector('select');
-                styleSelect.value = row.style;
+                // 检查之前选的款式是否还在现在的列表中（可能在第一步被删了）
+                const styleExists = [...styleSelect.options].some(opt => opt.value === row.style);
+                if (styleExists) {
+                    styleSelect.value = row.style;
+                } else {
+                    row.style = ""; // 如果款式被删了，重置数据
+                    styleSelect.value = "";
+                }
                 
                 tbody.appendChild(tr);
             });

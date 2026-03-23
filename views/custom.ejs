@@ -896,13 +896,13 @@
                                                         MOQ要求：开模定制通常 500pcs 起订
                                                     </div>
                                                 </div>
-                                                <div>
-                                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">Logo 文件 (AI/PDF/PNG)</label>
+                                               <div>
+                                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">Logo 文件 (支持多选)</label>
                                                     <div class="premium-upload-row upload-row-sm" onclick="document.getElementById('metalLogoFile').click()">
                                                         <div class="upload-label-group">
                                                             <span id="metalLogoFileName" class="upload-label-main" style="font-size:12px; color:#94a3b8;">未选择文件</span>
                                                         </div>
-                                                        <input type="file" id="metalLogoFile" class="hidden" onchange="handleMetalFiles(this, 'logo')"> 
+                                                        <input type="file" id="metalLogoFile" class="hidden" multiple onchange="handleMetalFiles(this, 'logo')"> 
                                                         <button type="button" class="btn-outline" style="padding:2px 8px; font-size:10px; height:24px; pointer-events:none;">浏览</button>
                                                     </div>
                                                     <div id="metalLogoPreview" class="oem-image-preview-grid" style="margin-top:10px;"></div>
@@ -923,7 +923,10 @@
                                             <input type="file" id="metalSourceFile" multiple class="hidden" onchange="handleMetalFiles(this, 'source')">
                                         </div>
                                         <div id="metalSourcePreview" class="oem-image-preview-grid" style="margin-top:12px;"></div>
-                                        <div class="metal-notice">
+                                        
+                                        <textarea id="metal-source-remark" class="oem-textarea" style="height:60px; margin-top:15px; font-size:12px;" placeholder="请描述您要寻找的五金件特征（如：内径 2cm 的 O型环，表面要做拉丝处理...）" oninput="updateMetalSummary()"></textarea>
+                                        
+                                        <div class="metal-notice" style="margin-top: 12px;">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
                                             注：特殊找样可能产生额外的采购服务费
                                         </div>
@@ -2232,14 +2235,21 @@
             
             files.forEach(file => {
                 if (file.size > 20 * 1024 * 1024) { showToast(`文件 ${file.name} 超过 20MB`, 'error'); return; }
-                // Logo 通常只保留一个最新，找样可以多个
-                if (type === 'logo') targetArray.length = 0; 
-                targetArray.push(file);
+                // 防止重复上传同一文件
+                if (!targetArray.some(f => f.name === file.name && f.size === file.size)) {
+                    targetArray.push(file);
+                }
             });
 
-            if (type === 'logo' && targetArray.length > 0) {
-                document.getElementById('metalLogoFileName').innerText = targetArray[0].name;
-                document.getElementById('metalLogoFileName').style.color = 'var(--text-main)';
+            if (type === 'logo') {
+                const nameEl = document.getElementById('metalLogoFileName');
+                if (targetArray.length > 0) {
+                    nameEl.innerText = targetArray.length === 1 ? targetArray[0].name : `已选 ${targetArray.length} 个文件`;
+                    nameEl.style.color = 'var(--text-main)';
+                } else {
+                    nameEl.innerText = '未选择文件';
+                    nameEl.style.color = '#94a3b8';
+                }
             }
             
             renderMetalPreviews(type);
@@ -2277,10 +2287,17 @@
         function removeMetalFile(type, index) {
             const targetArray = type === 'logo' ? metalConfig.logoFiles : metalConfig.sourceFiles;
             targetArray.splice(index, 1);
-            if (type === 'logo' && targetArray.length === 0) {
-                document.getElementById('metalLogoFileName').innerText = '未选择文件';
-                document.getElementById('metalLogoFileName').style.color = '#94a3b8';
+            
+            if (type === 'logo') {
+                const nameEl = document.getElementById('metalLogoFileName');
+                if (targetArray.length > 0) {
+                    nameEl.innerText = targetArray.length === 1 ? targetArray[0].name : `已选 ${targetArray.length} 个文件`;
+                } else {
+                    nameEl.innerText = '未选择文件';
+                    nameEl.style.color = '#94a3b8';
+                }
             }
+            
             renderMetalPreviews(type);
             updateMetalSummary();
         }

@@ -483,10 +483,17 @@
         }
         .metal-item.selected .option-img-alt { background: #fff; color: var(--primary-color); }
         
-        /* 针对 Logo 上传行的微调 */
+        /* 针对 Logo 上传行的微调 - 强制高度与下拉框对齐 */
         .upload-row-sm {
-            padding: 10px 15px !important; border-radius: 8px !important; background: #fff !important;
+            padding: 0 12px !important; height: 38px; border-radius: 8px !important; 
+            background: #fff !important; display: flex; align-items: center; justify-content: space-between;
+            border: 1px solid #e2e8f0; box-sizing: border-box;
         }
+        .upload-row-sm:hover { border-color: var(--primary-color); }
+        
+        /* 提示文案样式 */
+        .metal-notice { font-size: 11px; color: #94a3b8; display: flex; align-items: center; gap: 4px; margin-top: 8px; }
+        .metal-notice svg { color: #f59e0b; }
 
         /* =========================================================
            10. OEM 模块与商业需求评估
@@ -875,25 +882,30 @@
                                         </label>
                                         
                                         <div id="metal-logo-config" class="brand-custom-box hidden">
-                                            <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; align-items: flex-end;">
+                                            <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; align-items: flex-start;">
                                                 <div>
                                                     <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">定制类型</label>
-                                                    <select id="metal-logo-type" class="oem-input-mini" style="width:100%" onchange="updateMetalSummary()">
+                                                    <select id="metal-logo-type" class="oem-input-mini" style="width:100%; height:38px;" onchange="updateMetalSummary()">
                                                         <option value="Logo金属牌">Logo 金属牌/铭牌</option>
                                                         <option value="Logo拉链头">定制 Logo 拉链头</option>
                                                         <option value="Logo调节扣">Logo 刻字调节扣</option>
                                                         <option value="其他">其他 (Other)</option>
                                                     </select>
+                                                    <div class="metal-notice">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                                        MOQ要求：开模定制通常 500pcs 起订
+                                                    </div>
                                                 </div>
                                                 <div>
                                                     <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">Logo 文件 (AI/PDF/PNG)</label>
                                                     <div class="premium-upload-row upload-row-sm" onclick="document.getElementById('metalLogoFile').click()">
                                                         <div class="upload-label-group">
-                                                            <span class="upload-label-main" style="font-size:12px;">选择矢量文件</span>
+                                                            <span id="metalLogoFileName" class="upload-label-main" style="font-size:12px; color:#94a3b8;">未选择文件</span>
                                                         </div>
-                                                        <input type="file" id="metalLogoFile" class="hidden" onchange="updateMetalSummary()"> 
-                                                        <button type="button" class="btn-outline" style="padding:4px 10px; font-size:11px; pointer-events:none;">浏览</button>
+                                                        <input type="file" id="metalLogoFile" class="hidden" onchange="handleMetalFiles(this, 'logo')"> 
+                                                        <button type="button" class="btn-outline" style="padding:2px 8px; font-size:10px; height:24px; pointer-events:none;">浏览</button>
                                                     </div>
+                                                    <div id="metalLogoPreview" class="oem-image-preview-grid" style="margin-top:10px;"></div>
                                                 </div>
                                             </div>
                                             <textarea id="metal-logo-remark" class="oem-textarea" style="height:60px; margin-top:15px; font-size:12px;" placeholder="描述定制要求（如：1cm长方形，刻字填黑...）" oninput="updateMetalSummary()"></textarea>
@@ -901,15 +913,19 @@
                                     </div>
                                 </div>
     
-                                <!-- 4. 自由上传找样 (优化上传样式) -->
+                                <!-- 4. 特殊款式找样 (高度优化) -->
                                 <div class="attr-section">
                                     <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">D. 特殊款式找样 (Sourcing)</h4>
                                     <div style="margin-left: 13px;">
-                                        <div class="premium-upload-box" onclick="document.getElementById('metalSourceFile').click()" style="padding: 30px;">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2" style="margin-bottom:10px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-                                            <p style="font-size: 13px; color: var(--text-main); margin-bottom: 5px; font-weight:600;">上传参考图或特殊五金样照</p>
-                                            <p style="font-size: 11px; color: #94a3b8;">我们的采购团队将为您全球寻找相同/相似款式</p>
-                                            <input type="file" id="metalSourceFile" multiple class="hidden">
+                                        <div class="premium-upload-box" onclick="document.getElementById('metalSourceFile').click()" style="padding: 18px;">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2" style="margin-bottom:6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                                            <p style="font-size: 12px; color: var(--text-main); margin-bottom: 2px; font-weight:600;">点击上传参考图或特殊五金样照</p>
+                                            <input type="file" id="metalSourceFile" multiple class="hidden" onchange="handleMetalFiles(this, 'source')">
+                                        </div>
+                                        <div id="metalSourcePreview" class="oem-image-preview-grid" style="margin-top:12px;"></div>
+                                        <div class="metal-notice">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                                            注：特殊找样可能产生额外的采购服务费
                                         </div>
                                     </div>
                                 </div>
@@ -2204,8 +2220,70 @@
         let metalConfig = {
             finish: '亮金色 (Shiny Gold)',
             categories: [],
-            logoCustom: false
+            logoCustom: false,
+            logoFiles: [],
+            sourceFiles: []
         };
+
+        // 处理金属饰品文件上传 (参照 OEM 逻辑)
+        function handleMetalFiles(input, type) {
+            const files = Array.from(input.files);
+            const targetArray = type === 'logo' ? metalConfig.logoFiles : metalConfig.sourceFiles;
+            
+            files.forEach(file => {
+                if (file.size > 20 * 1024 * 1024) { showToast(`文件 ${file.name} 超过 20MB`, 'error'); return; }
+                // Logo 通常只保留一个最新，找样可以多个
+                if (type === 'logo') targetArray.length = 0; 
+                targetArray.push(file);
+            });
+
+            if (type === 'logo' && targetArray.length > 0) {
+                document.getElementById('metalLogoFileName').innerText = targetArray[0].name;
+                document.getElementById('metalLogoFileName').style.color = 'var(--text-main)';
+            }
+            
+            renderMetalPreviews(type);
+            updateMetalSummary();
+            input.value = ''; // 清空 input 允许重复上传
+        }
+
+        // 渲染预览图
+        function renderMetalPreviews(type) {
+            const grid = document.getElementById(type === 'logo' ? 'metalLogoPreview' : 'metalSourcePreview');
+            const files = type === 'logo' ? metalConfig.logoFiles : metalConfig.sourceFiles;
+            grid.innerHTML = '';
+
+            files.forEach((file, index) => {
+                const isImage = file.type.startsWith('image/');
+                const ext = file.name.split('.').pop().toUpperCase();
+                
+                let content = '';
+                if (isImage) {
+                    const url = URL.createObjectURL(file);
+                    content = `<img src="${url}" onclick="openOemPreview('${url}', '${file.name}')">`;
+                } else {
+                    content = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;">${ext}</div>`;
+                }
+
+                grid.insertAdjacentHTML('beforeend', `
+                    <div class="oem-preview-item" style="width:60px; height:60px;">
+                        ${content}
+                        <button type="button" class="oem-preview-remove" onclick="removeMetalFile('${type}', ${index})">&times;</button>
+                    </div>
+                `);
+            });
+        }
+
+        function removeMetalFile(type, index) {
+            const targetArray = type === 'logo' ? metalConfig.logoFiles : metalConfig.sourceFiles;
+            targetArray.splice(index, 1);
+            if (type === 'logo' && targetArray.length === 0) {
+                document.getElementById('metalLogoFileName').innerText = '未选择文件';
+                document.getElementById('metalLogoFileName').style.color = '#94a3b8';
+            }
+            renderMetalPreviews(type);
+            updateMetalSummary();
+        }
 
         function selectMetalAttr(attrType, value, el) {
             metalConfig[attrType] = value;
@@ -2236,7 +2314,6 @@
 
         function updateMetalSummary() {
             const st = document.getElementById('sum-trim-metal');
-            // 只有当用户选择了 "Yes" 时才更新详细汇总，否则保持 "不需要"
             const isMetalEnabled = document.querySelector('input[name="need_metal"][value="yes"]').checked;
             if (!isMetalEnabled) return;
 
@@ -2246,10 +2323,13 @@
             let logoText = '无需Logo';
             if (metalConfig.logoCustom) {
                 const type = document.getElementById('metal-logo-type').value;
-                logoText = `定制${type}`;
+                const hasFile = metalConfig.logoFiles.length > 0 ? '✓' : '×';
+                logoText = `定制${type}(${hasFile})`;
             }
+
+            const hasSource = metalConfig.sourceFiles.length > 0 ? `<br><span style="font-size:10px; color:#10b981;">+已传找样图(${metalConfig.sourceFiles.length})</span>` : '';
             
-            st.innerHTML = `<div style="text-align:right;">${colorPart} | ${catsPart}<br><span style="font-size:10px; opacity:0.8;">${logoText}</span></div>`;
+            st.innerHTML = `<div style="text-align:right;">${colorPart} | ${catsPart}<br><span style="font-size:10px; opacity:0.8;">${logoText}</span>${hasSource}</div>`;
             st.style.color = 'var(--primary-color)';
             st.style.fontWeight = 'bold';
         }

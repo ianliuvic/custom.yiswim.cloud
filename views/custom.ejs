@@ -2569,7 +2569,11 @@
                 if (category === 'metal') updateMetalSummary();
                 else if (category === 'bag') updateBagSummary();
                 else if (category === 'hangtag') updateHangtagSummary();
-                else if (category === 'label') { renderLabelSections(); updateLabelSummary(); }
+                else if (category === 'label') { 
+                    renderLabelUnifiedMaterials(); 
+                    renderLabelDynamicDetails(); 
+                    updateLabelSummary(); 
+                }
                 else {
                     summaryText.innerText = '已开启';
                     summaryText.style.color = 'var(--primary-color)';
@@ -2618,6 +2622,7 @@
             const activeBtn = document.getElementById(`label-mode-${mode}`);
             if(activeBtn) activeBtn.classList.add('active');
             
+            renderLabelUnifiedMaterials(); // 重新渲染材质选中状态
             renderLabelDynamicDetails(); // 重新生成下方配置区块
             updateLabelSummary();
         }
@@ -2831,6 +2836,13 @@
             st.style.color = 'var(--primary-color)'; st.style.fontWeight = 'bold';
         }
 
+        // 初始化加载一次
+        document.addEventListener('DOMContentLoaded', () => { 
+            if(currentStep === 3) {
+                renderLabelUnifiedMaterials(); 
+                renderLabelDynamicDetails(); 
+            }
+        });
         // ==========================================
         // 吊牌逻辑 (Hangtag)
         // ==========================================

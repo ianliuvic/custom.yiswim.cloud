@@ -1325,8 +1325,111 @@
                                     <label><input type="radio" name="need_hygiene" value="yes" onchange="toggleTrim('hygiene', true)"> 是 (Yes)</label>
                                 </div>
                             </div>
-                            <div id="content-hygiene" class="placeholder-box hidden"><p>此处未来展示：透明标准卫生贴、印字卫生贴等图片选项。</p></div>
+                        
+                            <div id="content-hygiene" class="hidden" style="animation: fadeIn 0.4s ease;">
+                                <!-- A. 材质与形状选择 -->
+                                <div class="attr-section" style="margin-bottom: 30px;">
+                                    <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 材质与剪裁规格 (Material & Shape)</h4>
+                                    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 30px; margin-left: 13px;">
+                                        <!-- 材质 -->
+                                        <div>
+                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:10px;">选择材质</label>
+                                            <div class="option-grid" style="grid-template-columns: 1fr 1fr; gap: 15px;">
+                                                <div class="option-item hygiene-mat selected" style="padding: 15px;" onclick="selectHygieneAttr('material', '透明 PET (标准)', this)">
+                                                    <div style="height:40px; background:rgba(200,220,255,0.2); border-radius:4px; margin-bottom:8px; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:10px;">[ 透明材质 ]</div>
+                                                    <h4 style="font-size:13px; margin:0;">透明 PET</h4>
+                                                    <p style="font-size:10px; margin:2px 0 0;">经典防潮，高性价比</p>
+                                                </div>
+                                                <div class="option-item hygiene-mat" style="padding: 15px;" onclick="selectHygieneAttr('material', '环保哑光纸', this)">
+                                                    <div class="eco-badge">ECO</div>
+                                                    <div style="height:40px; background:#f1f5f9; border-radius:4px; margin-bottom:8px; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:10px;">[ 哑光纸质 ]</div>
+                                                    <h4 style="font-size:13px; margin:0;">环保哑光纸</h4>
+                                                    <p style="font-size:10px; margin:2px 0 0;">触感高级，100%可降解</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- 形状 -->
+                                        <div>
+                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:10px;">适用剪裁</label>
+                                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                                <div class="radio-card">
+                                                    <input type="radio" name="hygiene_shape" value="universal" checked onclick="selectHygieneAttr('shape', '通用葫芦形', this)">
+                                                    <div class="card-content" style="padding: 12px 15px;">
+                                                        <h5 style="font-size: 13px;">通用葫芦形 (Universal)</h5>
+                                                        <p style="font-size: 11px;">适配 95% 泳裤款式（连体、三角裤等）</p>
+                                                    </div>
+                                                </div>
+                                                <div class="radio-card">
+                                                    <input type="radio" name="hygiene_shape" value="thong" onclick="selectHygieneAttr('shape', '丁字裤窄形', this)">
+                                                    <div class="card-content" style="padding: 12px 15px;">
+                                                        <h5 style="font-size: 13px;">丁字裤窄形 (Thong/T-Back)</h5>
+                                                        <p style="font-size: 11px;">极窄裆部专用，宽度仅 2-3cm</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        
+                                <!-- B. 印刷内容 -->
+                                <div class="attr-section" style="margin-bottom: 30px;">
+                                    <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 印刷内容与 Logo (Printing)</h4>
+                                    <div style="margin-left: 13px;">
+                                        <div class="mode-switcher" style="margin-bottom: 20px;">
+                                            <div class="mode-option active" id="hygiene-mode-std" onclick="switchHygieneMode('standard')">红绣标准通用款</div>
+                                            <div class="mode-option" id="hygiene-mode-custom" onclick="switchHygieneMode('custom')">品牌 Logo 定制款</div>
+                                        </div>
+                        
+                                        <div id="hygiene-standard-area" style="background:#f8fafc; padding:20px; border-radius:12px;">
+                                            <div style="display:flex; gap:20px; align-items:center;">
+                                                <div style="width:180px; height:60px; background:#fff; border:1px solid #e2e8f0; border-radius:4px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:10px; font-size:9px; color:#94a3b8; line-height:1.2; text-align:center;">
+                                                    [ 示例文案 ]<br>HYGIENE LINER<br>PLEASE DO NOT REMOVE UNTIL PURCHASE IS FINAL
+                                                </div>
+                                                <p style="font-size: 12px; color: #64748b; line-height: 1.6;">使用红绣标准通用印刷模板。<br><strong>优势：</strong>无起订量限制，出货快，降低库存成本。</p>
+                                            </div>
+                                        </div>
+                        
+                                        <div id="hygiene-custom-area" class="hidden brand-custom-box" style="margin-top:0;">
+                                            <div class="metal-notice" style="margin-bottom: 15px; color: #f59e0b;">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                                定制印刷 MOQ：5000枚起订。
+                                            </div>
+                                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                                <div>
+                                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">Logo 矢量文件上传</label>
+                                                    <div class="premium-upload-row upload-row-sm" onclick="document.getElementById('hygieneFile').click()">
+                                                        <div class="upload-label-group"><span id="hygieneFileName" style="font-size:11px; color:#94a3b8;">上传 AI / PDF / 高清 PNG</span></div>
+                                                        <input type="file" id="hygieneFile" class="hidden" multiple onchange="handleHygieneFiles(this)">
+                                                        <button type="button" class="btn-outline" style="padding:2px 8px; font-size:10px;">浏览</button>
+                                                    </div>
+                                                    <div id="hygienePreview" class="oem-image-preview-grid" style="margin-top:10px;"></div>
+                                                </div>
+                                                <div>
+                                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">自定义说明内容</label>
+                                                    <textarea id="hygiene-text" class="oem-textarea" style="height:85px; font-size:12px;" placeholder="如有特殊排版要求或文字内容（如特定品牌标语），请在此输入..." oninput="updateHygieneSummary()"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        
+                                <!-- C. 交付服务 -->
+                                <div class="attr-section">
+                                    <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 交付处理 (Application)</h4>
+                                    <div style="margin-left: 13px;">
+                                        <div class="chip-container">
+                                            <div class="chip selected" onclick="selectHygieneAttr('service', '代贴标服务', this)">代贴标服务 (推荐，直接贴于样衣/大货)</div>
+                                            <div class="chip" onclick="selectHygieneAttr('service', '随货发出 (卷装)', this)">随货发出 (卷装，自行贴标)</div>
+                                        </div>
+                                        <div class="metal-notice" style="margin-top: 12px;">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                                            注：红绣默认采用低粘医用级胶水，撕下后不留胶渍。
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
 
                         <div id="pane-other" class="sub-pane">
                             <div class="toggle-section">
@@ -2537,6 +2640,104 @@
                 summaryText.style.fontWeight = 'normal';
             }
         }
+
+        // ==========================================
+        // 卫生贴逻辑 (Hygiene Sticker)
+        // ==========================================
+        let hygieneConfig = {
+            mode: 'standard', // standard 或 custom
+            material: '透明 PET (标准)',
+            shape: '通用葫芦形',
+            service: '代贴标服务',
+            files: [],
+            remark: ''
+        };
+        
+        function selectHygieneAttr(attrType, value, el) {
+            hygieneConfig[attrType] = value;
+            
+            // UI 选中切换
+            if (attrType === 'material') {
+                el.parentNode.querySelectorAll('.hygiene-mat').forEach(item => item.classList.remove('selected'));
+            } else if (attrType === 'service') {
+                el.parentNode.querySelectorAll('.chip').forEach(item => item.classList.remove('selected'));
+            }
+            // Shape 是通过 radio-card 触发的，其样式会自动通过 input:checked 改变，
+            // 但我们需要手动处理非 radio 结构的 el (如果使用了自定义 card)
+            if (el.classList.contains('option-item') || el.classList.contains('chip')) {
+                el.classList.add('selected');
+            }
+            
+            updateHygieneSummary();
+        }
+        
+        function switchHygieneMode(mode) {
+            hygieneConfig.mode = mode;
+            document.querySelectorAll('#pane-hygiene .mode-option').forEach(opt => opt.classList.remove('active'));
+            document.getElementById(`hygiene-mode-${mode === 'standard' ? 'std' : 'custom'}`).classList.add('active');
+            
+            document.getElementById('hygiene-standard-area').classList.toggle('hidden', mode !== 'standard');
+            document.getElementById('hygiene-custom-area').classList.toggle('hidden', mode !== 'custom');
+            
+            updateHygieneSummary();
+        }
+        
+        function handleHygieneFiles(input) {
+            const files = Array.from(input.files);
+            files.forEach(file => {
+                if (file.size > 20 * 1024 * 1024) { alert(`文件 ${file.name} 超过 20MB`); return; }
+                if (!hygieneConfig.files.some(f => f.name === file.name && f.size === file.size)) {
+                    hygieneConfig.files.push(file);
+                }
+            });
+            renderHygienePreviews();
+            updateHygieneSummary();
+            input.value = '';
+        }
+        
+        function renderHygienePreviews() {
+            const grid = document.getElementById('hygienePreview');
+            if(!grid) return;
+            grid.innerHTML = '';
+            hygieneConfig.files.forEach((file, index) => {
+                const isImage = file.type.startsWith('image/');
+                const content = isImage 
+                    ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')">` 
+                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;">DOC</div>`;
+                grid.insertAdjacentHTML('beforeend', `
+                    <div class="oem-preview-item" style="width:50px; height:50px;">
+                        ${content}
+                        <button type="button" class="oem-preview-remove" onclick="removeHygieneFile(${index})">&times;</button>
+                    </div>
+                `);
+            });
+        }
+        
+        function removeHygieneFile(index) {
+            hygieneConfig.files.splice(index, 1);
+            document.getElementById('hygieneFileName').innerText = hygieneConfig.files.length > 0 ? `已选 ${hygieneConfig.files.length} 个文件` : '上传 AI / PDF / 高清 PNG';
+            renderHygienePreviews();
+            updateHygieneSummary();
+        }
+        
+        function updateHygieneSummary() {
+            const st = document.getElementById('sum-trim-hygiene');
+            const isEnabled = document.querySelector('input[name="need_hygiene"][value="yes"]').checked;
+            
+            if (!isEnabled) {
+                st.innerText = '不需要';
+                st.style.color = '#64748b'; st.style.fontWeight = 'normal';
+                return;
+            }
+        
+            const modeText = hygieneConfig.mode === 'standard' ? '红绣通用印刷' : '品牌定制 Logo';
+            const matText = hygieneConfig.material;
+            const fileStatus = (hygieneConfig.mode === 'custom' && hygieneConfig.files.length > 0) ? ' | 已传稿' : '';
+        
+            st.innerHTML = `<div style="text-align:right;">${matText} | ${hygieneConfig.shape}<br><span style="font-size:10px; opacity:0.8;">内容: ${modeText}${fileStatus}</span></div>`;
+            st.style.color = 'var(--primary-color)'; st.style.fontWeight = 'bold';
+        }
+
         // ==========================================
         // 标签逻辑 (Label) - 2024 高级重构版
         // ==========================================

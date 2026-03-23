@@ -461,15 +461,6 @@
         .bg-rose { background: linear-gradient(135deg, #e29a86 0%, #f4c2b3 50%, #d4836f 100%); }
         .bg-gunmetal { background: linear-gradient(135deg, #434343 0%, #6d6d6d 50%, #2b2b2b 100%); }
         .bg-black { background: #1a1a1a; }
-
-        .metal-category-card {
-            padding: 15px !important; display: flex; align-items: center; gap: 12px;
-        }
-        .metal-category-card .icon-box {
-            width: 40px; height: 40px; background: #f8fafc; border-radius: 8px;
-            display: flex; align-items: center; justify-content: center; color: #94a3b8;
-        }
-        .metal-category-card.selected .icon-box { background: #fff; color: var(--primary-color); }
         
         .brand-custom-box {
             background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px; padding: 25px;
@@ -489,8 +480,6 @@
         .hotspot:hover .hotspot-label, .hotspot.selected .hotspot-label { opacity: 1; transform: translateY(-18px); color: var(--primary-color); font-weight: bold; }
 
          /* 标签内容示例框 */
-        .content-example-box { background: #f1f5f9; padding: 12px; border-radius: 8px; font-size: 11px; color: #64748b; line-height: 1.6; border-left: 3px solid #cbd5e1; margin-top: 10px; }
-
         /* 缝制方式卡片样式 */
         .sewing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-top: 8px; }
         .sewing-card {
@@ -1325,44 +1314,6 @@
                                     </div>
                                 </div>
 
-                                <!-- 4. 内容与合规提示 -->
-                                <div class="attr-section" style="margin-bottom: 35px;">
-                                    <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 标签内容与合规信息 (Content)</h4>
-                                    <div style="margin-left: 13px;">
-                                        <div class="metal-notice" style="margin-bottom: 15px; color: #ef4444; background: #fff1f2; padding: 10px; border-radius: 6px;">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                                            <strong>合规提示：</strong>请确保标签包含产地(Made in China)、纤维成分及洗涤图标。不同国家（如美国FTC、欧盟标准）有不同强制要求，请务必核实。
-                                        </div>
-
-                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                                            <div>
-                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">标签文字内容 (如：品牌名, 网址等)</label>
-                                                <textarea id="label-text-content" class="oem-textarea" style="height:100px;" placeholder="请输入需要印/绣在标签上的文字内容..." oninput="updateLabelSummary()"></textarea>
-                                                <div class="content-example-box">
-                                                    <strong>内容示例：</strong><br>
-                                                    HONGXIU SWIMWEAR<br>
-                                                    82% Nylon, 18% Spandex<br>
-                                                    Hand Wash Cold, Dry In Shade<br>
-                                                    Made in China
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">设计稿件上传</label>
-                                                <div class="premium-upload-row" style="padding:15px;" onclick="document.getElementById('labelDesignFile').click()">
-                                                    <div class="upload-label-group">
-                                                        <span id="labelFileName" class="upload-label-main" style="font-size:12px;">上传标签 Logo 或完整设计稿</span>
-                                                        <span class="upload-label-sub">AI / PDF / PNG</span>
-                                                    </div>
-                                                    <input type="file" id="labelDesignFile" class="hidden" multiple onchange="handleLabelFiles(this)">
-                                                </div>
-                                                <div id="labelPreviewGrid" class="oem-image-preview-grid" style="margin-top:10px;"></div>
-                                                
-                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin:15px 0 8px;">补充说明 (选填)</label>
-                                                <textarea id="label-remark" class="oem-textarea" style="height:65px;" placeholder="其他特殊要求，如：要求使用环保回收纱线制作标签..." oninput="updateLabelSummary()"></textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
 
@@ -2655,6 +2606,14 @@
             const container = document.getElementById('label-dynamic-details');
             if(!container) return;
             container.innerHTML = '';
+
+            // --- 新增：将合规提示移入此处，确保用户能看到 ---
+            const complianceNotice = `
+                <div class="metal-notice" style="margin-bottom: 20px; color: #ef4444; background: #fff1f2; padding: 10px; border-radius: 6px; font-size:12px;">
+                    <strong>⚠️ 合规提醒：</strong>请确保内容包含产地(Made in China)、纤维成分及洗涤图标。
+                </div>`;
+            container.insertAdjacentHTML('beforeend', complianceNotice);
+            // ------------------------------------------
             
             const isSplit = labelConfig.mode === 'split';
             // 定义需要生成的区块
@@ -2820,21 +2779,26 @@
         function updateLabelSummary() {
             const st = document.getElementById('sum-trim-label');
             const isEnabled = document.querySelector('input[name="need_label"][value="yes"]').checked;
+            
             if (!isEnabled) {
                 st.innerText = '不需要';
                 st.style.color = '#64748b'; st.style.fontWeight = 'normal';
                 return;
             }
-
+        
             const modeText = labelConfig.mode === 'combined' ? '集成标' : '分体标';
             const matText = labelConfig.material;
-            const brandFiles = labelConfig.sections.brand.files.length;
-            const careFiles = labelConfig.sections.care.files.length;
-            const fileStatus = (brandFiles + careFiles) > 0 ? '已传稿' : '无稿件';
-
-            st.innerHTML = `<div style="text-align:right;">${modeText} | ${matText}<br><span style="font-size:10px; opacity:0.8;">位置: ${labelConfig.placement} | ${fileStatus}</span></div>`;
+            
+            // 检查是否有文字或文件
+            const hasBrandContent = labelConfig.sections.brand.text.trim() !== '' || labelConfig.sections.brand.files.length > 0;
+            const hasCareContent = labelConfig.mode === 'split' ? (labelConfig.sections.care.text.trim() !== '' || labelConfig.sections.care.files.length > 0) : false;
+            
+            const contentStatus = (hasBrandContent || hasCareContent) ? '内容已就绪' : '待补充内容';
+        
+            st.innerHTML = `<div style="text-align:right;">${modeText} | ${matText}<br><span style="font-size:10px; opacity:0.8;">位置: ${labelConfig.placement} | ${contentStatus}</span></div>`;
             st.style.color = 'var(--primary-color)'; st.style.fontWeight = 'bold';
         }
+
 
         // 初始化加载一次
         document.addEventListener('DOMContentLoaded', () => { 

@@ -999,20 +999,36 @@
                                 <div class="attr-section" style="margin-bottom: 25px;">
                                     <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 材质与袋型 (Material)</h4>
                                     <div id="bag-list-container" class="option-grid"><p style="color:#999; font-size:12px; padding:20px;">正在加载包装袋库...</p></div>
-                                    
+
                                     <!-- B. 行内动态展开面板 (仅包含尺寸) -->
                                     <div id="bag-config-panel" class="fabric-config-panel hidden" style="padding: 25px 30px; margin-top: 20px;">
                                         <div class="config-arrow"></div>
-                                        <h4 style="font-size: 14px; font-weight: 600; color: var(--text-main); margin: 0 0 15px;">选择适用尺寸 (Dimensions)</h4>
+                                        <h4 style="font-size: 14px; font-weight: 600; color: var(--text-main); margin: 0 0 15px;">选择/定义适用尺寸 (Dimensions)</h4>
                                         <div id="bag-size-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px;"></div>
+                                        
+                                        <!-- 自定义尺寸输入区 -->
+                                        <div id="bag-custom-size-box" class="hidden" style="margin-top: 20px; padding-top: 15px; border-top: 1px dashed #e2e8f0; animation: fadeIn 0.3s;">
+                                            <div class="metal-notice" style="margin-bottom: 10px; color: #f59e0b;">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                                自定义规格 MOQ 要求：通常需 5000 个起订
+                                            </div>
+                                            <div style="display: flex; gap: 10px; align-items: center;">
+                                                <input type="text" id="bag-custom-width" class="oem-input-mini" style="width: 120px; text-align: center;" placeholder="长 (cm)" oninput="updateBagCustomSize()">
+                                                <span style="color: #94a3b8;">×</span>
+                                                <input type="text" id="bag-custom-height" class="oem-input-mini" style="width: 120px; text-align: center;" placeholder="宽 (cm)" oninput="updateBagCustomSize()">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <!-- C/D. 高级选项 (固定在下方，渐进式显示) -->
+                                <!-- B/C 高级选项 (序号已调整) -->
                                 <div id="bag-advanced-section" class="hidden" style="animation: fadeIn 0.5s ease; border-top: 1px dashed #e2e8f0; padding-top: 25px;">
-                                    <!-- C. 印刷与工艺 -->
+                                    <!-- B. 印刷与工艺 -->
                                     <div class="attr-section" style="margin-bottom: 35px;">
-                                        <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 印刷与附加工艺 (Print & Finish)</h4>
+                                        <div style="display: flex; align-items: baseline; gap: 15px; margin-bottom: 15px;">
+                                            <h4 style="font-size: 14px; border-left: 3px solid var(--primary-color); padding-left: 10px; margin: 0;">B. 印刷与附加工艺 (Print & Finish)</h4>
+                                            <span style="font-size: 11px; color: #f59e0b; font-weight: 600;">[ 印刷款 MOQ: 5000起 ]</span>
+                                        </div>
                                         
                                         <div class="option-grid" style="grid-template-columns: repeat(3, 1fr); gap: 20px; margin-left: 13px; margin-bottom: 20px;">
                                             <div class="option-item bag-print selected" onclick="selectBagAttr('print', '空白无印', this)">
@@ -1040,9 +1056,9 @@
                                         </div>
                                     </div>
 
-                                    <!-- D. 设计图稿与排版 -->
+                                    <!-- C. 设计图稿与排版 -->
                                     <div class="attr-section">
-                                        <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">D. 设计图稿与排版要求 (Design Upload)</h4>
+                                        <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 设计图稿与排版要求 (Design Upload)</h4>
                                         <div style="margin-left: 13px;">
                                             <div class="premium-upload-box" onclick="document.getElementById('bagDesignFile').click()" style="padding: 18px;">
                                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2" style="margin-bottom:6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
@@ -2533,41 +2549,74 @@
 
         function renderBagSizes(sizes) {
             const container = document.getElementById('bag-size-container'); container.innerHTML = ''; 
-            if (!sizes?.length) { container.innerHTML = '<p style="color:#999; font-size:12px; padding:20px;">该款式暂无可选规格</p>'; return; }
             
-            sizes.forEach(size => {
-                // 简单的场景化预判逻辑 (根据第一个数字判断)
-                let sceneDesc = "适配常规衣物";
-                const match = size.match(/(\d+)/);
-                if (match) {
-                    const width = parseInt(match[1]);
-                    if (width < 25) sceneDesc = "适合内衣/泳装/小配件";
-                    else if (width >= 25 && width <= 32) sceneDesc = "适合常规T恤/背心";
-                    else if (width > 32) sceneDesc = "适合卫衣/长裤/外套";
-                }
+            // 1. 增加“红绣推荐”卡片
+            container.insertAdjacentHTML('beforeend', `
+                <div class="bag-size-card bag-size" onclick="selectBagAttr('size', '红绣推荐', this)" style="background: linear-gradient(to bottom, #fff, #fff9f9); border-color: #fecaca;">
+                    <div class="size-val" style="color:var(--primary-color); font-size: 15px;">由红绣推荐</div>
+                    <div class="size-scene">根据款式自动匹配</div>
+                </div>
+            `);
 
-                container.insertAdjacentHTML('beforeend', `
-                    <div class="bag-size-card bag-size" onclick="selectBagAttr('size', '${size}', this)">
-                        <div class="size-val">${size}</div>
-                        <div class="size-scene">${sceneDesc}</div>
-                    </div>
-                `);
-            });
+            if (sizes?.length) {
+                sizes.forEach(size => {
+                    let sceneDesc = "适配常规衣物";
+                    const match = size.match(/(\d+)/);
+                    if (match) {
+                        const width = parseInt(match[1]);
+                        if (width < 25) sceneDesc = "适合内衣/泳装/小配件";
+                        else if (width >= 25 && width <= 32) sceneDesc = "适合常规T恤/背心";
+                        else if (width > 32) sceneDesc = "适合卫衣/长裤/外套";
+                    }
+                    container.insertAdjacentHTML('beforeend', `
+                        <div class="bag-size-card bag-size" onclick="selectBagAttr('size', '${size}', this)">
+                            <div class="size-val">${size}</div>
+                            <div class="size-scene">${sceneDesc}</div>
+                        </div>
+                    `);
+                });
+            }
             
+            // 2. 增加“自定义尺寸”卡片
             container.insertAdjacentHTML('beforeend', `
                 <div class="bag-size-card bag-size" onclick="selectBagAttr('size', '自定义尺寸', this)" style="background:#f8fafc;">
-                    <div class="size-val" style="color:#64748b;">? x ?</div>
-                    <div class="size-scene">特殊要求 (请在底部备注)</div>
+                    <div class="size-val" style="color:#64748b;">自定义规格</div>
+                    <div class="size-scene">MOQ 5000起订</div>
                 </div>
             `);
         }
 
         function selectBagAttr(attrType, displayName, el) {
             bagConfig[attrType] = displayName; 
-            // 注意尺寸卡的类名是 .bag-size 而不是 .option-item
             const selector = attrType === 'size' ? '.bag-size' : `.bag-${attrType}`;
             document.getElementById('content-bag').querySelectorAll(selector).forEach(item => item.classList.remove('selected')); 
             el.classList.add('selected'); 
+
+            // 处理自定义尺寸输入框显隐
+            if (attrType === 'size') {
+                const customBox = document.getElementById('bag-custom-size-box');
+                if (displayName === '自定义尺寸') {
+                    customBox.classList.remove('hidden');
+                } else {
+                    customBox.classList.add('hidden');
+                    // 清空输入
+                    document.getElementById('bag-custom-width').value = '';
+                    document.getElementById('bag-custom-height').value = '';
+                }
+            }
+            
+            updateBagSummary();
+        }
+
+        // 新增：处理自定义尺寸输入
+        function updateBagCustomSize() {
+            const w = document.getElementById('bag-custom-width').value.trim();
+            const h = document.getElementById('bag-custom-height').value.trim();
+            if (w && h) {
+                bagConfig.size = `自定义: ${w}x${h}cm`;
+            } else {
+                bagConfig.size = '自定义尺寸 (未输入)';
+            }
             updateBagSummary();
         }
 

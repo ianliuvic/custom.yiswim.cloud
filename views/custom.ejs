@@ -1515,7 +1515,7 @@
                                 </div>
                             </div>
                         
-                            <!-- 2. 动态打样表格 -->
+                            <!-- B. 动态打样表格 -->
                             <div class="attr-section" style="margin-bottom: 35px;">
                                 <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 详细打样清单 (Sampling List)</h4>
                                 <div style="margin-left: 13px; overflow-x: auto;">
@@ -1587,8 +1587,42 @@
 
                                 </div>
                             </div>
-                    
-                            <!-- B. 样品接收配置 -->
+
+                            <!-- 【新增】打样预估费用看板 -->
+                            <div class="attr-section" style="margin-bottom: 35px;">
+                                <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">费用预估 (Estimated Sample Fee)</h4>
+                                <div style="margin-left: 13px; background: #fffafb; border: 1px solid #fecaca; border-radius: 12px; padding: 25px; position: relative; overflow: hidden;">
+                                    <!-- 右侧装饰图标 -->
+                                    <div style="position: absolute; right: -10px; top: -10px; opacity: 0.05; transform: rotate(-15deg);">
+                                        <svg width="120" height="120" viewBox="0 0 24 24" fill="var(--primary-color)"><path d="M11.8 2C6.38 2 2 6.38 2 11.8s4.38 9.8 9.8 9.8 9.8-4.38 9.8-9.8S17.22 2 11.8 2zM12 17h-1v-2h1v2zm1.68-6.69l-.51.63c-.39.48-.67.81-.67 1.56h-1c0-1.1.45-1.6 1-2.1l.6-.75c.2-.25.32-.5.32-.81 0-.66-.45-1.2-1.18-1.2-.73 0-1.18.54-1.18 1.2h-1c0-1.21.89-2.2 2.18-2.2 1.29 0 2.18.99 2.18 2.2 0 .58-.2 1.1-.52 1.47z"/></svg>
+                                    </div>
+                            
+                                    <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; position: relative; z-index: 1;">
+                                        <!-- 左侧：计算明细 -->
+                                        <div id="sample-fee-details" style="font-size: 13px; color: #64748b; line-height: 1.8;">
+                                            <!-- JS 动态填充明细 -->
+                                            正在根据清单核算费用...
+                                        </div>
+                            
+                                        <!-- 右侧：总计与退还条款 -->
+                                        <div style="text-align: right; border-left: 1px dashed #fecaca; padding-left: 40px; display: flex; flex-direction: column; justify-content: center;">
+                                            <div style="font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">预估开发总计 (USD)</div>
+                                            <div id="sample-fee-total" style="font-size: 36px; font-weight: 800; color: var(--primary-color); margin: 5px 0;">$0.00</div>
+                                            <div style="display: inline-block; background: #27ae60; color: #fff; font-size: 11px; padding: 4px 10px; border-radius: 4px; margin-top: 5px;">
+                                                💎 大货单款 >300件 样板费全额退还
+                                            </div>
+                                        </div>
+                                    </div>
+                            
+                                    <!-- 底部说明 -->
+                                    <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(170,0,0,0.05); font-size: 11px; color: #94a3b8;">
+                                        * 提示：以上费用仅包含基础制版与工时费。最终费用将根据您的<strong style="color:#64748b;">特殊面料选择、五金开模、Logo胶印及印花复杂度</strong>进行综合评估，以业务经理提供的正式 PI 账单为准。
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <!-- C. 样品接收配置 -->
                             <div class="attr-section" style="margin-bottom: 35px;">
                                 <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 样品接收配置 (Sample Shipping)</h4>
                                 <div style="margin-left: 13px;">
@@ -4250,6 +4284,7 @@
             }
         
             updateLogisticsSummary();
+            calculateSampleCost();
         }
         
         // 3. 确保款式数据更新时的健壮性
@@ -4314,6 +4349,99 @@
             
             if (mode === 'sample') initSampleTab();
             updateLogisticsSummary();
+        }
+
+        // ==========================================
+        // 打样费用计算核心逻辑
+        // ==========================================
+        function calculateSampleCost() {
+            if (typeof sampleRows === 'undefined' || sampleRows.length === 0) return;
+        
+            // 费率常量定义
+            const RATES = {
+                PATTERN_OEM: 20,    // OEM制版费
+                GRADING: 10,        // 放码费
+                DEV_MANAGE: 10,     // 开发管理费
+                SEWING_PROTO: 10,   // 初样制作
+                SEWING_FIT_PP: 20,  // 修改/产前样制作
+                LOGO_SETUP: 25,     // Logo胶印费 (预估)
+                PRINT_SETUP: 10     // 印花调试费 (预估)
+            };
+        
+            let totalPattern = 0;
+            let totalManage = 0;
+            let totalGrading = 0;
+            let totalSewing = 0;
+            let totalOptional = 0;
+        
+            // 统计唯一款式名，用于按“款”计费
+            const uniqueStyles = new Set();
+            sampleRows.forEach(row => {
+                if (row.style) uniqueStyles.add(row.style);
+            });
+        
+            // 1. 按“款”计算：制版、管理、放码
+            uniqueStyles.forEach(styleName => {
+                totalManage += RATES.DEV_MANAGE;
+                totalGrading += RATES.GRADING;
+                
+                if (styleName.startsWith('OEM')) {
+                    totalPattern += RATES.PATTERN_OEM;
+                }
+            });
+        
+            // 2. 按“件”计算：缝制制作费
+            sampleRows.forEach(row => {
+                if (!row.style) return;
+                const sewingRate = row.type.includes('Proto') ? RATES.SEWING_PROTO : RATES.SEWING_FIT_PP;
+                totalSewing += sewingRate * (parseInt(row.qty) || 0);
+            });
+        
+            // 3. 自动检测附加工艺 (检测前几步的选择)
+            // 检查面料是否有印花 (Step 2)
+            let hasPrint = false;
+            for (let cat in fabricSelection) {
+                if (fabricSelection[cat].activeName && fabricSelection[cat].configs[fabricSelection[cat].activeName].mode === 'print') {
+                    hasPrint = true; break;
+                }
+            }
+            if (hasPrint) totalOptional += RATES.PRINT_SETUP;
+        
+            // 检查是否有 Logo 定制 (Step 3)
+            const needsLogo = (metalConfig && metalConfig.logoCustom) || (labelConfig && document.querySelector('input[name="need_label"][value="yes"]')?.checked);
+            if (needsLogo) totalOptional += RATES.LOGO_SETUP;
+        
+            const grandTotal = totalPattern + totalManage + totalGrading + totalSewing + totalOptional;
+        
+            // 4. 渲染 UI
+            const detailsEl = document.getElementById('sample-fee-details');
+            const totalEl = document.getElementById('sample-fee-total');
+        
+            let detailsHtml = `
+                <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(0,0,0,0.03);">
+                    <span>基础开发费 (${uniqueStyles.size}款 × $${RATES.DEV_MANAGE + RATES.GRADING} 管理/放码)</span>
+                    <span style="font-family:monospace; color:#475569;">$${totalManage + totalGrading}.00</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(0,0,0,0.03);">
+                    <span>新款制版费 (${totalPattern/RATES.PATTERN_OEM}款 OEM)</span>
+                    <span style="font-family:monospace; color:#475569;">$${totalPattern}.00</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(0,0,0,0.03);">
+                    <span>样衣缝制费 (按清单总件数核算)</span>
+                    <span style="font-family:monospace; color:#475569;">$${totalSewing}.00</span>
+                </div>
+            `;
+        
+            if (totalOptional > 0) {
+                detailsHtml += `
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(0,0,0,0.03);">
+                        <span>工艺调试费 (Logo/印花等)</span>
+                        <span style="font-family:monospace; color:#475569;">$${totalOptional}.00</span>
+                    </div>`;
+            }
+        
+            detailsEl.innerHTML = detailsHtml;
+            totalEl.innerText = `$${grandTotal.toFixed(2)}`;
         }
 
         // ==========================================

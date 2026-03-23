@@ -1588,27 +1588,37 @@
                                 </div>
                             </div>
                     
-                            <!-- C. 样品接收 (原 A) -->
+                            <!-- B. 样品接收配置 -->
                             <div class="attr-section" style="margin-bottom: 35px;">
                                 <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 样品接收配置 (Sample Shipping)</h4>
-                                <div style="margin-left: 13px; display: grid; grid-template-columns: 1fr 1.5fr; gap: 40px; align-items: start;">
-                                    <div>
-                                        <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:10px;">样品接收目的地</label>
-                                        <select id="sample-destination" class="oem-input-mini" style="width: 100%; height: 38px;" onchange="updateLogisticsSummary()">
-                                            <option value="">请选择国家...</option>
-                                            <option value="美国">🇺🇸 美国 (USA)</option>
-                                            <option value="欧洲">🇪🇺 欧洲 (Europe)</option>
-                                            <option value="澳洲">🇦🇺 澳洲 (Australia)</option>
-                                            <option value="中国大陆">🇨🇳 中国 (Mainland China)</option>
-                                            <option value="其他">🌐 其他地区</option>
-                                        </select>
+                                <div style="margin-left: 13px;">
+                                    <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 40px; align-items: start; margin-bottom: 15px;">
+                                        <div>
+                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:10px;">样品接收目的地</label>
+                                            <select id="sample-destination" class="oem-input-mini" style="width: 100%; height: 38px;" onchange="updateLogisticsSummary()">
+                                                <option value="">请选择国家...</option>
+                                                <option value="美国">🇺🇸 美国 (USA)</option>
+                                                <option value="欧洲">🇪🇺 欧洲 (Europe)</option>
+                                                <option value="澳洲">🇦🇺 澳洲 (Australia)</option>
+                                                <option value="中国大陆">🇨🇳 中国 (Mainland China)</option>
+                                                <option value="其他">🌐 其他地区</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:10px;">首选样品快递</label>
+                                            <div class="chip-container">
+                                                <div class="chip selected" onclick="selectSampleAttr('carrier', 'DHL/FedEx (红绣代办)', this)">DHL / FedEx (推荐)</div>
+                                                <div class="chip" onclick="selectSampleAttr('carrier', '快递账号到付', this)">使用客户账号 (到付)</div>
+                                                <div class="chip" onclick="selectSampleAttr('carrier', '国内顺丰', this)">顺丰速运 (仅限国内)</div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:10px;">首选样品快递</label>
-                                        <div class="chip-container">
-                                            <div class="chip selected" onclick="selectSampleAttr('carrier', 'DHL/FedEx (红绣代办)', this)">DHL / FedEx (推荐)</div>
-                                            <div class="chip" onclick="selectSampleAttr('carrier', '快递账号到付', this)">使用客户账号 (到付)</div>
-                                            <div class="chip" onclick="selectSampleAttr('carrier', '国内顺丰', this)">顺丰速运 (仅限国内)</div>
+                            
+                                    <!-- 【新增】费用与地址免责提示 -->
+                                    <div style="background: #fdfdfd; border: 1px solid #f1f5f9; padding: 12px 15px; border-radius: 8px; display: flex; align-items: flex-start; gap: 10px;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" style="margin-top:2px;"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
+                                        <div style="font-size: 12px; color: #64748b; line-height: 1.5;">
+                                            <strong style="color: #475569;">费用说明：</strong> 样品国际运费需由客户自理。由于样品重量及包裹体积不确定，具体运费需待我们获取您的<strong style="color: var(--primary-color);">详细收货地址</strong>并完成打包核算后，方可为您提供最终物流报价。
                                         </div>
                                     </div>
                                 </div>

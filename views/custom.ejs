@@ -1517,19 +1517,22 @@
                         
                             <!-- B. 详细打样清单 -->
                             <div class="attr-section" style="margin-bottom: 35px;">
+                                <!-- B. 详细打样清单 标题行 -->
                                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;">
+                                    <!-- 左侧标题 -->
                                     <h4 style="font-size: 14px; margin: 0; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 详细打样清单 (Sampling List)</h4>
                                     
-                                    <!-- 打样指南触发按钮 -->
-                                    <button type="button" class="btn-outline" style="padding: 4px 12px; font-size: 11px; display: flex; align-items: center; gap: 5px; border-color: #cbd5e1; color: #64748b;" onclick="openSampleGuide()">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" cy="17" x2="12.01" y2="17"></line></svg>
-                                        打样规格建议
-                                    </button>
-                                    <!-- 【新增】收费标准按钮 -->
-                                    <button type="button" class="btn-outline" style="padding: 4px 12px; font-size: 11px; display: flex; align-items: center; gap: 5px; border-color: #cbd5e1; color: var(--primary-color); background: #fffcfc;" onclick="openFeeStandardModal()">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                                        打样收费标准
-                                    </button>
+                                    <!-- 右侧按钮组：确保两个按钮紧贴并靠右 -->
+                                    <div style="display: flex; gap: 10px;">
+                                        <button type="button" class="btn-outline" style="padding: 4px 12px; font-size: 11px; display: flex; align-items: center; gap: 5px; border-color: #cbd5e1; color: #64748b;" onclick="openSampleGuide()">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" cy="17" x2="12.01" y2="17"></line></svg>
+                                            打样规格建议
+                                        </button>
+                                        <button type="button" class="btn-outline" style="padding: 4px 12px; font-size: 11px; display: flex; align-items: center; gap: 5px; border-color: #cbd5e1; color: var(--primary-color); background: #fffcfc;" onclick="openFeeStandardModal()">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                                            打样收费标准
+                                        </button>
+                                    </div>
                                 </div>
                             
                                 <div style="margin-left: 13px; border: 1px solid #f1f5f9; border-radius: 12px; overflow: hidden; background: #fff;">

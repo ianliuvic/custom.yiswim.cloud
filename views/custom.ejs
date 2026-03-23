@@ -4414,8 +4414,8 @@
                                   oninput="updateBulkRowData(${index}, 'sizeDetail', this.value)">${row.sizeDetail}</textarea>
                     </td>
                     <td>
-                        <input type="text" class="bulk-table-input" value="${row.desc}" placeholder="备注颜色等" 
-                               oninput="updateBulkRowData(${index}, 'desc', this.value)">
+                        <textarea class="bulk-table-input" placeholder="例：&#10;主体黑色，撞色滚边&#10;注意防水拉链" 
+                                  oninput="updateBulkRowData(${index}, 'desc', this.value)">${row.desc}</textarea>
                     </td>
                     <td style="text-align:center;">
                         <button type="button" class="btn-remove-row" onclick="removeBulkRow(${index})">&times;</button>

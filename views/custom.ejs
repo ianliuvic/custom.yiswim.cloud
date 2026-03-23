@@ -475,6 +475,29 @@
             background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px; padding: 25px;
             margin-top: 15px; animation: fadeIn 0.4s ease;
         }
+        /* 包装袋专属高级样式 */
+        .eco-badge {
+            position: absolute; top: 10px; right: 10px; background: #10b981; color: #fff;
+            font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px;
+            z-index: 10; display: flex; align-items: center; gap: 3px; box-shadow: 0 2px 5px rgba(16, 185, 129, 0.3);
+        }
+        
+        .bag-size-card {
+            display: flex; flex-direction: column; justify-content: center; padding: 20px 15px;
+            border: 1px solid #e2e8f0; border-radius: 10px; background: #fff; cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); text-align: center; position: relative;
+        }
+        .bag-size-card:hover { border-color: var(--primary-color); transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .bag-size-card.selected { border-color: var(--primary-color); background: #fffafb; box-shadow: 0 0 0 1px var(--primary-color); }
+        .bag-size-card.selected::after {
+            content: '✓'; position: absolute; top: 8px; right: 10px; color: var(--primary-color); font-weight: bold; font-size: 14px;
+        }
+        .size-val { font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; }
+        .bag-size-card.selected .size-val { color: var(--primary-color); }
+        .size-scene { font-size: 11px; color: #94a3b8; line-height: 1.4; }
+
+        .print-icon-box { height: 90px; background: #f8fafc; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #f1f5f9; transition: all 0.3s; }
+        .option-item.selected .print-icon-box { background: #fffafb; }
 
         /* 统一样式的金属件卡片 */
         .metal-item .option-img-alt {
@@ -961,37 +984,77 @@
                                 </div>
                             </div>
                             <div id="content-bag" class="hidden" style="animation: fadeIn 0.4s ease;">
+                                <!-- A. 材质选择 (始终显示) -->
                                 <div class="attr-section" style="margin-bottom: 30px;">
                                     <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 材质与袋型 (Material)</h4>
                                     <div id="bag-list-container" class="option-grid"><p style="color:#999; font-size:12px; padding:20px;">正在加载包装袋库...</p></div>
                                 </div>
-                                <div class="attr-section" style="margin-bottom: 30px;">
-                                    <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 尺寸规格 (Dimensions)</h4>
-                                    <div id="bag-size-container" class="option-grid"><p style="color:#999; font-size:12px; padding:20px;">请先选择包装材质</p></div>
-                                </div>
-                                <div class="attr-section" style="margin-bottom: 30px;">
-                                    <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 印刷工艺 (Print Finish)</h4>
-                                    <div class="option-grid">
-                                        <div class="option-item bag-print" onclick="selectBagAttr('print', '空白无印', this)">
-                                            <div style="height: 100px; background: #fff; display: flex; align-items:center; justify-content:center; color:#ddd; border-bottom: 1px solid #eee; font-size: 12px;">[空白示意]</div>
-                                            <div class="option-info"><h4>Blank (No Print)</h4><p>保持原质感，极简优选</p></div>
+
+                                <!-- B/C/D 渐进式展开容器 -->
+                                <div id="bag-details-section" class="hidden" style="animation: fadeIn 0.5s ease;">
+                                    
+                                    <!-- B. 尺寸规格 -->
+                                    <div class="attr-section" style="margin-bottom: 35px;">
+                                        <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 尺寸规格 (Dimensions)</h4>
+                                        <div id="bag-size-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; margin-left: 13px;"></div>
+                                    </div>
+                                    
+                                    <!-- C. 基础印刷与特殊工艺 -->
+                                    <div class="attr-section" style="margin-bottom: 35px;">
+                                        <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 印刷与附加工艺 (Print & Finish)</h4>
+                                        
+                                        <!-- C1. 基础印刷单选 -->
+                                        <div class="option-grid" style="grid-template-columns: repeat(3, 1fr); gap: 20px; margin-left: 13px; margin-bottom: 20px;">
+                                            <div class="option-item bag-print selected" onclick="selectBagAttr('print', '空白无印', this)">
+                                                <div class="print-icon-box">
+                                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 4"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                                                </div>
+                                                <div class="option-info"><h4>Blank (无印)</h4><p>保持原质感，极简优选</p></div>
+                                            </div>
+                                            <div class="option-item bag-print" onclick="selectBagAttr('print', '单色印刷', this)">
+                                                <div class="print-icon-box">
+                                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" color="#64748b"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/></svg>
+                                                </div>
+                                                <div class="option-info"><h4>1-Color Print</h4><p>印制单色 Logo/警示语</p></div>
+                                            </div>
+                                            <div class="option-item bag-print" onclick="selectBagAttr('print', '彩色印刷', this)">
+                                                <div class="print-icon-box" style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);">
+                                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="url(#color-grad)" stroke-width="2">
+                                                        <defs><linearGradient id="color-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ef4444"/><stop offset="50%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#3b82f6"/></linearGradient></defs>
+                                                        <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 16l4-4 4 4"/><circle cx="9" cy="9" r="2" fill="currentColor"/>
+                                                    </svg>
+                                                </div>
+                                                <div class="option-info"><h4>Multi-Color</h4><p>彩色Logo或平铺满印</p></div>
+                                            </div>
                                         </div>
-                                        <div class="option-item bag-print" onclick="selectBagAttr('print', '单色印刷', this)">
-                                            <div style="height: 100px; background: #fafafa; display: flex; align-items:center; justify-content:center; color:#999; border-bottom: 1px solid #eee; font-size: 12px;">[单色Logo示意]</div>
-                                            <div class="option-info"><h4>1-Color Print</h4><p>印制单色 Logo</p></div>
-                                        </div>
-                                        <div class="option-item bag-print" onclick="selectBagAttr('print', '彩色印刷', this)">
-                                            <div style="height: 100px; background: linear-gradient(45deg, #f1e1e1, #e1e8f1); display: flex; align-items:center; justify-content:center; color:#888; border-bottom: 1px solid #eee; font-size: 12px;">[彩色印花示意]</div>
-                                            <div class="option-info"><h4>Multi-Color</h4><p>彩色图案或平铺满印</p></div>
+
+                                        <!-- C2. 特殊工艺多选 -->
+                                        <div style="margin-left: 13px;">
+                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">特殊工艺附加 (可多选)</label>
+                                            <div class="chip-container">
+                                                <div class="chip" onclick="toggleBagCraft('局部磨砂半透明', this)">局部磨砂 (Frosted)</div>
+                                                <div class="chip" onclick="toggleBagCraft('烫金/银', this)">烫金/银 (Foil)</div>
+                                                <div class="chip" onclick="toggleBagCraft('打透气孔', this)">打透气孔 (Punch Hole)</div>
+                                                <div class="chip" onclick="toggleBagCraft('防窒息警示语', this)">印防窒息警示语</div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="attr-section" style="margin-bottom: 10px;">
-                                    <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">D. 设计图稿上传 (Design Upload)</h4>
-                                    <div class="premium-upload-box">
-                                        <p style="margin: 0 0 10px; font-size: 14px; color: var(--text-main);">点击或拖拽上传 Logo / 包装设计图</p>
-                                        <input type="file" id="bag-design-file" class="custom-file-input">
+
+                                    <!-- D. 设计图稿与排版要求 -->
+                                    <div class="attr-section">
+                                        <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">D. 设计图稿与排版要求 (Design Upload)</h4>
+                                        <div style="margin-left: 13px;">
+                                            <div class="premium-upload-box" onclick="document.getElementById('bagDesignFile').click()" style="padding: 18px;">
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2" style="margin-bottom:6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                                                <p style="font-size: 12px; color: var(--text-main); margin-bottom: 2px; font-weight:600;">点击上传包装设计图 / Logo矢量文件</p>
+                                                <input type="file" id="bagDesignFile" multiple class="hidden" onchange="handleBagFiles(this)">
+                                            </div>
+                                            <div id="bagDesignPreview" class="oem-image-preview-grid" style="margin-top:12px;"></div>
+                                            
+                                            <textarea id="bag-remark" class="oem-textarea" style="height:70px; margin-top:15px; font-size:12px;" placeholder="请输入您的排版要求（如：Logo居中，占宽度1/3；底部印 Made in China...）" oninput="updateBagSummary()"></textarea>
+                                        </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -2380,7 +2443,15 @@
             st.style.fontWeight = 'bold';
         }
 
-        let bagConfig = { material: '未选材质', size: '未选尺寸', print: '未选印刷' };
+        // 扩展 bagConfig 数据结构
+        let bagConfig = { 
+            material: '未选材质', 
+            size: '未选尺寸', 
+            print: '空白无印', 
+            crafts: [], 
+            designFiles: [] 
+        };
+        
         function renderBags(bags) {
             const container = document.getElementById('bag-list-container'); container.innerHTML = ''; 
             bags.forEach(bag => {
@@ -2389,36 +2460,144 @@
                     ? `<img src="${bag.image_urls[0]}" class="option-img" loading="lazy">`
                     : `<div style="width:100%; aspect-ratio:1/1; background:#f8fafc; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:12px;">[暂无预览图]</div>`;
 
+                // 简单的环保标识正则匹配
+                const isEco = /环保|降解|回收|eco|biodegradable|recycled/i.test(bag.name + bag.description);
+                const ecoBadge = isEco ? `<div class="eco-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM12 22C6.48 22 2 17.52 2 12S6.48 2 12 2s10 4.48 10 10-4.48 10-10 10z"/><path d="M16 8l-5.5 5.5L8 11"/></svg> ECO</div>` : '';
+
                 container.insertAdjacentHTML('beforeend', `
                     <div class="option-item bag-material" onclick="onBagClick(${bagJson}, this)">
+                        ${ecoBadge}
                         <div class="details-btn" onclick="event.stopPropagation(); openDetailModal(${bagJson})" title="查看详情">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                         </div>
                         ${imgHtml}
                         <div class="option-info">
                             <h4>${bag.name}</h4>
-                            <p>${bag.description || '优质定制包装'}</p>
+                            <p style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${bag.description || '优质定制包装'}">${bag.description || '优质定制包装'}</p>
                         </div>
                     </div>
                 `);
             });
         }
 
-        function onBagClick(bag, el) { selectBagAttr('material', bag.name, el); renderBagSizes(bag.sizes); bagConfig.size = '未选尺寸'; updateBagSummary(); }
+        function onBagClick(bag, el) { 
+            selectBagAttr('material', bag.name, el); 
+            renderBagSizes(bag.sizes); 
+            bagConfig.size = '未选尺寸'; 
+            
+            // 渐进式展开后续选项
+            document.getElementById('bag-details-section').classList.remove('hidden');
+            updateBagSummary(); 
+        }
+
         function renderBagSizes(sizes) {
             const container = document.getElementById('bag-size-container'); container.innerHTML = ''; 
             if (!sizes?.length) { container.innerHTML = '<p style="color:#999; font-size:12px; padding:20px;">该款式暂无可选规格</p>'; return; }
-            sizes.forEach(size => container.insertAdjacentHTML('beforeend', `<div class="option-item bag-size" onclick="selectBagAttr('size', '${size}', this)"><div style="height: 100px; background: #fafafa; display: flex; align-items:center; justify-content:center; font-size:18px; font-weight:bold; color:#666; border-bottom: 1px solid #eee;">${size}</div><div class="option-info"><h4>规格: ${size} cm</h4><p>适配当前选中的袋型</p></div></div>`));
-            container.insertAdjacentHTML('beforeend', `<div class="option-item bag-size" onclick="selectBagAttr('size', '自定义尺寸', this)"><div style="height: 100px; background: #fafafa; display: flex; align-items:center; justify-content:center; font-size:18px; font-weight:bold; color:#ccc; border-bottom: 1px solid #eee;">? x ?</div><div class="option-info"><h4>自定义尺寸</h4><p>我有特殊要求 (请备注)</p></div></div>`);
+            
+            sizes.forEach(size => {
+                // 简单的场景化预判逻辑 (根据第一个数字判断)
+                let sceneDesc = "适配常规衣物";
+                const match = size.match(/(\d+)/);
+                if (match) {
+                    const width = parseInt(match[1]);
+                    if (width < 25) sceneDesc = "适合内衣/泳装/小配件";
+                    else if (width >= 25 && width <= 32) sceneDesc = "适合常规T恤/背心";
+                    else if (width > 32) sceneDesc = "适合卫衣/长裤/外套";
+                }
+
+                container.insertAdjacentHTML('beforeend', `
+                    <div class="bag-size-card bag-size" onclick="selectBagAttr('size', '${size}', this)">
+                        <div class="size-val">${size}</div>
+                        <div class="size-scene">${sceneDesc}</div>
+                    </div>
+                `);
+            });
+            
+            container.insertAdjacentHTML('beforeend', `
+                <div class="bag-size-card bag-size" onclick="selectBagAttr('size', '自定义尺寸', this)" style="background:#f8fafc;">
+                    <div class="size-val" style="color:#64748b;">? x ?</div>
+                    <div class="size-scene">特殊要求 (请在底部备注)</div>
+                </div>
+            `);
         }
+
         function selectBagAttr(attrType, displayName, el) {
-            bagConfig[attrType] = displayName; document.getElementById('content-bag').querySelectorAll(`.bag-${attrType}`).forEach(item => item.classList.remove('selected')); el.classList.add('selected'); updateBagSummary();
+            bagConfig[attrType] = displayName; 
+            // 注意尺寸卡的类名是 .bag-size 而不是 .option-item
+            const selector = attrType === 'size' ? '.bag-size' : `.bag-${attrType}`;
+            document.getElementById('content-bag').querySelectorAll(selector).forEach(item => item.classList.remove('selected')); 
+            el.classList.add('selected'); 
+            updateBagSummary();
         }
+
+        function toggleBagCraft(craft, el) {
+            const index = bagConfig.crafts.indexOf(craft);
+            if (index > -1) { bagConfig.crafts.splice(index, 1); el.classList.remove('selected'); } 
+            else { bagConfig.crafts.push(craft); el.classList.add('selected'); }
+            updateBagSummary();
+        }
+
+        function handleBagFiles(input) {
+            const files = Array.from(input.files);
+            files.forEach(file => {
+                if (file.size > 20 * 1024 * 1024) { showToast(`文件 ${file.name} 超过 20MB`, 'error'); return; }
+                if (!bagConfig.designFiles.some(f => f.name === file.name && f.size === file.size)) {
+                    bagConfig.designFiles.push(file);
+                }
+            });
+            renderBagPreviews();
+            updateBagSummary();
+            input.value = ''; 
+        }
+
+        function renderBagPreviews() {
+            const grid = document.getElementById('bagDesignPreview');
+            grid.innerHTML = '';
+            bagConfig.designFiles.forEach((file, index) => {
+                const isImage = file.type.startsWith('image/');
+                const ext = file.name.split('.').pop().toUpperCase();
+                let content = isImage 
+                    ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')">` 
+                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;">${ext}</div>`;
+
+                grid.insertAdjacentHTML('beforeend', `
+                    <div class="oem-preview-item" style="width:60px; height:60px;">
+                        ${content}
+                        <button type="button" class="oem-preview-remove" onclick="removeBagFile(${index})">&times;</button>
+                    </div>
+                `);
+            });
+        }
+
+        function removeBagFile(index) {
+            bagConfig.designFiles.splice(index, 1);
+            renderBagPreviews();
+            updateBagSummary();
+        }
+
         function updateBagSummary() {
             const st = document.getElementById('sum-trim-bag');
-            if (bagConfig.material === '未选材质' && bagConfig.size === '未选尺寸' && bagConfig.print === '未选印刷') { st.innerText = '已开启 (待选择详细配置)'; } 
-            else { st.innerText = `${bagConfig.material !== '未选材质' ? bagConfig.material : '??'} | ${bagConfig.size !== '未选尺寸' ? bagConfig.size.split(' ')[0] : '??'} | ${bagConfig.print !== '未选印刷' ? bagConfig.print : '??'}`; }
-            st.style.color = 'var(--primary-color)'; st.style.fontWeight = 'bold';
+            const isBagEnabled = document.querySelector('input[name="need_bag"][value="yes"]');
+            if (!isBagEnabled || !isBagEnabled.checked) return; // 只有开启时才更新
+
+            if (bagConfig.material === '未选材质') { 
+                st.innerText = '已开启 (待选择材质)'; 
+                st.style.color = 'var(--primary-color)'; st.style.fontWeight = 'bold';
+                return; 
+            } 
+            
+            const matPart = bagConfig.material;
+            const sizePart = bagConfig.size !== '未选尺寸' ? bagConfig.size.split(' ')[0] : '尺寸待定';
+            
+            // 组装工艺文字
+            let printText = bagConfig.print === '空白无印' ? '无印' : bagConfig.print;
+            if (bagConfig.crafts.length > 0) printText += `+${bagConfig.crafts.length}工艺`;
+
+            const hasFile = bagConfig.designFiles.length > 0 ? `<br><span style="font-size:10px; color:#10b981;">+已传设计图(${bagConfig.designFiles.length})</span>` : '';
+
+            st.innerHTML = `<div style="text-align:right;">${matPart} | ${sizePart}<br><span style="font-size:10px; opacity:0.8;">${printText}</span>${hasFile}</div>`;
+            st.style.color = 'var(--primary-color)'; 
+            st.style.fontWeight = 'bold';
         }
 
         // ==========================================
@@ -2497,8 +2676,13 @@
                 const noRadio = document.querySelector(`input[name="need_${category}"][value="no"]`);
                 if(noRadio) noRadio.checked = true; toggleTrim(category, false); 
             });
-            bagConfig = { material: '未选材质', size: '未选尺寸', print: '未选印刷' };
+            // 重置包装袋
+            bagConfig = { material: '未选材质', size: '未选尺寸', print: '空白无印', crafts: [], designFiles: [] };
             document.querySelectorAll('.bag-material, .bag-size, .bag-print').forEach(item => item.classList.remove('selected'));
+            document.querySelectorAll('#content-bag .chip').forEach(item => item.classList.remove('selected'));
+            document.getElementById('bag-details-section').classList.add('hidden');
+            document.getElementById('bagDesignPreview').innerHTML = '';
+            document.getElementById('bag-remark').value = '';
             // 重置金属饰品
             metalConfig = { finish: '亮金色 (Shiny Gold)', categories: [], logoCustom: false, logoTypes: [], logoFiles: [], sourceFiles: [] };
             document.querySelectorAll('.finish-item').forEach(item => item.classList.remove('selected'));

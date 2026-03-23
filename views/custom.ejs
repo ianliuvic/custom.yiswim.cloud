@@ -1441,11 +1441,45 @@
                                     <label><input type="radio" name="need_other" value="yes" onchange="toggleTrim('other', true)"> 是 (Yes)</label>
                                 </div>
                             </div>
-                            <div id="content-other" class="placeholder-box hidden">
-                                <p style="margin-bottom: 10px; color:#333;">请输入特殊要求（如特定拉链、反光条等）：</p>
-                                <textarea style="width:100%; height:100px; padding:10px; border:1px solid #ccc; font-family:inherit;" spellcheck="false"></textarea>
+                        
+                            <div id="content-other" class="hidden" style="animation: fadeIn 0.4s ease;">
+                                <div class="attr-section" style="margin-bottom: 25px;">
+                                    <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">特殊辅料需求描述 (Special Trims)</h4>
+                                    <div style="margin-left: 13px;">
+                                        
+                                        <div class="metal-notice" style="margin-bottom: 20px;">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                            如需特殊定制的辅料（如：YKK防水拉链、品牌防滑硅胶带、反光抽绳、特殊丈根松紧带等），请在此详细说明。
+                                        </div>
+                        
+                                        <div style="display: flex; flex-direction: column; gap: 20px;">
+                                            <!-- 大文本输入区 -->
+                                            <div>
+                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">详细需求说明 <span style="color:#ef4444;">*</span></label>
+                                                <textarea id="other-remark" class="oem-textarea" style="height: 140px; font-size:13px; line-height:1.6;" placeholder="请详细输入辅料名称、材质、尺寸、颜色，以及预期用在衣物的哪个部位。&#10;例如：需要 15cm 长的黑色 YKK 隐形拉链，用于后背开襟..." oninput="updateOtherSummary()"></textarea>
+                                            </div>
+                        
+                                            <!-- 附件上传区 -->
+                                            <div>
+                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">参考图样或工艺单 (选填)</label>
+                                                <div class="premium-upload-row" onclick="document.getElementById('otherFile').click()" style="padding: 15px 20px; background: #f8fafc; border-color: #cbd5e1;">
+                                                    <div class="upload-label-group">
+                                                        <span id="otherFileName" class="upload-label-main" style="font-size:13px; color:#334155;">点击此处上传参考附件</span>
+                                                        <span class="upload-label-sub">支持 AI / PDF / 图片格式 (Max 20MB)</span>
+                                                    </div>
+                                                    <input type="file" id="otherFile" class="hidden" multiple onchange="handleOtherFiles(this)">
+                                                    <button type="button" class="btn-outline" style="padding:6px 16px; font-size:12px; pointer-events:none; background:#fff;">选择文件</button>
+                                                </div>
+                                                <!-- 预览网格 -->
+                                                <div id="otherPreview" class="oem-image-preview-grid" style="margin-top:12px; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));"></div>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
                     </div>
 
                     <!-- ==========================================
@@ -2616,12 +2650,10 @@
             document.getElementById(`pane-${paneId}`).classList.add('active'); el.classList.add('active');
         }
         function toggleTrim(category, isNeeded) {
-            const contentBox = document.getElementById(`content-${category}`), 
-                  summaryText = document.getElementById(`sum-trim-${category}`);
+            const contentBox = document.getElementById(`content-${category}`);
             
             if (isNeeded) {
                 contentBox.classList.remove('hidden');
-                // 修复：切换为 Yes 时，调用各自的 Summary 渲染函数
                 if (category === 'metal') updateMetalSummary();
                 else if (category === 'bag') updateBagSummary();
                 else if (category === 'hangtag') updateHangtagSummary();
@@ -2630,15 +2662,13 @@
                     renderLabelDynamicDetails(); 
                     updateLabelSummary(); 
                 }
-                else {
-                    summaryText.innerText = '已开启';
-                    summaryText.style.color = 'var(--primary-color)';
-                    summaryText.style.fontWeight = 'bold';
-                }
+                else if (category === 'hygiene') updateHygieneSummary();
+                else if (category === 'other') updateOtherSummary(); // 确保这里加上了
             } else {
                 contentBox.classList.add('hidden');
+                const summaryText = document.getElementById(`sum-trim-${category}`);
                 summaryText.innerText = '不需要';
-                summaryText.style.color = '#666';
+                summaryText.style.color = '#64748b';
                 summaryText.style.fontWeight = 'normal';
             }
         }
@@ -3015,6 +3045,103 @@
                 renderLabelDynamicDetails(); 
             }
         });
+
+        // ==========================================
+        // 其他辅料逻辑 (Other Trims)
+        // ==========================================
+        let otherConfig = {
+            remark: '',
+            files: []
+        };
+        
+        function handleOtherFiles(input) {
+            const files = Array.from(input.files);
+            files.forEach(file => {
+                if (file.size > 20 * 1024 * 1024) { alert(`文件 ${file.name} 超过 20MB`); return; }
+                if (!otherConfig.files.some(f => f.name === file.name && f.size === file.size)) {
+                    otherConfig.files.push(file);
+                }
+            });
+        
+            const nameEl = document.getElementById('otherFileName');
+            if (otherConfig.files.length > 0) {
+                nameEl.innerText = `已选 ${otherConfig.files.length} 个文件`;
+                nameEl.style.color = 'var(--primary-color)';
+            } else {
+                nameEl.innerText = '点击此处上传参考附件';
+                nameEl.style.color = '#334155';
+            }
+        
+            renderOtherPreviews();
+            updateOtherSummary();
+            input.value = ''; // 允许重复上传同名文件
+        }
+        
+        function renderOtherPreviews() {
+            const grid = document.getElementById('otherPreview');
+            if(!grid) return;
+            grid.innerHTML = '';
+            otherConfig.files.forEach((file, index) => {
+                const isImage = file.type.startsWith('image/');
+                const ext = file.name.split('.').pop().toUpperCase();
+                
+                let content = isImage 
+                    ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')">` 
+                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#e2e8f0;color:#475569;font-size:11px;font-weight:bold;border-radius:6px;">${ext}</div>`;
+                
+                grid.insertAdjacentHTML('beforeend', `
+                    <div class="oem-preview-item" style="width:70px; height:70px; border-radius:6px;">
+                        ${content}
+                        <button type="button" class="oem-preview-remove" onclick="removeOtherFile(${index})">&times;</button>
+                    </div>
+                `);
+            });
+        }
+        
+        function removeOtherFile(index) {
+            otherConfig.files.splice(index, 1);
+            
+            const nameEl = document.getElementById('otherFileName');
+            if (otherConfig.files.length > 0) {
+                nameEl.innerText = `已选 ${otherConfig.files.length} 个文件`;
+                nameEl.style.color = 'var(--primary-color)';
+            } else {
+                nameEl.innerText = '点击此处上传参考附件';
+                nameEl.style.color = '#334155';
+            }
+            
+            renderOtherPreviews();
+            updateOtherSummary();
+        }
+        
+        function updateOtherSummary() {
+            const st = document.getElementById('sum-trim-other');
+            const isEnabled = document.querySelector('input[name="need_other"][value="yes"]').checked;
+            
+            if (!isEnabled) {
+                st.innerText = '不需要';
+                st.style.color = '#64748b'; 
+                st.style.fontWeight = 'normal';
+                return;
+            }
+        
+            otherConfig.remark = document.getElementById('other-remark').value;
+            const hasText = otherConfig.remark.trim() !== '';
+            const fileCount = otherConfig.files.length;
+            
+            if (!hasText && fileCount === 0) {
+                st.innerHTML = `<span style="color:#f59e0b;">已开启 (待填写需求)</span>`;
+                return;
+            }
+        
+            const textStatus = hasText ? '有需求描述' : '无文字描述';
+            const fileStatus = fileCount > 0 ? ` + ${fileCount}附件` : '';
+        
+            st.innerHTML = `<div style="text-align:right;">定制特殊辅料<br><span style="font-size:10px; opacity:0.8;">${textStatus}${fileStatus}</span></div>`;
+            st.style.color = 'var(--primary-color)'; 
+            st.style.fontWeight = 'bold';
+        }
+
         // ==========================================
         // 吊牌逻辑 (Hangtag)
         // ==========================================

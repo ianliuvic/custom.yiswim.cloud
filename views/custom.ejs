@@ -2245,6 +2245,21 @@
             });
         }
 
+        // 检查用户是否在 Step 1 填写了任何 OEM 相关信息
+        function checkOemHasContent() {
+            const hasRef = typeof oemFilesData !== 'undefined' && oemFilesData.ref.length > 0;
+            const hasTech = typeof oemFilesData !== 'undefined' && oemFilesData.tech.length > 0;
+            
+            const oemRemarkEl = document.getElementById('oem-remark');
+            const hasRemark = oemRemarkEl && oemRemarkEl.value.trim() !== '';
+            
+            const physicalEl = document.getElementById('oem-physical');
+            const hasPhysical = physicalEl && physicalEl.checked;
+            
+            // 只要有任何一项满足，就认为用户有 OEM 需求
+            return hasRef || hasTech || hasRemark || hasPhysical;
+        }
+
         // ==========================================
         // 3. OEM 自主设计模块
         // ==========================================
@@ -4082,15 +4097,47 @@
         
         // 初始化：Step 4 激活时调用
         function initSampleTab() {
+            // 1. 更新 ODM 数量徽章
             const odmCount = (typeof selectedOdmStyles !== 'undefined') ? selectedOdmStyles.length : 0;
-            document.getElementById('odm-count-badge').innerText = odmCount;
+            const badge = document.getElementById('odm-count-badge');
+            if (badge) badge.innerText = odmCount;
             
+            // 2. 【核心新增】控制 OEM 数量输入框的读写状态
+            const oemInput = document.getElementById('oem-style-count');
+            if (oemInput) {
+                const hasOemContent = checkOemHasContent();
+                
+                if (!hasOemContent) {
+                    // 没有内容：强制归零，禁用，并变灰
+                    oemInput.value = 0;
+                    oemInput.disabled = true;
+                    oemInput.style.backgroundColor = '#f8fafc';
+                    oemInput.style.color = '#cbd5e1';
+                    oemInput.style.cursor = 'not-allowed';
+                    oemInput.title = "您未在第一步提供任何自主设计(OEM)资料，不可添加OEM款式";
+                } else {
+                    // 有内容：启用输入框
+                    oemInput.disabled = false;
+                    oemInput.style.backgroundColor = '#fff';
+                    oemInput.style.color = 'var(--text-main)';
+                    oemInput.style.cursor = 'text';
+                    oemInput.title = "";
+                    
+                    // 智能化体验：如果有内容且当前是0，自动帮用户填个1，省去手动输入的麻烦
+                    if (parseInt(oemInput.value) === 0 || oemInput.value === "") {
+                        oemInput.value = 1;
+                    }
+                }
+            }
+        
+            // 3. 渲染或初始化表格
             if (sampleRows.length === 0) {
                 addSampleRow(); // 默认第一行
             } else {
                 renderSampleTable();
             }
         }
+
         
         // 增加一行
         function addSampleRow() {

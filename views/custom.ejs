@@ -1014,10 +1014,30 @@
                                 <div class="mode-option" id="mode-print" onclick="switchFabricMode('print')">定制印花 (Print)</div>
                             </div>
                             <div id="fabric-solid-area">
-                                <p style="font-size: 13px; color: var(--text-light); margin-bottom: 15px;">点击选择所需颜色（支持多选），悬浮查看色号：</p>
-                                <div class="color-palette" id="color-palette-container"></div>
-                                <div id="selected-colors-text" style="font-size: 12px; color: #999; margin-top: 10px; font-weight: 500;">未选择颜色</div>
+                                <!-- 档案卡式包装色卡图 -->
+                                <div style="margin-bottom: 20px; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background: #f8fafc; cursor: zoom-in; transition: border-color 0.3s;" onclick="openFabricColorModal()" onmouseover="this.style.borderColor='var(--primary-color)'" onmouseout="this.style.borderColor='#e2e8f0'">
+                                    <div style="padding: 10px 15px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #fff;">
+                                        <span style="font-size: 12px; font-weight: 600; color: var(--text-main);">实物色卡档案 (Physical Swatch)</span>
+                                        <span style="font-size: 11px; color: var(--primary-color); display: flex; align-items: center; gap: 4px;">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                            点击查看高清全图
+                                        </span>
+                                    </div>
+                                    <!-- 图片占位，你可以稍后将 url 替换为真实的色卡图链接 -->
+                                    <div id="fabric-swatch-img-preview" style="height: 140px; width: 100%; background-color: #f1f5f9; background-image: url('https://via.placeholder.com/800x300/e2e8f0/64748b?text=Click+to+view+HD+Swatch'); background-size: cover; background-position: center;"></div>
+                                </div>
+                            
+                                <!-- 色号输入 -->
+                                <div>
+                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">请输入您选定的色号 (可多选，请用逗号隔开) <span style="color:#ef4444;">*</span></label>
+                                    <input type="text" id="fabric-color-input" class="oem-input-mini" style="width: 100%; box-sizing: border-box;" placeholder="对照上方色卡，输入数字编号。例如：24, 36..." oninput="updateSolidColorInput()">
+                                    <div style="margin-top: 8px; font-size: 11px; color: #94a3b8; display: flex; align-items: flex-start; gap: 4px; line-height: 1.4;">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0; margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                        注：实拍图受屏幕材质与亮度影响存在微小色差，最终颜色确认将以红绣提供的实物产前样或物理色卡为准。
+                                    </div>
+                                </div>
                             </div>
+
                             <div id="fabric-print-area" class="hidden">
                                 <div class="premium-upload-box" id="printDropzone" onclick="document.getElementById('printFile').click()" style="padding: 30px 20px;">
                                     <div style="margin-bottom: 12px;">
@@ -3570,10 +3590,11 @@
 
             // 3. 数据初始化与 UI 切换
             selection.activeName = name; 
+
             if (!selection.configs[name]) {
-                // 新增 customDesc, colorReq, trackingNo
-                selection.configs[name] = { mode: isCustomSourcing ? 'custom' : 'solid', colors: [], remark: '', files: [], prints: [], customDesc: '', comp: '', gsm: '', colorReq: '', physical: false, trackingNo: '' };
+                selection.configs[name] = { mode: isCustomSourcing ? 'custom' : 'solid', colors: [], colorText: '', remark: '', files: [], prints: [], customDesc: '', comp: '', gsm: '', colorReq: '', physical: false, trackingNo: '' };
             }
+
             const config = selection.configs[name];
 
             const standardArea = [document.getElementById('fabric-mode-switcher'), document.getElementById('fabric-solid-area'), document.getElementById('fabric-print-area')];
@@ -3604,7 +3625,12 @@
 
             // 4. 恢复通用项 (备注、附件、色卡渲染等...)
             document.getElementById('config-type-tag').innerText = selection.originalCatName;
-            if (!isCustomSourcing) renderColorPalette(name, config.colors);
+            if (!isCustomSourcing) {
+                document.getElementById('fabric-color-input').value = config.colorText || '';
+                // 假设你有针对当前面料的特定色卡图片 URL，可以在这里动态替换背景图
+                // document.getElementById('fabric-swatch-img-preview').style.backgroundImage = `url('你的特定面料色卡链接')`;
+            }
+
             renderFabricFileList(config.files || []);
             renderPrintPreview(config.prints || []);
             document.getElementById('fabric-remark').value = config.remark; 
@@ -3621,6 +3647,30 @@
             document.getElementById('fabric-solid-area').classList.toggle('hidden', mode !== 'solid'); 
             document.getElementById('fabric-print-area').classList.toggle('hidden', mode !== 'print');
             updateFabricSummary();
+        }
+
+        // 记录用户输入的面料色号并触发汇总更新
+        function updateSolidColorInput() {
+            if(!activeFabricCat || !fabricSelection[activeFabricCat] || !fabricSelection[activeFabricCat].activeName) return;
+            const config = fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName];
+            config.colorText = document.getElementById('fabric-color-input').value.trim();
+            updateFabricSummary();
+        }
+        
+        // 打开全屏色卡大图预览
+        function openFabricColorModal() {
+            // 这里提取占位 div 的背景图 URL（或者你可以根据当前面料名称动态获取真实图片 URL）
+            const bgImage = document.getElementById('fabric-swatch-img-preview').style.backgroundImage;
+            const imageUrl = bgImage.slice(4, -1).replace(/["']/g, ""); // 清理 url("...") 格式
+            
+            const activeName = fabricSelection[activeFabricCat]?.activeName || '面料';
+            
+            // 复用现有的产品详情弹窗展示高清图
+            openDetailModal({
+                name: `${activeName} - 物理色卡档案`,
+                image_urls: [imageUrl],
+                description: `请放大查看色卡边缘质感与对应编号。<br><strong style="color:var(--primary-color);">选定后请将编号填入下方输入框。</strong>`
+            });
         }
 
         function toggleColor(colorCode, el) {
@@ -3683,7 +3733,9 @@
                         statusText = `<span style="color:var(--primary-color);">定制找样/开发</span>`;
                     } else {
                         const config = selection.configs[selection.activeName];
-                        statusText = config.mode === 'print' ? `${selection.activeName} (印花)` : `${selection.activeName} (${config.colors.length}色)`;
+                        let colorDisplay = config.colorText ? `(色号: ${config.colorText})` : '(待填色号)';
+                        statusText = config.mode === 'print' ? `${selection.activeName} (印花)` : `${selection.activeName} ${colorDisplay}`;
+
                     }
                 }
                 html += `<div style="font-size:12px; margin-bottom:4px; color:var(--text-main); text-align:right;">${catName}: ${statusText}</div>`;

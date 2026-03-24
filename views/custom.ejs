@@ -2112,67 +2112,104 @@
                         <div class="attr-section" style="margin-bottom: 35px;">
                             <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 商业身份档案 (Commercial Identity)</h4>
                             <div style="margin-left: 13px;">
+                                <!-- 修复：确保这里使用了 gap: 25px 并且正确生效 -->
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 20px;">
                                     <div>
                                         <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">联系人姓名 <span style="color:#ef4444;">*</span></label>
-                                        <input type="text" id="final-contact-name" class="oem-input-mini" style="width:100%; height:40px;" placeholder="您的称呼 (如: Alex Wang)" required>
+                                        <input type="text" id="final-contact-name" class="oem-input-mini" style="width:100%; height:40px; box-sizing: border-box;" placeholder="您的称呼 (如: Alex Wang)" required>
                                     </div>
                                     <div>
                                         <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">联系邮箱 / WhatsApp <span style="color:#ef4444;">*</span></label>
-                                        <input type="text" id="final-contact-info" class="oem-input-mini" style="width:100%; height:40px;" placeholder="以便我们发送 PI 报价单" required>
+                                        <input type="text" id="final-contact-info" class="oem-input-mini" style="width:100%; height:40px; box-sizing: border-box;" placeholder="以便我们发送 PI 报价单" required>
                                     </div>
                                 </div>
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
                                     <div>
                                         <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">公司/品牌名称 <span style="color:#ef4444;">*</span></label>
-                                        <input type="text" id="final-brand-name" class="oem-input-mini" style="width:100%; height:40px;" placeholder="Brand or Company Name">
+                                        <input type="text" id="final-brand-name" class="oem-input-mini" style="width:100%; height:40px; box-sizing: border-box;" placeholder="Brand or Company Name">
                                     </div>
                                     <div>
                                         <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">品牌官网 / SNS (选填)</label>
-                                        <input type="url" id="final-website" class="oem-input-mini" style="width:100%; height:40px;" placeholder="Instagram / TikTok / Website URL">
+                                        <input type="url" id="final-website" class="oem-input-mini" style="width:100%; height:40px; box-sizing: border-box;" placeholder="Instagram / TikTok / Website URL">
                                     </div>
                                 </div>
                             </div>
                         </div>
                     
-                        <!-- 2. 团队服务指派 (老客户忠诚度模块) -->
+                        <!-- 2. 团队服务指派 (老客户忠诚度模块 - 改为下拉框) -->
                         <div class="attr-section" style="margin-bottom: 35px;">
                             <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 团队服务指派 (Dedicated Team Assignment)</h4>
                             <div style="margin-left: 13px; background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px; padding: 25px;">
                                 <p style="font-size: 12px; color: #64748b; margin-top: 0; margin-bottom: 20px; line-height: 1.5;">
-                                    <strong style="color:var(--primary-color);">如果您是红绣的老朋友：</strong> 我们建议您指定熟悉的团队继续服务，以确保产品风格的一致性。新客户请保持默认，我们将为您分配最合适的专业人员。
+                                    <strong style="color:var(--primary-color);">如果您是红绣的老朋友：</strong> 我们建议您指定熟悉的团队继续服务，以确保产品风格的一致性。新客户请保持默认，我们将为您智能匹配最合适的专业人员。
                                 </p>
                                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
-                                    <div class="input-group">
-                                        <label style="font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase;">期望指定的业务经理</label>
-                                        <input type="text" id="assign-sales" class="oem-input-mini" style="background:#fff;" placeholder="或选 [由系统分配]">
+                                    <div>
+                                        <label style="display:block; font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; margin-bottom:8px;">期望指定的业务经理</label>
+                                        <select id="assign-sales" class="oem-input-mini" style="width:100%; height:38px; background:#fff; box-sizing: border-box;">
+                                            <option value="">[ 由系统智能分配 ]</option>
+                                            <option value="Sarah Chen">Sarah Chen (北美大客组)</option>
+                                            <option value="David Li">David Li (欧洲专线组)</option>
+                                            <option value="Jessica Wu">Jessica Wu (澳洲及新锐品牌组)</option>
+                                        </select>
                                     </div>
-                                    <div class="input-group">
-                                        <label style="font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase;">期望指定的打版师</label>
-                                        <input type="text" id="assign-pattern" class="oem-input-mini" style="background:#fff;" placeholder="Pattern Maker">
+                                    <div>
+                                        <label style="display:block; font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; margin-bottom:8px;">期望指定的打版师</label>
+                                        <select id="assign-pattern" class="oem-input-mini" style="width:100%; height:38px; background:#fff; box-sizing: border-box;">
+                                            <option value="">[ 由红绣技术总监指派 ]</option>
+                                            <option value="Master Wang">王师傅 (Master Wang) - 擅长连体/塑形</option>
+                                            <option value="Master Zhang">张师傅 (Master Zhang) - 擅长比基尼/高叉</option>
+                                            <option value="Master Lin">林师傅 (Master Lin) - 擅长运动/大码</option>
+                                        </select>
                                     </div>
-                                    <div class="input-group">
-                                        <label style="font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase;">期望指定的样衣师</label>
-                                        <input type="text" id="assign-sewing" class="oem-input-mini" style="background:#fff;" placeholder="Sample Maker">
+                                    <div>
+                                        <label style="display:block; font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; margin-bottom:8px;">期望指定的样衣师</label>
+                                        <select id="assign-sewing" class="oem-input-mini" style="width:100%; height:38px; background:#fff; box-sizing: border-box;">
+                                            <option value="">[ 由车间主管指派 ]</option>
+                                            <option value="Group A">A 组 - 无缝包边专线</option>
+                                            <option value="Group B">B 组 - 复杂褶皱/手工专线</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     
-                        <!-- 3. 最终备注与确认 (Closing Section) -->
+                        <!-- 3. 最终备注、附件与确认 (增加附件上传) -->
                         <div class="attr-section" style="margin-bottom: 20px;">
-                            <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 最终补充与条款确认 (Remarks & Confirmation)</h4>
+                            <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 最终补充与条款确认 (Remarks & Confirmation)</h4>
                             <div style="margin-left: 13px;">
-                                <textarea id="final-remark" class="oem-textarea" style="height: 100px; margin-bottom: 25px;" placeholder="您还有哪些在前面步骤中未能详细说明的特殊要求？请在此补充..."></textarea>
                                 
+                                <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; margin-bottom: 25px; align-items: stretch;">
+                                    <!-- 文本备注区 -->
+                                    <div style="display: flex; flex-direction: column;">
+                                        <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">最终补充要求 (Final Notes)</label>
+                                        <textarea id="final-remark" class="oem-textarea" style="flex:1; min-height: 100px; resize: none; box-sizing: border-box;" placeholder="您还有哪些在前面步骤中未能详细说明的特殊要求？（如：需要通过某种特定的环保验厂标准、特定的测试要求等）"></textarea>
+                                    </div>
+                                    
+                                    <!-- 综合附件上传区 -->
+                                    <div style="display: flex; flex-direction: column;">
+                                        <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">综合参考附件 (Comprehensive Tech Pack)</label>
+                                        <div class="premium-upload-row" style="padding: 15px; background: #fff; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; border-color: #cbd5e1; border-radius: 10px;" onclick="document.getElementById('finalDocsFile').click()">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                            <span id="finalDocsFileName" style="font-size:12px; color:#64748b; font-weight:500;">点击上传综合工艺单/企划书</span>
+                                            <span style="font-size:10px; color:#94a3b8;">支持 PDF / ZIP / Excel (Max 50MB)</span>
+                                            <input type="file" id="finalDocsFile" class="hidden" multiple onchange="handleFinalDocsFiles(this)">
+                                        </div>
+                                        <!-- 预览网格 -->
+                                        <div id="finalDocsPreview" class="oem-image-preview-grid" style="margin-top:10px; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- NDA 确认 -->
                                 <div style="background: #fff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 10px;">
-                                    <label class="oem-checkbox-label" style="align-items: flex-start; cursor: pointer;">
-                                        <input type="checkbox" id="nda-agree" style="margin-top: 3px;">
-                                        <span style="font-size: 13px; color: #334155; line-height: 1.6;">
-                                            我确认上述填写的所有配置需求准确无误。我上传的所有设计稿件、品牌资产及商业数据均受 <a href="javascript:void(0)" onclick="openNdaModal()" style="color:var(--primary-color); text-decoration:underline;">《红绣商业保密协议 (NDA)》</a> 严格保护，红绣承诺未经授权绝不外泄给任何第三方。
+                                    <label class="oem-checkbox-label" style="align-items: flex-start; cursor: pointer; margin: 0;">
+                                        <input type="checkbox" id="nda-agree" style="margin-top: 3px; transform: scale(1.1);">
+                                        <span style="font-size: 13px; color: #334155; line-height: 1.6; margin-left: 5px;">
+                                            我确认上述填写的所有配置需求准确无误。我上传的所有设计稿件、品牌资产及商业数据均受 <a href="javascript:void(0)" onclick="openNdaModal()" style="color:var(--primary-color); text-decoration:underline; font-weight:600;">《红绣商业保密协议 (NDA)》</a> 严格保护，红绣承诺未经授权绝不外泄给任何第三方。
                                         </span>
                                     </label>
                                 </div>
+                                
                             </div>
                         </div>
                     </div>
@@ -2848,6 +2885,7 @@
                     // ... 其他面料、辅料数据 ...
                 },
                 finalRemark: document.getElementById('final-remark').value
+                finalDocs: finalDocsFiles // 提交这个数组给后端
             };
         
             console.log("🚀 正式提交询盘数据:", finalOrderData);
@@ -4415,6 +4453,71 @@
             document.getElementById('bulkPackingFileName').innerText = bulkPackingFiles.length > 0 ? `已选 ${bulkPackingFiles.length} 个文件` : '上传参考文件';
             renderBulkPackingPreviews();
             updateLogisticsSummary();
+        }
+
+        // ==========================================
+        // Step 5 最终综合附件处理
+        // ==========================================
+        let finalDocsFiles = [];
+        
+        function handleFinalDocsFiles(input) {
+            const files = Array.from(input.files);
+            files.forEach(file => {
+                // 综合附件可能包含几十页的 PDF 或图包，限制放宽到 50MB
+                if (file.size > 50 * 1024 * 1024) { 
+                    alert(`文件 ${file.name} 超过 50MB 限制`); 
+                    return; 
+                }
+                if (!finalDocsFiles.some(f => f.name === file.name && f.size === file.size)) {
+                    finalDocsFiles.push(file);
+                }
+            });
+        
+            const nameEl = document.getElementById('finalDocsFileName');
+            if (finalDocsFiles.length > 0) {
+                nameEl.innerText = `已成功添加 ${finalDocsFiles.length} 个综合附件`;
+                nameEl.style.color = 'var(--primary-color)';
+            } else {
+                nameEl.innerText = '点击上传综合工艺单/企划书';
+                nameEl.style.color = '#64748b';
+            }
+            
+            renderFinalDocsPreviews();
+            input.value = '';
+        }
+        
+        function renderFinalDocsPreviews() {
+            const grid = document.getElementById('finalDocsPreview');
+            if(!grid) return;
+            grid.innerHTML = '';
+            
+            finalDocsFiles.forEach((file, index) => {
+                const isImage = file.type.startsWith('image/');
+                const ext = file.name.split('.').pop().toUpperCase();
+                
+                let content = isImage 
+                    ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')">` 
+                    : `<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:11px;font-weight:800;border-radius:6px;border:1px solid #e2e8f0;"><span>${ext}</span></div>`;
+                
+                grid.insertAdjacentHTML('beforeend', `
+                    <div class="oem-preview-item" style="width:60px; height:60px; border-radius:6px;">
+                        ${content}
+                        <button type="button" class="oem-preview-remove" onclick="removeFinalDocsFile(${index})">&times;</button>
+                    </div>
+                `);
+            });
+        }
+        
+        function removeFinalDocsFile(index) {
+            finalDocsFiles.splice(index, 1);
+            const nameEl = document.getElementById('finalDocsFileName');
+            if (finalDocsFiles.length > 0) {
+                nameEl.innerText = `已成功添加 ${finalDocsFiles.length} 个综合附件`;
+            } else {
+                nameEl.innerText = '点击上传综合工艺单/企划书';
+                nameEl.style.color = '#64748b';
+            }
+            renderFinalDocsPreviews();
         }
 
         // ==========================================

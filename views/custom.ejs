@@ -391,11 +391,77 @@
            ========================================================= */
         .premium-upload-box { border: 2px dashed #e2e8f0; background-color: #f8fafc; border-radius: 12px; padding: 40px 20px; text-align: center; transition: all 0.3s; cursor: pointer; }
         .premium-upload-box:hover { border-color: var(--primary-color); background-color: #fffafb; }
+
+        button {
+            padding: 12px 36px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            /* 核心交互动画：平滑、快速 */
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            outline: none;
+        }
         
-        button { padding: 12px 32px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid var(--primary-color); }
-        #nextBtn { background: var(--primary-color); color: #fff; }
-        #prevBtn { background: #fff; color: var(--primary-color); }
-        #prevBtn:disabled { border-color: #e2e8f0; color: #cbd5e1; cursor: not-allowed; }
+        /* 上一步按钮：保持低调的次要按钮风格 */
+        #prevBtn {
+            background: #fff;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+        }
+        
+        #prevBtn:hover:not(:disabled) {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            color: var(--text-main);
+            transform: translateY(-1px); /* 极轻微的上浮 */
+        }
+        
+        #prevBtn:active:not(:disabled) {
+            transform: translateY(0) scale(0.98); /* 点击时按下的触感 */
+        }
+        
+        #prevBtn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: #f1f5f9;
+        }
+        
+        /* 下一步/提交按钮：强化品牌感 */
+        #nextBtn {
+            background: var(--primary-color);
+            color: #fff;
+            border: 1px solid var(--primary-color);
+            box-shadow: 0 2px 4px rgba(170, 0, 0, 0.15); /* 淡淡的投影 */
+        }
+        
+        #nextBtn:hover:not(:disabled) {
+            background: #c00000; /* 略微加深 */
+            filter: brightness(1.1); /* 稍微提亮一点点 */
+            box-shadow: 0 4px 12px rgba(170, 0, 0, 0.25);
+            transform: translateY(-1px);
+        }
+        
+        #nextBtn:active:not(:disabled) {
+            transform: translateY(0) scale(0.98);
+        }
+        
+        /* 特殊：第五步提交状态的样式增强（不再使用绿色） */
+        #nextBtn.is-final {
+            background: #1e293b; /* 方案：最后一步使用稳重的深海军蓝，或保持红色 */
+            border-color: #1e293b;
+            padding-left: 45px;
+            padding-right: 45px;
+        }
+        
+        #nextBtn.is-final:hover {
+            background: #0f172a;
+        }
     
         /* =========================================================
            8. 右侧侧边栏汇总细节
@@ -2821,15 +2887,16 @@
             const nextBtn = document.getElementById('nextBtn');
             
             prevBtn.disabled = (currentStep === 1);
-            
+
             if (currentStep === totalSteps) { 
+                // 优化：不再使用绿色的丑按钮
                 nextBtn.innerText = '确认并提交定制需求'; 
-                nextBtn.style.backgroundColor = '#27ae60'; 
-                nextBtn.style.borderColor = '#27ae60'; 
+                // 我们可以加一个标识类名，或者干脆保持品牌红
+                nextBtn.classList.add('is-final');
+                // nextBtn.style.backgroundColor = ''; // 删掉原来的 green 赋值
             } else { 
                 nextBtn.innerText = '继续下一步'; 
-                nextBtn.style.backgroundColor = 'var(--primary-color)'; 
-                nextBtn.style.borderColor = 'var(--primary-color)'; 
+                nextBtn.classList.remove('is-final');
             }
             
             // 回到顶部

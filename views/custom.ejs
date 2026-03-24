@@ -843,7 +843,7 @@
                                     <div style="flex: 1;">
                                         <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">包含款式数 (Style Count) <span style="color:#ef4444;">*</span></label>
                                         <div style="display: flex; align-items: center; gap: 8px;">
-                                            <input type="number" id="oem-collection-count" class="oem-input-mini" style="width:100%; height:38px; box-sizing:border-box;" value="1" min="1" max="50" oninput="renderOemStyleDescInputs()">
+                                            <input type="number" id="oem-collection-count" class="oem-input-mini" style="width:100%; height:38px; box-sizing:border-box;" value="0" min="0" max="50" oninput="renderOemStyleDescInputs()">
                                             <span style="font-size: 12px; color: #64748b;">款</span>
                                         </div>
                                     </div>
@@ -2730,6 +2730,7 @@
             } else {
                 sumStyleEl.innerHTML = `<div style="text-align: right; line-height: 1.4;">${html}</div>`;
             }
+            renderOemStyleDescInputs();
         }
 
         // ==========================================
@@ -2828,12 +2829,11 @@
         // 3. OEM 自主设计模块
         // ==========================================
         let oemFilesData = { tech: [], ref: [] }; 
-        let oemStyleDescriptions = ['']; // 存储每款的简述
+        let oemStyleDescriptions = []; // 存储每款的简述
 
         function renderOemStyleDescInputs() {
             const countInput = document.getElementById('oem-collection-count');
-            let count = parseInt(countInput.value) || 1;
-            if (count < 1) { count = 1; countInput.value = 1; }
+            let count = parseInt(countInput.value) || 0; // 默认为 0
             if (count > 50) { count = 50; countInput.value = 50; }
             
             const container = document.getElementById('oem-style-desc-container');

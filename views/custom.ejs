@@ -2452,6 +2452,18 @@
             if (!styles || styles.length === 0) { navContainer.innerHTML = '<p style="color:#999;font-size:12px;">暂无款式数据</p>'; return; }
 
             const categories = [...new Set(styles.map(s => s.category).filter(Boolean))];
+
+            // --- 新增：强制分类排序逻辑 ---
+            const targetOrder = ['比基尼', '分体', '连体', '大码', '儿童', '沙滩裤', '男裤'];
+            categories.sort((a, b) => {
+                const indexA = targetOrder.indexOf(a);
+                const indexB = targetOrder.indexOf(b);
+                if (indexA !== -1 && indexB !== -1) return indexA - indexB; // 都在预设里，按预设顺序
+                if (indexA !== -1) return -1; // a 在预设里，a 靠前
+                if (indexB !== -1) return 1;  // b 在预设里，b 靠前
+                return a.localeCompare(b, 'zh-CN'); // 都不在预设里，按默认中文排序
+            });
+            // ------------------------------
             
             navContainer.innerHTML = ''; contentContainer.innerHTML = '';
             categories.forEach((cat, index) => {

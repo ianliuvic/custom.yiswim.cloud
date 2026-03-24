@@ -2101,83 +2101,82 @@
                     </div>
 
                     <!-- ==========================================
-                         步骤 5: 商业需求评估
+                         步骤 5: 需求确认与提交 (Review & Submit)
                          ========================================== -->
                     <div class="step-content hidden" id="step-5">
-                        <div class="step-desc">为了给您提供最准确的打样方案与初步报价评估，请大致描绘您的商业规划。具体细节将在样衣确认后最终敲定。</div>
-
-                        <div class="profile-section">
-                            <h4 class="profile-title">A. 当前项目所处阶段 <span class="required">*</span></h4>
-                            <div class="radio-card-grid">
-                                <label class="radio-card">
-                                    <input type="radio" name="project_stage" value="concept" checked>
-                                    <div class="card-content"><h5>概念预研</h5><p>仅询价/了解可行性，暂无图纸</p></div>
-                                </label>
-                                <label class="radio-card">
-                                    <input type="radio" name="project_stage" value="planning">
-                                    <div class="card-content"><h5>筹备阶段</h5><p>计划 1-2 个月内启动打样</p></div>
-                                </label>
-                                <label class="radio-card">
-                                    <input type="radio" name="project_stage" value="urgent">
-                                    <div class="card-content"><h5>紧急落地</h5><p>资料已备齐，需尽快安排头版</p></div>
-                                </label>
-                            </div>
+                        <div class="step-desc">
+                            您的定制需求已基本配置完成。最后，请留下您的商业名片并确认保密条款，我们将为您分派专属团队进行后续对接。
                         </div>
-
-                        <div class="profile-section">
-                            <h4 class="profile-title">B. 首单规模预估 (单款) <span class="required">*</span></h4>
-                            <div class="radio-card-grid grid-4">
-                                <label class="radio-card">
-                                    <input type="radio" name="est_volume" value="sample_only" checked onchange="updateSummaryVolume('仅开发样衣')">
-                                    <div class="card-content"><h5>仅开发样衣</h5><p>暂无大货计划</p></div>
-                                </label>
-                                <label class="radio-card">
-                                    <input type="radio" name="est_volume" value="small_batch" onchange="updateSummaryVolume('试水小单 (100-300)')">
-                                    <div class="card-content"><h5>试水小单</h5><p>100 - 300 件</p></div>
-                                </label>
-                                <label class="radio-card">
-                                    <input type="radio" name="est_volume" value="standard" onchange="updateSummaryVolume('常规起订 (300-1000)')">
-                                    <div class="card-content"><h5>常规起订</h5><p>300 - 1000 件</p></div>
-                                </label>
-                                <label class="radio-card">
-                                    <input type="radio" name="est_volume" value="bulk" onchange="updateSummaryVolume('深度合作 (1000+)')">
-                                    <div class="card-content"><h5>深度合作</h5><p>1000 件以上</p></div>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="profile-section flex-row">
-                            <div class="flex-half">
-                                <h4 class="profile-title">C. 颜色与尺码广度</h4>
-                                <div class="input-group">
-                                    <input type="number" id="plan_colors" placeholder="计划开发几个颜色？ (如: 3)">
-                                    <select id="plan_sizes">
-                                        <option value="">请选择尺码跨度...</option>
-                                        <option value="regular">常规跨度 (如 S-XL, 共4个码)</option>
-                                        <option value="extended">包含大码/特体 (如 XS-3XL, 共7个码)</option>
-                                        <option value="custom">定制特殊尺码配比</option>
-                                    </select>
+                    
+                        <!-- 1. 商业身份档案 (Contact Profile) -->
+                        <div class="attr-section" style="margin-bottom: 35px;">
+                            <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 商业身份档案 (Commercial Identity)</h4>
+                            <div style="margin-left: 13px;">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 20px;">
+                                    <div>
+                                        <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">联系人姓名 <span style="color:#ef4444;">*</span></label>
+                                        <input type="text" id="final-contact-name" class="oem-input-mini" style="width:100%; height:40px;" placeholder="您的称呼 (如: Alex Wang)" required>
+                                    </div>
+                                    <div>
+                                        <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">联系邮箱 / WhatsApp <span style="color:#ef4444;">*</span></label>
+                                        <input type="text" id="final-contact-info" class="oem-input-mini" style="width:100%; height:40px;" placeholder="以便我们发送 PI 报价单" required>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="flex-half">
-                                <h4 class="profile-title">D. 目标市场与预算 <span class="optional">(选填)</span></h4>
-                                <div class="input-group">
-                                    <select id="target_market">
-                                        <option value="">品牌定位 / 目标消费群...</option>
-                                        <option value="mass">大众性价比 (Mass Market)</option>
-                                        <option value="premium">中高端轻奢 (Premium)</option>
-                                        <option value="luxury">顶级高定 (Luxury / Designer)</option>
-                                    </select>
-                                    <input type="text" id="target_price" placeholder="期望出厂价 (Target FOB) 如: $15" autocomplete="off">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
+                                    <div>
+                                        <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">公司/品牌名称 <span style="color:#ef4444;">*</span></label>
+                                        <input type="text" id="final-brand-name" class="oem-input-mini" style="width:100%; height:40px;" placeholder="Brand or Company Name">
+                                    </div>
+                                    <div>
+                                        <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">品牌官网 / SNS (选填)</label>
+                                        <input type="url" id="final-website" class="oem-input-mini" style="width:100%; height:40px;" placeholder="Instagram / TikTok / Website URL">
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="profile-section" style="margin-bottom: 0;">
-                            <h4 class="profile-title">E. 补充说明 (Remarks)</h4>
-                            <textarea id="final_remark" placeholder="请输入您的其他特殊要求，如特定的环保认证标准、特殊的独立站发货包装要求等..." spellcheck="false"></textarea>
+                    
+                        <!-- 2. 团队服务指派 (老客户忠诚度模块) -->
+                        <div class="attr-section" style="margin-bottom: 35px;">
+                            <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 团队服务指派 (Dedicated Team Assignment)</h4>
+                            <div style="margin-left: 13px; background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px; padding: 25px;">
+                                <p style="font-size: 12px; color: #64748b; margin-top: 0; margin-bottom: 20px; line-height: 1.5;">
+                                    <strong style="color:var(--primary-color);">如果您是红绣的老朋友：</strong> 我们建议您指定熟悉的团队继续服务，以确保产品风格的一致性。新客户请保持默认，我们将为您分配最合适的专业人员。
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                                    <div class="input-group">
+                                        <label style="font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase;">期望指定的业务经理</label>
+                                        <input type="text" id="assign-sales" class="oem-input-mini" style="background:#fff;" placeholder="或选 [由系统分配]">
+                                    </div>
+                                    <div class="input-group">
+                                        <label style="font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase;">期望指定的打版师</label>
+                                        <input type="text" id="assign-pattern" class="oem-input-mini" style="background:#fff;" placeholder="Pattern Maker">
+                                    </div>
+                                    <div class="input-group">
+                                        <label style="font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase;">期望指定的样衣师</label>
+                                        <input type="text" id="assign-sewing" class="oem-input-mini" style="background:#fff;" placeholder="Sample Maker">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <!-- 3. 最终备注与确认 (Closing Section) -->
+                        <div class="attr-section" style="margin-bottom: 20px;">
+                            <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 最终补充与条款确认 (Remarks & Confirmation)</h4>
+                            <div style="margin-left: 13px;">
+                                <textarea id="final-remark" class="oem-textarea" style="height: 100px; margin-bottom: 25px;" placeholder="您还有哪些在前面步骤中未能详细说明的特殊要求？请在此补充..."></textarea>
+                                
+                                <div style="background: #fff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 10px;">
+                                    <label class="oem-checkbox-label" style="align-items: flex-start; cursor: pointer;">
+                                        <input type="checkbox" id="nda-agree" style="margin-top: 3px;">
+                                        <span style="font-size: 13px; color: #334155; line-height: 1.6;">
+                                            我确认上述填写的所有配置需求准确无误。我上传的所有设计稿件、品牌资产及商业数据均受 <a href="javascript:void(0)" onclick="openNdaModal()" style="color:var(--primary-color); text-decoration:underline;">《红绣商业保密协议 (NDA)》</a> 严格保护，红绣承诺未经授权绝不外泄给任何第三方。
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
                 </form>
             </div>
 
@@ -2808,37 +2807,64 @@
 
         // --- 最终表单提交出口 (新增) ---
         function submitForm() {
-            // 此处可以收集之前定义在全局变量中的所有数据
-            const finalData = {
-                odmStyles: selectedOdmStyles,
-                odmCustomizations: odmCustomData,
-                oemFiles: oemFilesData, // 注意：实际上传时需用 FormData 包装 file 对象
-                oemRemark: document.getElementById('oem-remark').value,
-                oemPhysicalSample: document.getElementById('oem-physical').checked,
-                fabric: fabricSelection,
-                trimConfig: bagConfig, // 可扩充其它辅料收集
-                projectStage: document.querySelector('input[name="project_stage"]:checked').value,
-                estVolume: document.querySelector('input[name="est_volume"]:checked').value,
-                planColors: document.getElementById('plan_colors').value,
-                planSizes: document.getElementById('plan_sizes').value,
-                targetMarket: document.getElementById('target_market').value,
-                targetPrice: document.getElementById('target_price').value,
-                finalRemark: document.getElementById('final_remark').value
+            // 1. 获取 Step 5 的必填项
+            const contactName = document.getElementById('final-contact-name').value.trim();
+            const contactInfo = document.getElementById('final-contact-info').value.trim();
+            const brandName = document.getElementById('final-brand-name').value.trim();
+            const ndaChecked = document.getElementById('nda-agree').checked;
+        
+            // 2. 基础合法性校验
+            if (!contactName || !contactInfo || !brandName) {
+                alert("请完整填写商业身份档案中的必填项 (*)，以便我们能联系到您。");
+                // 如果不在第五步，自动切过去
+                if (currentStep !== 5) changeStep(5 - currentStep);
+                return;
+            }
+        
+            if (!ndaChecked) {
+                alert("提交前请阅读并勾选同意商业保密协议 (NDA)。");
+                return;
+            }
+        
+            // 3. 数据构造 (合并之前的表格数据、物流数据等)
+            const finalOrderData = {
+                identity: {
+                    name: contactName,
+                    contact: contactInfo,
+                    brand: brandName,
+                    website: document.getElementById('final-website').value
+                },
+                assignment: {
+                    sales: document.getElementById('assign-sales').value,
+                    patternMaker: document.getElementById('assign-pattern').value,
+                    sampleMaker: document.getElementById('assign-sewing').value
+                },
+                // 这里继承之前步骤定义的全局变量
+                config: {
+                    styles: selectedOdmStyles,
+                    sampleList: sampleRows, // 第四步的打样表格
+                    bulkList: bulkRows,     // 第四步的大货表格
+                    deliveryMode: currentDeliveryMode, // sample or bulk
+                    // ... 其他面料、辅料数据 ...
+                },
+                finalRemark: document.getElementById('final-remark').value
             };
-
-            console.log("即将提交的数据总览: ", finalData);
-            
-            // 模拟提交效果
+        
+            console.log("🚀 正式提交询盘数据:", finalOrderData);
+        
+            // 4. 执行提交动画
             const nextBtn = document.getElementById('nextBtn');
-            nextBtn.innerText = '正在提交...';
+            nextBtn.innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="animation: rotate 1s linear infinite; margin-right:8px;">
+                    <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+                </svg> 正在加密传输并分派团队...`;
             nextBtn.disabled = true;
-
+        
+            // 模拟后端响应
             setTimeout(() => {
-                alert("提交成功！需求编号已生成，业务经理将尽快与您联系。");
-                // TODO: 在这里编写实际的 fetch/axios 提交到后端的逻辑
-                // 成功后可执行页面跳转或重置页面
-                // window.location.href = '/success';
-            }, 800);
+                alert("✅ 提交成功！\n\n您的需求编号为: HX20240508001\n专属业务经理将在 24 小时内为您提供正式报价。");
+                // window.location.reload(); // 或者跳转到成功页
+            }, 1500);
         }
 
         function selectItem(category, displayName) {

@@ -720,7 +720,7 @@
     
         .oem-dropzone {
             border: 2px dashed #e2e8f0; border-radius: 12px; padding: 30px; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: all 0.3s; background: #fafbfc;
+            cursor: pointer; transition: all 0.3s; background: #fafbfc; margin-left: 13px;
         }
         .oem-dropzone:hover, .oem-dropzone.dragover { border-color: var(--primary-color); background: #fffafb; }
         .oem-dropzone.dragover { transform: scale(1.01); }
@@ -735,6 +735,7 @@
         .oem-preview-remove:hover { background: #ef4444; transform: scale(1.1); }
     
         .oem-textarea {
+            margin-left: 13px;
             width: 100%; height: 100px; padding: 15px; border: 1px solid #e2e8f0; border-radius: 10px; font-family: inherit; font-size: 13px; resize: none; box-sizing: border-box; transition: all 0.3s;
         }
         .oem-textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 3px 10px rgba(0,0,0,0.03); }
@@ -832,6 +833,9 @@
                         <div id="custom-upload" class="hidden" style="animation: fadeIn 0.4s ease;">
                             <!-- 新增：项目系列名称与款式数量 -->
                             <div class="oem-upload-section" style="margin-bottom: 25px; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; background: #fbfcfd;">
+                                <div class="oem-section-header" style="margin-bottom: 18px;">
+                                    <h4 style="font-size: 14px; margin: 0; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 项目基本信息 (Project Basic Info)</h4>
+                                </div>                                
                                 <div style="display: flex; gap: 20px; align-items: flex-start; margin-bottom: 15px;">
                                     <div style="flex: 2;">
                                         <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">项目/系列名称 (Collection Name) <span style="color:#ef4444;">*</span></label>
@@ -856,9 +860,9 @@
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px; align-items: start;">
                                 <!-- A. 灵感参考图 -->
                                 <div class="oem-upload-section">
-                                    <div class="oem-section-header">
-                                        <h4 class="oem-title">1. 参考图与灵感 (Inspiration)</h4>
-                                        <span class="oem-subtitle">请上传款式参考图或草图 (仅限图片)</span>
+                                    <div class="oem-section-header" style="margin-bottom: 12px;">
+                                        <h4 style="font-size: 14px; margin: 0 0 4px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 参考图与灵感 (Inspiration)</h4>
+                                        <span class="oem-subtitle" style="margin-left: 13px;">请上传款式参考图或草图 (仅限图片)</span>
                                     </div>
                                     <div class="oem-dropzone" id="oemRefDropzone" onclick="document.getElementById('oemRefFile').click()">
                                         <div style="text-align: center;">
@@ -872,10 +876,11 @@
                         
                                 <!-- B. 工艺单/设计稿 -->
                                 <div class="oem-upload-section">
-                                    <div class="oem-section-header">
-                                        <h4 class="oem-title">2. 工艺单/设计稿 (Tech Pack)</h4>
-                                        <span class="oem-subtitle">支持图片、PDF、AI、EPS 等格式</span>
+                                    <div class="oem-section-header" style="margin-bottom: 12px;">
+                                        <h4 style="font-size: 14px; margin: 0 0 4px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 工艺单/设计稿 (Tech Pack)</h4>
+                                        <span class="oem-subtitle" style="margin-left: 13px;">支持图片、PDF、AI、EPS 等格式</span>
                                     </div>
+
                                     <div class="oem-dropzone" id="oemTechDropzone" onclick="document.getElementById('oemTechFile').click()">
                                         <div style="text-align: center;">
                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -888,7 +893,7 @@
                             </div>
                         
                             <div class="oem-upload-section" style="margin-bottom: 25px;">
-                                <h4 class="oem-title">3. 补充说明 (Design Remarks)</h4>
+                                <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">D. 补充说明 (Design Remarks)</h4>
                                 <textarea id="oem-remark" class="oem-textarea" style="height: 100px;" placeholder="请详细描述您的修改要求或特定工艺要求..." spellcheck="false" oninput="updateCombinedStyleSummary()"></textarea>
                             </div>
                         

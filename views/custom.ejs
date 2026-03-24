@@ -1667,7 +1667,7 @@
                                     <!-- OEM 数量输入 -->
                                     <div style="display: flex; align-items: center; gap: 12px;">
                                         <span style="font-size: 13px; color: #64748b;">自主设计 (OEM) 款式数:</span>
-                                        <input type="number" id="oem-style-count" class="oem-input-mini" style="width: 80px; text-align: center;" value="0" min="0" oninput="refreshSampleTableStyles()">
+                                        <span id="oem-count-badge" style="background: #1e293b; color: #fff; padding: 2px 10px; border-radius: 20px; font-weight: 700; font-size: 14px;">0</span>
                                     </div>
                                     <div style="font-size: 12px; color: #94a3b8;">* 系统将根据以上总数生成打样清单</div>
                                 </div>
@@ -1981,7 +1981,7 @@
                                     <!-- OEM 数量输入 -->
                                     <div style="display: flex; align-items: center; gap: 12px;">
                                         <span style="font-size: 13px; color: #64748b;">自主设计 (OEM) 款式数:</span>
-                                        <input type="number" id="bulk-oem-style-count" class="oem-input-mini" style="width: 80px; text-align: center;" value="0" min="0" oninput="syncOemCount(this.value)">
+                                        <span id="bulk-oem-count-badge" style="background: #1e293b; color: #fff; padding: 2px 10px; border-radius: 20px; font-weight: 700; font-size: 14px;">0</span>
                                     </div>
                                     <div style="font-size: 12px; color: #94a3b8;">* 系统将基于此总数核算大货生产排期</div>
                                 </div>
@@ -2870,10 +2870,15 @@
             container.innerHTML = html;
             
             // 关键：将款式数量同步到第四步(交付规划)的 OEM 数量框，并触发对应逻辑
-            const step4SampleInput = document.getElementById('oem-style-count');
-            const step4BulkInput = document.getElementById('bulk-oem-style-count');
-            if (step4SampleInput) step4SampleInput.value = count;
-            if (step4BulkInput) step4BulkInput.value = count;
+            // 更新 Step 4 的两个 OEM 徽章
+            const sBadge = document.getElementById('oem-count-badge');
+            const bBadge = document.getElementById('bulk-oem-count-badge');
+            if (sBadge) sBadge.innerText = count;
+            if (bBadge) bBadge.innerText = count;
+            
+            // 依然需要触发后续表格渲染逻辑
+            if (typeof renderSampleTable === 'function') renderSampleTable();
+            if (typeof renderBulkTable === 'function') renderBulkTable();
             
             // 触发第四步的表格刷新
             if (typeof syncOemCount === 'function') syncOemCount(count);
@@ -4992,34 +4997,6 @@
             const badge = document.getElementById('odm-count-badge');
             if (badge) badge.innerText = odmCount;
             
-            // 2. 【核心新增】控制 OEM 数量输入框的读写状态
-            const oemInput = document.getElementById('oem-style-count');
-            if (oemInput) {
-                const hasOemContent = checkOemHasContent();
-                
-                if (!hasOemContent) {
-                    // 没有内容：强制归零，禁用，并变灰
-                    oemInput.value = 0;
-                    oemInput.disabled = true;
-                    oemInput.style.backgroundColor = '#f8fafc';
-                    oemInput.style.color = '#cbd5e1';
-                    oemInput.style.cursor = 'not-allowed';
-                    oemInput.title = "您未在第一步提供任何自主设计(OEM)资料，不可添加OEM款式";
-                } else {
-                    // 有内容：启用输入框
-                    oemInput.disabled = false;
-                    oemInput.style.backgroundColor = '#fff';
-                    oemInput.style.color = 'var(--text-main)';
-                    oemInput.style.cursor = 'text';
-                    oemInput.title = "";
-                    
-                    // 智能化体验：如果有内容且当前是0，自动帮用户填个1，省去手动输入的麻烦
-                    if (parseInt(oemInput.value) === 0 || oemInput.value === "") {
-                        oemInput.value = 1;
-                    }
-                }
-            }
-        
             // 3. 渲染或初始化表格
             if (sampleRows.length === 0) {
                 addSampleRow(); // 默认第一行

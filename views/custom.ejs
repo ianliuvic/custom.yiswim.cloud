@@ -2434,11 +2434,14 @@
             <!-- 采用左右 Flex 布局 -->
             <div class="custom-modal-body" style="display: flex; gap: 30px; padding: 30px 35px 35px;">
                 
-                <!-- 左侧：款式图片展示区 -->
-                <div style="flex: 0 0 260px; border-radius: 10px; overflow: hidden; background: #f8fafc; border: 1px solid #e2e8f0; display: flex; align-items: flex-start;">
-                    <img id="customModalImg" src="" style="width: 100%; aspect-ratio: 3/4; object-fit: cover; object-position: top;">
+                <!-- 新左侧：支持轮播的款式图片区 -->
+                <div style="flex: 0 0 280px; position: relative; border-radius: 10px; overflow: hidden; background: #f1f5f9; display: flex; align-items: center; justify-content: center; border: 1px solid #e2e8f0;">
+                    <button class="carousel-btn left" id="custom-carousel-prev" onclick="customCarouselMove(-1)" style="width: 32px; height: 32px; min-width: 32px; font-size: 14px; left: 10px;">&#10094;</button>
+                    <img id="customModalImg" src="" style="width: 100%; height: 100%; object-fit: contain;">
+                    <button class="carousel-btn right" id="custom-carousel-next" onclick="customCarouselMove(1)" style="width: 32px; height: 32px; min-width: 32px; font-size: 14px; right: 10px;">&#10095;</button>
+                    <div class="carousel-dots" id="custom-carousel-dots" style="bottom: 15px;"></div>
                 </div>
-                
+
                 <!-- 右侧：填写表单区 -->
                 <div style="flex: 1; display: flex; flex-direction: column;">
                     
@@ -2599,7 +2602,7 @@
                             <div class="details-btn" onclick="event.stopPropagation(); openDetailModal(${styleJson})" title="查看图片">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                             </div>
-                            <div class="customize-btn" onclick="event.stopPropagation(); openCustomModal('${style.name}', this.closest('.option-item'))" title="版型轻定制">
+                            <div class="customize-btn" onclick="event.stopPropagation(); openCustomModal(${styleJson}, this.closest('.option-item'))" title="版型轻定制">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
                             </div>
                             <img src="${coverImg}" class="option-img" loading="lazy">
@@ -2761,20 +2764,64 @@
         let selectedOdmStyles = []; 
         const MAX_FILE_SIZE = 20 * 1024 * 1024;
 
-        function openCustomModal(styleName, cardEl) {
+        // 新增轮播状态变量
+        let customModalImages = [];
+        let customImageIndex = 0;
+        // 参数名改为 styleData 接收完整对象
+        function openCustomModal(styleData, cardEl) {
+            const styleName = styleData.name; // 从对象中解构出名字
             selectOdmStyle(styleName, cardEl, true); 
             currentEditingStyle = styleName;
             document.getElementById('customModalTarget').innerText = `(${styleName})`;
-            const imgEl = cardEl.querySelector('.option-img');
-            const targetImg = document.getElementById('customModalImg');
-            if (imgEl && targetImg) {
-                targetImg.src = imgEl.src;
-            }
+            
+            // 初始化轮播数据
+            customModalImages = styleData.image_urls || [];
+            if (typeof styleData.image_urls === 'string') customModalImages = [styleData.image_urls];
+            customImageIndex = 0;
+            renderCustomModalCarousel();
+
             const existingData = odmCustomData[styleName] || { remark: '', files: [] };
             document.getElementById('customRemark').value = existingData.remark;
             currentModalFiles = [...existingData.files];
             renderFileList();
             document.getElementById('customModal').classList.add('active');
+        }
+
+        // 渲染轻定制弹窗的轮播图
+        function renderCustomModalCarousel() {
+            const imgEl = document.getElementById('customModalImg');
+            const prevBtn = document.getElementById('custom-carousel-prev');
+            const nextBtn = document.getElementById('custom-carousel-next');
+            const dots = document.getElementById('custom-carousel-dots');
+            
+            if (!customModalImages || customModalImages.length === 0) {
+                imgEl.style.display = 'none';
+                prevBtn.style.display = 'none'; nextBtn.style.display = 'none'; dots.innerHTML = '';
+                return;
+            }
+            
+            imgEl.style.display = 'block';
+            imgEl.src = customModalImages[customImageIndex];
+            
+            if (customModalImages.length <= 1) {
+                prevBtn.style.display = 'none'; nextBtn.style.display = 'none'; dots.innerHTML = '';
+            } else {
+                prevBtn.style.display = 'flex'; nextBtn.style.display = 'flex';
+                dots.innerHTML = customModalImages.map((_, idx) => `<div class="carousel-dot ${idx === customImageIndex ? 'active' : ''}" onclick="goToCustomModalImage(${idx})" style="width: 6px; height: 6px;"></div>`).join('');
+            }
+        }
+        
+        // 轻定制弹窗的翻页事件
+        function customCarouselMove(step) {
+            if (customModalImages.length <= 1) return;
+            customImageIndex = (customImageIndex + step + customModalImages.length) % customModalImages.length;
+            renderCustomModalCarousel();
+        }
+        
+        // 轻定制弹窗的点选事件
+        function goToCustomModalImage(idx) {
+            customImageIndex = idx;
+            renderCustomModalCarousel();
         }
 
         function closeCustomModal() { document.getElementById('customModal').classList.remove('active'); currentModalFiles = []; }

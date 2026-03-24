@@ -1907,6 +1907,32 @@
                                             </svg>
                                             添加款式生产项
                                         </button>
+                                        <!-- 2. 大货预期单价与免责说明 (紧跟在表格和添加按钮下方) -->
+                                        <div style="padding: 25px; background: #fdfdfd; border-top: 1px solid #f1f5f9;">
+                                            <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 40px; align-items: center;">
+                                                
+                                                <!-- 左侧：期望价格输入 -->
+                                                <div>
+                                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:10px;">期望 EXW 大货单价范围 (Target Price)</label>
+                                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                                        <span style="font-size: 16px; color: #94a3b8; font-weight: 600;">$</span>
+                                                        <input type="text" id="bulk-target-price" class="oem-input-mini" style="height: 38px; flex: 1;" placeholder="如: 10.50 - 13.00" oninput="updateLogisticsSummary()">
+                                                        <span style="font-size: 12px; color: #94a3b8; font-weight: 500;">/ 件</span>
+                                                    </div>
+                                                </div>
+                                
+                                                <!-- 右侧：专业报价免责声明 -->
+                                                <div style="display: flex; gap: 12px; align-items: flex-start;">
+                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" style="margin-top: 2px; flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                                    <div style="font-size: 11px; color: #94a3b8; line-height: 1.6;">
+                                                        <strong style="color: #64748b;">价格核算说明：</strong> 
+                                                        此处填写的为您对大货单价的预期。由于大货报价受<strong style="color:#475569;">订单总数、面辅料实时市价、工艺复杂度及汇率</strong>等多种动态因素影响，系统目前无法给出实时一口价。最终准确的报价需经由业务经理完成详细成本核算后，以为您提供的正式 <strong>Proforma Invoice (PI)</strong> 账单为准。
+                                                    </div>
+                                                </div>
+                                
+                                            </div>
+                                        </div>
+
                                     </div>
                                     <div class="metal-notice" style="margin-top: 12px; color: #64748b;">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
@@ -1935,28 +1961,6 @@
                             <!-- 2. 目的地与交货条款 (原 A 顺延为 B) -->
                             <div class="attr-section" style="margin-bottom: 35px;">
                                 <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 目的地与交货条款 (Bulk Logistics)</h4>
-                                <div style="margin-left: 13px;">
-                                    <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 15px;">
-                                        <label style="font-size:12px; font-weight:600; color:#475569;">大货目的地：</label>
-                                        <select id="bulk-destination" class="oem-input-mini" style="width: 280px; height: 38px;" onchange="updateLogisticsSummary()">
-                                            <option value="">请选择国家...</option>
-                                            <option value="美国">🇺🇸 美国</option>
-                                            <option value="欧洲">🇪🇺 欧洲</option>
-                                            <option value="澳洲">🇦🇺 澳洲</option>
-                                            <option value="中国">🇨🇳 中国</option>
-                                        </select>
-                                    </div>
-                                    <div class="radio-card-grid">
-                                        <label class="radio-card"><input type="radio" name="bulk_trade_term" value="DDP" checked onclick="selectBulkLogistics('term', 'DDP 双清包税', this)"><div class="card-content" style="padding:15px;"><h5>DDP / DDU</h5><p>包税到门，适合跨境电商</p></div></label>
-                                        <label class="radio-card"><input type="radio" name="bulk_trade_term" value="FOB" onclick="selectBulkLogistics('term', 'FOB 离岸交货', this)"><div class="card-content" style="padding:15px;"><h5>FOB / CIF</h5><p>指定港口交货，自理清关</p></div></label>
-                                        <label class="radio-card"><input type="radio" name="bulk_trade_term" value="EXW" onclick="selectBulkLogistics('term', 'EXW 工厂交货', this)"><div class="card-content" style="padding:15px;"><h5>EXW</h5><p>工厂交货，自理物流</p></div></label>
-                                    </div>
-                                </div>
-                            </div>
-                    
-                            <!-- C. 目的地与交货条款 (原 A) -->
-                            <div class="attr-section" style="margin-bottom: 35px;">
-                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">D. 目的地与交货条款 (Bulk Logistics)</h4>
                                 <div style="margin-left: 13px;">
                                     <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 15px;">
                                         <label style="font-size:12px; font-weight:600; color:#475569;">大货目的地：</label>
@@ -4417,13 +4421,18 @@
                     });
                 }
                 
+                // 获取填写的期望价格
+                const targetPriceEl = document.getElementById('bulk-target-price');
+                const targetPrice = (targetPriceEl && targetPriceEl.value) ? `(目标 $${targetPriceEl.value})` : '';
+        
                 sumEl.innerHTML = `
                     <div style="text-align:right;">
                         <span style="color:var(--primary-color); font-weight:700;">大货订单 (${dest})</span><br>
-                        <span style="font-size:11px; color:#64748b;">清单: ${bulkStylesCount}款 / 共${totalBulkQty}件</span><br>
+                        <span style="font-size:11px; color:#64748b;">清单: ${bulkStylesCount}款 / 共${totalBulkQty}件 ${targetPrice}</span><br>
                         <span style="font-size:10px; color:#94a3b8;">${bulkLogisticsConfig.term} | ${bulkLogisticsConfig.method}</span>
                     </div>
                 `;
+
             }
         }
 

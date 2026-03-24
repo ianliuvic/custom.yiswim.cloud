@@ -1873,7 +1873,16 @@
 
                             <!-- 2. 大货生产清单 -->
                             <div class="attr-section" style="margin-bottom: 35px;">
-                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 详细生产清单 (Bulk Order List)</h4>
+                                <!-- 【修改点】包裹标题和右侧按钮 -->
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;">
+                                    <h4 style="font-size: 14px; margin: 0; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 详细生产清单 (Bulk Order List)</h4>
+                                    
+                                    <!-- 【新增】起订量标准按钮 -->
+                                    <button type="button" class="btn-outline" style="padding: 4px 12px; font-size: 11px; display: flex; align-items: center; gap: 5px; border-color: #cbd5e1; color: var(--primary-color); background: #fffcfc;" onclick="openMoqStandardModal()">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                                        起订量(MOQ)阶梯标准
+                                    </button>
+                                </div>                                
                                 <div style="margin-left: 13px;">
                                     <div style="border: 1px solid #f1f5f9; border-radius: 12px; overflow: hidden; background: #fff;">
                                         <table class="sample-table" id="bulk-logic-table" style="border: none; border-bottom: 1px solid #f1f5f9;">
@@ -1922,7 +1931,6 @@
                                 }
                                 .bulk-size-textarea:focus { border-color: var(--primary-color); outline: none; background: #fff; }
                             </style>
-
 
                             <!-- 2. 目的地与交货条款 (原 A 顺延为 B) -->
                             <div class="attr-section" style="margin-bottom: 35px;">
@@ -1985,6 +1993,70 @@
                         </div>
                     </div>
 
+                    <!-- 【新增】起订量标准弹窗 -->
+                    <div class="modal-overlay" id="moqStandardModal">
+                        <div class="modal-content modal-md" style="max-width: 640px;">
+                            <div class="custom-modal-header" style="background: #fffafb;">
+                                <h3 style="color: var(--primary-color);">红绣服饰 (Hongxiu) 大货起订量标准</h3>
+                                <button class="modal-close-abs" onclick="closeMoqStandardModal()">&times;</button>
+                            </div>
+                            <div class="custom-modal-body" style="max-height: 70vh; overflow-y: auto;">
+                                
+                                <div style="margin-bottom: 20px; font-size: 12px; color: #64748b; line-height: 1.6; padding: 12px; background: #f8fafc; border-radius: 8px; border-left: 3px solid #f59e0b;">
+                                    <strong style="color: #475569;">核心原则：</strong> 以下所有起订量（MOQ）均指 <strong>“单款单色 (Per Style, Per Color)”</strong>。同一颜色内，尺码可按您的需求配比混合装箱。
+                                </div>
+                    
+                                <!-- 阶梯说明列表 -->
+                                <div style="display: flex; flex-direction: column; gap: 15px;">
+                                    
+                                    <!-- Level 1 -->
+                                    <div style="padding: 15px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                            <span style="font-size: 13px; font-weight: 700; color: #1e293b;">现有款式 (ODM) + 常规物料</span>
+                                            <span style="font-size: 14px; font-weight: 800; color: var(--primary-color);">MOQ 50件</span>
+                                        </div>
+                                        <p style="font-size: 11px; color: #64748b; margin: 0; line-height: 1.5;">
+                                            红绣现有打样成熟的版型，搭配市场现货常规面料、常规颜色及通用辅料。极速返单，适合试水测款。
+                                        </p>
+                                    </div>
+                    
+                                    <!-- Level 2 -->
+                                    <div style="padding: 15px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                            <span style="font-size: 13px; font-weight: 700; color: #1e293b;">ODM 款式轻定制 + 常规物料</span>
+                                            <span style="font-size: 14px; font-weight: 800; color: var(--primary-color);">MOQ 100件</span>
+                                        </div>
+                                        <p style="font-size: 11px; color: #64748b; margin: 0; line-height: 1.5;">
+                                            在现有款式基础上进行版型微调（如：加宽肩带、修改罩杯结构），需重新调试纸样与裁剪排料。
+                                        </p>
+                                    </div>
+                    
+                                    <!-- Level 3 -->
+                                    <div style="padding: 15px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                            <span style="font-size: 13px; font-weight: 700; color: #1e293b;">自主设计 (OEM) + 常规物料</span>
+                                            <span style="font-size: 14px; font-weight: 800; color: var(--primary-color);">MOQ 100-300件</span>
+                                        </div>
+                                        <p style="font-size: 11px; color: #64748b; margin: 0; line-height: 1.5;">
+                                            由您提供设计稿/参考图全新开版。具体起订量视款式的拼接复杂度与工艺难度而定。
+                                        </p>
+                                    </div>
+                    
+                                    <!-- Level 4 -->
+                                    <div style="padding: 15px; border: 1px solid #fecaca; border-radius: 8px; background: #fffafb;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                            <span style="font-size: 13px; font-weight: 700; color: #ef4444;">任何款式 (ODM/OEM) + 特殊物料</span>
+                                            <span style="font-size: 14px; font-weight: 800; color: #ef4444;">MOQ 300件起</span>
+                                        </div>
+                                        <p style="font-size: 11px; color: #64748b; margin: 0; line-height: 1.5;">
+                                            包含且不限于：面料定染指定 Pantone 色、定制定位印花、特殊肌理面料找样、品牌专属五金开模等。<strong>(受限于面料染厂及辅料供应链的最低开机起订要求)</strong>
+                                        </p>
+                                    </div>
+                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- ==========================================
                          步骤 5: 商业需求评估
@@ -4629,6 +4701,10 @@
         // 收费标准弹窗控制
         function openFeeStandardModal() { document.getElementById('feeStandardModal').classList.add('active'); }
         function closeFeeStandardModal() { document.getElementById('feeStandardModal').classList.remove('active'); }
+
+        // 起订量标准弹窗控制
+        function openMoqStandardModal() { document.getElementById('moqStandardModal').classList.add('active'); }
+        function closeMoqStandardModal() { document.getElementById('moqStandardModal').classList.remove('active'); }
 
         // 3. 确保款式数据更新时的健壮性
         // 实时更新数组数据（已移除重复行限制）

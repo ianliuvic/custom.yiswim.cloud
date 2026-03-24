@@ -2642,32 +2642,22 @@
         function updateStep4Scale() {
             const count = selectedOdmStyles.length;
             const hasOemContent = checkOemHasContent();
-            
+
             // 处理打样 Tab
             const sBadge = document.getElementById('odm-count-badge');
-            const sInput = document.getElementById('oem-style-count');
             if(sBadge) sBadge.innerText = count;
             
             // 处理大货 Tab
             const bBadge = document.getElementById('bulk-odm-count-badge');
-            const bInput = document.getElementById('bulk-oem-style-count');
             if(bBadge) bBadge.innerText = count;
-        
-            // 统一步调：锁定/解锁 OEM 输入框
-            [sInput, bInput].forEach(input => {
-                if (!input) return;
-                if (!hasOemContent) {
-                    input.value = 0;
-                    input.disabled = true;
-                    input.style.backgroundColor = '#f8fafc';
-                    input.style.cursor = 'not-allowed';
-                } else {
-                    input.disabled = false;
-                    input.style.backgroundColor = '#fff';
-                    input.style.cursor = 'text';
-                    if (parseInt(input.value) === 0) input.value = 1;
-                }
-            });
+            
+            // 将 Step 1 的数量同步到 Step 4 的 OEM 徽章上
+            const oemCountInput = document.getElementById('oem-collection-count');
+            const currentOemCount = oemCountInput ? (parseInt(oemCountInput.value) || 0) : 0;
+            const sOemBadge = document.getElementById('oem-count-badge');
+            const bOemBadge = document.getElementById('bulk-oem-count-badge');
+            if (sOemBadge) sOemBadge.innerText = currentOemCount;
+            if (bOemBadge) bOemBadge.innerText = currentOemCount;
         
             if (currentDeliveryMode === 'sample') renderSampleTable();
 
@@ -4905,7 +4895,8 @@
             if(!tbody) return;
         
             const odmStyles = (typeof selectedOdmStyles !== 'undefined') ? selectedOdmStyles : [];
-            const oemCount = parseInt(document.getElementById('bulk-oem-style-count')?.value) || 0;
+            const oemCountInput = document.getElementById('oem-collection-count');
+            const oemCount = oemCountInput ? (parseInt(oemCountInput.value) || 0) : 0;
         
             let styleOptionsHtml = `<option value="">-- 请选择款式 --</option>`;
             odmStyles.forEach(name => {
@@ -5036,7 +5027,8 @@
         function renderSampleTable() {
             const tbody = document.getElementById('sample-table-body');
             const odmStyles = (typeof selectedOdmStyles !== 'undefined') ? selectedOdmStyles : [];
-            const oemCount = parseInt(document.getElementById('oem-style-count').value) || 0;
+            const oemCountInput = document.getElementById('oem-collection-count');
+            const oemCount = oemCountInput ? (parseInt(oemCountInput.value) || 0) : 0;
             
             let hasHighQty = false; // 标记是否存在数量 > 2 的行
         

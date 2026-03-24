@@ -2431,12 +2431,26 @@
                 <button class="modal-close-abs" onclick="closeNdaModal()" style="top:22px; right:25px; background: #fff;">&times;</button>
             </div>
             <div class="custom-modal-body" style="padding: 35px 40px; max-height: 60vh; overflow-y: auto;">
-                <!-- 新增主体定义 -->
-                <div style="font-size: 13px; color: #1e293b; background: #f1f5f9; padding: 10px 15px; border-radius: 6px; margin-bottom: 20px; border-left: 4px solid #cbd5e1;">
-                    <strong>协议主体：</strong><br>
-                    甲方：<%= user.username %> (及所属品牌/公司)<br>
-                    乙方：兴城市红绣服饰有限公司 (Hongxiu Clothing)
+                <!-- 极简协议主体 (纯内联样式) -->
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 25px; margin-bottom: 25px; border-bottom: 1px solid #f1f5f9;">
+                    
+                    <!-- 甲方 -->
+                    <div style="flex: 1;">
+                        <span style="font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; display: block;">甲方 (披露方 / Disclosing Party)</span>
+                        <div style="font-size: 14px; font-weight: 700; color: #1e293b;"><%= user.username %></div>
+                    </div>
+                    
+                    <!-- VS 分隔符 -->
+                    <div style="padding: 0 20px; align-self: center; color: #cbd5e1; font-style: italic; font-size: 12px;">VS</div>
+                    
+                    <!-- 乙方 -->
+                    <div style="flex: 1; text-align: right;">
+                        <span style="font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; display: block;">乙方 (接收方 / Receiving Party)</span>
+                        <div style="font-size: 14px; font-weight: 700; color: #1e293b;">东莞市红绣服饰有限公司</div>
+                    </div>
+                    
                 </div>
+
                 <p style="font-size: 13.5px; color: #475569; line-height: 1.8; margin-top: 0; margin-bottom: 20px;">
                     <strong>第一条 保密内容与范围</strong><br>
                     乙方同意对甲方提供的所有设计稿、图纸、样衣、品牌信息、工艺单及尚未公开的商业计划严格保密。未经甲方明确书面许可，绝不向任何第三方（包括且不限于工厂外包商、竞争对手及公众媒体）透露。

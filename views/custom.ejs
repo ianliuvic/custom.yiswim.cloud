@@ -878,8 +878,8 @@
                                         <span><strong>收件地址：</strong>中国辽宁省兴城市铁西路10-8A红绣服饰有限公司 (收件人：刘先生 177-1101-4152)</span>
                                     </div>
                                     <div style="display: flex; align-items: center; gap: 10px; margin-top: 4px;">
-                                        <span style="font-weight: 500;">物流单号：</span>
-                                        <input type="text" class="oem-input-mini" style="flex: 1; max-width: 300px; background: #fff;" placeholder="请在此输入您的寄件快递单号，以便我们查收..." autocomplete="off" oninput="updateCombinedStyleSummary()">
+                                        <span style="font-weight: 500;">寄件单号 (选填)：</span>
+                                        <input type="text" class="oem-input-mini" style="flex: 1; max-width: 300px; background: #fff;" placeholder="若已寄出请填写；若尚未寄出，可稍后告知业务经理" autocomplete="off" oninput="updateCombinedStyleSummary()">
                                     </div>
                                 </div>
                             </div>
@@ -2660,6 +2660,13 @@
                 // 新增：显示寄样状态
                 if (oemPhysical) {
                     html += `<span style="font-size: 11px; color: #64748b; display:block;">- <span style="color:#27ae60;">●</span> 寄送实体样衣</span>`;
+                    const trackingInput = document.querySelector('#oem-address-info input');
+                    const trackingNo = trackingInput ? trackingInput.value.trim() : '';
+                    if (trackingNo) {
+                        html += `<span style="font-size: 10px; color: #94a3b8; display:block; padding-left:15px;">单号: ${trackingNo}</span>`;
+                    } else if (oemPhysical) {
+                        html += `<span style="font-size: 10px; color: #f59e0b; display:block; padding-left:15px;">待更新物流单号</span>`;
+                    }                
                 }
         
                 // 如果只有备注没有文件和寄样，显示提示

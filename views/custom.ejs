@@ -2534,6 +2534,7 @@
             }
             updateCombinedStyleSummary();
             // 【新增】同步更新 Step-4 的 ODM 数量徽章
+            const count = selectedOdmStyles.length; // 定义 count
             const sBadge = document.getElementById('odm-count-badge');
             const bBadge = document.getElementById('bulk-odm-count-badge');
             if (sBadge) sBadge.innerText = count;

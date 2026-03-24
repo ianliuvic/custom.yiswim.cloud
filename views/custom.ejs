@@ -830,6 +830,29 @@
 
                         <!-- OEM 自主设计模块 -->
                         <div id="custom-upload" class="hidden" style="animation: fadeIn 0.4s ease;">
+                            <!-- 新增：项目系列名称与款式数量 -->
+                            <div class="oem-upload-section" style="margin-bottom: 25px; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; background: #fbfcfd;">
+                                <div style="display: flex; gap: 20px; align-items: flex-start; margin-bottom: 15px;">
+                                    <div style="flex: 2;">
+                                        <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">项目/系列名称 (Collection Name) <span style="color:#ef4444;">*</span></label>
+                                        <input type="text" id="oem-collection-name" class="oem-input-mini" style="width:100%; height:38px; box-sizing:border-box;" placeholder="例如: 2026 Summer Neon Series" autocomplete="off" oninput="updateCombinedStyleSummary()">
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">包含款式数 (Style Count) <span style="color:#ef4444;">*</span></label>
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <input type="number" id="oem-collection-count" class="oem-input-mini" style="width:100%; height:38px; box-sizing:border-box;" value="1" min="1" max="50" oninput="renderOemStyleDescInputs()">
+                                            <span style="font-size: 12px; color: #64748b;">款</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 动态生成的款式简述容器 -->
+                                <div id="oem-style-desc-container" style="display: flex; flex-direction: column; gap: 10px;">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <span style="font-size: 11px; font-weight: 600; color: var(--primary-color); min-width: 45px;">款 1 :</span>
+                                        <input type="text" class="oem-input-mini" style="flex: 1; height: 32px; font-size: 12px; background: #fff;" placeholder="简要标识 (如: 红色连体款 / Page 1 比基尼上衣)" value="" oninput="oemStyleDescriptions[0]=this.value; updateCombinedStyleSummary();">
+                                    </div>
+                                </div>
+                            </div>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px; align-items: start;">
                                 <!-- A. 灵感参考图 -->
                                 <div class="oem-upload-section">
@@ -2670,10 +2693,19 @@
             // 2. 处理 OEM 部分 (判断是否有文件或备注)
             const hasOemFiles = oemFilesData.tech.length > 0 || oemFilesData.ref.length > 0;
             const oemRemark = document.getElementById('oem-remark').value.trim();
+            const collectionName = document.getElementById('oem-collection-name') ? document.getElementById('oem-collection-name').value.trim() : '';
+            const collectionCount = document.getElementById('oem-collection-count') ? parseInt(document.getElementById('oem-collection-count').value) : 0;
             const oemPhysical = document.getElementById('oem-physical').checked; // 新增：获取寄样勾选状态
-            if (hasOemFiles || oemRemark !== '' || oemPhysical) {
+            if (hasOemFiles || oemRemark !== '' || oemPhysical || collectionName !== '') {
                 html += `<div style="border-top: 1px dashed #e2e8f0; padding-top: 8px;">`;
                 html += `<strong style="color:var(--primary-color);">OEM 自主设计包:</strong><br>`;
+                
+                // 【新增】显示项目名称和数量
+                if (collectionName) {
+                    html += `<span style="font-size: 11px; color: #1e293b; display:block; font-weight:600;">[ ${collectionName} ] - 共 ${collectionCount} 款</span>`;
+                } else if (collectionCount > 0) {
+                    html += `<span style="font-size: 11px; color: #1e293b; display:block; font-weight:600;">共 ${collectionCount} 款设计</span>`;
+                }
                 
                 // 显示上传状态
                 if (hasOemFiles) {
@@ -2802,6 +2834,49 @@
         // 3. OEM 自主设计模块
         // ==========================================
         let oemFilesData = { tech: [], ref: [] }; 
+        let oemStyleDescriptions = ['']; // 存储每款的简述
+
+        function renderOemStyleDescInputs() {
+            const countInput = document.getElementById('oem-collection-count');
+            let count = parseInt(countInput.value) || 1;
+            if (count < 1) { count = 1; countInput.value = 1; }
+            if (count > 50) { count = 50; countInput.value = 50; }
+            
+            const container = document.getElementById('oem-style-desc-container');
+            
+            // 扩展数组以保留之前填写的值
+            while (oemStyleDescriptions.length < count) {
+                oemStyleDescriptions.push('');
+            }
+            
+            let html = '';
+            for (let i = 0; i < count; i++) {
+                // 转义处理避免单引号破坏 HTML 属性
+                const safeValue = oemStyleDescriptions[i].replace(/"/g, '&quot;');
+                html += `
+                    <div style="display: flex; align-items: center; gap: 10px; animation: fadeIn 0.3s ease;">
+                        <span style="font-size: 11px; font-weight: 600; color: var(--primary-color); min-width: 45px;">款 ${i + 1} :</span>
+                        <input type="text" class="oem-input-mini" style="flex: 1; height: 32px; font-size: 12px; background: #fff;" 
+                               placeholder="简要标识 (如: 红色连体款 / Page 1 比基尼上衣)" 
+                               value="${safeValue}" 
+                               oninput="oemStyleDescriptions[${i}] = this.value; updateCombinedStyleSummary();">
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+            
+            // 关键：将款式数量同步到第四步(交付规划)的 OEM 数量框，并触发对应逻辑
+            const step4SampleInput = document.getElementById('oem-style-count');
+            const step4BulkInput = document.getElementById('bulk-oem-style-count');
+            if (step4SampleInput) step4SampleInput.value = count;
+            if (step4BulkInput) step4BulkInput.value = count;
+            
+            // 触发第四步的表格刷新
+            if (typeof syncOemCount === 'function') syncOemCount(count);
+            if (typeof refreshSampleTableStyles === 'function') refreshSampleTableStyles();
+            
+            updateCombinedStyleSummary();
+        }
 
         function togglePhysicalInfo(isVisible) {
             const infoBox = document.getElementById('oem-address-info');

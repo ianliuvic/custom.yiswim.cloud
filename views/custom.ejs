@@ -1278,42 +1278,48 @@
 
                                 
                                     <!-- B. 行内动态配置面板 (参考面料风格) -->
-                                    <!-- 配置面板内部重构 -->
-                                    <div id="metal-config-panel" class="fabric-config-panel hidden" style="padding: 25px; background: #fffcfc; border-color: #fecaca;">
+                                    <div id="metal-config-panel" class="fabric-config-panel hidden" style="padding: 25px 30px; background: #fffcfc; border-color: #fecaca; margin-bottom: 20px;">
                                         <div class="config-arrow" style="border-top-color: #fecaca; border-left-color: #fecaca;"></div>
-
-                                        <!-- 插入下方这行：修复报错的关键标题行 -->
-                                        <div class="config-header" style="margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-                                            <h4 id="metal-active-title" style="margin: 0; font-size: 15px; color: var(--primary-color);">配置选项</h4>
-                                            <span style="font-size: 11px; color: #94a3b8;">Item Details</span>
-                                        </div>
-
-                                        <!-- 第一行：基本要求与参考图 -->
-                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 25px;">
-                                            <div>
-                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">详细需求说明 <span style="color:#ef4444;">*</span></label>
-                                                <textarea id="metal-item-remark" class="oem-textarea" style="height: 100px; font-size:12px;" placeholder="请描述规格要求（如：内径 1.2cm）、单件用量等..." oninput="updateMetalItemData()"></textarea>
-                                            </div>
-                                            <div>
-                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">样式参考图 (Style Ref)</label>
-                                                <div class="premium-upload-box" onclick="document.getElementById('metalItemStyleFile').click()" style="padding: 15px; border-style: dashed; background: #fff;">
-                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-                                                    <input type="file" id="metalItemStyleFile" class="hidden" multiple onchange="handleMetalItemFiles(this, 'style')">
-                                                </div>
-                                                <!-- 修复 Gap：确保预览在自己的容器内 -->
-                                                <div id="metalItemStylePreview" class="oem-image-preview-grid" style="margin-top:10px;"></div>
-                                            </div>
+                                        
+                                        <div class="config-header" style="margin-bottom: 20px; border-bottom: 1px dashed #fecaca; padding-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                                            <h4 id="metal-active-title" style="margin: 0; font-size: 15px; color: var(--primary-color); font-weight: 600;">配置选项</h4>
+                                            <span style="font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Item Details</span>
                                         </div>
                                     
-                                        <!-- 第二行：独立出的 Logo 定制区 -->
-                                        <div style="border-top: 1px dashed #f1f5f9; padding-top: 20px;">
-                                            <label class="oem-checkbox-label">
+                                        <!-- 第一行：左右等高对称布局 -->
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                                            <!-- 左侧：文本描述 -->
+                                            <div style="display: flex; flex-direction: column;">
+                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">详细需求说明 <span style="color:#ef4444;">*</span></label>
+                                                <textarea id="metal-item-remark" class="oem-textarea" style="flex: 1; min-height: 90px; resize: none; font-size:12px; box-sizing: border-box;" placeholder="请描述规格要求（如：内径 1.2cm）、单件用量等..." oninput="updateMetalItemData()"></textarea>
+                                            </div>
+                                            
+                                            <!-- 右侧：文件上传框 (强制与左侧等高) -->
+                                            <div style="display: flex; flex-direction: column;">
+                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">样式参考图 (Style Ref)</label>
+                                                <div class="premium-upload-box" onclick="document.getElementById('metalItemStyleFile').click()" style="flex: 1; min-height: 90px; padding: 0; border-style: dashed; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; cursor: pointer;">
+                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="margin-bottom:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                                                    <p style="font-size: 11px; color: #94a3b8; margin:0;">点击上传参考文件</p>
+                                                    <input type="file" id="metalItemStyleFile" class="hidden" multiple onchange="handleMetalItemFiles(this, 'style')">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- 预览网格：放置在左右布局的正下方，右侧对齐 -->
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 10px;">
+                                            <div></div> <!-- 左侧占位，保持视觉对齐 -->
+                                            <div id="metalItemStylePreview" class="oem-image-preview-grid"></div>
+                                        </div>
+                                    
+                                        <!-- 第二行：紧凑的 Logo 定制区 -->
+                                        <div style="border-top: 1px dashed #f1f5f9; padding-top: 15px; margin-top: 15px;">
+                                            <label class="oem-checkbox-label" style="margin: 0; padding: 0;">
                                                 <input type="checkbox" id="metal-item-logo-check" onchange="toggleMetalLogoArea(this.checked)"> 需要在该配件上定制品牌 Logo?
                                             </label>
                                             
-                                            <div id="metal-item-logo-box" class="hidden" style="margin-top: 15px; padding: 20px; background: #fff; border: 1px dashed #fecaca; border-radius: 8px;">
+                                            <div id="metal-item-logo-box" class="hidden" style="margin-top: 12px; padding: 15px; background: #fff; border: 1px dashed #fecaca; border-radius: 8px;">
                                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start;">
-                                                    <div class="premium-upload-row upload-row-sm" onclick="document.getElementById('metalItemLogoFile').click()">
+                                                    <div class="premium-upload-row upload-row-sm" onclick="document.getElementById('metalItemLogoFile').click()" style="margin: 0;">
                                                         <span id="metalItemLogoFileName" style="font-size:11px; color:#94a3b8;">选择 Logo 矢量图 (AI/PDF)</span>
                                                         <input type="file" id="metalItemLogoFile" class="hidden" multiple onchange="handleMetalItemFiles(this, 'logo')">
                                                     </div>
@@ -1322,7 +1328,6 @@
                                             </div>
                                         </div>
                                     </div>
-
 
                                 </div>
 
@@ -4983,11 +4988,21 @@
             loadMetalPanelData(catName);
             panel.classList.remove('hidden');
             
-            // 调整箭头位置
+                // 调整箭头位置并平滑滚动
             setTimeout(() => {
                 const arrow = panel.querySelector('.config-arrow');
                 const arrowPos = el.getBoundingClientRect().left - panel.getBoundingClientRect().left + (el.getBoundingClientRect().width / 2) - 8;
                 arrow.style.left = `${arrowPos}px`;
+                
+                // --- 新增滚动居中逻辑 ---
+                const scrollArea = document.querySelector('.config-scroll-area');
+                const header = panel.querySelector('.config-header');
+                if (scrollArea && header) {
+                    const scrollAreaRect = scrollArea.getBoundingClientRect();
+                    const headerRect = header.getBoundingClientRect();
+                    const scrollAmount = headerRect.top - scrollAreaRect.top - 80;
+                    scrollArea.scrollBy({ top: scrollAmount, behavior: 'smooth' });
+                }
             }, 50);
         }
         
@@ -5085,11 +5100,17 @@
             
             const files = (type === 'logo') ? data.logoFiles : data.styleFiles;
             files.forEach((file, index) => {
-                const url = URL.createObjectURL(file);
-                // 关键：移除 style="width:50px;" 让 CSS Grid 自动控制
+                const isImage = file.type.startsWith('image/');
+                const ext = file.name.split('.').pop().toUpperCase();
+                
+                // 核心修复：如果是图片就渲染 img，否则渲染格式方块
+                const content = isImage 
+                    ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')">` 
+                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;border-radius:4px;border:1px solid #e2e8f0;">${ext}</div>`;
+        
                 grid.insertAdjacentHTML('beforeend', `
                     <div class="oem-preview-item">
-                        <img src="${url}" onclick="openOemPreview('${url}', '${file.name}')">
+                        ${content}
                         <button type="button" class="oem-preview-remove" onclick="removeMetalItemFile('${cat}', '${type}', ${index})">&times;</button>
                     </div>`);
             });

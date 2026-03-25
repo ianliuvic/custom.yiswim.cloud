@@ -988,6 +988,20 @@
                                     </div>
                                 </div>
 
+                                <!-- 新增：定制找样附件上传 -->
+                                <div style="margin-bottom: 20px;">
+                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">上传面料描述文件或参考图 (Optional Documents)</label>
+                                    <div class="premium-upload-row" onclick="document.getElementById('customFabricFile').click()" style="padding: 12px 15px; background: #fff; border-color: #e2e8f0; border-radius: 8px;">
+                                        <div class="upload-label-group">
+                                            <span id="customFabricFileName" class="upload-label-main" style="font-size: 12px; color: #94a3b8;">选择图片或 PDF 说明文档</span>
+                                        </div>
+                                        <input type="file" id="customFabricFile" multiple class="hidden" onchange="handleCustomFabricFiles(this.files)"> 
+                                        <button type="button" class="btn-outline" style="padding: 4px 12px; font-size: 11px; pointer-events: none;">浏览文件</button>
+                                    </div>
+                                    <!-- 预览网格 -->
+                                    <div id="customFabricPreviewGrid" class="oem-image-preview-grid" style="margin-top: 10px;"></div>
+                                </div>
+
                                 <!-- 3. 寄样选项与地址展开区 -->
                                 <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 5px;">
                                     <div>
@@ -3697,6 +3711,7 @@
                     files: [], 
                     prints: [], 
                     customDesc: '', 
+                    customFiles: [], // 新增此行
                     comp: '', 
                     gsm: '', 
                     colorReq: '', 
@@ -3728,6 +3743,12 @@
                 document.getElementById('custom-fabric-physical').checked = config.physical || false;
                 document.getElementById('custom-fabric-tracking').value = config.trackingNo || '';
                 document.getElementById('custom-fabric-address-info').classList.toggle('hidden', !config.physical);
+
+                // 在 selectFabric 内部的 if (isCustomSourcing) { ... } 块末尾增加
+                renderCustomFabricPreview(config.customFiles || []);
+                const nameEl = document.getElementById('customFabricFileName');
+                if (nameEl) nameEl.innerText = config.customFiles.length > 0 ? `已选 ${config.customFiles.length} 个附件` : '选择图片或 PDF 说明文档';
+
             } else {
                 // 标准面料选择模式
                 standardArea.forEach(area => area?.classList.remove('hidden'));
@@ -3776,6 +3797,52 @@
             updateFabricSummary();
         }
 
+        // 处理定制找样附件上传
+        function handleCustomFabricFiles(files) {
+            if(!activeFabricCat || !fabricSelection[activeFabricCat].activeName) return;
+            const config = fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName];
+            
+            Array.from(files).forEach(file => {
+                if (file.size > 20 * 1024 * 1024) { alert(`文件 ${file.name} 超过 20MB`); return; }
+                if (!config.customFiles.some(f => f.name === file.name && f.size === file.size)) {
+                    config.customFiles.push(file);
+                }
+            });
+            
+            document.getElementById('customFabricFileName').innerText = `已选 ${config.customFiles.length} 个附件`;
+            renderCustomFabricPreview(config.customFiles);
+            updateFabricSummary();
+        }
+        
+        // 渲染定制找样预览
+        function renderCustomFabricPreview(files) {
+            const grid = document.getElementById('customFabricPreviewGrid');
+            if(!grid) return;
+            grid.innerHTML = '';
+            files.forEach((file, index) => {
+                const isImage = file.type.startsWith('image/');
+                const ext = file.name.split('.').pop().toUpperCase();
+                
+                const content = isImage 
+                    ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')" style="cursor:zoom-in;">`
+                    : `<div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#f1f5f9; color:#64748b; font-size:10px; font-weight:bold;">${ext}</div>`;
+                    
+                grid.insertAdjacentHTML('beforeend', `
+                    <div class="oem-preview-item" style="width:60px; height:60px; border-radius:6px;">
+                        ${content}
+                        <button type="button" class="oem-preview-remove" onclick="removeCustomFabricFile(${index})">&times;</button>
+                    </div>`);
+            });
+        }
+        
+        // 移除定制找样附件
+        function removeCustomFabricFile(index) {
+            const config = fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName];
+            config.customFiles.splice(index, 1);
+            document.getElementById('customFabricFileName').innerText = config.customFiles.length > 0 ? `已选 ${config.customFiles.length} 个附件` : '选择图片或 PDF 说明文档';
+            renderCustomFabricPreview(config.customFiles);
+            updateFabricSummary();
+        }
 
         // 切换印花类型
         function switchPrintType(type, el) {

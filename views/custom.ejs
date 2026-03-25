@@ -3724,15 +3724,17 @@
                 document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：${name}`;
 
                 // --- 新增：里料特殊过滤逻辑 ---
-                const printTab = document.getElementById('mode-print');
+                const modeSwitcher = document.getElementById('fabric-mode-switcher');
                 const notesArea = document.querySelector('.fabric-notes-area');
                 
                 if (isLining) {
-                    if (printTab) printTab.style.display = 'none'; // 隐藏印花 Tab
-                    if (notesArea) notesArea.style.display = 'none'; // 隐藏拼色说明与附件区
-                    config.mode = 'solid'; // 强制里料只能是纯色模式
+                    // 如果是里料，直接隐藏整个切换器（包含纯色和印花Tab）
+                    if (modeSwitcher) modeSwitcher.style.display = 'none'; 
+                    if (notesArea) notesArea.style.display = 'none';
+                    config.mode = 'solid'; // 强制数据为纯色模式
                 } else {
-                    if (printTab) printTab.style.display = 'block';
+                    // 非里料分类，恢复切换器的显示
+                    if (modeSwitcher) modeSwitcher.style.display = 'inline-flex'; 
                     if (notesArea) notesArea.style.display = 'block';
                 }
                 

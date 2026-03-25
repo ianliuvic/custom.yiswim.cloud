@@ -3648,22 +3648,14 @@
             const panel = document.getElementById('fabric-config-panel');
             const selection = fabricSelection[catId];
             const isCustomSourcing = (name === 'CUSTOM_SOURCING');
-
-            const isLining = (selection.originalCatName === '里料');
             
             // 1. 处理面板折叠逻辑
-            if (selection.activeName === name) {
-                panel.classList.toggle('hidden');
-                if (!panel.classList.contains('hidden')) {
-                    scrollToPanelHeader();
-                    const arrow = document.getElementById('config-arrow');
-                    const arrowPos = el.getBoundingClientRect().left - panel.getBoundingClientRect().left + (el.getBoundingClientRect().width / 2) - 8;
-                    arrow.style.left = `${arrowPos}px`;
-                }
+            if (selection.activeName === name && !panel.classList.contains('hidden')) {
+                panel.classList.add('hidden');
                 return;
             }
         
-            // 2. 切换选中状态与 DOM 搬运（确保面板插入在当前行下方）
+            // 2. 切换选中状态与 DOM 搬运
             document.getElementById(catId).querySelectorAll('.fabric-item').forEach(item => item.classList.remove('selected')); 
             el.classList.add('selected');
             
@@ -3692,44 +3684,37 @@
             const arrowPos = el.getBoundingClientRect().left - panel.getBoundingClientRect().left + (el.getBoundingClientRect().width / 2) - 8;
             arrow.style.left = `${arrowPos}px`;
         
-            // 3. 数据结构初始化（包含所有新增字段）
+            // 3. 数据结构初始化
             selection.activeName = name; 
             if (!selection.configs[name]) {
                 selection.configs[name] = { 
                     mode: isCustomSourcing ? 'custom' : 'solid', 
-                    colors: [], 
-                    colorText: '', 
-                    printType: 'seamless', 
-                    printRefColor: '',
-                    remark: '', 
-                    files: [], 
-                    prints: [], 
-                    customDesc: '', 
-                    customFiles: [], // 新增此行
-                    comp: '', 
-                    gsm: '', 
-                    colorReq: '', 
-                    physical: false, 
-                    trackingNo: '' 
+                    colors: [], colorText: '', printType: 'seamless', printRefColor: '',
+                    remark: '', files: [], prints: [], customDesc: '', comp: '', 
+                    gsm: '', colorReq: '', physical: false, trackingNo: '', customFiles: [] 
                 };
             }
             const config = selection.configs[name];
         
-            // 4. UI 面板显隐切换
-            const standardArea = [
-                document.getElementById('fabric-mode-switcher'), 
-                document.getElementById('fabric-solid-area'), 
-                document.getElementById('fabric-print-area')
-            ];
+            // 4. UI 显隐逻辑定义
+            const modeSwitcher = document.getElementById('fabric-mode-switcher');
+            const solidArea = document.getElementById('fabric-solid-area');
+            const printArea = document.getElementById('fabric-print-area');
             const customForm = document.getElementById('fabric-custom-sourcing-form');
+            const notesArea = document.querySelector('.fabric-notes-area'); // 核心变量
+            const isLining = (selection.originalCatName === '里料');
+        
+            // --- 核心修复：无论哪种模式，只要是里料，强制隐藏拼色说明与附件区 ---
+            if (notesArea) notesArea.style.display = isLining ? 'none' : 'block';
+            if (modeSwitcher) modeSwitcher.style.display = isLining ? 'none' : 'inline-flex';
         
             if (isCustomSourcing) {
-                // 定制找样模式
-                standardArea.forEach(area => area?.classList.add('hidden'));
+                // A. 定制找样模式 UI
+                [modeSwitcher, solidArea, printArea].forEach(area => area?.classList.add('hidden'));
                 customForm.classList.remove('hidden');
                 document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：定制开发/全球找样`;
                 
-                // 恢复定制找样表单数据
+                // 恢复定制表单数据
                 document.getElementById('custom-fabric-desc').value = config.customDesc || '';
                 document.getElementById('custom-fabric-comp').value = config.comp || '';
                 document.getElementById('custom-fabric-gsm').value = config.gsm || '';
@@ -3737,43 +3722,22 @@
                 document.getElementById('custom-fabric-physical').checked = config.physical || false;
                 document.getElementById('custom-fabric-tracking').value = config.trackingNo || '';
                 document.getElementById('custom-fabric-address-info').classList.toggle('hidden', !config.physical);
-
-                // 在 selectFabric 内部的 if (isCustomSourcing) { ... } 块末尾增加
                 renderCustomFabricPreview(config.customFiles || []);
+                
                 const nameEl = document.getElementById('customFabricFileName');
                 if (nameEl) nameEl.innerText = config.customFiles.length > 0 ? `已选 ${config.customFiles.length} 个附件` : '选择图片或 PDF 说明文档';
-
             } else {
-                // 标准面料选择模式
-                standardArea.forEach(area => area?.classList.remove('hidden'));
+                // B. 标准面料模式 UI
+                [solidArea, printArea].forEach(area => area?.classList.remove('hidden'));
                 customForm.classList.add('hidden');
                 document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：${name}`;
-
-                // --- 新增：里料特殊过滤逻辑 ---
-                const modeSwitcher = document.getElementById('fabric-mode-switcher');
-                const notesArea = document.querySelector('.fabric-notes-area');
                 
-                if (isLining) {
-                    // 如果是里料，直接隐藏整个切换器（包含纯色和印花Tab）
-                    if (modeSwitcher) modeSwitcher.style.display = 'none'; 
-                    if (notesArea) notesArea.style.display = 'none';
-                    config.mode = 'solid'; // 强制数据为纯色模式
-                } else {
-                    // 非里料分类，恢复切换器的显示
-                    if (modeSwitcher) modeSwitcher.style.display = 'inline-flex'; 
-                    if (notesArea) notesArea.style.display = 'block';
-                }
-                
-                // 恢复选色/印花模式显示
+                if (isLining) config.mode = 'solid'; // 里料强制纯色数据
                 switchFabricMode(config.mode); 
                 
-                // 恢复纯色模式下的色号文本
                 document.getElementById('fabric-color-input').value = config.colorText || '';
-                
-                // 恢复印花模式下的详细配置
                 if (config.mode === 'print') {
-                    const typeItems = document.querySelectorAll('.print-type-item');
-                    typeItems.forEach(item => {
+                    document.querySelectorAll('.print-type-item').forEach(item => {
                         const isTarget = (config.printType === 'seamless' && item.innerText.includes('无缝')) || 
                                          (config.printType === 'placement' && item.innerText.includes('定位'));
                         item.classList.toggle('selected', isTarget);
@@ -3782,7 +3746,7 @@
                 }
             }
         
-            // 5. 恢复通用项（备注、附件、印花预览）
+            // 5. 恢复通用项（仅在非里料且非找样时才会有实际内容的可见性，但数据恢复照旧）
             document.getElementById('config-type-tag').innerText = selection.originalCatName;
             document.getElementById('fabric-remark').value = config.remark || '';
             renderFabricFileList(config.files || []);
@@ -3790,6 +3754,7 @@
             
             updateFabricSummary();
         }
+
 
         // 处理定制找样附件上传
         function handleCustomFabricFiles(files) {

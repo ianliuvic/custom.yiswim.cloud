@@ -3741,7 +3741,7 @@
                 if (nameEl) nameEl.innerText = config.customFiles.length > 0 ? `已选 ${config.customFiles.length} 个附件` : '选择图片或 PDF 说明文档';
             } else {
                 // B. 标准面料模式 UI
-                [solidArea, printArea].forEach(area => area?.classList.remove('hidden'));
+                [modeSwitcher, solidArea, printArea].forEach(area => area?.classList.remove('hidden'));
                 customForm.classList.add('hidden');
                 document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：${name}`;
                 

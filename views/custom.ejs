@@ -978,7 +978,19 @@
                             
                             <!-- 新增：定制找样专属表单 (默认隐藏) -->
                             <div id="fabric-custom-sourcing-form" class="hidden" style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px dashed #e2e8f0;">
-                                
+                                <!-- 新增：找样服务重要提示 -->
+                                <div style="margin-bottom: 20px; padding: 12px 18px; background: #fffbeb; border: 1px dashed #fcd34d; border-radius: 8px; display: flex; align-items: flex-start; gap: 12px;">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5" style="margin-top: 2px; flex-shrink: 0;">
+                                        <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
+                                    </svg>
+                                    <div style="font-size: 12px; color: #92400e; line-height: 1.6;">
+                                        <strong>找样特别说明 (Sourcing Notice)：</strong><br>
+                                        • 服务周期：预计 <strong>3-7 个工作日</strong>，具体视物料稀缺程度而定。<br>
+                                        • 服务费用：特殊找样可能产生额外的采购服务费及物流溢价。<br>
+                                        • <strong>核心建议：</strong>为确保质感、克重及对色 100% 精准，强烈建议您寄送<strong>实物面料/样衣</strong>供我们对照匹配。
+                                    </div>
+                                </div>
+
                                 <!-- 1. 需求描述区 -->
                                 <label style="display:block; font-size:13px; font-weight:600; color:var(--text-main); margin-bottom:8px;">面料需求描述</label>
                                 <textarea id="custom-fabric-desc" placeholder="请详细描述您需要的面料质感、特性（如：冰丝感、高弹、抗菌、防泼水、起皱肌理等）..." class="oem-textarea" style="height: 70px; margin-bottom: 15px;" oninput="updateCustomFabricData()"></textarea>

@@ -1570,7 +1570,7 @@
                                                     <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">刀模图/异形参考 (选填)</label>
                                                     <div class="premium-upload-box" onclick="document.getElementById('hangtagShapeFile').click()" style="flex: 1; min-height: 80px; padding: 0; border-style: dashed; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-sizing: border-box;">
                                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="margin-bottom:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-                                                        <p style="font-size: 11px; color: #94a3b8; margin:0;">点击上传参考文件</p>
+                                                        <p id="hangtagShapeFileName" style="font-size: 11px; color: #94a3b8; margin:0;">点击上传参考文件</p>
                                                         <input type="file" id="hangtagShapeFile" class="hidden" multiple onchange="handleHangtagFiles(this, 'shape')">
                                                     </div>
                                                 </div>
@@ -1623,7 +1623,7 @@
                                                 <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">设计稿/Logo上传</label>
                                                 <div class="premium-upload-box" onclick="document.getElementById('hangtagDesignFile').click()" style="flex: 1; min-height: 120px; padding: 0; border-style: dashed; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-sizing: border-box;">
                                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="margin-bottom:8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-                                                    <p style="font-size: 11px; color: #94a3b8; margin:0;">点击上传 AI / PDF / 高清图</p>
+                                                    <p id="hangtagFileName" style="font-size: 11px; color: #94a3b8; margin:0;">点击上传 AI / PDF / 高清图</p>
                                                     <input type="file" id="hangtagDesignFile" multiple class="hidden" onchange="handleHangtagFiles(this, 'design')">
                                                 </div>
                                             </div>

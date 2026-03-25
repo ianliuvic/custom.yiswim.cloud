@@ -1087,7 +1087,20 @@
                                     <input type="file" id="printFile" multiple class="hidden" onchange="handlePrintFiles(this.files)">
                                 </div>
                                 <div id="printPreviewGrid" class="oem-image-preview-grid" style="margin-top: 15px;"></div>
-                            
+
+                                <!-- 新增：印花尺寸比例说明 -->
+                                <div style="margin-top: 20px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">印花尺寸比例 (Print Scale)</label>
+                                    <input type="text" id="fabric-print-scale" class="oem-input-mini" style="width: 100%; box-sizing: border-box; background: #fff;" placeholder="例: 循环单元 20cm 或 Logo 宽 10cm" oninput="updatePrintScale()">
+                                    
+                                    <div style="margin-top: 10px; display: flex; align-items: flex-start; gap: 8px;">
+                                        <div style="background: var(--primary-color); color: #fff; font-size: 9px; font-weight: 800; padding: 2px 5px; border-radius: 4px; margin-top: 2px;">TIP</div>
+                                        <p style="margin: 0; font-size: 11px; color: #64748b; line-height: 1.5;">
+                                            如果您对尺寸没有概念，请在上方区域上传一张<strong>成衣效果图 (Mockup)</strong>。通过图片展示印花在泳装上的比例位置，版师将据此为您精准还原。
+                                        </p>
+                                    </div>
+                                </div>
+
                                 <!-- 3. 调色参考 -->
                                 <div style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed #e2e8f0;">
                                     <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">调色对照参考 (Color Match)</label>
@@ -3690,7 +3703,7 @@
                 selection.configs[name] = { 
                     mode: isCustomSourcing ? 'custom' : 'solid', 
                     colors: [], colorText: '', printType: 'seamless', printRefColor: '',
-                    remark: '', files: [], prints: [], customDesc: '', comp: '', 
+                    remark: '', files: [], prints: [], customDesc: '', comp: '', printScale: '',
                     gsm: '', colorReq: '', physical: false, trackingNo: '', customFiles: [] 
                 };
             }
@@ -3737,6 +3750,7 @@
                 
                 document.getElementById('fabric-color-input').value = config.colorText || '';
                 if (config.mode === 'print') {
+                    document.getElementById('fabric-print-scale').value = config.printScale || '';
                     document.querySelectorAll('.print-type-item').forEach(item => {
                         const isTarget = (config.printType === 'seamless' && item.innerText.includes('无缝')) || 
                                          (config.printType === 'placement' && item.innerText.includes('定位'));
@@ -3744,6 +3758,14 @@
                     });
                     document.getElementById('fabric-print-ref-color').value = config.printRefColor || '';
                 }
+            }
+
+            // 更新印花尺寸数据
+            function updatePrintScale() {
+                if(!activeFabricCat || !fabricSelection[activeFabricCat] || !fabricSelection[activeFabricCat].activeName) return;
+                const config = fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName];
+                config.printScale = document.getElementById('fabric-print-scale').value.trim();
+                updateFabricSummary();
             }
         
             // 5. 恢复通用项（仅在非里料且非找样时才会有实际内容的可见性，但数据恢复照旧）
@@ -3992,7 +4014,8 @@
                             // 印花模式
                             const typeName = config.printType === 'placement' ? '定位印花' : '无缝印花';
                             const refText = config.printRefColor ? ` | 对色: ${config.printRefColor}` : '';
-                            statusText = `${selection.activeName}<br><span style="font-size:10px; color:var(--primary-color);">${typeName}${refText}</span>`;
+                            const scaleText = config.printScale ? ` | 尺寸: ${config.printScale}` : '';
+                            statusText = `${selection.activeName}<br><span style="font-size:10px; color:var(--primary-color);">${typeName}印花${refText}${scaleText}</span>`;
                         } else {
                             // 纯色模式 (默认)
                             const colorDisplay = config.colorText ? `色号: ${config.colorText}` : '待填色号';

@@ -915,18 +915,11 @@
                             </div>
                         
                             <div style="background: #fff; border-radius: 12px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px;">
-                                <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px dashed #f1f5f9; padding-top: 15px; margin-top: 15px;">
+                                <div>
                                     <label class="oem-checkbox-label" style="margin: 0; padding: 0;">
-                                        <input type="checkbox" id="metal-item-logo-check" onchange="toggleMetalLogoArea(this.checked)"> 需要在该配件上定制品牌 Logo?
+                                        <input type="checkbox" id="oem-physical" onchange="togglePhysicalInfo(this.checked)"> 寄送实体样衣进行打版参考
                                     </label>
-                                    
-                                    <!-- 新增：开模费与 MOQ 提示 -->
-                                    <div style="font-size: 10px; color: #b45309; background: #fffbeb; border: 1px solid #fde68a; padding: 3px 8px; border-radius: 4px; display: flex; align-items: center; gap: 4px; font-weight: 500;">
-                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                                        <span>注：定制专属 Logo 模具需支付开模费，且大货起订量 (MOQ) 通常为 500-1000 件/款。</span>
-                                    </div>
                                 </div>
-
                                 <div id="oem-address-info" class="hidden" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed #cbd5e1; display: flex; flex-direction: column; gap: 10px; font-size: 12.5px; color: #475569; transition: all 0.3s;">
                                     <div style="display: flex; align-items: flex-start; gap: 6px; line-height: 1.5;">
                                         <span style="font-size: 14px;">📍</span>

@@ -3480,15 +3480,19 @@
                     const printArea = document.getElementById('fabric-print-area');
                     const customForm = document.getElementById('fabric-custom-sourcing-form');
                     const notesArea = document.querySelector('.fabric-notes-area');
-                    
                     const isLining = (selection.originalCatName === '里料');
 
+                    // --- 统一控制里料样式 ---
+                    if (notesArea) notesArea.style.display = isLining ? 'none' : 'block';
+                    if (modeSwitcher) modeSwitcher.style.display = isLining ? 'none' : 'inline-flex';
+
                     if (isCustomSourcing) {
-                        // 定制找样恢复逻辑
+                        // 定制找样逻辑
                         document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：定制开发/全球找样`;
                         [modeSwitcher, solidArea, printArea].forEach(area => area?.classList.add('hidden'));
                         if(customForm) customForm.classList.remove('hidden');
                         
+                        // 恢复数据
                         document.getElementById('custom-fabric-desc').value = config.customDesc || '';
                         document.getElementById('custom-fabric-comp').value = config.comp || '';
                         document.getElementById('custom-fabric-gsm').value = config.gsm || '';
@@ -3496,25 +3500,15 @@
                         document.getElementById('custom-fabric-physical').checked = config.physical || false;
                         document.getElementById('custom-fabric-tracking').value = config.trackingNo || '';
                         document.getElementById('custom-fabric-address-info').classList.toggle('hidden', !config.physical);
+                        renderCustomFabricPreview(config.customFiles || []);
                     } else {
-                        // 标准面料恢复逻辑
+                        // 标准面料逻辑 (删掉了原有的 notesArea.style.display 行)
                         document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：${selection.activeName}`;
                         [solidArea, printArea].forEach(area => area?.classList.remove('hidden'));
                         if(customForm) customForm.classList.add('hidden');
                         
-                        // 核心：应用里料样式隔离逻辑
-                        if (isLining) {
-                            if (modeSwitcher) modeSwitcher.style.display = 'none'; 
-                            if (notesArea) notesArea.style.display = 'none';
-                            config.mode = 'solid'; 
-                        } else {
-                            if (modeSwitcher) modeSwitcher.style.display = 'inline-flex'; 
-                            if (notesArea) notesArea.style.display = 'block';
-                        }
-                        
+                        if (isLining) config.mode = 'solid';
                         switchFabricMode(config.mode); 
-                        
-                        // 核心修复：恢复输入框，移除报错的 renderColorPalette
                         document.getElementById('fabric-color-input').value = config.colorText || '';
                         
                         if (config.mode === 'print') {

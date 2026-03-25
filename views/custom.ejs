@@ -2557,7 +2557,10 @@
         
         <!-- 交互容器 -->
         <div id="swatchFullContainer" style="width:100vw; height:100vh; display:flex; align-items:center; justify-content:center; cursor: grab; overflow: hidden;">
-            <img id="swatchFullImg" src="" style="user-select: none; -webkit-user-drag: none; transition: transform 0.05s linear; transform: translate(0px, 0px) scale(1);">
+            <img id="swatchFullImg" src="" 
+                 style="user-select: none; -webkit-user-drag: none; transition: transform 0.05s linear; 
+                        transform: translate(0px, 0px) scale(1); 
+                        max-width: 95%; max-height: 95%; object-fit: contain;">
         </div>
     
         <!-- 操作提示 -->
@@ -3685,19 +3688,23 @@
         const swatchImg = document.getElementById('swatchFullImg');
         const swatchCont = document.getElementById('swatchFullContainer');
         
-        // 1. 打开与初始化
         function openFabricColorModal() {
             const bgImage = document.getElementById('fabric-swatch-img-preview').style.backgroundImage;
             const imageUrl = bgImage.slice(4, -1).replace(/["']/g, ""); 
+            
+            // 关键：先加载图片
             swatchImg.src = imageUrl;
             
-            // 重置变量
-            zoom = 1; offset = { x: 0, y: 0 };
-            updateSwatchTransform();
+            // 关键：重置为初始“完整展示”状态
+            zoom = 1; 
+            offset = { x: 0, y: 0 };
+            
+            // 延迟一丁点执行更新，确保浏览器已识别新 src
+            setTimeout(updateSwatchTransform, 10);
             
             document.getElementById('swatchFullModal').classList.add('active');
         }
-        
+
         // 2. 更新图片状态 (唯一控制函数)
         function updateSwatchTransform() {
             swatchImg.style.transform = `translate(${offset.x}px, ${offset.y}px) scale(${zoom})`;

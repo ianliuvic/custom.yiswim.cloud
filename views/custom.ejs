@@ -1208,34 +1208,58 @@
                                     </div>
                                 </div>
                                 <!-- ====================================================== -->
-                                <div id="metal-custom-details" class="hidden" style="animation: fadeIn 0.4s ease; padding-top: 15px;">
-                                    <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">3. 金属件明细定义 (Detailed Specs)</h4>
-                                    <p style="font-size: 11px; color: #94a3b8; margin: -5px 0 20px 13px;">请选择所需类别，选中后在下方展开的面板中填写具体要求。支持多选。</p>
+                                <!-- 修复间距：将 padding-top 改小，去除多余的 margin -->
+                                <div id="metal-custom-details" class="hidden" style="animation: fadeIn 0.4s ease; padding-top: 5px;">
                                     
-                                    <!-- A. 金属件类别网格 -->
-                                    <div class="option-grid" id="metal-category-grid" style="grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; margin-left:13px; margin-bottom: 20px;">
-                                        <!-- JS 动态渲染或手动列出 -->
+                                    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">
+                                        <h4 style="font-size: 14px; margin: 0;">3. 金属件明细定义 (Detailed Specs)</h4>
+                                        <!-- 新增：清除当前所有饰品选项的按钮 -->
+                                        <button type="button" class="clear-all-btn" onclick="clearMetalCustomDetails()" title="清空所有已选金属件" style="font-size: 10px; padding: 2px 6px;">
+                                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:3px;"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                            清空明细
+                                        </button>
+                                    </div>
+                                    
+                                    <p style="font-size: 11px; color: #94a3b8; margin: 0 0 15px 13px;">请选择所需类别，选中后在下方展开的面板中填写具体要求。<strong style="color:var(--primary-color);">点击已选中的卡片可取消选择。</strong></p>
+                                    
+                                    <!-- A. 金属件类别网格 (增加图片占位区) -->
+                                    <div class="option-grid" id="metal-category-grid" style="grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; margin-left:13px; margin-bottom: 15px;">
+                                        
                                         <div class="option-item metal-item" data-cat="调节扣/环" onclick="toggleMetalCategory('调节扣/环', this)">
+                                            <div class="option-img-alt" style="height: 120px; background: #f8fafc url('https://placehold.co/300x300/e2e8f0/64748b?text=Ring+Sliders') center/cover;"></div>
                                             <div class="option-info"><h4>调节扣/环</h4><p>8字扣、O型环</p></div>
                                         </div>
+                                        
                                         <div class="option-item metal-item" data-cat="背扣" onclick="toggleMetalCategory('背扣', this)">
+                                            <div class="option-img-alt" style="height: 120px; background: #f8fafc url('https://placehold.co/300x300/e2e8f0/64748b?text=Back+Clasps') center/cover;"></div>
                                             <div class="option-info"><h4>背扣</h4><p>后背插扣/钩扣</p></div>
                                         </div>
+                                        
                                         <div class="option-item metal-item" data-cat="钢托" onclick="toggleMetalCategory('钢托', this)">
+                                            <div class="option-img-alt" style="height: 120px; background: #f8fafc url('https://placehold.co/300x300/e2e8f0/64748b?text=Underwires') center/cover;"></div>
                                             <div class="option-info"><h4>钢托</h4><p>胸部定型钢圈</p></div>
                                         </div>
+                                        
                                         <div class="option-item metal-item" data-cat="金属拉链" onclick="toggleMetalCategory('金属拉链', this)">
+                                            <div class="option-img-alt" style="height: 120px; background: #f8fafc url('https://placehold.co/300x300/e2e8f0/64748b?text=Zippers') center/cover;"></div>
                                             <div class="option-info"><h4>金属拉链</h4><p>拉链头及拉链</p></div>
                                         </div>
+                                        
                                         <div class="option-item metal-item" data-cat="按扣" onclick="toggleMetalCategory('按扣', this)">
+                                            <div class="option-img-alt" style="height: 120px; background: #f8fafc url('https://placehold.co/300x300/e2e8f0/64748b?text=Snap+Buttons') center/cover;"></div>
                                             <div class="option-info"><h4>按扣</h4><p>工字扣、揿扣</p></div>
                                         </div>
+                                        
                                         <div class="option-item metal-item" data-cat="金属吊钟" onclick="toggleMetalCategory('金属吊钟', this)">
+                                            <div class="option-img-alt" style="height: 120px; background: #f8fafc url('https://placehold.co/300x300/e2e8f0/64748b?text=Cord+Ends') center/cover;"></div>
                                             <div class="option-info"><h4>金属吊钟</h4><p>绑带末端装饰</p></div>
                                         </div>
+                                        
                                         <div class="option-item metal-item" data-cat="其他" onclick="toggleMetalCategory('其他', this)">
+                                            <div class="option-img-alt" style="height: 120px; background: #f8fafc url('https://placehold.co/300x300/e2e8f0/64748b?text=Other+Trims') center/cover;"></div>
                                             <div class="option-info"><h4>其他</h4><p>装饰牌、吊坠等</p></div>
                                         </div>
+                                        
                                     </div>
                                 
                                     <!-- B. 行内动态配置面板 (参考面料风格) -->
@@ -4892,28 +4916,43 @@
             updateMetalSummary();
         }
 
-        // 1. 切换金属件类别选中态及面板位置
         function toggleMetalCategory(catName, el) {
             const panel = document.getElementById('metal-config-panel');
             const grid = document.getElementById('metal-category-grid');
             
-            // 初始化该分类数据结构
-            if (!metalConfig.details[catName]) {
-                metalConfig.details[catName] = { remark: '', styleFiles: [], logoNeeded: false, logoFiles: [] };
-            }
-        
-            // 处理点击逻辑：如果是点击当前正在编辑的项且面板开着 -> 折叠
-            if (metalConfig.activeCategory === catName && !panel.classList.contains('hidden')) {
-                panel.classList.add('hidden');
+            // 如果该卡片已经被选中
+            if (metalConfig.categories.includes(catName)) {
+                if (metalConfig.activeCategory === catName && !panel.classList.contains('hidden')) {
+                    // 第一次点击已选项：仅折叠面板
+                    panel.classList.add('hidden');
+                } else if (metalConfig.activeCategory === catName && panel.classList.contains('hidden')) {
+                    // 第二次点击已选项（在面板折叠状态下）：取消选中该卡片并清空该分类的数据
+                    const index = metalConfig.categories.indexOf(catName);
+                    metalConfig.categories.splice(index, 1);
+                    delete metalConfig.details[catName]; // 清理数据内存
+                    el.classList.remove('selected');
+                    metalConfig.activeCategory = '';
+                    updateMetalSummary();
+                } else {
+                    // 点击了另一个已选项：展开该项的面板
+                    switchMetalPanelFocus(catName, el, grid, panel);
+                }
                 return;
             }
         
-            // 标记选中态并加入数组
-            if (!metalConfig.categories.includes(catName)) {
-                metalConfig.categories.push(catName);
-                el.classList.add('selected');
-            }
+            // ----------------------------------------------------
+            // 如果是新选中的卡片
+            metalConfig.categories.push(catName);
+            el.classList.add('selected');
             
+            // 初始化该分类数据结构
+            metalConfig.details[catName] = { remark: '', styleFiles: [], logoNeeded: false, logoFiles: [] };
+            
+            switchMetalPanelFocus(catName, el, grid, panel);
+        }
+        
+        // 提取的辅助函数：用于移动和展开面板
+        function switchMetalPanelFocus(catName, el, grid, panel) {
             metalConfig.activeCategory = catName;
         
             // 搬运面板到当前行下方
@@ -4929,7 +4968,6 @@
         
             // 填充面板数据
             loadMetalPanelData(catName);
-            
             panel.classList.remove('hidden');
             
             // 调整箭头位置
@@ -4939,6 +4977,26 @@
                 arrow.style.left = `${arrowPos}px`;
             }, 50);
         }
+        
+        // 新增：一键清空所有金属明细的函数
+        function clearMetalCustomDetails() {
+            if (!confirm('确定要清空下方已选择的所有金属明细吗？')) return;
+            
+            // 1. 清空数据
+            metalConfig.categories = [];
+            metalConfig.details = {};
+            metalConfig.activeCategory = '';
+            
+            // 2. 隐藏面板与取消 UI 选中态
+            document.getElementById('metal-config-panel').classList.add('hidden');
+            document.querySelectorAll('#metal-category-grid .metal-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            // 3. 更新右侧侧边栏汇总
+            updateMetalSummary();
+        }
+
         
         // 2. 加载特定分类的数据到面板 UI
         function loadMetalPanelData(catName) {

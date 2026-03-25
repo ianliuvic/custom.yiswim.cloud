@@ -4219,6 +4219,14 @@
         }
         function toggleTrim(category, isNeeded) {
             const contentBox = document.getElementById(`content-${category}`);
+
+            if (category === 'bag') {
+                const defaultHint = document.getElementById('bag-default-hint');
+                if (defaultHint) {
+                    // 如果需要定制(isNeeded为true)，则隐藏默认提示；反之显示
+                    defaultHint.style.display = isNeeded ? 'none' : 'flex';
+                }
+            }
             
             if (isNeeded) {
                 contentBox.classList.remove('hidden');

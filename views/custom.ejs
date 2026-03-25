@@ -2634,19 +2634,22 @@
         <button class="modal-close-abs" onclick="closeSwatchModal()" style="top:20px; right:20px; background: rgba(0,0,0,0.5); color:#fff; border: 1px solid rgba(255,255,255,0.2); z-index: 10001;">&times;</button>
         
         <!-- 新增：左切换按钮 -->
-        <button id="swatch-prev-btn" onclick="swatchCarouselMove(-1)" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); z-index: 10001; background: rgba(255,255,255,0.2); color: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; font-size: 18px; cursor: pointer; display: none;">&#10094;</button>
-    
+        <button id="swatch-prev-btn" onclick="swatchCarouselMove(-1)" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); z-index: 10005; background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.3s; display: none;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
         <!-- 交互容器 -->
         <div id="swatchFullContainer" style="width:100vw; height:100vh; display:flex; align-items:center; justify-content:center; cursor: grab; overflow: hidden;">
             <img id="swatchFullImg" src="" style="user-select: none; -webkit-user-drag: none; transition: transform 0.05s linear; transform: translate(0px, 0px) scale(1); max-width: 95%; max-height: 95%; object-fit: contain;">
         </div>
     
         <!-- 新增：右切换按钮 -->
-        <button id="swatch-next-btn" onclick="swatchCarouselMove(1)" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); z-index: 10001; background: rgba(255,255,255,0.2); color: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; font-size: 18px; cursor: pointer; display: none;">&#10095;</button>
-    
+        <button id="swatch-next-btn" onclick="swatchCarouselMove(1)" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); z-index: 10005; background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.3s; display: none;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+
         <!-- 新增：图片指示器 (1 / 3) -->
-        <div id="swatch-counter" style="position: absolute; top: 25px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 14px; background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 12px; z-index: 10001; display: none;">1 / 1</div>
-    
+        <div id="swatch-counter" style="position: absolute; top: 25px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 13px; font-weight: 600; letter-spacing: 1px; background: rgba(0,0,0,0.6); padding: 6px 16px; border-radius: 20px; z-index: 10005; display: none;">1 / 1</div>
+
         <!-- 操作提示 -->
         <div style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.5); font-size: 12px; pointer-events: none; background: rgba(0,0,0,0.3); padding: 5px 15px; border-radius: 20px;">
             滚轮缩放 · 左键拖拽 · 双击重置
@@ -3925,32 +3928,20 @@
         let currentSwatchIndex = 0;
         
         function openFabricColorModal() {
-            // 1. 获取当前选中的面料名
-            if (!activeFabricCat || !fabricSelection[activeFabricCat] || !fabricSelection[activeFabricCat].activeName) return;
-            const fabricName = fabricSelection[activeFabricCat].activeName;
-            
-            // 2. 从全局字典中获取该面料的完整数据
-            const fabricData = window.globalFabricsMap[fabricName];
-            
-            // 3. 提取多图数组 (如果没数据，用占位图兜底演示)
-            if (fabricData && fabricData.image_urls && fabricData.image_urls.length > 0) {
-                currentSwatchImages = fabricData.image_urls;
-            } else {
-                // 用于演示的占位多图
-                currentSwatchImages = [
-                    'https://files.yiswim.cloud/uploads/swatch-1.jpg',
-                    'https://placehold.co/800x600/3b82f6/fff?text=Swatch+Page+2',
-                    'https://placehold.co/800x600/10b981/fff?text=Swatch+Page+3'
-                ];
-            }
+            // 强制使用固定的高清物理色卡图片数组进行演示
+            currentSwatchImages = [
+                'https://files.yiswim.cloud/uploads/swatch-1.jpg',
+                'https://files.yiswim.cloud/uploads/swatch-1.jpg' // 这里用两张相同的图演示多图轮播
+            ];
             
             currentSwatchIndex = 0;
             
-            // 4. 渲染初始图片和按钮状态
+            // 渲染 UI 并绑定第一张图
             updateSwatchCarouselUI();
             
             document.getElementById('swatchFullModal').classList.add('active');
         }
+
 
         // 更新轮播图 UI 及控制按钮显示状态
         function updateSwatchCarouselUI() {
@@ -3961,26 +3952,28 @@
             
             if (currentSwatchImages.length === 0) return;
             
-            // 加载当前图片
+            // 1. 加载当前图片
             img.src = currentSwatchImages[currentSwatchIndex];
             
-            // 重置缩放与位移状态
+            // 2. 重置缩放与位移状态
             zoom = 1; 
             offset = { x: 0, y: 0 };
             setTimeout(updateSwatchTransform, 10);
             
-            // 只有一张图时隐藏控制器
+            // 3. 只有一张图时隐藏控制器，否则显示
             if (currentSwatchImages.length <= 1) {
                 prevBtn.style.display = 'none';
                 nextBtn.style.display = 'none';
                 counter.style.display = 'none';
             } else {
-                prevBtn.style.display = 'block';
-                nextBtn.style.display = 'block';
+                // 【关键修复】这里要用 flex 而不是 block，否则 SVG 会失去居中效果
+                prevBtn.style.display = 'flex';
+                nextBtn.style.display = 'flex';
                 counter.style.display = 'block';
                 counter.innerText = `${currentSwatchIndex + 1} / ${currentSwatchImages.length}`;
             }
         }
+
         
         // 左右切换逻辑
         function swatchCarouselMove(step) {

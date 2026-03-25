@@ -3068,25 +3068,38 @@
 
         // --- 新增函数 ---
         function openOemPreview(clickedSrc, fileName) {
-            // 1. 抓取当前已上传的所有 OEM/附件 图片，形成画廊
-            const allImgs = document.querySelectorAll('.oem-preview-item img');
-            const imageUrls = Array.from(allImgs).map(img => img.src);
+            // 1. 通过唯一的 src 地址，反向找到页面中被点击的那个 <img> 元素
+            const clickedImg = document.querySelector(`img[src="${clickedSrc}"]`);
             
-            // 2. 找到当前点击的图片在画廊中的索引
+            let allImgs = [];
+            if (clickedImg) {
+                // 2. 向上查找到最近的“预览网格容器” (这就实现了作用域隔离)
+                // 使用可选链容错，防止找不到特定的 class
+                const grid = clickedImg.closest('.oem-image-preview-grid') || clickedImg.parentElement.parentElement;
+                
+                // 3. 仅在这个局部网格内部，抓取所有图片
+                allImgs = grid.querySelectorAll('img');
+            } else {
+                // 兜底防错机制：如果找不到对应元素，退回全局抓取
+                allImgs = document.querySelectorAll('.oem-preview-item img');
+            }
+            
+            // 4. 提取图片链接并确定起始索引
+            const imageUrls = Array.from(allImgs).map(img => img.src);
             const startIndex = imageUrls.indexOf(clickedSrc);
             
-            // 3. 复用产品详情弹窗，传入 true 激活纯图片模式
+            // 5. 调用纯净版大图预览
             openDetailModal({
                 name: fileName || '附件预览',
                 image_urls: imageUrls
             }, true);
             
-            // 4. 定位到点击的这张图
             if (startIndex !== -1) {
                 currentImageIndex = startIndex;
                 renderModalCarousel(); 
             }
         }
+
 
         function removeOemFile(type, index) {
             oemFilesData[type].splice(index, 1);

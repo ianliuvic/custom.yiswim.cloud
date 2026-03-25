@@ -3493,11 +3493,11 @@
                     const printArea = document.getElementById('fabric-print-area');
                     const customForm = document.getElementById('fabric-custom-sourcing-form');
                     const notesArea = document.querySelector('.fabric-notes-area');
-                    const isLining = (selection.originalCatName === '里料');
+                    const isSimplified = ['里料', '网纱'].includes(selection.originalCatName);
 
                     // --- 统一控制里料样式 ---
-                    if (notesArea) notesArea.style.display = isLining ? 'none' : 'block';
-                    if (modeSwitcher) modeSwitcher.style.display = isLining ? 'none' : 'inline-flex';
+                    if (notesArea) notesArea.style.display = isSimplified  ? 'none' : 'block';
+                    if (modeSwitcher) modeSwitcher.style.display = isSimplified  ? 'none' : 'inline-flex';
 
                     if (isCustomSourcing) {
                         // 定制找样逻辑
@@ -3520,7 +3520,7 @@
                         [solidArea, printArea].forEach(area => area?.classList.remove('hidden'));
                         if(customForm) customForm.classList.add('hidden');
                         
-                        if (isLining) config.mode = 'solid';
+                        if (isSimplified) config.mode = 'solid';
                         switchFabricMode(config.mode); 
                         document.getElementById('fabric-color-input').value = config.colorText || '';
                         
@@ -3715,11 +3715,11 @@
             const printArea = document.getElementById('fabric-print-area');
             const customForm = document.getElementById('fabric-custom-sourcing-form');
             const notesArea = document.querySelector('.fabric-notes-area'); // 核心变量
-            const isLining = (selection.originalCatName === '里料');
+            const isSimplified = ['里料', '网纱'].includes(selection.originalCatName);
         
             // --- 核心修复：无论哪种模式，只要是里料，强制隐藏拼色说明与附件区 ---
-            if (notesArea) notesArea.style.display = isLining ? 'none' : 'block';
-            if (modeSwitcher) modeSwitcher.style.display = isLining ? 'none' : 'inline-flex';
+            if (notesArea) notesArea.style.display = isSimplified ? 'none' : 'block';
+            if (modeSwitcher) modeSwitcher.style.display = isSimplified ? 'none' : 'inline-flex';
         
             if (isCustomSourcing) {
                 // A. 定制找样模式 UI
@@ -3742,10 +3742,10 @@
             } else {
                 // B. 标准面料模式 UI
                 [modeSwitcher, solidArea, printArea].forEach(area => area?.classList.remove('hidden'));
-                customForm.classList.add('hidden');
+                if(customForm) customForm.classList.add('hidden');
                 document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：${name}`;
                 
-                if (isLining) config.mode = 'solid'; // 里料强制纯色数据
+                if (isSimplified) config.mode = 'solid'; // 里料强制纯色数据
                 switchFabricMode(config.mode); 
                 
                 document.getElementById('fabric-color-input').value = config.colorText || '';

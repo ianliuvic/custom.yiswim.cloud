@@ -3629,6 +3629,8 @@
             const panel = document.getElementById('fabric-config-panel');
             const selection = fabricSelection[catId];
             const isCustomSourcing = (name === 'CUSTOM_SOURCING');
+
+            const isLining = (selection.originalCatName === '里料');
             
             // 1. 处理面板折叠逻辑
             if (selection.activeName === name) {
@@ -3720,6 +3722,19 @@
                 standardArea.forEach(area => area?.classList.remove('hidden'));
                 customForm.classList.add('hidden');
                 document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：${name}`;
+
+                // --- 新增：里料特殊过滤逻辑 ---
+                const printTab = document.getElementById('mode-print');
+                const notesArea = document.querySelector('.fabric-notes-area');
+                
+                if (isLining) {
+                    if (printTab) printTab.style.display = 'none'; // 隐藏印花 Tab
+                    if (notesArea) notesArea.style.display = 'none'; // 隐藏拼色说明与附件区
+                    config.mode = 'solid'; // 强制里料只能是纯色模式
+                } else {
+                    if (printTab) printTab.style.display = 'block';
+                    if (notesArea) notesArea.style.display = 'block';
+                }
                 
                 // 恢复选色/印花模式显示
                 switchFabricMode(config.mode); 

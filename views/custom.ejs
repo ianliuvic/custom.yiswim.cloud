@@ -3521,7 +3521,7 @@
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         grid.insertAdjacentHTML('beforeend', `
-                            <div class="oem-preview-item" style="width:100px;">
+                            <div class="oem-preview-item">
                                 <img src="${e.target.result}" onclick="openOemPreview(this.src, '${file.name}')" style="cursor:zoom-in;">
                                 <button type="button" class="oem-preview-remove" onclick="removePrintFile(${index})">&times;</button>
                             </div>`);
@@ -3529,7 +3529,7 @@
                     reader.readAsDataURL(file);
                 } else {
                     grid.insertAdjacentHTML('beforeend', `
-                        <div class="oem-preview-item" style="width:100px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; flex-direction:column;">
+                        <div class="oem-preview-item" style="display:flex; align-items:center; justify-content:center; flex-direction:column;">
                             <span style="font-size:10px; font-weight:800; color:#64748b;">${ext}</span>
                             <button type="button" class="oem-preview-remove" onclick="removePrintFile(${index})">&times;</button>
                         </div>`);

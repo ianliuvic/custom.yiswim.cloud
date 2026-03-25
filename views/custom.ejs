@@ -3068,21 +3068,20 @@
 
         // --- 新增函数 ---
         function openOemPreview(clickedSrc, fileName) {
-            // 1. 抓取当前已上传的所有 OEM 图片，形成画廊，支持左右滑动
+            // 1. 抓取当前已上传的所有 OEM/附件 图片，形成画廊
             const allImgs = document.querySelectorAll('.oem-preview-item img');
             const imageUrls = Array.from(allImgs).map(img => img.src);
             
             // 2. 找到当前点击的图片在画廊中的索引
             const startIndex = imageUrls.indexOf(clickedSrc);
             
-            // 3. 复用现有的产品详情弹窗
+            // 3. 复用产品详情弹窗，传入 true 激活纯图片模式
             openDetailModal({
-                name: 'OEM 附件预览',
-                image_urls: imageUrls,
-                description: `当前查看文件：<strong style="color:var(--primary-color);">${fileName || '未知文件'}</strong><br>您可以在此预览所有已上传的 OEM 图片附件。`
-            });
+                name: fileName || '附件预览',
+                image_urls: imageUrls
+            }, true);
             
-            // 4. 覆盖默认的索引(默认是0)，让轮播图直接定位到点击的这张图
+            // 4. 定位到点击的这张图
             if (startIndex !== -1) {
                 currentImageIndex = startIndex;
                 renderModalCarousel(); 
@@ -3142,14 +3141,27 @@
         // 4. 多图轮播弹窗
         // ==========================================
         let currentModalImages = [], currentImageIndex = 0;
-        function openDetailModal(itemData) {
+        function openDetailModal(itemData, isPureMode = false) {
             document.getElementById('modalTitle').innerText = itemData.name || '产品详情';
             currentModalImages = itemData.image_urls || [];
             if(typeof itemData.image_urls === 'string') currentModalImages = [itemData.image_urls];
-            currentImageIndex = 0; renderModalCarousel();
+            
+            currentImageIndex = 0; 
+            renderModalCarousel();
+            
             document.getElementById('modalDesc').innerHTML = `<div style="background:#f9f9f9; padding:12px; border-radius:4px; margin-top:15px;"><strong style="color:var(--text-main);">详情简介：</strong><br><span style="color:#666;">${itemData.description || '暂无详细说明。'}</span></div>`;
+            
+            // --- 新增：动态控制右侧内容显隐 ---
+            const infoSide = document.querySelector('#detailModal .modal-info-side');
+            if (isPureMode) {
+                infoSide.style.display = 'none'; // 隐藏右侧，左侧图片将自动撑满 100% 宽度
+            } else {
+                infoSide.style.display = 'flex'; // 恢复默认布局
+            }
+            
             document.getElementById('detailModal').classList.add('active');
         }
+
         function renderModalCarousel() {
             const carouselBox = document.getElementById('modalCarousel');
             if (!currentModalImages?.length) { carouselBox.style.display = 'none'; document.getElementById('carousel-dots').innerHTML = ''; return; }

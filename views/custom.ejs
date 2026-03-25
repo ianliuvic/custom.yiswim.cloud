@@ -1403,50 +1403,46 @@
 
                                 <!-- B/C 高级选项 (序号已调整) -->
                                 <div id="bag-advanced-section" style="animation: fadeIn 0.5s ease; border-top: 1px dashed #e2e8f0; padding-top: 25px;">
-                                    <!-- B. 印刷与工艺 -->
+                                    <!-- B. 印刷与附加工艺 -->
                                     <div class="attr-section" style="margin-bottom: 35px;">
                                         <div style="display: flex; align-items: baseline; gap: 15px; margin-bottom: 15px;">
-                                            <h4 style="font-size: 14px; border-left: 3px solid var(--primary-color); padding-left: 10px; margin: 0;">B. 印刷与附加工艺 (Print & Finish)</h4>
-                                            <span style="font-size: 11px; color: #f59e0b; font-weight: 600;">[ 印刷款 MOQ: 5000起 ]</span>
+                                            <h4 style="font-size: 14px; border-left: 3px solid var(--primary-color); padding-left: 10px; margin: 0;">B. 印刷内容与排版设计 (Print & Design)</h4>
                                         </div>
                                         
-                                        <div class="option-grid" style="grid-template-columns: repeat(3, 1fr); gap: 20px; margin-left: 13px; margin-bottom: 20px;">
-                                            <div class="option-item bag-print selected" onclick="selectBagAttr('print', '空白无印', this)">
+                                        <div class="option-grid" id="bag-print-grid" style="grid-template-columns: repeat(3, 1fr); gap: 20px; margin-left: 13px; margin-bottom: 20px;">
+                                            <div class="option-item bag-print selected" onclick="selectBagPrintMode('空白无印', this)">
                                                 <div class="print-icon-box"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 4"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div>
                                                 <div class="option-info"><h4>Blank (无印)</h4><p>保持原质感，极简优选</p></div>
                                             </div>
-                                            <div class="option-item bag-print" onclick="selectBagAttr('print', '单色印刷', this)">
+                                            <div class="option-item bag-print" onclick="selectBagPrintMode('单色印刷', this)">
                                                 <div class="print-icon-box"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" color="#64748b"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/></svg></div>
                                                 <div class="option-info"><h4>1-Color Print</h4><p>印制单色 Logo/警示语</p></div>
                                             </div>
-                                            <div class="option-item bag-print" onclick="selectBagAttr('print', '彩色印刷', this)">
+                                            <div class="option-item bag-print" onclick="selectBagPrintMode('彩色印刷', this)">
                                                 <div class="print-icon-box" style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="url(#bag-color-grad-main)" stroke-width="2"><defs><linearGradient id="bag-color-grad-main" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ef4444"/><stop offset="50%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#3b82f6"/></linearGradient></defs><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 16l4-4 4 4"/><circle cx="9" cy="9" r="2" fill="currentColor"/></svg></div>
                                                 <div class="option-info"><h4>Multi-Color</h4><p>彩色Logo或平铺满印</p></div>
                                             </div>
                                         </div>
-
-                                        <div style="margin-left: 13px;">
-                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">特殊工艺附加 (可多选)</label>
-                                            <div class="chip-container">
-                                                <div class="chip" onclick="toggleBagCraft('局部磨砂', this)">局部磨砂 (Frosted)</div>
-                                                <div class="chip" onclick="toggleBagCraft('烫金/银', this)">烫金/银 (Foil)</div>
-                                                <div class="chip" onclick="toggleBagCraft('打透气孔', this)">打透气孔 (Punch Hole)</div>
-                                                <div class="chip" onclick="toggleBagCraft('印警示语', this)">印防窒息警示语</div>
+                                    
+                                        <!-- B. 行内动态展开面板 (用于上传设计) -->
+                                        <div id="bag-print-panel" class="fabric-config-panel hidden" style="padding: 25px 30px; margin-left: 13px; background: #fffcfc; border-color: #fecaca;">
+                                            <div class="config-arrow" style="border-top-color: #fecaca; border-left-color: #fecaca;"></div>
+                                            
+                                            <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px;">
+                                                <div>
+                                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">设计图稿/Logo上传</label>
+                                                    <div class="premium-upload-box" onclick="document.getElementById('bagDesignFile').click()" style="padding: 20px; border-style: dashed; background: #fff;">
+                                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="margin-bottom:8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                                                        <p style="font-size: 11px; color: #94a3b8; margin:0;">点击上传 AI/PDF/高清图</p>
+                                                        <input type="file" id="bagDesignFile" multiple class="hidden" onchange="handleBagFiles(this)">
+                                                    </div>
+                                                    <div id="bagDesignPreview" class="oem-image-preview-grid" style="margin-top:12px;"></div>
+                                                </div>
+                                                <div>
+                                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">印刷排版要求</label>
+                                                    <textarea id="bag-remark" class="oem-textarea" style="height: 110px; font-size:12px; box-sizing: border-box;" placeholder="请描述您的排版要求（如：Logo居中，离顶部5cm...）" oninput="updateBagSummary()"></textarea>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- C. 设计图稿与排版 -->
-                                    <div class="attr-section">
-                                        <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 设计图稿与排版要求 (Design Upload)</h4>
-                                        <div style="margin-left: 13px;">
-                                            <div class="premium-upload-box" onclick="document.getElementById('bagDesignFile').click()" style="padding: 18px;">
-                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2" style="margin-bottom:6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-                                                <p style="font-size: 12px; color: var(--text-main); margin-bottom: 2px; font-weight:600;">点击上传包装设计图 / Logo矢量文件</p>
-                                                <input type="file" id="bagDesignFile" multiple class="hidden" onchange="handleBagFiles(this)">
-                                            </div>
-                                            <div id="bagDesignPreview" class="oem-image-preview-grid" style="margin-top:12px;"></div>
-                                            <textarea id="bag-remark" class="oem-textarea" style="height:70px; margin-top:15px; font-size:12px;" placeholder="请输入您的排版要求（如：Logo居中，占宽度1/3；底部印 Made in China...）" oninput="updateBagSummary()"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -5387,22 +5383,56 @@
             input.value = ''; 
         }
 
+        // 专门处理包装袋印刷模式的选择与面板展开
+        function selectBagPrintMode(modeName, el) {
+            const panel = document.getElementById('bag-print-panel');
+            const grid = document.getElementById('bag-print-grid');
+            
+            // 1. 设置数据与选中态
+            bagConfig.print = modeName;
+            grid.querySelectorAll('.bag-print').forEach(item => item.classList.remove('selected'));
+            el.classList.add('selected');
+        
+            // 2. 逻辑判断：如果是“空白无印”，隐藏面板；否则显示面板
+            if (modeName === '空白无印') {
+                panel.classList.add('hidden');
+            } else {
+                // 搬运面板到当前行下方（包装袋印刷只有一行，其实直接 append 即可）
+                grid.parentNode.insertBefore(panel, grid.nextSibling);
+                panel.classList.remove('hidden');
+                
+                // 调整箭头位置
+                setTimeout(() => {
+                    const arrow = panel.querySelector('.config-arrow');
+                    const arrowPos = el.getBoundingClientRect().left - panel.getBoundingClientRect().left + (el.getBoundingClientRect().width / 2) - 8;
+                    arrow.style.left = `${arrowPos}px`;
+                    
+                    // 平滑滚动
+                    const scrollArea = document.querySelector('.config-scroll-area');
+                    const panelRect = panel.getBoundingClientRect();
+                    if(scrollArea) scrollArea.scrollBy({ top: panelRect.top - 300, behavior: 'smooth' });
+                }, 50);
+            }
+            
+            updateBagSummary();
+        }
+        
+        // 修改原有的 handleBagFiles 预览逻辑，去除固定 60px 限制
         function renderBagPreviews() {
             const grid = document.getElementById('bagDesignPreview');
+            if(!grid) return;
             grid.innerHTML = '';
             bagConfig.designFiles.forEach((file, index) => {
                 const isImage = file.type.startsWith('image/');
-                const ext = file.name.split('.').pop().toUpperCase();
-                let content = isImage 
+                const content = isImage 
                     ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')">` 
-                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;">${ext}</div>`;
-
+                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;">DOC</div>`;
+        
                 grid.insertAdjacentHTML('beforeend', `
-                    <div class="oem-preview-item" style="width:60px; height:60px;">
+                    <div class="oem-preview-item">
                         ${content}
                         <button type="button" class="oem-preview-remove" onclick="removeBagFile(${index})">&times;</button>
-                    </div>
-                `);
+                    </div>`);
             });
         }
 

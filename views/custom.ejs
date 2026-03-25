@@ -3440,7 +3440,7 @@
             const panel = document.getElementById('fabric-config-panel');
             const selection = fabricSelection[catId];
             
-                        if (selection && selection.activeName) {
+            if (selection && selection.activeName) {
                 const selectedEl = document.getElementById(catId).querySelector('.fabric-item.selected');
                 const config = selection.configs[selection.activeName];
                 
@@ -3458,55 +3458,66 @@
                     
                     panel.classList.remove('hidden');
                     
-                                        document.getElementById('config-type-tag').innerText = selection.originalCatName;
+                    document.getElementById('config-type-tag').innerText = selection.originalCatName;
                     
                     const isCustomSourcing = (selection.activeName === 'CUSTOM_SOURCING');
                     const modeSwitcher = document.getElementById('fabric-mode-switcher');
                     const solidArea = document.getElementById('fabric-solid-area');
                     const printArea = document.getElementById('fabric-print-area');
                     const customForm = document.getElementById('fabric-custom-sourcing-form');
+                    const notesArea = document.querySelector('.fabric-notes-area');
+                    
+                    const isLining = (selection.originalCatName === '里料');
 
                     if (isCustomSourcing) {
-                        // 如果是定制找样卡片：隐藏标准选项，显示定制表单
+                        // 定制找样恢复逻辑
                         document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：定制开发/全球找样`;
-                        if(modeSwitcher) modeSwitcher.classList.add('hidden');
-                        if(solidArea) solidArea.classList.add('hidden');
-                        if(printArea) printArea.classList.add('hidden');
+                        [modeSwitcher, solidArea, printArea].forEach(area => area?.classList.add('hidden'));
                         if(customForm) customForm.classList.remove('hidden');
                         
-                        // 恢复定制表单数据
                         document.getElementById('custom-fabric-desc').value = config.customDesc || '';
                         document.getElementById('custom-fabric-comp').value = config.comp || '';
                         document.getElementById('custom-fabric-gsm').value = config.gsm || '';
                         document.getElementById('custom-fabric-color').value = config.colorReq || '';
                         document.getElementById('custom-fabric-physical').checked = config.physical || false;
                         document.getElementById('custom-fabric-tracking').value = config.trackingNo || '';
-                        
                         document.getElementById('custom-fabric-address-info').classList.toggle('hidden', !config.physical);
                     } else {
-                        // 如果是标准卡片：显示标准选项，隐藏定制表单
+                        // 标准面料恢复逻辑
                         document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：${selection.activeName}`;
-                        if(modeSwitcher) modeSwitcher.classList.remove('hidden');
+                        [solidArea, printArea].forEach(area => area?.classList.remove('hidden'));
                         if(customForm) customForm.classList.add('hidden');
                         
-                        // 恢复纯色/印花模式
-                        document.getElementById('mode-solid').classList.toggle('active', config.mode === 'solid'); 
-                        document.getElementById('mode-print').classList.toggle('active', config.mode === 'print');
-                        if(solidArea) solidArea.classList.toggle('hidden', config.mode !== 'solid'); 
-                        if(printArea) printArea.classList.toggle('hidden', config.mode !== 'print');
+                        // 核心：应用里料样式隔离逻辑
+                        if (isLining) {
+                            if (modeSwitcher) modeSwitcher.style.display = 'none'; 
+                            if (notesArea) notesArea.style.display = 'none';
+                            config.mode = 'solid'; 
+                        } else {
+                            if (modeSwitcher) modeSwitcher.style.display = 'inline-flex'; 
+                            if (notesArea) notesArea.style.display = 'block';
+                        }
                         
-                        // 恢复色卡
-                        renderColorPalette(selection.activeName, config.colors);
+                        switchFabricMode(config.mode); 
+                        
+                        // 核心修复：恢复输入框，移除报错的 renderColorPalette
+                        document.getElementById('fabric-color-input').value = config.colorText || '';
+                        
+                        if (config.mode === 'print') {
+                            document.querySelectorAll('.print-type-item').forEach(item => {
+                                const isTarget = (config.printType === 'seamless' && item.innerText.includes('无缝')) || 
+                                                 (config.printType === 'placement' && item.innerText.includes('定位'));
+                                item.classList.toggle('selected', isTarget);
+                            });
+                            document.getElementById('fabric-print-ref-color').value = config.printRefColor || '';
+                        }
                     }
-                    
-                    const textEl = document.getElementById('selected-colors-text');
-                    if (config.colors.length === 0) { textEl.innerText = '未选择颜色'; textEl.style.color = '#999'; } 
-                    else { textEl.innerText = `已选色号 (${config.colors.length})：${config.colors.join(', ')}`; textEl.style.color = 'var(--primary-color)'; }
 
+                    // 通用项恢复
                     document.getElementById('fabric-remark').value = config.remark || '';
-                    renderFabricFileList(config.files || []); // 切换 Tab 时恢复附件列表
+                    renderFabricFileList(config.files || []); 
+                    renderPrintPreview(config.prints || []);
 
-                    renderPrintPreview(config.prints || []); // 切换 Tab 时恢复印花预览
                     
                     setTimeout(() => {
                         const arrow = document.getElementById('config-arrow');

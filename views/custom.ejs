@@ -2552,12 +2552,15 @@
     </div>
 
     <!-- 高清色卡专用纯净预览弹窗 -->
-    <div class="modal-overlay" id="swatchFullModal" style="background: rgba(0,0,0,0.95); z-index: 10000;">
-        <button class="modal-close-abs" onclick="closeSwatchModal()" style="top:20px; right:20px; background: rgba(255,255,255,0.1); color:#fff; border: 1px solid rgba(255,255,255,0.2);">&times;</button>
-        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; overflow: auto; padding: 20px;">
-            <img id="swatchFullImg" src="" style="max-width: 100%; cursor: zoom-in; transition: transform 0.3s ease; transform-origin: center;" onclick="toggleSwatchZoom(this)">
+    <div class="modal-overlay" id="swatchFullModal" style="background: rgba(0,0,0,0.95); z-index: 10000; padding: 0;">
+        <button class="modal-close-abs" onclick="closeSwatchModal()" style="top:20px; right:20px; background: rgba(0,0,0,0.5); color:#fff; border: 1px solid rgba(255,255,255,0.2); z-index: 10001;">&times;</button>
+        
+        <!-- 图片滚动容器 -->
+        <div id="swatchFullContainer" style="width:100%; height:100%; overflow: hidden; display:flex; align-items:center; justify-content:center; cursor: grab;">
+            <img id="swatchFullImg" src="" style="max-width: 90%; max-height: 90%; transition: transform 0.3s cubic-bezier(0.2, 0, 0.2, 1); transform-origin: center; user-select: none; -webkit-user-drag: none;">
         </div>
     </div>
+
 
     <!-- =========================================================================
          核心 JavaScript 逻辑
@@ -3668,35 +3671,103 @@
             updateFabricSummary();
         }
         
-        // 打开纯净大图预览
+        // 状态变量
+        let isZoomed = false;
+        let isDragging = false;
+        let startX, startY, scrollLeft, scrollTop;
+        
+        // 1. 打开弹窗
         function openFabricColorModal() {
-            // 提取占位图 URL 或 真实的色卡 URL
             const bgImage = document.getElementById('fabric-swatch-img-preview').style.backgroundImage;
             const imageUrl = bgImage.slice(4, -1).replace(/["']/g, ""); 
             
-            const modal = document.getElementById('swatchFullModal');
             const img = document.getElementById('swatchFullImg');
+            const container = document.getElementById('swatchFullContainer');
             
             img.src = imageUrl;
-            img.style.transform = "scale(1)"; // 重置缩放
-            img.style.cursor = "zoom-in";
-            modal.classList.add('active');
+            resetSwatch(); // 每次打开重置状态
+            document.getElementById('swatchFullModal').classList.add('active');
         }
         
-        // 简单的点击缩放切换逻辑
-        function toggleSwatchZoom(img) {
-            if (img.style.transform === "scale(1)" || img.style.transform === "") {
-                img.style.transform = "scale(2.5)"; // 放大倍数，可根据图片清晰度调整
-                img.style.cursor = "zoom-out";
+        // 2. 重置图片状态
+        function resetSwatch() {
+            isZoomed = false;
+            const img = document.getElementById('swatchFullImg');
+            const container = document.getElementById('swatchFullContainer');
+            img.style.transform = "scale(1)";
+            img.style.maxWidth = "90%";
+            img.style.maxHeight = "90%";
+            container.style.cursor = "zoom-in";
+            container.style.overflow = "hidden";
+            container.scrollTo(0, 0);
+        }
+        
+        // 3. 切换缩放 (点击事件)
+        document.getElementById('swatchFullContainer').addEventListener('click', function(e) {
+            if (isDragging) return; // 如果刚才在拖拽，则不触发缩放切换
+            
+            const img = document.getElementById('swatchFullImg');
+            const container = this;
+        
+            if (!isZoomed) {
+                // 放大逻辑
+                img.style.transform = "scale(3)"; // 放大倍数
+                img.style.maxWidth = "none";
+                img.style.maxHeight = "none";
+                container.style.cursor = "grab";
+                container.style.overflow = "auto"; // 允许滚动
+                isZoomed = true;
             } else {
-                img.style.transform = "scale(1)";
-                img.style.cursor = "zoom-in";
+                // 缩小逻辑
+                resetSwatch();
             }
-        }
+        });
         
-        // 关闭预览
+        // 4. 拖拽平移逻辑 (核心)
+        const container = document.getElementById('swatchFullContainer');
+        
+        container.addEventListener('mousedown', (e) => {
+            if (!isZoomed) return;
+            isDragging = false;
+            const startClickTime = Date.now();
+            
+            container.style.cursor = 'grabbing';
+            startX = e.pageX - container.offsetLeft;
+            startY = e.pageY - container.offsetTop;
+            scrollLeft = container.scrollLeft;
+            scrollTop = container.scrollTop;
+        
+            const onMouseMove = (e) => {
+                isDragging = true; // 只要移动了，就标记为正在拖拽
+                e.preventDefault();
+                const x = e.pageX - container.offsetLeft;
+                const y = e.pageY - container.offsetTop;
+                const walkX = (x - startX) * 2; // 滚动速度倍率
+                const walkY = (y - startY) * 2;
+                container.scrollLeft = scrollLeft - walkX;
+                container.scrollTop = scrollTop - walkY;
+            };
+        
+            const onMouseUp = () => {
+                container.style.cursor = isZoomed ? 'grab' : 'zoom-in';
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+                
+                // 如果点击时间很短且没怎么移动，click 事件会正常触发缩放
+                // 否则在这里通过延时阻止 click 逻辑
+                if (isDragging) {
+                    setTimeout(() => { isDragging = false; }, 50);
+                }
+            };
+        
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+        });
+        
+        // 5. 关闭弹窗
         function closeSwatchModal() {
             document.getElementById('swatchFullModal').classList.remove('active');
+            setTimeout(resetSwatch, 300); // 弹窗完全消失后重置
         }
 
         function toggleColor(colorCode, el) {

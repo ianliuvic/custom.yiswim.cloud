@@ -1271,7 +1271,13 @@
                                     <!-- 配置面板内部重构 -->
                                     <div id="metal-config-panel" class="fabric-config-panel hidden" style="padding: 25px; background: #fffcfc; border-color: #fecaca;">
                                         <div class="config-arrow" style="border-top-color: #fecaca; border-left-color: #fecaca;"></div>
-                                        
+
+                                        <!-- 插入下方这行：修复报错的关键标题行 -->
+                                        <div class="config-header" style="margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                                            <h4 id="metal-active-title" style="margin: 0; font-size: 15px; color: var(--primary-color);">配置选项</h4>
+                                            <span style="font-size: 11px; color: #94a3b8;">Item Details</span>
+                                        </div>
+
                                         <!-- 第一行：基本要求与参考图 -->
                                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 25px;">
                                             <div>

@@ -1157,6 +1157,16 @@
                          ========================================== -->
                     <div class="step-content hidden" id="step-3">
                         <div class="step-desc">请在下方标签页中分别配置您需要的品牌辅料。如果不需要某项辅料，保持默认“否”即可。</div>
+
+                        <!-- 新增：开发阶段与大货辅料差异提示 -->
+                        <div style="margin: -15px 0 25px; padding: 12px 18px; background: #f8fafc; border-left: 3px solid #cbd5e1; border-radius: 4px; display: flex; align-items: flex-start; gap: 10px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5" style="margin-top: 2px; flex-shrink: 0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                            <div style="font-size: 11.5px; color: #64748b; line-height: 1.6;">
+                                <strong style="color: #475569;">开发阶段说明 (Sampling Stage Notice)：</strong><br>
+                                本步骤配置的所有品牌辅料主要用于<strong>大货生产的成本核算与规划</strong>。打样阶段将优先使用工厂通用辅料，暂不受此配置影响。需注意，涉及 Logo 开模或定制印刷的辅料因受最低起订量 (MOQ) 限制，通常<strong>不会在打样环节单独落实</strong>。
+                            </div>
+                        </div>
+
                         <div class="sub-tabs">
                             <div class="sub-tab active" onclick="switchSubTab('metal', this)">金属饰品</div>
                             <div class="sub-tab" onclick="switchSubTab('bag', this)">包装袋</div>

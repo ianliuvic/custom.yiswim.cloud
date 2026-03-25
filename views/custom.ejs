@@ -1042,17 +1042,45 @@
                             </div>
 
                             <div id="fabric-print-area" class="hidden">
-                                <div class="premium-upload-box" id="printDropzone" onclick="document.getElementById('printFile').click()" style="padding: 30px 20px;">
+                                <!-- 1. 印花类型选择 -->
+                                <div style="margin-bottom: 25px;">
+                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:12px;">选择印花工艺类型 (Printing Method)</label>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                        <div class="option-item print-type-item selected" onclick="switchPrintType('seamless', this)">
+                                            <div style="padding: 12px;">
+                                                <h4 style="font-size:13px; margin:0 0 4px;">无缝循环印花 (Allover)</h4>
+                                                <p style="font-size:11px; color:#94a3b8; margin:0; line-height:1.4;">图案在面料上无限连续循环重复，适合碎花、迷彩或几何图案。</p>
+                                            </div>
+                                        </div>
+                                        <div class="option-item print-type-item" onclick="switchPrintType('placement', this)">
+                                            <div style="padding: 12px;">
+                                                <h4 style="font-size:13px; margin:0 0 4px;">定位定版印花 (Placement)</h4>
+                                                <p style="font-size:11px; color:#94a3b8; margin:0; line-height:1.4;">图案精准印在衣物的特定部位（如胸前），适合单图或特定裁片设计。</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                                <!-- 2. 文件上传区域 (强化高清要求) -->
+                                <div class="premium-upload-box" id="printDropzone" onclick="document.getElementById('printFile').click()" style="padding: 30px 20px; border-color: #cbd5e1;">
                                     <div style="margin-bottom: 12px;">
+                                        <span style="display:inline-block; padding:2px 8px; background:#fee2e2; color:#ef4444; font-size:10px; font-weight:800; border-radius:4px; margin-bottom:10px; text-transform: uppercase; letter-spacing: 0.5px;">Required: High Definition</span>
+                                        <br>
                                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
                                     </div>
-                                    <p style="margin: 0 0 6px; color: var(--text-main); font-size: 14px; font-weight: 600;">上传定制印花图案 (Allover Print)</p>
-                                    <p style="color: #94a3b8; font-size: 12px; margin-bottom: 0;">支持无缝拼接图 (AI, EPS, TIFF, 高清JPG)</p>
+                                    <p style="margin: 0 0 6px; color: var(--text-main); font-size: 14px; font-weight: 600;">上传定制印花设计原稿</p>
+                                    <p style="color: #94a3b8; font-size: 12px; margin-bottom: 0;">支持 AI, EPS, PDF, 或 300DPI 以上高清图片</p>
                                     <input type="file" id="printFile" multiple class="hidden" onchange="handlePrintFiles(this.files)">
                                 </div>
-                                <!-- 印花图片预览网格 -->
-                                <div id="printPreviewGrid" class="oem-image-preview-grid" style="margin-top: 15px; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));"></div>
+                                <div id="printPreviewGrid" class="oem-image-preview-grid" style="margin-top: 15px;"></div>
+                            
+                                <!-- 3. 调色参考 -->
+                                <div style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed #e2e8f0;">
+                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">调色对照参考 (Color Match)</label>
+                                    <input type="text" id="fabric-print-ref-color" class="oem-input-mini" style="width: 100%; box-sizing: border-box;" placeholder="请填写纯色色卡中接近的色号 (如: 24)，方便调色师对照纠偏" oninput="updatePrintRefColor()">
+                                </div>
                             </div>
+
                             <div class="fabric-notes-area">
                                 <h4 style="font-size: 13px; margin: 0 0 10px; color: var(--text-main);">拼色说明与参考附件 (可选)</h4>
                                 
@@ -3577,7 +3605,7 @@
             const selection = fabricSelection[catId];
             const isCustomSourcing = (name === 'CUSTOM_SOURCING');
             
-            // 1. 处理折叠
+            // 1. 处理面板折叠逻辑
             if (selection.activeName === name) {
                 panel.classList.toggle('hidden');
                 if (!panel.classList.contains('hidden')) {
@@ -3588,8 +3616,8 @@
                 }
                 return;
             }
-
-            // 2. 切换选中状态与 DOM 搬运 (逻辑不变...)
+        
+            // 2. 切换选中状态与 DOM 搬运（确保面板插入在当前行下方）
             document.getElementById(catId).querySelectorAll('.fabric-item').forEach(item => item.classList.remove('selected')); 
             el.classList.add('selected');
             
@@ -3597,8 +3625,14 @@
             let insertBeforeNode = null;
             let currentElement = el.nextElementSibling;
             while (currentElement) {
-                if (currentElement.id === 'fabric-config-panel') { currentElement = currentElement.nextElementSibling; continue; }
-                if (currentElement.offsetTop > el.offsetTop) { insertBeforeNode = currentElement; break; }
+                if (currentElement.id === 'fabric-config-panel') { 
+                    currentElement = currentElement.nextElementSibling; 
+                    continue; 
+                }
+                if (currentElement.offsetTop > el.offsetTop) { 
+                    insertBeforeNode = currentElement; 
+                    break; 
+                }
                 currentElement = currentElement.nextElementSibling;
             }
             if (insertBeforeNode) gridContainer.insertBefore(panel, insertBeforeNode);
@@ -3607,57 +3641,109 @@
             panel.classList.remove('hidden'); 
             scrollToPanelHeader();
             
+            // 调整配置面板的小箭头指向
             const arrow = document.getElementById('config-arrow');
             const arrowPos = el.getBoundingClientRect().left - panel.getBoundingClientRect().left + (el.getBoundingClientRect().width / 2) - 8;
             arrow.style.left = `${arrowPos}px`;
-
-            // 3. 数据初始化与 UI 切换
+        
+            // 3. 数据结构初始化（包含所有新增字段）
             selection.activeName = name; 
-
             if (!selection.configs[name]) {
-                selection.configs[name] = { mode: isCustomSourcing ? 'custom' : 'solid', colors: [], colorText: '', remark: '', files: [], prints: [], customDesc: '', comp: '', gsm: '', colorReq: '', physical: false, trackingNo: '' };
+                selection.configs[name] = { 
+                    mode: isCustomSourcing ? 'custom' : 'solid', 
+                    colors: [], 
+                    colorText: '', 
+                    printType: 'seamless', 
+                    printRefColor: '',
+                    remark: '', 
+                    files: [], 
+                    prints: [], 
+                    customDesc: '', 
+                    comp: '', 
+                    gsm: '', 
+                    colorReq: '', 
+                    physical: false, 
+                    trackingNo: '' 
+                };
             }
-
             const config = selection.configs[name];
-
-            const standardArea = [document.getElementById('fabric-mode-switcher'), document.getElementById('fabric-solid-area'), document.getElementById('fabric-print-area')];
+        
+            // 4. UI 面板显隐切换
+            const standardArea = [
+                document.getElementById('fabric-mode-switcher'), 
+                document.getElementById('fabric-solid-area'), 
+                document.getElementById('fabric-print-area')
+            ];
             const customForm = document.getElementById('fabric-custom-sourcing-form');
-
+        
             if (isCustomSourcing) {
+                // 定制找样模式
                 standardArea.forEach(area => area?.classList.add('hidden'));
                 customForm.classList.remove('hidden');
                 document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：定制开发/全球找样`;
                 
-                // 恢复表单数据
+                // 恢复定制找样表单数据
                 document.getElementById('custom-fabric-desc').value = config.customDesc || '';
                 document.getElementById('custom-fabric-comp').value = config.comp || '';
                 document.getElementById('custom-fabric-gsm').value = config.gsm || '';
                 document.getElementById('custom-fabric-color').value = config.colorReq || '';
                 document.getElementById('custom-fabric-physical').checked = config.physical || false;
                 document.getElementById('custom-fabric-tracking').value = config.trackingNo || '';
-                
-                // 根据 checkbox 状态展示地址信息框
                 document.getElementById('custom-fabric-address-info').classList.toggle('hidden', !config.physical);
-
             } else {
+                // 标准面料选择模式
                 standardArea.forEach(area => area?.classList.remove('hidden'));
                 customForm.classList.add('hidden');
                 document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：${name}`;
+                
+                // 恢复选色/印花模式显示
                 switchFabricMode(config.mode); 
-            }
-
-            // 4. 恢复通用项 (备注、附件、色卡渲染等...)
-            document.getElementById('config-type-tag').innerText = selection.originalCatName;
-            if (!isCustomSourcing) {
+                
+                // 恢复纯色模式下的色号文本
                 document.getElementById('fabric-color-input').value = config.colorText || '';
-                // 假设你有针对当前面料的特定色卡图片 URL，可以在这里动态替换背景图
-                // document.getElementById('fabric-swatch-img-preview').style.backgroundImage = `url('你的特定面料色卡链接')`;
+                
+                // 恢复印花模式下的详细配置
+                if (config.mode === 'print') {
+                    const typeItems = document.querySelectorAll('.print-type-item');
+                    typeItems.forEach(item => {
+                        const isTarget = (config.printType === 'seamless' && item.innerText.includes('无缝')) || 
+                                         (config.printType === 'placement' && item.innerText.includes('定位'));
+                        item.classList.toggle('selected', isTarget);
+                    });
+                    document.getElementById('fabric-print-ref-color').value = config.printRefColor || '';
+                }
             }
-
+        
+            // 5. 恢复通用项（备注、附件、印花预览）
+            document.getElementById('config-type-tag').innerText = selection.originalCatName;
+            document.getElementById('fabric-remark').value = config.remark || '';
             renderFabricFileList(config.files || []);
             renderPrintPreview(config.prints || []);
-            document.getElementById('fabric-remark').value = config.remark; 
             
+            updateFabricSummary();
+        }
+
+
+        // 切换印花类型
+        function switchPrintType(type, el) {
+            if(!activeFabricCat || !fabricSelection[activeFabricCat] || !fabricSelection[activeFabricCat].activeName) return;
+            const config = fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName];
+            
+            config.printType = type;
+            
+            // 切换 UI 选中态
+            el.parentNode.querySelectorAll('.print-type-item').forEach(item => item.classList.remove('selected'));
+            el.classList.add('selected');
+            
+            updateFabricSummary();
+        }
+        
+        // 更新印花参考色号
+        function updatePrintRefColor() {
+            if(!activeFabricCat || !fabricSelection[activeFabricCat] || !fabricSelection[activeFabricCat].activeName) return;
+            const config = fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName];
+            
+            config.printRefColor = document.getElementById('fabric-print-ref-color').value.trim();
             updateFabricSummary();
         }
 
@@ -3805,30 +3891,51 @@
             updateFabricSummary();
         }
 
-        // 修改汇总显示逻辑
         function updateFabricSummary() {
             let html = '';
             let hasSelection = false;
+        
             for (const key in fabricSelection) {
                 const selection = fabricSelection[key];
                 const catName = selection.originalCatName;
-                let statusText = '未选';
+                let statusText = '<span style="color:#cbd5e1;">未选</span>';
                 
                 if (selection.activeName) {
                     hasSelection = true;
+                    
                     if (selection.activeName === 'CUSTOM_SOURCING') {
-                        statusText = `<span style="color:var(--primary-color);">定制找样/开发</span>`;
+                        // 定制找样模式
+                        statusText = `<span style="color:var(--primary-color); font-weight:600;">定制找样 / 开发</span>`;
                     } else {
                         const config = selection.configs[selection.activeName];
-                        let colorDisplay = config.colorText ? `(色号: ${config.colorText})` : '(待填色号)';
-                        statusText = config.mode === 'print' ? `${selection.activeName} (印花)` : `${selection.activeName} ${colorDisplay}`;
-
+                        
+                        if (config.mode === 'print') {
+                            // 印花模式
+                            const typeName = config.printType === 'placement' ? '定位印花' : '无缝印花';
+                            const refText = config.printRefColor ? ` | 对色: ${config.printRefColor}` : '';
+                            statusText = `${selection.activeName}<br><span style="font-size:10px; color:var(--primary-color);">${typeName}${refText}</span>`;
+                        } else {
+                            // 纯色模式 (默认)
+                            const colorDisplay = config.colorText ? `色号: ${config.colorText}` : '待填色号';
+                            statusText = `${selection.activeName}<br><span style="font-size:10px; color:#64748b;">${colorDisplay}</span>`;
+                        }
                     }
                 }
-                html += `<div style="font-size:12px; margin-bottom:4px; color:var(--text-main); text-align:right;">${catName}: ${statusText}</div>`;
+                
+                // 拼接单个部位的汇总 HTML
+                html += `<div style="font-size:12px; margin-bottom:10px; color:var(--text-main); text-align:right; line-height: 1.4;">
+                            <span style="color:#94a3b8; font-size: 11px;">[${catName}]</span><br>
+                            ${statusText}
+                         </div>`;
             }
-            document.getElementById('sum-fabric').innerHTML = hasSelection ? html : '未选';
+            
+            // 更新到右侧侧边栏
+            const sumFabricEl = document.getElementById('sum-fabric');
+            if (sumFabricEl) {
+                sumFabricEl.innerHTML = hasSelection ? html : '<div style="text-align:right; font-size:12px; color:#94a3b8;">未选</div>';
+            }
         }
+
 
         function switchSubTab(paneId, el) {
             document.querySelectorAll('.sub-pane').forEach(p => p.classList.remove('active')); document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));

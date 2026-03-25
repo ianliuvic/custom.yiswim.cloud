@@ -1428,22 +1428,36 @@
                                         <div id="bag-print-panel" class="fabric-config-panel hidden" style="padding: 25px 30px; margin-left: 13px; background: #fffcfc; border-color: #fecaca;">
                                             <div class="config-arrow" style="border-top-color: #fecaca; border-left-color: #fecaca;"></div>
                                             
-                                            <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px;">
-                                                <div>
+                                            <!-- 1. 新增：印刷款 MOQ 提醒横幅 -->
+                                            <div style="margin-bottom: 20px; padding: 10px 15px; background: #fff9f0; border: 1px dashed #fcd34d; border-radius: 8px; display: flex; align-items: center; gap: 10px;">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                                <span style="font-size: 11px; color: #b45309; font-weight: 600;">商业提示：定制印刷包装袋（单色或彩色）起订量 (MOQ) 通常为 5000 个起。</span>
+                                            </div>
+                                        
+                                            <!-- 2. 核心布局：左右等高对称 -->
+                                            <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px; align-items: stretch;">
+                                                
+                                                <!-- 左侧：设计上传 (垂直 Flex 布局以撑满高度) -->
+                                                <div style="display: flex; flex-direction: column;">
                                                     <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">设计图稿/Logo上传</label>
-                                                    <div class="premium-upload-box" onclick="document.getElementById('bagDesignFile').click()" style="padding: 20px; border-style: dashed; background: #fff;">
+                                                    <div class="premium-upload-box" onclick="document.getElementById('bagDesignFile').click()" style="flex: 1; min-height: 120px; padding: 0; border-style: dashed; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-sizing: border-box;">
                                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="margin-bottom:8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-                                                        <p style="font-size: 11px; color: #94a3b8; margin:0;">点击上传 AI/PDF/高清图</p>
+                                                        <p style="font-size: 11px; color: #94a3b8; margin:0;">点击上传 AI / PDF / 高清图</p>
                                                         <input type="file" id="bagDesignFile" multiple class="hidden" onchange="handleBagFiles(this)">
                                                     </div>
-                                                    <div id="bagDesignPreview" class="oem-image-preview-grid" style="margin-top:12px;"></div>
+                                                    <!-- 预览图：放在左侧容器内，随容器排列 -->
+                                                    <div id="bagDesignPreview" class="oem-image-preview-grid" style="margin-top:12px; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));"></div>
                                                 </div>
-                                                <div>
+                                        
+                                                <!-- 右侧：印刷要求 (垂直 Flex 布局以撑满高度) -->
+                                                <div style="display: flex; flex-direction: column;">
                                                     <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">印刷排版要求</label>
-                                                    <textarea id="bag-remark" class="oem-textarea" style="height: 110px; font-size:12px; box-sizing: border-box;" placeholder="请描述您的排版要求（如：Logo居中，离顶部5cm...）" oninput="updateBagSummary()"></textarea>
+                                                    <textarea id="bag-remark" class="oem-textarea" style="flex: 1; height: 100%; min-height: 120px; font-size:12px; resize: none; box-sizing: border-box; line-height: 1.6;" placeholder="请详细描述印刷位置与排版要求。&#10;例如：Logo 位于袋子正中心，宽度占袋宽 1/3；底部需印环保循环标识..." oninput="updateBagSummary()"></textarea>
                                                 </div>
+                                                
                                             </div>
                                         </div>
+
                                     </div>
                                 </div>
                             </div>

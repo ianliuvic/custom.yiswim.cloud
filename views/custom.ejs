@@ -2552,14 +2552,20 @@
     </div>
 
     <!-- 高清色卡专用纯净预览弹窗 -->
-    <div class="modal-overlay" id="swatchFullModal" style="background: rgba(0,0,0,0.95); z-index: 10000; padding: 0;">
+    <div class="modal-overlay" id="swatchFullModal" style="background: rgba(0,0,0,0.95); z-index: 10000; padding: 0; overflow: hidden;">
         <button class="modal-close-abs" onclick="closeSwatchModal()" style="top:20px; right:20px; background: rgba(0,0,0,0.5); color:#fff; border: 1px solid rgba(255,255,255,0.2); z-index: 10001;">&times;</button>
         
-        <!-- 图片滚动容器 -->
-        <div id="swatchFullContainer" style="width:100%; height:100%; overflow: hidden; display:flex; align-items:center; justify-content:center; cursor: grab;">
-            <img id="swatchFullImg" src="" style="max-width: 90%; max-height: 90%; transition: transform 0.3s cubic-bezier(0.2, 0, 0.2, 1); transform-origin: center; user-select: none; -webkit-user-drag: none;">
+        <!-- 交互容器 -->
+        <div id="swatchFullContainer" style="width:100vw; height:100vh; display:flex; align-items:center; justify-content:center; cursor: grab; overflow: hidden;">
+            <img id="swatchFullImg" src="" style="user-select: none; -webkit-user-drag: none; transition: transform 0.05s linear; transform: translate(0px, 0px) scale(1);">
+        </div>
+    
+        <!-- 操作提示 -->
+        <div style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.5); font-size: 12px; pointer-events: none; background: rgba(0,0,0,0.3); padding: 5px 15px; border-radius: 20px;">
+            滚轮缩放 · 左键拖拽 · 双击重置
         </div>
     </div>
+
 
 
     <!-- =========================================================================
@@ -3671,103 +3677,73 @@
             updateFabricSummary();
         }
         
-        // 状态变量
-        let isZoomed = false;
-        let isDragging = false;
-        let startX, startY, scrollLeft, scrollTop;
+        let zoom = 1;
+        let offset = { x: 0, y: 0 };
+        let isPanning = false;
+        let startPos = { x: 0, y: 0 };
         
-        // 1. 打开弹窗
+        const swatchImg = document.getElementById('swatchFullImg');
+        const swatchCont = document.getElementById('swatchFullContainer');
+        
+        // 1. 打开与初始化
         function openFabricColorModal() {
             const bgImage = document.getElementById('fabric-swatch-img-preview').style.backgroundImage;
             const imageUrl = bgImage.slice(4, -1).replace(/["']/g, ""); 
+            swatchImg.src = imageUrl;
             
-            const img = document.getElementById('swatchFullImg');
-            const container = document.getElementById('swatchFullContainer');
+            // 重置变量
+            zoom = 1; offset = { x: 0, y: 0 };
+            updateSwatchTransform();
             
-            img.src = imageUrl;
-            resetSwatch(); // 每次打开重置状态
             document.getElementById('swatchFullModal').classList.add('active');
         }
         
-        // 2. 重置图片状态
-        function resetSwatch() {
-            isZoomed = false;
-            const img = document.getElementById('swatchFullImg');
-            const container = document.getElementById('swatchFullContainer');
-            img.style.transform = "scale(1)";
-            img.style.maxWidth = "90%";
-            img.style.maxHeight = "90%";
-            container.style.cursor = "zoom-in";
-            container.style.overflow = "hidden";
-            container.scrollTo(0, 0);
+        // 2. 更新图片状态 (唯一控制函数)
+        function updateSwatchTransform() {
+            swatchImg.style.transform = `translate(${offset.x}px, ${offset.y}px) scale(${zoom})`;
         }
         
-        // 3. 切换缩放 (点击事件)
-        document.getElementById('swatchFullContainer').addEventListener('click', function(e) {
-            if (isDragging) return; // 如果刚才在拖拽，则不触发缩放切换
+        // 3. 滚轮无级缩放
+        swatchCont.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? 0.9 : 1.1; // 缩放系数
+            const newZoom = zoom * delta;
             
-            const img = document.getElementById('swatchFullImg');
-            const container = this;
-        
-            if (!isZoomed) {
-                // 放大逻辑
-                img.style.transform = "scale(3)"; // 放大倍数
-                img.style.maxWidth = "none";
-                img.style.maxHeight = "none";
-                container.style.cursor = "grab";
-                container.style.overflow = "auto"; // 允许滚动
-                isZoomed = true;
-            } else {
-                // 缩小逻辑
-                resetSwatch();
+            // 限制缩放范围 (0.5倍 到 10倍)
+            if (newZoom > 0.5 && newZoom < 10) {
+                zoom = newZoom;
+                updateSwatchTransform();
             }
+        }, { passive: false });
+        
+        // 4. 左键拖拽平移
+        swatchCont.addEventListener('mousedown', (e) => {
+            if (e.button !== 0) return; // 仅限左键
+            isPanning = true;
+            startPos = { x: e.clientX - offset.x, y: e.clientY - offset.y };
+            swatchCont.style.cursor = 'grabbing';
         });
         
-        // 4. 拖拽平移逻辑 (核心)
-        const container = document.getElementById('swatchFullContainer');
-        
-        container.addEventListener('mousedown', (e) => {
-            if (!isZoomed) return;
-            isDragging = false;
-            const startClickTime = Date.now();
-            
-            container.style.cursor = 'grabbing';
-            startX = e.pageX - container.offsetLeft;
-            startY = e.pageY - container.offsetTop;
-            scrollLeft = container.scrollLeft;
-            scrollTop = container.scrollTop;
-        
-            const onMouseMove = (e) => {
-                isDragging = true; // 只要移动了，就标记为正在拖拽
-                e.preventDefault();
-                const x = e.pageX - container.offsetLeft;
-                const y = e.pageY - container.offsetTop;
-                const walkX = (x - startX) * 2; // 滚动速度倍率
-                const walkY = (y - startY) * 2;
-                container.scrollLeft = scrollLeft - walkX;
-                container.scrollTop = scrollTop - walkY;
-            };
-        
-            const onMouseUp = () => {
-                container.style.cursor = isZoomed ? 'grab' : 'zoom-in';
-                document.removeEventListener('mousemove', onMouseMove);
-                document.removeEventListener('mouseup', onMouseUp);
-                
-                // 如果点击时间很短且没怎么移动，click 事件会正常触发缩放
-                // 否则在这里通过延时阻止 click 逻辑
-                if (isDragging) {
-                    setTimeout(() => { isDragging = false; }, 50);
-                }
-            };
-        
-            document.addEventListener('mousemove', onMouseMove);
-            document.addEventListener('mouseup', onMouseUp);
+        window.addEventListener('mousemove', (e) => {
+            if (!isPanning) return;
+            offset.x = e.clientX - startPos.x;
+            offset.y = e.clientY - startPos.y;
+            updateSwatchTransform();
         });
         
-        // 5. 关闭弹窗
+        window.addEventListener('mouseup', () => {
+            isPanning = false;
+            swatchCont.style.cursor = 'grab';
+        });
+        
+        // 5. 辅助功能：双击重置
+        swatchCont.addEventListener('dblclick', () => {
+            zoom = 1; offset = { x: 0, y: 0 };
+            updateSwatchTransform();
+        });
+        
         function closeSwatchModal() {
             document.getElementById('swatchFullModal').classList.remove('active');
-            setTimeout(resetSwatch, 300); // 弹窗完全消失后重置
         }
 
         function toggleColor(colorCode, el) {

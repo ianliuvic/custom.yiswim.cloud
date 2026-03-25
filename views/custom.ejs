@@ -159,6 +159,17 @@
         .option-info h4 { margin: 0 0 6px; font-size: 15px; color: var(--text-main); font-weight: 600; letter-spacing: 0.3px; }
         .option-info p { margin: 0; font-size: 12px; color: var(--text-light); line-height: 1.5; }
 
+        /* 面料卡片标签样式 */
+        .fabric-tags-wrapper { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+        .fabric-tag-item { 
+            font-size: 10px; background: #f1f5f9; color: #64748b; 
+            padding: 1px 6px; border-radius: 4px; font-weight: 500;
+            border: 1px solid #e2e8f0; white-space: nowrap;
+        }
+        /* 特殊标签高亮 (可选：如识别到 '常用' 或 '推荐') */
+        .fabric-tag-item.highlight { background: #fff0f0; color: var(--primary-color); border-color: #fecaca; }
+
+
         /* QA 标签交互样式 */
         .qa-badge-container {
             position: relative; cursor: help; display: flex; align-items: center; gap: 10px;
@@ -3413,6 +3424,22 @@
                 // 3. 填充当前分类下的面料卡片
                 catFabrics.forEach(fabric => {
                     window.globalFabricsMap[fabric.name] = fabric; // 将面料数据存入全局字典
+
+                    // --- 新增：标签解析逻辑 ---
+                    let tagsHtml = '';
+                    if (fabric.tags && fabric.tags.trim() !== '') {
+                        // 使用正则兼容中英文逗号分割，并过滤空字符串
+                        const tagList = fabric.tags.split(/[，,]/).map(t => t.trim()).filter(t => t !== '');
+                        if (tagList.length > 0) {
+                            tagsHtml = `<div class="fabric-tags-wrapper">` + 
+                                tagList.map(t => {
+                                    const isHighlight = ['常用', '推荐', 'HOT'].includes(t);
+                                    return `<span class="fabric-tag-item ${isHighlight ? 'highlight' : ''}">${t}</span>`;
+                                }).join('') + 
+                            `</div>`;
+                        }
+                    }
+
                     const coverImg = (fabric.image_urls && fabric.image_urls.length > 0) ? fabric.image_urls[0] : '';
                     const fabricJson = JSON.stringify(fabric).replace(/"/g, '&quot;');
                     
@@ -3425,10 +3452,12 @@
                             <div class="details-btn" onclick="event.stopPropagation(); openDetailModal(${fabricJson})" title="查看详情">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                             </div>
-                            ${coverImg ? `<img src="${coverImg}" class="option-img" loading="lazy">` : `<div style="width:100%; aspect-ratio:1/1; background:#f8fafc; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:12px;">[暂无预览图]</div>`}
+                            ${coverImg ? `<img src="${coverImg}" class="option-img" loading="lazy">` : `...`}
                             <div class="option-info">
                                 <h4>${fabric.name}</h4>
                                 <p style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${subText}">${subText}</p>
+                                <!-- 插入标签区域 -->
+                                ${tagsHtml}
                             </div>
                         </div>`;
                     gridContainer.insertAdjacentHTML('beforeend', cardHtml);

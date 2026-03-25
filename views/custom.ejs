@@ -5025,7 +5025,7 @@
             if (metalConfig.mode === 'auto') {
                 // 代配模式下的精简汇总
                 st.innerHTML = `<div style="text-align:right;">${colorPart}<br><span style="font-size:10px; color:#10b981; font-weight:600;">红绣智能代配</span></div>`;
-            else {
+            } else {
                 const selectedCats = metalConfig.categories;
                 if (selectedCats.length === 0) {
                     st.innerHTML = `<div style="text-align:right;">${colorPart}<br><span style="font-size:10px; color:#94a3b8;">待选择饰品</span></div>`;
@@ -5037,9 +5037,6 @@
                     st.innerHTML = `<div style="text-align:right;">${colorPart}<br>${detailText}</div>`;
                 }
             }
-            
-            st.style.color = 'var(--primary-color)';
-            st.style.fontWeight = 'bold';
         }
 
         // 扩展 bagConfig 数据结构

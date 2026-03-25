@@ -1551,14 +1551,16 @@
                                                 <div class="shape-name">正方/圆形</div>
                                                 <div class="shape-desc">视觉独特<br>童装、内衣、配饰推荐</div>
                                             </div>
-                                            <div class="hangtag-shape-card" onclick="selectHangtagAttr('shape', '异形定制 (开模刀模)', this)" style="background:#f8fafc;">
+                                            <!-- 4. 修改后的定制卡片 -->
+                                            <div class="hangtag-shape-card" onclick="selectHangtagAttr('shape', '尺寸或特殊异形定制', this)" style="background:#f8fafc;">
                                                 <div class="shape-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/><circle cx="12" cy="7" r="1"/></svg></div>
-                                                <div class="shape-name" style="color:#64748b;">特殊异形定制</div>
+                                                <div class="shape-name" style="color:#64748b;">尺寸或特殊异形定制</div>
                                                 <div class="shape-desc">Logo形状等<br><span style="color:#f59e0b; font-weight:bold;">需开刀模 (MOQ 5000起)</span></div>
                                             </div>
                                         </div>
-                                        
-                                        <div style="margin-left: 13px; margin-top: 20px; padding-top: 20px; border-top: 1px dashed #e2e8f0;">
+
+                                        <!-- 将此区域包裹并默认隐藏 -->
+                                        <div id="hangtag-custom-shape-area" class="hidden" style="margin-left: 13px; margin-top: 20px; padding-top: 20px; border-top: 1px dashed #e2e8f0;">
                                             <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; align-items: flex-start;">
                                                 <div style="display: flex; flex-direction: column;">
                                                     <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">补充尺寸说明 / 异形要求 (选填)</label>
@@ -1606,31 +1608,6 @@
                                                         <div class="string-color-swatch bg-silver" onclick="selectHangtagAttr('stringColor', '银色系', this)"></div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                            
-                                    <!-- D. 高级工艺附加 -->
-                                    <div class="attr-section" style="margin-bottom: 30px;">
-                                        <div style="display: flex; align-items: baseline; gap: 15px; margin-bottom: 15px;">
-                                            <h4 style="font-size: 14px; border-left: 3px solid var(--primary-color); padding-left: 10px; margin: 0;">D. 高级工艺附加 (Advanced Crafts)</h4>
-                                            <span style="font-size: 11px; color: #f59e0b; font-weight: 600;">[ 吊牌类定制 MOQ: 3000起 ]</span>
-                                        </div>
-                                        <div style="margin-left: 13px;">
-                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">高级工艺附加 (可多选，仅限正面)</label>
-                                            <div class="chip-container" style="margin-bottom: 20px;">
-                                                <div class="chip" onclick="toggleHangtagCraft('烫金/烫银', this)">烫金/烫银 (Foil Stamping)</div>
-                                                <div class="chip" onclick="toggleHangtagCraft('击凸/压凹', this)">击凸/压凹 (Embossing)</div>
-                                                <div class="chip" onclick="toggleHangtagCraft('局部UV发亮', this)">局部UV (Spot UV)</div>
-                                                <div class="chip" onclick="toggleHangtagCraft('覆亚膜', this)">覆亚膜 (Matte Lamination)</div>
-                                            </div>
-                                            <div>
-                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">背面信息处理方式</label>
-                                                <select id="hangtag-back-info" class="oem-input-mini" style="width: 280px; height:38px;" onchange="updateHangtagSummary()">
-                                                    <option value="留白贴不干胶">底部留白 (用于后续粘贴尺码不干胶)</option>
-                                                    <option value="固定信息印刷">仅印固定信息 (网址、洗涤图标等)</option>
-                                                    <option value="双面均为空白">双面空白无印</option>
-                                                </select>
                                             </div>
                                         </div>
                                     </div>
@@ -4824,6 +4801,12 @@
                 document.getElementById('content-hangtag').querySelectorAll('.metal-item').forEach(item => item.classList.remove('selected'));
             } else if (attrType === 'shape') {
                 document.getElementById('content-hangtag').querySelectorAll('.hangtag-shape-card').forEach(item => item.classList.remove('selected'));
+                // --- 新增：定制区域显隐控制 ---
+                const customArea = document.getElementById('hangtag-custom-shape-area');
+                if (customArea) {
+                    // 只有当选中的值是“尺寸或特殊异形定制”时才显示
+                    customArea.classList.toggle('hidden', value !== '尺寸或特殊异形定制');
+                }
             } else if (attrType === 'stringMat') {
                 document.getElementById('content-hangtag').querySelectorAll('.hangtag-string-mat').forEach(item => item.classList.remove('selected'));
             } else if (attrType === 'stringColor') {

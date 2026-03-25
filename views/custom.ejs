@@ -971,7 +971,7 @@
 
                         <div id="fabric-config-panel" class="fabric-config-panel hidden">
                             <div id="config-arrow" class="config-arrow"></div>
-                                                        <div class="config-header">
+                            <div class="config-header">
                                 <h4 id="selected-fabric-display">配置选项</h4>
                                 <span id="config-type-tag" style="font-size: 11px; padding: 2px 8px; border-radius: 10px; background: #eee; color: #666;">面料</span>
                             </div>
@@ -1149,6 +1149,30 @@
                                 <div id="fabricFileList" class="file-list-container"></div>
                             </div>
 
+                        </div>
+
+                        <!-- ================= 新增：全局客供物料 (CMT) 选项 ================= -->
+                        <div style="margin-top: 30px; padding-top: 25px; border-top: 2px dashed #f1f5f9;">
+                            <label class="oem-checkbox-label" style="margin: 0; padding: 0;">
+                                <input type="checkbox" id="fabric-cmt-check" onchange="toggleFabricCmtInfo(this.checked)"> 
+                                <span style="font-size: 13px; font-weight: 600; color: #334155;">我将自行采购并寄送面辅料 (CMT 模式 / Customer Supplied Material)</span>
+                            </label>
+                            
+                            <div id="fabric-cmt-address-info" class="hidden" style="margin-top: 15px; background: #fffbeb; padding: 20px; border-radius: 8px; border: 1px solid #fcd34d; display: flex; flex-direction: column; gap: 12px; font-size: 12.5px; color: #92400e; transition: all 0.3s;">
+                                <div style="display: flex; align-items: flex-start; gap: 8px; line-height: 1.6;">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5" style="flex-shrink: 0; margin-top: 2px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                    <span>
+                                        <strong>收件仓库：</strong>广东省东莞市虎门镇红绣服饰制造中心一楼 物料仓<br>
+                                        <strong>收件人：</strong>物料核发部 138-0000-0000<br>
+                                        <span style="font-size: 11px; color: #b45309; display: block; margin-top: 4px;">* 寄出前请务必在外包装上显著标明您的 <strong>品牌名称</strong> 及 <strong>项目单号</strong>，以免与其它入库物料混淆。</span>
+                                    </span>
+                                </div>
+                                
+                                <div style="display: flex; align-items: center; gap: 10px; margin-top: 5px; padding-top: 12px; border-top: 1px dashed #fde68a;">
+                                    <span style="font-weight: 600;">寄件单号 (选填)：</span>
+                                    <input type="text" id="fabric-cmt-tracking" class="oem-input-mini" style="flex: 1; max-width: 300px; background: #fff; border-color: #fcd34d;" placeholder="若已寄出请填写，方便库房查收..." autocomplete="off" oninput="updateFabricSummary()">
+                                </div>
+                            </div>
                         </div>
                     </div>
 

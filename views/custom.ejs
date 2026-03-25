@@ -4268,7 +4268,20 @@
                             ${statusText}
                          </div>`;
             }
-            
+
+            // --- 新增：客供物料 (CMT) 汇总逻辑 ---
+            const isCmt = document.getElementById('fabric-cmt-check') && document.getElementById('fabric-cmt-check').checked;
+            if (isCmt) {
+                hasSelection = true;
+                const trackingNo = document.getElementById('fabric-cmt-tracking').value.trim();
+                const trackingText = trackingNo ? `单号: ${trackingNo}` : '待更新单号';
+                
+                html += `<div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #e2e8f0; font-size:12px; color:var(--text-main); text-align:right;">
+                            <span style="color:var(--primary-color); font-weight:600;">客户自行提供物料 (CMT)</span><br>
+                            <span style="font-size:10px; color:#f59e0b;">${trackingText}</span>
+                         </div>`;
+            }
+
             // 更新到右侧侧边栏
             const sumFabricEl = document.getElementById('sum-fabric');
             if (sumFabricEl) {
@@ -6339,6 +6352,18 @@
             document.getElementById('fabric-config-panel').classList.add('hidden');
             
             // 3. 更新右侧侧边栏汇总
+            updateFabricSummary();
+        }
+
+        // 控制客供物料信息框的显隐，并更新侧边栏汇总
+        function toggleFabricCmtInfo(isChecked) {
+            const infoBox = document.getElementById('fabric-cmt-address-info');
+            if (isChecked) {
+                infoBox.classList.remove('hidden');
+            } else {
+                infoBox.classList.add('hidden');
+                document.getElementById('fabric-cmt-tracking').value = ''; // 收起时清空单号
+            }
             updateFabricSummary();
         }
 

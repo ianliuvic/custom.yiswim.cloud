@@ -2558,7 +2558,7 @@
         <!-- 交互容器 -->
         <div id="swatchFullContainer" style="width:100vw; height:100vh; display:flex; align-items:center; justify-content:center; cursor: grab; overflow: hidden;">
             <img id="swatchFullImg" src="" 
-                 style="user-select: none; -webkit-user-drag: none; transition: transform 0.05s linear; 
+                 style="user-select: none; -webkit-user-drag: none; 
                         transform: translate(0px, 0px) scale(1); 
                         max-width: 95%; max-height: 95%; object-fit: contain;">
         </div>
@@ -3710,19 +3710,25 @@
             swatchImg.style.transform = `translate(${offset.x}px, ${offset.y}px) scale(${zoom})`;
         }
         
-        // 3. 滚轮无级缩放
+        // 3. 滚轮无级缩放 (以画面中心为锚点)
         swatchCont.addEventListener('wheel', (e) => {
             e.preventDefault();
-            const delta = e.deltaY > 0 ? 0.9 : 1.1; // 缩放系数
+            
+            const delta = e.deltaY > 0 ? 0.85 : 1.15; // 缩放系数
             const newZoom = zoom * delta;
             
-            // 限制缩放范围 (0.5倍 到 10倍)
-            if (newZoom > 0.5 && newZoom < 10) {
+            // 限制缩放范围 (0.5倍 到 15倍)
+            if (newZoom > 0.5 && newZoom < 15) {
+                // 核心算法：为了让缩放中心保持在画面中心
+                // 我们需要让偏移量也跟随缩放系数同步变化
+                offset.x *= delta;
+                offset.y *= delta;
+                
                 zoom = newZoom;
                 updateSwatchTransform();
             }
         }, { passive: false });
-        
+
         // 4. 左键拖拽平移
         swatchCont.addEventListener('mousedown', (e) => {
             if (e.button !== 0) return; // 仅限左键
@@ -3745,7 +3751,8 @@
         
         // 5. 辅助功能：双击重置
         swatchCont.addEventListener('dblclick', () => {
-            zoom = 1; offset = { x: 0, y: 0 };
+            zoom = 1; 
+            offset = { x: 0, y: 0 }; // 坐标归零
             updateSwatchTransform();
         });
         

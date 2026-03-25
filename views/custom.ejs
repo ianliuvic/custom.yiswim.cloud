@@ -5269,10 +5269,9 @@
             
             // --- 新增：自动选中“由红绣推荐” ---
             setTimeout(() => {
-                // 查找“红绣推荐”的卡片并模拟点击
                 const recommendCard = document.querySelector('.bag-size-card[onclick*="红绣推荐"]');
-                if (recommendCard && bagConfig.size === '未选尺寸') {
-                    recommendCard.click();
+                if (recommendCard) {
+                    recommendCard.click(); // 强制执行默认推荐
                 }
             }, 100);
             // -----------------------------------

@@ -5404,71 +5404,6 @@
             el.classList.add('selected');
             updateHangtagSummary();
         }
-        
-        // 处理工艺多选逻辑 - 强制互斥修复版
-        function toggleHangtagCraft(val, el) {
-            const grid = el.closest('.option-grid');
-            if (!grid) return;
-        
-            // 1. 精准找到“无附加工艺”的卡片元素
-            const noneCard = grid.querySelector('[data-is-none="true"]');
-            
-            // 初始化配置数组
-            if (!hangtagConfig.crafts) hangtagConfig.crafts = ['无附加工艺'];
-            let arr = hangtagConfig.crafts;
-        
-            if (val === '无附加工艺') {
-                // --- 情况 A: 用户点击了“无附加工艺” ---
-                arr = ['无附加工艺'];
-                // UI操作：全场熄灭，仅点亮自己
-                grid.querySelectorAll('.option-item').forEach(item => item.classList.remove('selected'));
-                el.classList.add('selected');
-            } else {
-                // --- 情况 B: 用户点击了高级工艺（如烫金等） ---
-                
-                // 核心修复逻辑：
-                // 1. 无论数组里有没有，只要点了高级工艺，就强制熄灭“无附加工艺”卡片
-                if (noneCard) {
-                    noneCard.classList.remove('selected');
-                }
-                
-                // 2. 从数据数组中移除“无附加工艺”
-                const noneIndex = arr.indexOf('无附加工艺');
-                if (noneIndex > -1) {
-                    arr.splice(noneIndex, 1);
-                }
-        
-                // 3. 处理当前点击项的逻辑（多选切换）
-                const idx = arr.indexOf(val);
-                if (idx > -1) {
-                    arr.splice(idx, 1); // 再次点击取消
-                    el.classList.remove('selected');
-                } else {
-                    arr.push(val); // 选中
-                    el.classList.add('selected');
-                }
-        
-                // 4. 自动回滚：如果所有高级工艺都没选，重新点亮“无附加工艺”
-                if (arr.length === 0) {
-                    arr = ['无附加工艺'];
-                    if (noneCard) noneCard.classList.add('selected');
-                }
-            }
-        
-            // 更新全局配置
-            hangtagConfig.crafts = arr;
-            
-            // 联动控制“其他”备注区
-            const otherArea = document.getElementById('hangtag-craft-other-area');
-            if (otherArea) {
-                const needsOther = arr.includes('其他');
-                otherArea.classList.toggle('hidden', !needsOther);
-                if (needsOther) setTimeout(() => scrollElementToCenter('hangtag-craft-other-area'), 50);
-            }
-        
-            updateHangtagSummary();
-        }
-
 
         /**
          * 将指定的元素平滑滚动到滚动容器的中心位置
@@ -5498,13 +5433,73 @@
             });
         }
 
-
-        function toggleHangtagCraft(craft, el) {
-            const index = hangtagConfig.crafts.indexOf(craft);
-            if (index > -1) { hangtagConfig.crafts.splice(index, 1); el.classList.remove('selected'); } 
-            else { hangtagConfig.crafts.push(craft); el.classList.add('selected'); }
+        // 吊牌工艺多选逻辑：第一项与其它项完全互斥
+        function toggleHangtagCraft(val, el) {
+            // 1. 获取网格容器及所有卡片
+            const grid = el.closest('.option-grid');
+            if (!grid) return;
+            const allCards = grid.querySelectorAll('.option-item');
+            const noneCard = grid.querySelector('[data-is-none="true"]');
+        
+            // 初始化配置数组
+            if (!hangtagConfig.crafts) hangtagConfig.crafts = ['无附加工艺'];
+            let arr = hangtagConfig.crafts;
+        
+            if (val === '无附加工艺') {
+                // --- 情况 A: 用户选择了第一项 ---
+                arr = ['无附加工艺'];
+                // UI: 熄灭所有，点亮自己
+                allCards.forEach(card => card.classList.remove('selected'));
+                el.classList.add('selected');
+            } else {
+                // --- 情况 B: 用户选择了其他高级工艺 ---
+                
+                // 1. 数据互斥：从数组中彻底移除“无附加工艺”
+                const noneIdx = arr.indexOf('无附加工艺');
+                if (noneIdx > -1) {
+                    arr.splice(noneIdx, 1);
+                }
+                // UI互斥：熄灭“无附加工艺”卡片样式
+                if (noneCard) {
+                    noneCard.classList.remove('selected');
+                }
+        
+                // 2. 多选切换逻辑
+                const currentIdx = arr.indexOf(val);
+                if (currentIdx > -1) {
+                    // 已在数组中，说明是取消选择
+                    arr.splice(currentIdx, 1);
+                    el.classList.remove('selected');
+                } else {
+                    // 不在数组中，说明是新增选择
+                    arr.push(val);
+                    el.classList.add('selected');
+                }
+        
+                // 3. 自动回滚逻辑：如果用户取消了所有高级选项，自动变回“无附加工艺”
+                if (arr.length === 0) {
+                    arr = ['无附加工艺'];
+                    if (noneCard) noneCard.classList.add('selected');
+                }
+            }
+        
+            // 写入全局配置
+            hangtagConfig.crafts = arr;
+            
+            // 4. 联动控制：如果包含“其他”，显示文本输入区
+            const otherArea = document.getElementById('hangtag-craft-other-area');
+            if (otherArea) {
+                const needsOtherArea = arr.includes('其他');
+                otherArea.classList.toggle('hidden', !needsOtherArea);
+                if (needsOtherArea) {
+                    setTimeout(() => scrollElementToCenter('hangtag-craft-other-area'), 50);
+                }
+            }
+        
+            // 5. 刷新侧边栏
             updateHangtagSummary();
         }
+
 
         // 修改文件处理函数，支持 string 类型
         function handleHangtagFiles(input, type) {

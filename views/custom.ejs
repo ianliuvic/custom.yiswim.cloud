@@ -4787,20 +4787,46 @@
             document.getElementById(`pane-${paneId}`).classList.add('active'); el.classList.add('active');
         }
 
-        // 1. 辅料 CMT 复选框交互逻辑
+        // 1. 辅料 CMT 复选框交互逻辑 (带平滑滚动与数据清理)
         function toggleTrimCmt(category, isChecked) {
-            const infoBox = document.getElementById(`cmt-info-${category}`);
-            if (infoBox) infoBox.classList.toggle('hidden', !isChecked);
+            const infoBoxId = `cmt-info-${category}`;
+            const infoBox = document.getElementById(infoBoxId);
             
-            // 包装袋特判：勾选 CMT 则隐藏默认无印包装提示
-            if (category === 'bag') {
-                const defaultHint = document.getElementById('bag-default-hint');
-                if (defaultHint) defaultHint.style.display = isChecked ? 'none' : 'flex';
+            if (infoBox) {
+                if (isChecked) {
+                    infoBox.classList.remove('hidden');
+                    // 展开时，平滑滚动至该信息框的中心位置
+                    setTimeout(() => {
+                        scrollElementToCenter(infoBoxId);
+                    }, 50);
+                } else {
+                    infoBox.classList.add('hidden');
+                    // 收起时，清空该分类下用户填写的 CMT 数据
+                    const trackingInput = document.getElementById(`cmt-tracking-${category}`);
+                    const descInput = document.getElementById(`cmt-desc-${category}`);
+                    if (trackingInput) trackingInput.value = '';
+                    if (descInput) descInput.value = '';
+                    
+                    // 清空上传的文件
+                    cmtFilesData[category] = [];
+                    const nameEl = document.getElementById(`cmt-filename-${category}`);
+                    if (nameEl) nameEl.innerText = '点击上传';
+                    renderCmtPreviews(category);
+                }
             }
             
+            // 包装袋特判：勾选 CMT 则隐藏默认的“无印包装提示”
+            if (category === 'bag') {
+                const defaultHint = document.getElementById('bag-default-hint');
+                if (defaultHint) {
+                    defaultHint.style.display = isChecked ? 'none' : 'flex';
+                }
+            }
+            
+            // 触发对应的侧边栏汇总更新
             updateTrimSummaryTrigger(category);
         }
-        
+
         // 2. 路由触发器
         function updateTrimSummaryTrigger(category) {
             if(category === 'metal') updateMetalSummary();
@@ -7092,15 +7118,33 @@
             updateFabricSummary();
         }
 
-        // 控制客供物料信息框的显隐，并更新侧边栏汇总
+        // 控制面料客供物料 (CMT) 信息框的显隐，并平滑滚动
         function toggleFabricCmtInfo(isChecked) {
             const infoBox = document.getElementById('fabric-cmt-address-info');
+            if (!infoBox) return;
+        
             if (isChecked) {
                 infoBox.classList.remove('hidden');
+                // 展开后，略微延迟以确保 DOM 渲染完成，然后滚动到视野中心
+                setTimeout(() => {
+                    scrollElementToCenter('fabric-cmt-address-info');
+                }, 50);
             } else {
                 infoBox.classList.add('hidden');
-                document.getElementById('fabric-cmt-tracking').value = ''; // 收起时清空单号
+                // 收起时清空所有关联的输入数据，保持数据整洁
+                const trackingInput = document.getElementById('fabric-cmt-tracking');
+                const descInput = document.getElementById('fabric-cmt-desc');
+                if (trackingInput) trackingInput.value = '';
+                if (descInput) descInput.value = '';
+                
+                // 清空上传的文件
+                cmtFilesData['fabric'] = [];
+                const nameEl = document.getElementById('fabricCmtFileName');
+                if (nameEl) nameEl.innerText = '点击上传图片或 PDF 清单';
+                renderCmtPreviews('fabric');
             }
+            
+            // 更新右侧侧边栏的汇总状态
             updateFabricSummary();
         }
 

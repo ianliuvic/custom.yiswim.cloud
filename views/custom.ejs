@@ -5474,23 +5474,6 @@
             // 6. 刷新侧边栏显示
             updateHangtagSummary();
         }
-        
-            // 写回配置
-            hangtagConfig.crafts = arr;
-            
-            // 4. 联动：控制“其他工艺”描述区的显隐
-            const otherArea = document.getElementById('hangtag-craft-other-area');
-            if (otherArea) {
-                const needsOther = arr.includes('其他');
-                otherArea.classList.toggle('hidden', !needsOther);
-                if (needsOther) {
-                    // 使用之前定义的平滑滚动函数
-                    setTimeout(() => scrollElementToCenter('hangtag-craft-other-area'), 50);
-                }
-            }
-        
-            updateHangtagSummary();
-        }
 
 
         /**

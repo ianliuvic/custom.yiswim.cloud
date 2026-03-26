@@ -1681,10 +1681,61 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <!-- C. 印刷工艺选择 -->
+                                    <div class="attr-section" style="margin-bottom: 30px;">
+                                        <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 印刷工艺附加 (Printing Craft)</h4>
+                                        <div class="option-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-left: 13px;">
+                                            <!-- 1. 不需要 -->
+                                            <div class="option-item metal-item selected" onclick="selectHangtagAttr('craft', '不需要', this)">
+                                                <div class="option-img-alt" style="background: #fdfdfd; display:flex; align-items:center; justify-content:center; color:#cbd5e1;">无附加工艺</div>
+                                                <div class="option-info"><h4>无附加工艺</h4><p>常规油墨印刷</p></div>
+                                            </div>
+                                            <!-- 2. 烫金/烫银 -->
+                                            <div class="option-item metal-item" onclick="selectHangtagAttr('craft', '烫金/烫银', this)">
+                                                <div class="option-img-alt" style="background: linear-gradient(135deg, #e6be8a 0%, #f7e1ad 100%); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:bold; text-shadow:0 1px 2px rgba(0,0,0,0.2);">FOIL</div>
+                                                <div class="option-info"><h4>烫金 / 烫银</h4><p>金属质感高亮LOGO</p></div>
+                                            </div>
+                                            <!-- 3. 局部UV -->
+                                            <div class="option-item metal-item" onclick="selectHangtagAttr('craft', '局部UV', this)">
+                                                <div class="option-img-alt" style="background: #334155; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.8);">SPOT UV</div>
+                                                <div class="option-info"><h4>局部 UV</h4><p>特定区域凸起发亮</p></div>
+                                            </div>
+                                            <!-- 4. 凹凸印 -->
+                                            <div class="option-item metal-item" onclick="selectHangtagAttr('craft', '凹凸印', this)">
+                                                <div class="option-img-alt" style="background: #f1f5f9; display:flex; align-items:center; justify-content:center; color:#94a3b8; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1);">EMBOSS</div>
+                                                <div class="option-info"><h4>凹凸印</h4><p>立体浮雕触感</p></div>
+                                            </div>
+                                            <!-- 5. 其他 -->
+                                            <div class="option-item metal-item" onclick="selectHangtagAttr('craft', '其他', this)">
+                                                <div class="option-img-alt" style="background: #f1f5f9; display:flex; align-items:center; justify-content:center; color:#94a3b8;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14"/></svg></div>
+                                                <div class="option-info"><h4>其他</h4><p>丝印、磨砂等特殊工艺</p></div>
+                                            </div>
+                                        </div>
+                                    
+                                        <!-- 新增：其他工艺定制区域 -->
+                                        <div id="hangtag-craft-other-area" class="hidden" style="margin-left: 13px; margin-top: 20px; padding: 20px; background: #fffcfc; border: 1px dashed #fecaca; border-radius: 8px;">
+                                            <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px;">
+                                                <div>
+                                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">工艺需求描述</label>
+                                                    <textarea id="hangtag-craft-remark" class="oem-textarea" style="height: 80px; font-size:12px;" placeholder="请描述您需要的特殊印刷工艺及其应用部位..." oninput="updateHangtagSummary()"></textarea>
+                                                </div>
+                                                <div>
+                                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">工艺参考图</label>
+                                                    <div class="premium-upload-box" onclick="document.getElementById('hangtagCraftFile').click()" style="padding: 15px; border-style: dashed; background: #fff;">
+                                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="margin-bottom:5px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                                                        <input type="file" id="hangtagCraftFile" class="hidden" multiple onchange="handleHangtagFiles(this, 'craft')">
+                                                        <p id="hangtagCraftFileName" style="font-size: 11px; color: #94a3b8; margin:0;">点击上传</p>
+                                                    </div>
+                                                    <div id="hangtagCraftPreview" class="oem-image-preview-grid" style="margin-top:10px;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                             
                                     <!-- C. 吊粒与挂绳 -->
                                     <div class="attr-section" style="margin-bottom: 30px;">
-                                        <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 吊粒挂绳 (Attachment)</h4>
+                                        <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">D. 吊粒挂绳 (Attachment)</h4>
                                         <div style="background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px; padding: 20px; margin-left: 13px;">
                                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
                                                 <div>
@@ -5008,36 +5059,37 @@
         // 吊牌逻辑 (Hangtag)
         // ==========================================
         let hangtagConfig = {
-            mode: 'auto', // 默认代配
-            material: '经典白卡 (350g/500g)',
+            mode: 'auto',
+            material: '白卡纸 (White Cardboard)',
             shape: '标准修长型 (约 4x9cm)',
+            craft: '不需要', // 新增默认值
             stringMat: '通用塑料吊粒',
             stringColor: '白色',
-            crafts: [],
             designFiles: [],
-            shapeFiles: [] // 新增形状参考文件组
+            shapeFiles: [],
+            otherMatFiles: [],
+            otherCraftFiles: [] // 新增存储数组
         };
 
+        // 2. 修改属性选择函数
         function selectHangtagAttr(attrType, value, el) {
             hangtagConfig[attrType] = value;
             
+            // 统一同级卡片选中态处理
+            el.parentNode.querySelectorAll('.option-item').forEach(item => item.classList.remove('selected'));
+        
             if (attrType === 'material') {
-                document.getElementById('content-hangtag').querySelectorAll('.metal-item').forEach(item => item.classList.remove('selected'));
-                // 控制“其他材质”区域显隐
-                const otherMatArea = document.getElementById('hangtag-material-other-area');
-                if (otherMatArea) otherMatArea.classList.toggle('hidden', value !== '其他');
-            } else if (attrType === 'shape') {
-                document.getElementById('content-hangtag').querySelectorAll('.hangtag-shape-card').forEach(item => item.classList.remove('selected'));
-                // --- 新增：定制区域显隐控制 ---
-                const customArea = document.getElementById('hangtag-custom-shape-area');
-                if (customArea) {
-                    // 只有当选中的值是“尺寸或特殊异形定制”时才显示
-                    customArea.classList.toggle('hidden', value !== '尺寸或特殊异形定制');
-                }
-            } else if (attrType === 'stringMat') {
-                document.getElementById('content-hangtag').querySelectorAll('.hangtag-string-mat').forEach(item => item.classList.remove('selected'));
-            } else if (attrType === 'stringColor') {
-                document.getElementById('content-hangtag').querySelectorAll('.string-color-swatch').forEach(item => item.classList.remove('selected'));
+                const area = document.getElementById('hangtag-material-other-area');
+                if (area) area.classList.toggle('hidden', value !== '其他');
+            } 
+            else if (attrType === 'shape') {
+                const area = document.getElementById('hangtag-custom-shape-area');
+                if (area) area.classList.toggle('hidden', value !== '尺寸或特殊异形定制');
+            }
+            // --- 新增：工艺显隐控制 ---
+            else if (attrType === 'craft') {
+                const area = document.getElementById('hangtag-craft-other-area');
+                if (area) area.classList.toggle('hidden', value !== '其他');
             }
             
             el.classList.add('selected');
@@ -5073,23 +5125,13 @@
 
         function handleHangtagFiles(input, type) {
             const files = Array.from(input.files);
-            let targetArray;
-            let nameId;
-            let previewId;
+            let targetArray, nameId;
         
-            if (type === 'design') {
-                targetArray = hangtagConfig.designFiles;
-                nameId = 'hangtagFileName';
-                previewId = 'hangtagPreview';
-            } else if (type === 'shape') {
-                targetArray = hangtagConfig.shapeFiles;
-                nameId = 'hangtagShapeFileName';
-                previewId = 'hangtagShapePreview';
-            } else if (type === 'material') { // 新增材质类型处理
-                targetArray = hangtagConfig.otherMatFiles = (hangtagConfig.otherMatFiles || []);
-                nameId = 'hangtagMatFileName';
-                previewId = 'hangtagMatPreview';
-            }
+            if (type === 'design') { targetArray = hangtagConfig.designFiles; nameId = 'hangtagFileName'; }
+            else if (type === 'shape') { targetArray = hangtagConfig.shapeFiles; nameId = 'hangtagShapeFileName'; }
+            else if (type === 'material') { targetArray = hangtagConfig.otherMatFiles; nameId = 'hangtagMatFileName'; }
+            // --- 新增：工艺文件处理 ---
+            else if (type === 'craft') { targetArray = hangtagConfig.otherCraftFiles; nameId = 'hangtagCraftFileName'; }
         
             files.forEach(file => {
                 if (!targetArray.some(f => f.name === file.name)) targetArray.push(file);
@@ -5104,14 +5146,23 @@
         }
 
         function renderHangtagPreviews(type) {
-            let gridId = (type === 'design') ? 'hangtagPreview' : (type === 'shape' ? 'hangtagShapePreview' : 'hangtagMatPreview');
-            let targetArray = (type === 'design') ? hangtagConfig.designFiles : (type === 'shape' ? hangtagConfig.shapeFiles : hangtagConfig.otherMatFiles);
+            let gridId = (type==='design')?'hangtagPreview':(type==='shape'?'hangtagShapePreview':(type==='material'?'hangtagMatPreview':'hangtagCraftPreview'));
+            let targetArray = (type==='design')?hangtagConfig.designFiles:(type==='shape'?'hangtagShapeFiles':(type==='material'?'otherMatFiles':'otherCraftFiles'));
+            // 注意：如果是直接访问 hangtagConfig 里的属性，请确保写法正确：
+            const files = hangtagConfig[targetArray] || targetArray; // 兼容不同写法
             
             const grid = document.getElementById(gridId);
             if(!grid) return;
             grid.innerHTML = '';
             
-            targetArray.forEach((file, index) => {
+            // 这里使用传入的 type 获取正确的数组
+            let actualFiles = [];
+            if(type === 'design') actualFiles = hangtagConfig.designFiles;
+            else if(type === 'shape') actualFiles = hangtagConfig.shapeFiles;
+            else if(type === 'material') actualFiles = hangtagConfig.otherMatFiles;
+            else if(type === 'craft') actualFiles = hangtagConfig.otherCraftFiles;
+        
+            actualFiles.forEach((file, index) => {
                 const url = URL.createObjectURL(file);
                 grid.insertAdjacentHTML('beforeend', `
                     <div class="oem-preview-item">

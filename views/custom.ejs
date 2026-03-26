@@ -1158,21 +1158,34 @@
                                 <span style="font-size: 13px; font-weight: 600; color: #334155;">我将自行采购并寄送面辅料 (CMT 模式 / Customer Supplied Material)</span>
                             </label>
                             
-                            <div id="fabric-cmt-address-info" class="hidden" style="margin-top: 15px; background: #fffbeb; padding: 20px; border-radius: 8px; border: 1px solid #fcd34d; display: flex; flex-direction: column; gap: 12px; font-size: 12.5px; color: #92400e; transition: all 0.3s;">
+                            <!-- Step 2: 面料 CMT 展开区 -->
+                            <div id="fabric-cmt-address-info" class="hidden" style="margin-top: 15px; background: #fffbeb; padding: 20px; border-radius: 8px; border: 1px solid #fcd34d; display: flex; flex-direction: column; gap: 15px; font-size: 12.5px; color: #92400e; transition: all 0.3s;">
+                                <!-- 原有地址信息保持不变 -->
                                 <div style="display: flex; align-items: flex-start; gap: 8px; line-height: 1.6;">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5" style="flex-shrink: 0; margin-top: 2px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                                    <span>
-                                        <strong>收件仓库：</strong>广东省东莞市虎门镇红绣服饰制造中心一楼 物料仓<br>
-                                        <strong>收件人：</strong>物料核发部 138-0000-0000<br>
-                                        <span style="font-size: 11px; color: #b45309; display: block; margin-top: 4px;">* 寄出前请务必在外包装上显著标明您的 <strong>品牌名称</strong> 及 <strong>项目单号</strong>，以免与其它入库物料混淆。</span>
-                                    </span>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                    <span><strong>收件仓库：</strong>广东省东莞市虎门镇红绣服饰制造中心一楼 物料仓 (收件人：物料核发部 138-0000-0000)</span>
+                                </div>
+                            
+                                <!-- 新增：面料 CMT 描述与附件 -->
+                                <div style="padding-top: 10px; border-top: 1px dashed #fde68a;">
+                                    <label style="display:block; font-size:11px; font-weight:700; margin-bottom:8px;">客供面料明细描述 <span style="color:#ef4444;">*</span></label>
+                                    <textarea id="fabric-cmt-desc" class="oem-textarea" style="height:60px; font-size:12px; background:#fff; border-color:#fcd34d;" placeholder="请描述您寄送的面料成分、颜色、卷数及总米数..." oninput="updateFabricSummary()"></textarea>
+                                    
+                                    <label style="display:block; font-size:11px; font-weight:700; margin-top:12px; margin-bottom:8px;">面料实物样照/发货清单上传</label>
+                                    <div class="premium-upload-row upload-row-sm" style="background:#fff; border-color:#fcd34d; height: 38px;" onclick="document.getElementById('fabricCmtFile').click()">
+                                        <span id="fabricCmtFileName" style="font-size:11px; color:#94a3b8;">点击上传图片或 PDF 清单</span>
+                                        <input type="file" id="fabricCmtFile" class="hidden" multiple onchange="handleCmtFiles(this, 'fabric')">
+                                        <button type="button" class="btn-outline" style="padding:2px 8px; font-size:10px;">浏览</button>
+                                    </div>
+                                    <div id="fabricCmtPreview" class="oem-image-preview-grid" style="margin-top:10px;"></div>
                                 </div>
                                 
                                 <div style="display: flex; align-items: center; gap: 10px; margin-top: 5px; padding-top: 12px; border-top: 1px dashed #fde68a;">
-                                    <span style="font-weight: 600;">寄件单号 (选填)：</span>
-                                    <input type="text" id="fabric-cmt-tracking" class="oem-input-mini" style="flex: 1; max-width: 300px; background: #fff; border-color: #fcd34d;" placeholder="若已寄出请填写，方便库房查收..." autocomplete="off" oninput="updateFabricSummary()">
+                                    <span style="font-weight: 600;">寄件单号：</span>
+                                    <input type="text" id="fabric-cmt-tracking" class="oem-input-mini" style="flex: 1; max-width: 300px; background: #fff; border-color: #fcd34d;" placeholder="若已寄出请填写..." autocomplete="off" oninput="updateFabricSummary()">
                                 </div>
                             </div>
+
                         </div>
                     </div>
 
@@ -1220,6 +1233,20 @@
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="10" r="3"/><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>
                                         <span><strong>收件仓：</strong>东莞市虎门镇红绣服饰 物料仓<br><strong>收件人：</strong>辅料核发部 138-0000-0000</span>
                                     </div>
+
+                                    <!-- 统一新增描述和上传 -->
+                                    <div style="border-top: 1px dashed #fde68a; padding-top: 10px;">
+                                        <label style="display:block; font-weight:700; margin-bottom:5px;">客供物料明细描述 <span style="color:#ef4444;">*</span></label>
+                                        <textarea id="cmt-desc-metal" class="oem-textarea" style="height:50px; font-size:11px; background:#fff; border-color:#fcd34d;" placeholder="例如：自供 15cm YKK 金属拉链，金色，100条..." oninput="updateMetalSummary()"></textarea>
+                                        
+                                        <label style="display:block; font-weight:700; margin-top:10px; margin-bottom:5px;">清单/样照上传</label>
+                                        <div class="premium-upload-row upload-row-sm" style="background:#fff; border-color:#fcd34d; height: 32px;" onclick="document.getElementById('cmt-file-metal').click()">
+                                            <span id="cmt-filename-metal" style="font-size:10px; color:#94a3b8;">点击上传</span>
+                                            <input type="file" id="cmt-file-metal" class="hidden" multiple onchange="handleCmtFiles(this, 'metal')">
+                                        </div>
+                                        <div id="cmt-preview-metal" class="oem-image-preview-grid" style="margin-top:8px;"></div>
+                                    </div>
+
                                     <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px; padding-top: 10px; border-top: 1px dashed #fde68a;">
                                         <span style="font-weight: 600; white-space: nowrap;">寄件单号：</span>
                                         <input type="text" id="cmt-tracking-metal" class="oem-input-mini" style="flex: 1; border-color: #fcd34d;" placeholder="选填，若已寄出请填写..." autocomplete="off" oninput="updateTrimSummaryTrigger('metal')">
@@ -1439,6 +1466,20 @@
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="10" r="3"/><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>
                                         <span><strong>收件仓：</strong>东莞市虎门镇红绣服饰 物料仓<br><strong>收件人：</strong>辅料核发部 138-0000-0000</span>
                                     </div>
+
+                                    <!-- 统一新增描述和上传 -->
+                                    <div style="border-top: 1px dashed #fde68a; padding-top: 10px;">
+                                        <label style="display:block; font-weight:700; margin-bottom:5px;">客供物料明细描述 <span style="color:#ef4444;">*</span></label>
+                                        <textarea id="cmt-desc-bag" class="oem-textarea" style="height:50px; font-size:11px; background:#fff; border-color:#fcd34d;" placeholder="例如：自供 15cm YKK 金属拉链，金色，100条..." oninput="updateBagSummary()"></textarea>
+                                        
+                                        <label style="display:block; font-weight:700; margin-top:10px; margin-bottom:5px;">清单/样照上传</label>
+                                        <div class="premium-upload-row upload-row-sm" style="background:#fff; border-color:#fcd34d; height: 32px;" onclick="document.getElementById('cmt-file-bag').click()">
+                                            <span id="cmt-filename-bag" style="font-size:10px; color:#94a3b8;">点击上传</span>
+                                            <input type="file" id="cmt-file-bag" class="hidden" multiple onchange="handleCmtFiles(this, 'bag')">
+                                        </div>
+                                        <div id="cmt-preview-bag" class="oem-image-preview-grid" style="margin-top:8px;"></div>
+                                    </div>
+
                                     <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px; padding-top: 10px; border-top: 1px dashed #fde68a;">
                                         <span style="font-weight: 600; white-space: nowrap;">寄件单号：</span>
                                         <input type="text" id="cmt-tracking-bag" class="oem-input-mini" style="flex: 1; border-color: #fcd34d;" placeholder="选填，若已寄出请填写..." autocomplete="off" oninput="updateTrimSummaryTrigger('bag')">
@@ -1561,6 +1602,19 @@
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="10" r="3"/><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>
                                         <span><strong>收件仓：</strong>东莞市虎门镇红绣服饰 物料仓<br><strong>收件人：</strong>辅料核发部 138-0000-0000</span>
                                     </div>
+
+                                    <div style="border-top: 1px dashed #fde68a; padding-top: 10px;">
+                                        <label style="display:block; font-weight:700; margin-bottom:5px;">客供物料明细描述 <span style="color:#ef4444;">*</span></label>
+                                        <textarea id="cmt-desc-hangtag" class="oem-textarea" style="height:50px; font-size:11px; background:#fff; border-color:#fcd34d;" placeholder="例如：自供 15cm YKK 金属拉链，金色，100条..." oninput="updateHangtagSummary()"></textarea>
+                                        
+                                        <label style="display:block; font-weight:700; margin-top:10px; margin-bottom:5px;">清单/样照上传</label>
+                                        <div class="premium-upload-row upload-row-sm" style="background:#fff; border-color:#fcd34d; height: 32px;" onclick="document.getElementById('cmt-file-hangtag').click()">
+                                            <span id="cmt-filename-hangtag" style="font-size:10px; color:#94a3b8;">点击上传</span>
+                                            <input type="file" id="cmt-file-hangtag" class="hidden" multiple onchange="handleCmtFiles(this, 'hangtag')">
+                                        </div>
+                                        <div id="cmt-preview-hangtag" class="oem-image-preview-grid" style="margin-top:8px;"></div>
+                                    </div>
+
                                     <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px; padding-top: 10px; border-top: 1px dashed #fde68a;">
                                         <span style="font-weight: 600; white-space: nowrap;">寄件单号：</span>
                                         <input type="text" id="cmt-tracking-hangtag" class="oem-input-mini" style="flex: 1; border-color: #fcd34d;" placeholder="选填，若已寄出请填写..." autocomplete="off" oninput="updateTrimSummaryTrigger('hangtag')">
@@ -1878,6 +1932,19 @@
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="10" r="3"/><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>
                                         <span><strong>收件仓：</strong>东莞市虎门镇红绣服饰 物料仓<br><strong>收件人：</strong>辅料核发部 138-0000-0000</span>
                                     </div>
+
+                                    <div style="border-top: 1px dashed #fde68a; padding-top: 10px;">
+                                        <label style="display:block; font-weight:700; margin-bottom:5px;">客供物料明细描述 <span style="color:#ef4444;">*</span></label>
+                                        <textarea id="cmt-desc-label" class="oem-textarea" style="height:50px; font-size:11px; background:#fff; border-color:#fcd34d;" placeholder="例如：自供 15cm YKK 金属拉链，金色，100条..." oninput="updateLabelSummary()"></textarea>
+                                        
+                                        <label style="display:block; font-weight:700; margin-top:10px; margin-bottom:5px;">清单/样照上传</label>
+                                        <div class="premium-upload-row upload-row-sm" style="background:#fff; border-color:#fcd34d; height: 32px;" onclick="document.getElementById('cmt-file-label').click()">
+                                            <span id="cmt-filename-label" style="font-size:10px; color:#94a3b8;">点击上传</span>
+                                            <input type="file" id="cmt-file-label" class="hidden" multiple onchange="handleCmtFiles(this, 'label')">
+                                        </div>
+                                        <div id="cmt-preview-label" class="oem-image-preview-grid" style="margin-top:8px;"></div>
+                                    </div>
+
                                     <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px; padding-top: 10px; border-top: 1px dashed #fde68a;">
                                         <span style="font-weight: 600; white-space: nowrap;">寄件单号：</span>
                                         <input type="text" id="cmt-tracking-label" class="oem-input-mini" style="flex: 1; border-color: #fcd34d;" placeholder="选填，若已寄出请填写..." autocomplete="off" oninput="updateTrimSummaryTrigger('label')">
@@ -1953,6 +2020,19 @@
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="10" r="3"/><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>
                                         <span><strong>收件仓：</strong>东莞市虎门镇红绣服饰 物料仓<br><strong>收件人：</strong>辅料核发部 138-0000-0000</span>
                                     </div>
+
+                                    <div style="border-top: 1px dashed #fde68a; padding-top: 10px;">
+                                        <label style="display:block; font-weight:700; margin-bottom:5px;">客供物料明细描述 <span style="color:#ef4444;">*</span></label>
+                                        <textarea id="cmt-desc-hygiene" class="oem-textarea" style="height:50px; font-size:11px; background:#fff; border-color:#fcd34d;" placeholder="例如：自供 15cm YKK 金属拉链，金色，100条..." oninput="updateHygieneSummary()"></textarea>
+                                        
+                                        <label style="display:block; font-weight:700; margin-top:10px; margin-bottom:5px;">清单/样照上传</label>
+                                        <div class="premium-upload-row upload-row-sm" style="background:#fff; border-color:#fcd34d; height: 32px;" onclick="document.getElementById('cmt-file-hygiene').click()">
+                                            <span id="cmt-filename-hygiene" style="font-size:10px; color:#94a3b8;">点击上传</span>
+                                            <input type="file" id="cmt-file-hygiene" class="hidden" multiple onchange="handleCmtFiles(this, 'hygiene')">
+                                        </div>
+                                        <div id="cmt-preview-hygiene" class="oem-image-preview-grid" style="margin-top:8px;"></div>
+                                    </div>
+
                                     <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px; padding-top: 10px; border-top: 1px dashed #fde68a;">
                                         <span style="font-weight: 600; white-space: nowrap;">寄件单号：</span>
                                         <input type="text" id="cmt-tracking-hygiene" class="oem-input-mini" style="flex: 1; border-color: #fcd34d;" placeholder="选填，若已寄出请填写..." autocomplete="off" oninput="updateTrimSummaryTrigger('hygiene')">
@@ -2087,10 +2167,16 @@
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="10" r="3"/><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>
                                         <span><strong>收件仓：</strong>东莞市虎门镇红绣服饰 物料仓<br><strong>收件人：</strong>辅料核发部 138-0000-0000</span>
                                     </div>
-                                    <!-- 插入在 id="cmt-info-other" 内部 -->
-                                    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #fde68a;">
-                                        <label style="display:block; font-size:11px; font-weight:700; color:#92400e; margin-bottom:8px;">客供辅料明细描述 <span style="color:#ef4444;">*</span></label>
-                                        <textarea id="cmt-other-desc" class="oem-textarea" style="height:60px; font-size:12px; background:#fff; border-color:#fcd34d;" placeholder="请详细说明您将自行寄送哪些辅料（如：特定拉链、纽扣、织带等）..." oninput="updateOtherSummary()"></textarea>
+                                    <div style="border-top: 1px dashed #fde68a; padding-top: 10px;">
+                                        <label style="display:block; font-weight:700; margin-bottom:5px;">客供物料明细描述 <span style="color:#ef4444;">*</span></label>
+                                        <textarea id="cmt-desc-other" class="oem-textarea" style="height:50px; font-size:11px; background:#fff; border-color:#fcd34d;" placeholder="例如：自供 15cm YKK 金属拉链，金色，100条..." oninput="updateOtherSummary()"></textarea>
+                                        
+                                        <label style="display:block; font-weight:700; margin-top:10px; margin-bottom:5px;">清单/样照上传</label>
+                                        <div class="premium-upload-row upload-row-sm" style="background:#fff; border-color:#fcd34d; height: 32px;" onclick="document.getElementById('cmt-file-other').click()">
+                                            <span id="cmt-filename-other" style="font-size:10px; color:#94a3b8;">点击上传</span>
+                                            <input type="file" id="cmt-file-other" class="hidden" multiple onchange="handleCmtFiles(this, 'other')">
+                                        </div>
+                                        <div id="cmt-preview-other" class="oem-image-preview-grid" style="margin-top:8px;"></div>
                                     </div>
                                     <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px; padding-top: 10px; border-top: 1px dashed #fde68a;">
                                         <span style="font-weight: 600; white-space: nowrap;">寄件单号：</span>
@@ -3054,6 +3140,94 @@
          核心 JavaScript 逻辑
          ========================================================================= -->
     <script>
+        // 全局 CMT 数据管理
+        let cmtFilesData = {
+            fabric: [],
+            metal: [],
+            bag: [],
+            hangtag: [],
+            label: [],
+            hygiene: [],
+            other: []
+        };
+
+        /**
+         * 统一处理 CMT 模式的文件上传
+         * @param {HTMLElement} input - file input 元素
+         * @param {string} category - 类别 (如 'fabric', 'metal', 'other' 等)
+         */
+        function handleCmtFiles(input, category) {
+            const files = Array.from(input.files);
+            const targetArray = cmtFilesData[category];
+            
+            files.forEach(file => {
+                if (file.size > 20 * 1024 * 1024) { alert(`文件 ${file.name} 超过 20MB`); return; }
+                if (!targetArray.some(f => f.name === file.name && f.size === file.size)) {
+                    targetArray.push(file);
+                }
+            });
+        
+            // 更新按钮文字
+            const nameElId = (category === 'fabric') ? 'fabricCmtFileName' : `cmt-filename-${category}`;
+            const nameEl = document.getElementById(nameElId);
+            if (nameEl) nameEl.innerText = `已选 ${targetArray.length} 个文件`;
+        
+            renderCmtPreviews(category);
+            
+            // 触发对应的侧边栏汇总刷新
+            if (category === 'fabric') updateFabricSummary();
+            else updateTrimSummaryTrigger(category);
+            
+            input.value = '';
+        }
+        
+        /**
+         * 渲染 CMT 预览网格
+         */
+        function renderCmtPreviews(category) {
+            const gridId = (category === 'fabric') ? 'fabricCmtPreview' : `cmt-preview-${category}`;
+            const grid = document.getElementById(gridId);
+            if (!grid) return;
+            
+            grid.innerHTML = '';
+            const files = cmtFilesData[category];
+        
+            files.forEach((file, index) => {
+                const isImage = file.type.startsWith('image/');
+                const ext = file.name.split('.').pop().toUpperCase();
+                let content = isImage 
+                    ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')">` 
+                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;">${ext}</div>`;
+        
+                grid.insertAdjacentHTML('beforeend', `
+                    <div class="oem-preview-item" style="width:50px; height:50px;">
+                        ${content}
+                        <button type="button" class="oem-preview-remove" onclick="removeCmtFile(${index}, '${category}')">&times;</button>
+                    </div>
+                `);
+            });
+        }
+        
+        /**
+         * 移除 CMT 文件
+         */
+        function removeCmtFile(index, category) {
+            cmtFilesData[category].splice(index, 1);
+            
+            // 更新文字提示
+            const nameElId = (category === 'fabric') ? 'fabricCmtFileName' : `cmt-filename-${category}`;
+            const nameEl = document.getElementById(nameElId);
+            if (nameEl) {
+                const count = cmtFilesData[category].length;
+                nameEl.innerText = count > 0 ? `已选 ${count} 个文件` : (category === 'fabric' ? '点击上传图片或 PDF 清单' : '点击上传');
+            }
+        
+            renderCmtPreviews(category);
+            if (category === 'fabric') updateFabricSummary();
+            else updateTrimSummaryTrigger(category);
+        }
+
+
         document.addEventListener('DOMContentLoaded', async () => {
             try {
                 // 仅作展示用途，若本地无 /api/get-data，控制台会报错但不影响UI
@@ -4595,19 +4769,17 @@
             const cmtCheck = document.getElementById(`cmt-check-${category}`);
             if (cmtCheck && cmtCheck.checked) {
                 const tracking = document.getElementById(`cmt-tracking-${category}`).value.trim();
+                const descId = (category === 'fabric') ? 'fabric-cmt-desc' : `cmt-desc-${category}`;
+                const descVal = document.getElementById(descId)?.value.trim();
+                const fileCount = cmtFilesData[category].length;
                 
-                // --- 新增：针对 other 分类的描述抓取 ---
-                let otherDescText = '';
-                if (category === 'other') {
-                    const descVal = document.getElementById('cmt-other-desc').value.trim();
-                    otherDescText = descVal ? `<br><span style="font-size:10px; color:#b45309;">描述: ${descVal.substring(0, 15)}${descVal.length > 15 ? '...' : ''}</span>` : '';
-                }
-                // --------------------------------------
+                let detailHtml = descVal ? `<br><span style="font-size:10px; color:#b45309;">描述: ${descVal.substring(0, 12)}...</span>` : '<br><span style="font-size:10px; color:#ef4444;">待写描述</span>';
+                let fileHtml = fileCount > 0 ? ` <span style="color:#10b981;">(附${fileCount}图)</span>` : '';
         
                 stEl.innerHTML = `
                     <div style="text-align:right;">
                         <span style="color:#d97706; font-weight:600;">客户自行提供 (CMT)</span>
-                        ${otherDescText}
+                        ${detailHtml}${fileHtml}
                         <br><span style="font-size:10px; opacity:0.8; color:#92400e;">${tracking ? '单号: '+tracking : '待填单号'}</span>
                     </div>`;
                 return true; 
@@ -4617,6 +4789,7 @@
             stEl.style.fontWeight = 'normal';
             return false;
         }
+
 
         function toggleTrim(category, isNeeded) {
             const contentBox = document.getElementById(`content-${category}`);

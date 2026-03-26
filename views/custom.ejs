@@ -1210,7 +1210,7 @@
                             </div>
 
                             <!-- CMT 客供选项 (选择否时显示) -->
-                            <div id="cmt-section-metal" style="margin-bottom: 20px; animation: fadeIn 0.3s;">
+                            <div id="cmt-section-metal" style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed #e2e8f0; margin-bottom: 20px; animation: fadeIn 0.3s;">
                                 <label class="oem-checkbox-label" style="margin: 0; padding: 0;">
                                     <input type="checkbox" id="cmt-check-metal" onchange="toggleTrimCmt('metal', this.checked)"> 
                                     <span style="font-size: 12px; font-weight: 600; color: #475569;">我将自行采购并寄送该辅料 (CMT 模式)</span>
@@ -1429,7 +1429,7 @@
                             </div>
 
                             <!-- CMT 客供选项 (选择否时显示) -->
-                            <div id="cmt-section-bag" style="margin-bottom: 20px; animation: fadeIn 0.3s;">
+                            <div id="cmt-section-bag" style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed #e2e8f0; margin-bottom: 20px; animation: fadeIn 0.3s;">
                                 <label class="oem-checkbox-label" style="margin: 0; padding: 0;">
                                     <input type="checkbox" id="cmt-check-bag" onchange="toggleTrimCmt('bag', this.checked)"> 
                                     <span style="font-size: 12px; font-weight: 600; color: #475569;">我将自行采购并寄送该辅料 (CMT 模式)</span>
@@ -1551,7 +1551,7 @@
                             </div>
 
                             <!-- CMT 客供选项 (选择否时显示) -->
-                            <div id="cmt-section-hangtag" style="margin-bottom: 20px; animation: fadeIn 0.3s;">
+                            <div id="cmt-section-hangtag" style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed #e2e8f0; margin-bottom: 20px; animation: fadeIn 0.3s;">
                                 <label class="oem-checkbox-label" style="margin: 0; padding: 0;">
                                     <input type="checkbox" id="cmt-check-hangtag" onchange="toggleTrimCmt('hangtag', this.checked)"> 
                                     <span style="font-size: 12px; font-weight: 600; color: #475569;">我将自行采购并寄送该辅料 (CMT 模式)</span>
@@ -1733,7 +1733,7 @@
                             </div>
 
                             <!-- CMT 客供选项 (选择否时显示) -->
-                            <div id="cmt-section-label" style="margin-bottom: 20px; animation: fadeIn 0.3s;">
+                            <div id="cmt-section-label" style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed #e2e8f0; margin-bottom: 20px; animation: fadeIn 0.3s;">
                                 <label class="oem-checkbox-label" style="margin: 0; padding: 0;">
                                     <input type="checkbox" id="cmt-check-label" onchange="toggleTrimCmt('label', this.checked)"> 
                                     <span style="font-size: 12px; font-weight: 600; color: #475569;">我将自行采购并寄送该辅料 (CMT 模式)</span>
@@ -1808,7 +1808,7 @@
                             </div>
 
                             <!-- CMT 客供选项 (选择否时显示) -->
-                            <div id="cmt-section-hygiene" style="margin-bottom: 20px; animation: fadeIn 0.3s;">
+                            <div id="cmt-section-hygiene" style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed #e2e8f0; margin-bottom: 20px; animation: fadeIn 0.3s;">
                                 <label class="oem-checkbox-label" style="margin: 0; padding: 0;">
                                     <input type="checkbox" id="cmt-check-hygiene" onchange="toggleTrimCmt('hygiene', this.checked)"> 
                                     <span style="font-size: 12px; font-weight: 600; color: #475569;">我将自行采购并寄送该辅料 (CMT 模式)</span>
@@ -1942,7 +1942,7 @@
                             </div>
 
                             <!-- CMT 客供选项 (选择否时显示) -->
-                            <div id="cmt-section-other" style="margin-bottom: 20px; animation: fadeIn 0.3s;">
+                            <div id="cmt-section-other" style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed #e2e8f0; margin-bottom: 20px; animation: fadeIn 0.3s;">
                                 <label class="oem-checkbox-label" style="margin: 0; padding: 0;">
                                     <input type="checkbox" id="cmt-check-other" onchange="toggleTrimCmt('other', this.checked)"> 
                                     <span style="font-size: 12px; font-weight: 600; color: #475569;">我将自行采购并寄送该辅料 (CMT 模式)</span>
@@ -1951,6 +1951,11 @@
                                     <div style="display: flex; align-items: flex-start; gap: 6px;">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="10" r="3"/><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>
                                         <span><strong>收件仓：</strong>东莞市虎门镇红绣服饰 物料仓<br><strong>收件人：</strong>辅料核发部 138-0000-0000</span>
+                                    </div>
+                                    <!-- 插入在 id="cmt-info-other" 内部 -->
+                                    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #fde68a;">
+                                        <label style="display:block; font-size:11px; font-weight:700; color:#92400e; margin-bottom:8px;">客供辅料明细描述 <span style="color:#ef4444;">*</span></label>
+                                        <textarea id="cmt-other-desc" class="oem-textarea" style="height:60px; font-size:12px; background:#fff; border-color:#fcd34d;" placeholder="请详细说明您将自行寄送哪些辅料（如：特定拉链、纽扣、织带等）..." oninput="updateOtherSummary()"></textarea>
                                     </div>
                                     <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px; padding-top: 10px; border-top: 1px dashed #fde68a;">
                                         <span style="font-weight: 600; white-space: nowrap;">寄件单号：</span>
@@ -4455,7 +4460,21 @@
             const cmtCheck = document.getElementById(`cmt-check-${category}`);
             if (cmtCheck && cmtCheck.checked) {
                 const tracking = document.getElementById(`cmt-tracking-${category}`).value.trim();
-                stEl.innerHTML = `<div style="text-align:right;"><span style="color:#d97706; font-weight:600;">客户自行提供 (CMT)</span><br><span style="font-size:10px; opacity:0.8; color:#92400e;">${tracking ? '单号: '+tracking : '待填单号'}</span></div>`;
+                
+                // --- 新增：针对 other 分类的描述抓取 ---
+                let otherDescText = '';
+                if (category === 'other') {
+                    const descVal = document.getElementById('cmt-other-desc').value.trim();
+                    otherDescText = descVal ? `<br><span style="font-size:10px; color:#b45309;">描述: ${descVal.substring(0, 15)}${descVal.length > 15 ? '...' : ''}</span>` : '';
+                }
+                // --------------------------------------
+        
+                stEl.innerHTML = `
+                    <div style="text-align:right;">
+                        <span style="color:#d97706; font-weight:600;">客户自行提供 (CMT)</span>
+                        ${otherDescText}
+                        <br><span style="font-size:10px; opacity:0.8; color:#92400e;">${tracking ? '单号: '+tracking : '待填单号'}</span>
+                    </div>`;
                 return true; 
             }
             stEl.innerText = '不需要';

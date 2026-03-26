@@ -1739,30 +1739,72 @@
                                         </div>
                                     </div>
                             
-                                    <!-- C. 吊粒与挂绳 -->
+                                    <!-- D. 吊粒挂绳 (Attachment) -->
                                     <div class="attr-section" style="margin-bottom: 30px;">
                                         <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">D. 吊粒挂绳 (Attachment)</h4>
-                                        <div style="background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px; padding: 20px; margin-left: 13px;">
-                                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                                        <div style="background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px; padding: 25px; margin-left: 13px;">
+                                            <div style="display: flex; flex-direction: column; gap: 30px;">
+                                                
+                                                <!-- 1. 吊粒材质与形状 -->
                                                 <div>
-                                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:12px;">挂绳材质</label>
-                                                    <div class="option-grid" style="grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top:0;">
-                                                        <div class="hangtag-string-mat chip selected" style="text-align:center;" onclick="selectHangtagAttr('stringMat', '通用塑料吊粒', this)">塑料吊粒</div>
-                                                        <div class="hangtag-string-mat chip" style="text-align:center;" onclick="selectHangtagAttr('stringMat', '全棉绳', this)">全棉线绳</div>
-                                                        <div class="hangtag-string-mat chip" style="text-align:center;" onclick="selectHangtagAttr('stringMat', '高级蜡绳', this)">高级蜡绳</div>
+                                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:12px;">1. 吊粒类型 (Material & Shape)</label>
+                                                    <div class="option-grid" style="grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top:0;">
+                                                        <div class="option-item metal-item selected" onclick="selectHangtagAttr('stringType', '常规方块吊粒', this)">
+                                                            <div class="option-img-alt" style="height:60px; background:#fff; display:flex; align-items:center; justify-content:center;">
+                                                                <div style="width:20px; height:20px; background:#eee; border:1px solid #ccc;"></div>
+                                                            </div>
+                                                            <div class="option-info" style="padding:10px; text-align:center;"><h4>常规方块</h4></div>
+                                                        </div>
+                                                        <div class="option-item metal-item" onclick="selectHangtagAttr('stringType', '常规子弹头吊粒', this)">
+                                                            <div class="option-img-alt" style="height:60px; background:#fff; display:flex; align-items:center; justify-content:center;">
+                                                                <div style="width:12px; height:24px; background:#eee; border:1px solid #ccc; border-radius:10px;"></div>
+                                                            </div>
+                                                            <div class="option-info" style="padding:10px; text-align:center;"><h4>常规子弹头</h4></div>
+                                                        </div>
+                                                        <div class="option-item metal-item" onclick="selectHangtagAttr('stringType', '定制材质与形状', this)">
+                                                            <div class="option-img-alt" style="height:60px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; color:#94a3b8;">
+                                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                                                            </div>
+                                                            <div class="option-info" style="padding:10px; text-align:center;"><h4>定制需求</h4></div>
+                                                        </div>
+                                                    </div>
+                                    
+                                                    <!-- 定制吊粒详情区 (默认隐藏) -->
+                                                    <div id="hangtag-string-custom-area" class="hidden" style="margin-top: 20px; padding: 20px; background: #fff; border: 1px dashed #cbd5e1; border-radius: 8px;">
+                                                        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px;">
+                                                            <div>
+                                                                <label style="display:block; font-size:11px; font-weight:700; color:#94a3b8; margin-bottom:8px;">定制形状/材质描述</label>
+                                                                <textarea id="hangtag-string-remark" class="oem-textarea" style="height: 80px; font-size:12px;" placeholder="请描述您需要的吊粒形状（如圆形、Logo外形）或材质（如全棉、金属、木质）..." oninput="updateHangtagSummary()"></textarea>
+                                                            </div>
+                                                            <div>
+                                                                <label style="display:block; font-size:11px; font-weight:700; color:#94a3b8; margin-bottom:8px;">参考图上传</label>
+                                                                <div class="premium-upload-box" onclick="document.getElementById('stringCustomFile').click()" style="padding: 15px; border-style: dashed; background: #fbfcfd;">
+                                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="margin-bottom:5px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                                                                    <input type="file" id="stringCustomFile" class="hidden" multiple onchange="handleHangtagFiles(this, 'string')">
+                                                                    <p id="stringCustomFileName" style="font-size: 11px; color: #94a3b8; margin:0;">点击上传</p>
+                                                                </div>
+                                                                <div id="stringCustomPreview" class="oem-image-preview-grid" style="margin-top:10px;"></div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div>
-                                                    <label style="display:flex; align-items:center; justify-content:space-between; font-size:12px; font-weight:600; color:#475569; margin-bottom:12px;">
-                                                        <span>挂绳/吊粒颜色</span>
-                                                        <span style="font-size:10px; color:var(--primary-color); font-weight:normal; cursor:pointer;" onclick="syncHangtagColorWithMetal()">⚡ 自动同步五金颜色</span>
-                                                    </label>
-                                                    <div style="display:flex; gap:12px;" id="hangtag-string-color-container">
-                                                        <div class="string-color-swatch selected" style="background:#fff;" onclick="selectHangtagAttr('stringColor', '白色', this)"></div>
-                                                        <div class="string-color-swatch" style="background:#000;" onclick="selectHangtagAttr('stringColor', '黑色', this)"></div>
-                                                        <div class="string-color-swatch" style="background:#e5e7eb;" onclick="selectHangtagAttr('stringColor', '浅灰', this)"></div>
-                                                        <div class="string-color-swatch bg-gold" onclick="selectHangtagAttr('stringColor', '金色系', this)"></div>
-                                                        <div class="string-color-swatch bg-silver" onclick="selectHangtagAttr('stringColor', '银色系', this)"></div>
+                                    
+                                                <!-- 2. 挂绳颜色 -->
+                                                <div style="padding-top: 20px; border-top: 1px dashed #e2e8f0;">
+                                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:12px;">2. 挂绳/吊粒颜色 (Color)</label>
+                                                    <div style="display:flex; align-items:center; gap:15px;" id="hangtag-string-color-container">
+                                                        <div class="string-color-swatch selected" style="background:#fff;" title="白色" onclick="selectHangtagAttr('stringColor', '白色', this)"></div>
+                                                        <div class="string-color-swatch" style="background:#000;" title="黑色" onclick="selectHangtagAttr('stringColor', '黑色', this)"></div>
+                                                        <!-- 其他颜色选项 -->
+                                                        <div class="string-color-swatch" style="background: linear-gradient(45deg, #f1f5f9 25%, #cbd5e1 25%, #cbd5e1 50%, #f1f5f9 50%, #f1f5f9 75%, #cbd5e1 75%, #cbd5e1 100%); background-size: 10px 10px;" title="其他颜色" onclick="selectHangtagAttr('stringColor', '其他', this)">
+                                                            <span style="position: absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:10px; color:#64748b; font-weight:bold;">?</span>
+                                                        </div>
+                                                        <span id="string-color-name-display" style="font-size:12px; color:var(--primary-color); font-weight:600;">白色</span>
+                                                    </div>
+                                    
+                                                    <!-- 其他颜色输入框 (默认隐藏) -->
+                                                    <div id="hangtag-string-color-other-area" class="hidden" style="margin-top: 15px; max-width: 300px;">
+                                                        <input type="text" id="hangtag-string-color-other" class="oem-input-mini" style="width:100%;" placeholder="请输入潘通色号或颜色描述..." oninput="updateHangtagSummary()">
                                                     </div>
                                                 </div>
                                             </div>
@@ -5068,45 +5110,52 @@
             mode: 'auto',
             material: '白卡纸 (White Cardboard)',
             shape: '标准修长型 (约 4x9cm)',
-            craft: '不需要', // 新增默认值
-            stringMat: '通用塑料吊粒',
-            stringColor: '白色',
+            craft: '不需要',
+            stringType: '常规方块吊粒', // 新增
+            stringColor: '白色',      // 默认为白色
             designFiles: [],
             shapeFiles: [],
             otherMatFiles: [],
-            otherCraftFiles: [] // 新增存储数组
+            otherCraftFiles: [],
+            stringFiles: []           // 新增：吊粒定制图片
         };
+
 
         function selectHangtagAttr(attrType, value, el) {
             hangtagConfig[attrType] = value;
             
-            // 1. 处理选项卡片的选中样式切换
+            // 1. 实现单选：移除同级容器内所有项的 selected 类
             const container = el.parentNode;
-            container.querySelectorAll('.option-item').forEach(item => {
+            container.querySelectorAll('.option-item, .string-color-swatch, .hangtag-shape-card').forEach(item => {
                 item.classList.remove('selected');
             });
             el.classList.add('selected');
         
-            // 2. 定义值与 ID 的映射关系
+            // 2. 特殊逻辑处理
+            // A. 颜色名称实时显示
+            if (attrType === 'stringColor') {
+                const displayEl = document.getElementById('string-color-name-display');
+                if (displayEl) displayEl.innerText = value;
+            }
+        
+            // 3. 联动区域映射
             const customAreaMap = {
                 'material': { trigger: '其他', targetId: 'hangtag-material-other-area' },
                 'shape': { trigger: '尺寸或特殊异形定制', targetId: 'hangtag-custom-shape-area' },
-                'craft': { trigger: '其他', targetId: 'hangtag-craft-other-area' }
+                'craft': { trigger: '其他', targetId: 'hangtag-craft-other-area' },
+                'stringType': { trigger: '定制材质与形状', targetId: 'hangtag-string-custom-area' },
+                'stringColor': { trigger: '其他', targetId: 'hangtag-string-color-other-area' }
             };
         
             const config = customAreaMap[attrType];
-        
-            // 3. 控制自定义区域的显隐
             if (config) {
                 const targetArea = document.getElementById(config.targetId);
-                const isMatch = (value === config.trigger);
-                
                 if (targetArea) {
+                    const isMatch = (value === config.trigger);
                     targetArea.classList.toggle('hidden', !isMatch);
                     
-                    // 4. 如果是选中了自定义项，执行滚动
+                    // 4. 点击最后一项且开启时，平滑滚动到页面中间
                     if (isMatch) {
-                        // 延迟 50ms 确保浏览器已经完成了 DOM 的显隐切换和重绘
                         setTimeout(() => {
                             scrollElementToCenter(config.targetId);
                         }, 50);
@@ -5116,6 +5165,7 @@
             
             updateHangtagSummary();
         }
+
 
         /**
          * 将指定的元素平滑滚动到滚动容器的中心位置
@@ -5153,26 +5203,7 @@
             updateHangtagSummary();
         }
 
-        function syncHangtagColorWithMetal() {
-            // 根据金属件颜色自动匹配吊粒颜色
-            const metalColor = metalConfig.finish;
-            let targetColor = '白色';
-            if (metalColor.includes('金')) targetColor = '金色系';
-            else if (metalColor.includes('银')) targetColor = '银色系';
-            else if (metalColor.includes('黑')) targetColor = '黑色';
-            else { showToast('当前金属件颜色无需特殊匹配', 'info'); return; }
-
-            // 触发点击事件
-            const swatches = document.querySelectorAll('#hangtag-string-color-container .string-color-swatch');
-            for (let swatch of swatches) {
-                if (swatch.getAttribute('onclick').includes(targetColor)) {
-                    swatch.click();
-                    showToast(`已自动同步为：${targetColor}`, 'success');
-                    break;
-                }
-            }
-        }
-
+        // 修改文件处理函数，支持 string 类型
         function handleHangtagFiles(input, type) {
             const files = Array.from(input.files);
             let targetArray, nameId;
@@ -5180,8 +5211,8 @@
             if (type === 'design') { targetArray = hangtagConfig.designFiles; nameId = 'hangtagFileName'; }
             else if (type === 'shape') { targetArray = hangtagConfig.shapeFiles; nameId = 'hangtagShapeFileName'; }
             else if (type === 'material') { targetArray = hangtagConfig.otherMatFiles; nameId = 'hangtagMatFileName'; }
-            // --- 新增：工艺文件处理 ---
             else if (type === 'craft') { targetArray = hangtagConfig.otherCraftFiles; nameId = 'hangtagCraftFileName'; }
+            else if (type === 'string') { targetArray = hangtagConfig.stringFiles; nameId = 'stringCustomFileName'; } // 新增
         
             files.forEach(file => {
                 if (!targetArray.some(f => f.name === file.name)) targetArray.push(file);
@@ -5278,11 +5309,11 @@
             updateHangtagSummary();
         }
 
+        // 汇总逻辑更新
         function updateHangtagSummary() {
             const st = document.getElementById('sum-trim-hangtag');
             const isEnabled = document.querySelector('input[name="need_hangtag"][value="yes"]').checked;
             
-            // 如果未开启，调用工具函数处理 CMT 或显示“不需要”
             if (!isEnabled) {
                 handleTrimDisabledSummary('hangtag', st);
                 return;
@@ -5293,24 +5324,20 @@
                 st.innerHTML = `<div style="text-align:right;"><span style="color:#10b981; font-weight:600;">红绣智能代配</span><br><span style="font-size:10px; opacity:0.8;">设计稿: ${hasFile}</span></div>`;
             } else {
                 const matPart = hangtagConfig.material.split(' ')[0];
-                const shapePart = hangtagConfig.shape.split(' ')[0];
+                const stringType = hangtagConfig.stringType === '定制材质与形状' ? '定制吊粒' : hangtagConfig.stringType;
                 
-                // --- 核心修复：修改工艺展示逻辑 ---
-                let craftText = hangtagConfig.craft === '不需要' ? '常规印刷' : hangtagConfig.craft;
-                // 如果是“其他”且有文件，增加标识
-                if (hangtagConfig.craft === '其他' && hangtagConfig.otherCraftFiles && hangtagConfig.otherCraftFiles.length > 0) {
-                    craftText += ` (${hangtagConfig.otherCraftFiles.length}图)`;
+                // 处理颜色显示
+                let colorText = hangtagConfig.stringColor;
+                if (colorText === '其他') {
+                    const otherVal = document.getElementById('hangtag-string-color-other').value.trim();
+                    colorText = otherVal ? `色:${otherVal}` : '其他色';
                 }
-                // ------------------------------
         
-                const hasFile = hangtagConfig.designFiles.length > 0 ? `<br><span style="font-size:10px; color:#10b981;">+已传设计稿</span>` : '';
-                
-                st.innerHTML = `<div style="text-align:right;">${matPart} | ${shapePart}<br><span style="font-size:10px; opacity:0.8;">${hangtagConfig.stringMat} | ${craftText}</span>${hasFile}</div>`;
+                st.innerHTML = `<div style="text-align:right;">${matPart} | ${stringType}<br><span style="font-size:10px; opacity:0.8;">颜色: ${colorText} | 工艺: ${hangtagConfig.craft}</span></div>`;
             }
             st.style.color = 'var(--primary-color)';
             st.style.fontWeight = 'bold';
         }
-
 
 
         // ==========================================

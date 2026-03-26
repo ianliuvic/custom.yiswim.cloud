@@ -5147,23 +5147,6 @@
 
         function renderHangtagPreviews(type) {
             let gridId = '';
-            let actualFiles = [];
-        
-            // 根据类型锁定目标 ID 和 数组
-            if (type === 'design') {
-                gridId = 'hangtagPreview';
-                actualFiles = hangtagConfig.designFiles || [];
-            } else if (type === 'shape') {
-                gridId = 'hangtagShapePreview';
-                actualFiles = hangtagConfig.shapeFiles || [];
-            } else if (type === 'material') {
-                gridId = 'hangtagMatPreview';
-                actualFiles = hangtagConfig.otherMatFiles || [];
-            } else if (type === 'craft') {
-                gridId = 'hangtagCraftPreview';
-                actualFiles = hangtagConfig.otherCraftFiles || [];
-            }
-        
             const grid = document.getElementById(gridId);
             if (!grid) return;
             grid.innerHTML = '';

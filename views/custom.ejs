@@ -2025,26 +2025,7 @@
                                     </div>
                                 </div>
                             
-                                <!-- Auto 专属简易输入区 (智能代配) -->
-                                <div id="label-auto-area" style="margin-left: 13px; animation: fadeIn 0.4s ease;">
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 15px;">
-                                        <div style="display: flex; flex-direction: column;">
-                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">标签文字内容 (成分、产地、洗水等)</label>
-                                            <textarea id="label-auto-text" class="oem-textarea" style="flex: 1; min-height: 120px; font-size:12px; resize: none;" placeholder="请在此输入标签需要印制的文字内容..." oninput="updateLabelSummary()"></textarea>
-                                        </div>
-                                        <div style="display: flex; flex-direction: column;">
-                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">上传设计稿 / Logo</label>
-                                            <div class="premium-upload-box" onclick="document.getElementById('labelAutoFile').click()" style="flex: 1; min-height: 120px; padding: 0; border-style: dashed; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-sizing: border-box;">
-                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="margin-bottom:8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-                                                <p id="labelAutoFileName" style="font-size: 11px; color: #94a3b8; margin:0;">点击上传 AI / PDF / 高清图</p>
-                                                <input type="file" id="labelAutoFile" multiple class="hidden" onchange="handleLabelFiles(this, 'auto')">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div id="labelAutoPreview" class="tight-preview-grid"></div>
-                                </div>
-                            
-                                <!-- 自主定义细节区域 (默认隐藏) -->
+                                <!-- 自主定义细节包裹层 (默认隐藏) -->
                                 <div id="label-custom-details" class="hidden" style="animation: fadeIn 0.4s ease; padding-top: 15px; border-top: 1px dashed #e2e8f0;">
                                     
                                     <!-- A. 材质选择 -->
@@ -2073,7 +2054,7 @@
                                     </div>
                                     
                                     <!-- C. 安装位置 -->
-                                    <div class="attr-section" style="margin-bottom: 35px;">
+                                    <div class="attr-section" style="margin-bottom: 25px;">
                                         <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 安装位置定位 (Placement)</h4>
                                         <div class="placement-container">
                                             <div class="swimwear-map" id="placement-map">
@@ -2092,29 +2073,34 @@
                                         </div>
                                     </div>
                             
-                                    <!-- D. 内容录入与上传 -->
-                                    <div class="attr-section" style="margin-bottom: 20px;">
-                                        <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">D. 具体内容与图稿 (Design Content)</h4>
-                                        <div style="margin-left: 13px;">
-                                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: stretch; margin-bottom: 15px;">
-                                                <div style="display: flex; flex-direction: column;">
-                                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">文字内容 / 补充说明</label>
-                                                    <textarea id="label-custom-text" class="oem-textarea" style="flex: 1; min-height: 100px; font-size:12px; resize: none; box-sizing: border-box;" placeholder="需要印刷的文字，或者如有特殊要求（如：品牌标和洗水标要分成两张定做）..." oninput="updateLabelSummary()"></textarea>
-                                                </div>
-                                                <div style="display: flex; flex-direction: column;">
-                                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">上传设计稿 / Logo</label>
-                                                    <div class="premium-upload-box" onclick="document.getElementById('labelCustomFile').click()" style="flex: 1; min-height: 100px; padding: 0; border-style: dashed; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-sizing: border-box;">
-                                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="margin-bottom:8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-                                                        <p id="labelCustomFileName" style="font-size: 11px; color: #94a3b8; margin:0;">点击上传 AI / PDF / 高清图</p>
-                                                        <input type="file" id="labelCustomFile" multiple class="hidden" onchange="handleLabelFiles(this, 'custom')">
-                                                    </div>
+                                </div> <!-- 结束自主定义细节包裹层 -->
+                            
+                                <!-- 2. 核心设计上传与备注 (无论哪种模式均全局保留，对齐吊牌格式) -->
+                                <div class="attr-section" style="margin-top: 20px; border-top: 1px dashed #e2e8f0; padding-top: 25px;">
+                                    <h4 style="font-size: 14px; border-left: 3px solid var(--primary-color); padding-left: 10px; margin-bottom: 15px;">2. 设计稿与排版要求 (Design & Notes)</h4>
+                                    <div style="margin-left: 13px;">
+                                        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px; align-items: stretch;">
+                                            <div style="display: flex; flex-direction: column;">
+                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">设计稿/Logo上传</label>
+                                                <div class="premium-upload-box" onclick="document.getElementById('labelDesignFile').click()" style="flex: 1; min-height: 120px; padding: 0; border-style: dashed; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-sizing: border-box;">
+                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="margin-bottom:8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                                                    <p id="labelFileName" style="font-size: 11px; color: #94a3b8; margin:0;">点击上传 AI / PDF / 高清图</p>
+                                                    <input type="file" id="labelDesignFile" multiple class="hidden" onchange="handleLabelFiles(this)">
                                                 </div>
                                             </div>
-                                            <div id="labelCustomPreview" class="tight-preview-grid"></div>
+                                            <div style="display: flex; flex-direction: column;">
+                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">文字内容 / 补充说明</label>
+                                                <textarea id="label-remark" class="oem-textarea" style="flex: 1; min-height: 120px; font-size:12px; resize: none; box-sizing: border-box; line-height: 1.6;" placeholder="请在此输入标签需要印制的文字内容（成分、产地、洗水标识等），或排版要求..." oninput="updateLabelSummary()"></textarea>
+                                            </div>
+                                        </div>
+                                        
+                                        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px; margin-top: 12px;">
+                                            <div id="labelPreview" class="tight-preview-grid"></div>
+                                            <div></div>
                                         </div>
                                     </div>
-                            
                                 </div>
+                            
                             </div>
 
                         </div>
@@ -5131,20 +5117,19 @@
             st.style.color = 'var(--primary-color)'; st.style.fontWeight = 'bold';
         }
 
+
         // ==========================================
-        // 标签逻辑 (Label) - 智能代配与自主定义版
+        // 标签逻辑 (Label) - 智能代配与自主定义版 (结构统一优化)
         // ==========================================
         
         let labelConfig = {
             mode: 'auto',
-            autoText: '',
-            autoFiles: [],
             material: '无感烫印标',
             size: '',
             method: '四边平缝', 
             placement: '领后中',
-            customText: '',
-            customFiles: []
+            remark: '',          // 统一的文字内容/描述
+            designFiles: []      // 统一的文件数组
         };
         
         // 预设定义
@@ -5164,7 +5149,7 @@
         
         // 初始化渲染
         document.addEventListener('DOMContentLoaded', () => {
-            // 渲染材质和缝制网格
+            // 渲染材质网格
             const materialGrid = document.getElementById('label-material-grid');
             if (materialGrid) {
                 materialGrid.innerHTML = labelMaterialTypes.map(t => `
@@ -5178,6 +5163,7 @@
                 `).join('');
             }
         
+            // 渲染缝制方式网格
             const sewingGrid = document.getElementById('label-sewing-grid');
             if (sewingGrid) {
                 sewingGrid.innerHTML = sewingMethods.map(m => `
@@ -5194,22 +5180,20 @@
             labelConfig.mode = mode;
             
             // UI 按钮切换
-            document.getElementById('label-mode-auto').classList.toggle('active', mode === 'auto');
-            document.getElementById('label-mode-custom').classList.toggle('active', mode === 'custom');
+            document.querySelectorAll('#pane-label .mode-option').forEach(opt => opt.classList.remove('active'));
+            const activeBtn = document.getElementById(`label-mode-${mode}`);
+            if (activeBtn) activeBtn.classList.add('active');
             
-            // 区域显隐切换
-            const autoArea = document.getElementById('label-auto-area');
+            // 区域显隐切换 (注意：设计上传区不再切换，它是全局保留的)
             const autoHint = document.getElementById('label-auto-hint');
             const customDetails = document.getElementById('label-custom-details');
             
             if (mode === 'auto') {
-                autoArea.classList.remove('hidden');
-                autoHint.classList.remove('hidden');
-                customDetails.classList.add('hidden');
+                if(autoHint) autoHint.classList.remove('hidden');
+                if(customDetails) customDetails.classList.add('hidden');
             } else {
-                autoArea.classList.add('hidden');
-                autoHint.classList.add('hidden');
-                customDetails.classList.remove('hidden');
+                if(autoHint) autoHint.classList.add('hidden');
+                if(customDetails) customDetails.classList.remove('hidden');
             }
             
             updateLabelSummary();
@@ -5231,7 +5215,6 @@
                     setTimeout(() => scrollElementToCenter('label-size-sewing-area'), 50);
                 }
             }
-            
             updateLabelSummary();
         }
         
@@ -5247,73 +5230,109 @@
         function selectLabelPlacement(pos, el) {
             labelConfig.placement = pos;
             const map = el.closest('.swimwear-map');
-            if (map) {
-                map.querySelectorAll('.hotspot').forEach(h => h.classList.remove('selected'));
-            }
+            if (map) map.querySelectorAll('.hotspot').forEach(h => h.classList.remove('selected'));
             el.classList.add('selected');
             updateLabelSummary();
         }
         
-        // 5. 处理文件上传 (支持两个不同的上传区)
-        function handleLabelFiles(input, type) {
-            const files = Array.from(input.files);
-            let targetArray = type === 'auto' ? labelConfig.autoFiles : labelConfig.customFiles;
+        // 5. 交互式地图切换 (连体/分体)
+        function changeMapType(type) {
+            const mapContainer = document.getElementById('placement-map');
+            if (!mapContainer) return;
             
+            const switcher = mapContainer.nextElementSibling.querySelector('.mode-switcher');
+            if (switcher) {
+                switcher.querySelectorAll('.mode-option').forEach(opt => {
+                    opt.classList.remove('active');
+                    if(opt.innerText.includes(type === 'onepiece' ? '连体' : '分体')) opt.classList.add('active');
+                });
+            }
+        
+            const mapImg = mapContainer.querySelector('.map-svg');
+            if (mapImg) {
+                const onepieceSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'%3E%3Cpath d='M30,20 Q50,10 70,20 L80,50 Q80,80 50,110 Q20,80 20,50 Z' fill='none' stroke='%23333' stroke-width='1'/%3E%3C/svg%3E";
+                const bikiniSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'%3E%3Cpath d='M30,20 Q50,10 70,20 L80,40 Q50,35 20,40 Z M30,70 Q50,60 70,70 L80,90 Q50,115 20,90 Z' fill='none' stroke='%23333' stroke-width='1'/%3E%3C/svg%3E";
+                mapImg.src = (type === 'onepiece') ? onepieceSvg : bikiniSvg;
+            }
+        
+            mapContainer.querySelectorAll('.hotspot').forEach(h => h.remove());
+        
+            const spots = (type === 'onepiece') ? [
+                { name: '领后中', top: '20%', left: '50%' },
+                { name: '左侧缝', top: '60%', left: '20%' },
+                { name: '后腰内侧', top: '85%', left: '50%' }
+            ] : [
+                { name: '上衣后中', top: '15%', left: '50%' },
+                { name: '泳裤后腰', top: '75%', left: '50%' },
+                { name: '上衣左侧', top: '30%', left: '20%' }
+            ];
+        
+            spots.forEach(s => {
+                const hotspot = document.createElement('div');
+                hotspot.className = 'hotspot';
+                hotspot.style.top = s.top; hotspot.style.left = s.left;
+                hotspot.onclick = function() { selectLabelPlacement(s.name, this); };
+                hotspot.innerHTML = `<span class="hotspot-label">${s.name}</span>`;
+                if(labelConfig.placement === s.name) hotspot.classList.add('selected');
+                mapContainer.appendChild(hotspot);
+            });
+        }
+        
+        // 6. 统一的全局文件上传处理
+        function handleLabelFiles(input) {
+            const files = Array.from(input.files);
             files.forEach(file => {
                 if (file.size > 20 * 1024 * 1024) { alert(`文件 ${file.name} 超过 20MB`); return; }
-                if (!targetArray.some(f => f.name === file.name && f.size === file.size)) {
-                    targetArray.push(file);
+                if (!labelConfig.designFiles.some(f => f.name === file.name && f.size === file.size)) {
+                    labelConfig.designFiles.push(file);
                 }
             });
         
-            const nameId = type === 'auto' ? 'labelAutoFileName' : 'labelCustomFileName';
-            const nameEl = document.getElementById(nameId);
-            if (nameEl) nameEl.innerText = targetArray.length > 0 ? `已选 ${targetArray.length} 个文件` : '点击上传 AI / PDF / 高清图';
+            const nameEl = document.getElementById('labelFileName');
+            if (nameEl) nameEl.innerText = labelConfig.designFiles.length > 0 ? `已选 ${labelConfig.designFiles.length} 个文件` : '点击上传 AI / PDF / 高清图';
             
-            renderLabelPreviews(type);
+            renderLabelPreviews();
             updateLabelSummary();
             input.value = '';
         }
         
-        // 6. 渲染文件预览 (使用全新的紧凑网格)
-        function renderLabelPreviews(type) {
-            const gridId = type === 'auto' ? 'labelAutoPreview' : 'labelCustomPreview';
-            const grid = document.getElementById(gridId);
+        // 7. 渲染全局预览图 (使用紧凑网格)
+        function renderLabelPreviews() {
+            const grid = document.getElementById('labelPreview');
             if(!grid) return;
             grid.innerHTML = '';
             
-            let targetArray = type === 'auto' ? labelConfig.autoFiles : labelConfig.customFiles;
-            
-            targetArray.forEach((file, index) => {
+            labelConfig.designFiles.forEach((file, index) => {
                 const isImage = file.type.startsWith('image/');
                 const ext = file.name.split('.').pop().toUpperCase();
+                // 限制下方提示文字长度
+                const shortName = file.name.length > 5 ? file.name.substring(0, 4) + '..' : file.name;
+                
                 let content = isImage 
                     ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')" style="width:100%;height:100%;object-fit:cover;">` 
-                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;">${ext}</div>`;
+                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;border-radius:4px;">${ext}</div>`;
         
                 grid.insertAdjacentHTML('beforeend', `
-                    <div class="oem-preview-item">
+                    <div class="oem-preview-item" style="border-radius:4px;">
                         ${content}
-                        <button type="button" class="oem-preview-remove" onclick="removeLabelFile(${index}, '${type}')" style="width:16px;height:16px;font-size:12px;">&times;</button>
+                        <div style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.5); color:#fff; font-size:8px; padding:1px; text-align:center; white-space:nowrap; overflow:hidden;">${shortName}</div>
+                        <button type="button" class="oem-preview-remove" onclick="removeLabelFile(${index})" style="width:16px;height:16px;font-size:12px;">&times;</button>
                     </div>
                 `);
             });
         }
         
-        // 7. 删除文件
-        function removeLabelFile(index, type) {
-            let targetArray = type === 'auto' ? labelConfig.autoFiles : labelConfig.customFiles;
-            targetArray.splice(index, 1);
+        // 8. 移除全局文件
+        function removeLabelFile(index) {
+            labelConfig.designFiles.splice(index, 1);
+            const nameEl = document.getElementById('labelFileName');
+            if (nameEl) nameEl.innerText = labelConfig.designFiles.length > 0 ? `已选 ${labelConfig.designFiles.length} 个文件` : '点击上传 AI / PDF / 高清图';
             
-            const nameId = type === 'auto' ? 'labelAutoFileName' : 'labelCustomFileName';
-            const nameEl = document.getElementById(nameId);
-            if (nameEl) nameEl.innerText = targetArray.length > 0 ? `已选 ${targetArray.length} 个文件` : '点击上传 AI / PDF / 高清图';
-            
-            renderLabelPreviews(type);
+            renderLabelPreviews();
             updateLabelSummary();
         }
         
-        // 8. 实时更新侧边栏汇总
+        // 9. 更新侧边栏汇总
         function updateLabelSummary() {
             const st = document.getElementById('sum-trim-label');
             const isEnabled = document.querySelector('input[name="need_label"][value="yes"]')?.checked;
@@ -5323,25 +5342,20 @@
                 return;
             }
         
+            // 抓取全局备注文本
+            labelConfig.remark = document.getElementById('label-remark')?.value.trim() || '';
+            const hasContent = (labelConfig.remark !== '' || labelConfig.designFiles.length > 0) ? '✓ 已传稿/内容' : '× 待补内容';
+        
             if (labelConfig.mode === 'auto') {
-                const textVal = document.getElementById('label-auto-text')?.value.trim() || '';
-                labelConfig.autoText = textVal;
-                
-                const hasContent = (textVal !== '' || labelConfig.autoFiles.length > 0) ? '✓ 已传稿/内容' : '× 待补内容';
                 st.innerHTML = `<div style="text-align:right;"><span style="color:#10b981; font-weight:600;">红绣智能代配</span><br><span style="font-size:10px; opacity:0.8;">内容: ${hasContent}</span></div>`;
             } else {
-                const textVal = document.getElementById('label-custom-text')?.value.trim() || '';
-                labelConfig.customText = textVal;
-                
                 const sizeVal = document.getElementById('label-custom-size')?.value.trim() || '';
                 labelConfig.size = sizeVal;
                 
                 const matText = labelConfig.material;
                 const sizeText = sizeVal ? `尺寸: ${sizeVal}` : '尺寸待定';
                 
-                // 如果是无感烫印，不需要缝制方式
                 const sewingText = matText === '无感烫印标' ? '' : ` | ${labelConfig.method}`;
-                const hasContent = (textVal !== '' || labelConfig.customFiles.length > 0) ? '内容已就绪' : '待充内容';
         
                 st.innerHTML = `
                     <div style="text-align:right;">
@@ -5355,13 +5369,6 @@
         }
 
 
-        // 初始化加载一次
-        document.addEventListener('DOMContentLoaded', () => { 
-            if(currentStep === 3) {
-                renderLabelUnifiedMaterials(); 
-                renderLabelDynamicDetails(); 
-            }
-        });
 
         // ==========================================
         // 其他辅料逻辑 (Other Trims)

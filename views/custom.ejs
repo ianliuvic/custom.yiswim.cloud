@@ -1165,6 +1165,22 @@
                                 <div id="fabricFileList" class="file-list-container"></div>
                             </div>
 
+                            <!-- 新增：里料专属配置区 (全衬/局部) -->
+                            <div id="lining-special-config" class="hidden" style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed #e2e8f0; animation: fadeIn 0.4s ease;">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                                    <label style="font-size:12px; font-weight:600; color:#475569; margin: 0;">里料覆盖范围 (Lining Coverage)</label>
+                                </div>
+                                <div class="mode-switcher" style="margin-bottom: 15px;">
+                                    <div class="mode-option active" id="lining-mode-full" onclick="toggleFullLining(true)">全衬里 (Full Lining)</div>
+                                    <div class="mode-option" id="lining-mode-partial" onclick="toggleFullLining(false)">局部衬里 (Partial)</div>
+                                </div>
+                                
+                                <div id="lining-partial-area" class="hidden" style="animation: fadeIn 0.3s ease; background: #fffdf5; padding: 15px; border: 1px dashed #fcd34d; border-radius: 8px;">
+                                    <label style="display:block; font-size:11px; font-weight:700; color:#92400e; margin-bottom:8px;">局部里料位置说明 <span style="color:#ef4444;">*</span></label>
+                                    <textarea id="lining-placement-remark" class="oem-textarea" style="height: 60px; font-size: 12px; resize: none; border-color: #fde68a;" placeholder="例如：仅前幅加里料，后幅单层；或仅裆部加里料..." oninput="updateLiningPlacement()"></textarea>
+                                </div>
+                            </div>
+
                         </div>
 
                         <!-- ================= 新增：全局客供物料 (CMT) 选项 ================= -->
@@ -4357,17 +4373,20 @@
             
             // 调整配置面板的小箭头指向
             const arrow = document.getElementById('config-arrow');
-            const arrowPos = el.getBoundingClientRect().left - panel.getBoundingClientRect().left + (el.getBoundingClientRect().width / 2) - 8;
-            arrow.style.left = `${arrowPos}px`;
+            if (arrow) {
+                const arrowPos = el.getBoundingClientRect().left - panel.getBoundingClientRect().left + (el.getBoundingClientRect().width / 2) - 8;
+                arrow.style.left = `${arrowPos}px`;
+            }
         
-            // 3. 数据结构初始化
+            // 3. 数据结构初始化 (新增 fullLining 和 liningPlacement)
             selection.activeName = name; 
             if (!selection.configs[name]) {
                 selection.configs[name] = { 
                     mode: isCustomSourcing ? 'custom' : 'solid', 
                     colors: [], colorText: '', printType: 'seamless', printRefColor: '',
                     remark: '', files: [], prints: [], customDesc: '', comp: '', printScale: '',
-                    gsm: '', colorReq: '', physical: false, trackingNo: '', customFiles: [] 
+                    gsm: '', colorReq: '', physical: false, trackingNo: '', customFiles: [],
+                    fullLining: true, liningPlacement: '' // <--- 新增字段
                 };
             }
             const config = selection.configs[name];
@@ -4377,10 +4396,13 @@
             const solidArea = document.getElementById('fabric-solid-area');
             const printArea = document.getElementById('fabric-print-area');
             const customForm = document.getElementById('fabric-custom-sourcing-form');
-            const notesArea = document.querySelector('.fabric-notes-area'); // 核心变量
+            const notesArea = document.querySelector('.fabric-notes-area'); 
+            
+            // 判断当前大类是否为“里料”相关的词汇
+            const isLining = selection.originalCatName.includes('里料') || selection.originalCatName.includes('Lining');
             const isSimplified = ['里料', '网纱'].includes(selection.originalCatName);
         
-            // --- 核心修复：无论哪种模式，只要是里料，强制隐藏拼色说明与附件区 ---
+            // 控制里料简化样式
             if (notesArea) notesArea.style.display = isSimplified ? 'none' : 'block';
             if (modeSwitcher) modeSwitcher.style.display = isSimplified ? 'none' : 'inline-flex';
         
@@ -4422,16 +4444,23 @@
                     document.getElementById('fabric-print-ref-color').value = config.printRefColor || '';
                 }
             }
-
-            // 更新印花尺寸数据
-            function updatePrintScale() {
-                if(!activeFabricCat || !fabricSelection[activeFabricCat] || !fabricSelection[activeFabricCat].activeName) return;
-                const config = fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName];
-                config.printScale = document.getElementById('fabric-print-scale').value.trim();
-                updateFabricSummary();
+        
+            // --- 新增核心逻辑：里料专属的“全衬/局部”区域控制 ---
+            const liningSpecialConfig = document.getElementById('lining-special-config');
+            if (liningSpecialConfig) {
+                // 只有当前 Tab 叫“里料”时才显示这个区块
+                liningSpecialConfig.classList.toggle('hidden', !isLining);
+                
+                if (isLining) {
+                    const isFull = config.fullLining !== false; // 默认值为 true
+                    document.getElementById('lining-mode-full').classList.toggle('active', isFull);
+                    document.getElementById('lining-mode-partial').classList.toggle('active', !isFull);
+                    document.getElementById('lining-partial-area').classList.toggle('hidden', isFull);
+                    document.getElementById('lining-placement-remark').value = config.liningPlacement || '';
+                }
             }
         
-            // 5. 恢复通用项（仅在非里料且非找样时才会有实际内容的可见性，但数据恢复照旧）
+            // 5. 恢复通用项
             document.getElementById('config-type-tag').innerText = selection.originalCatName;
             document.getElementById('fabric-remark').value = config.remark || '';
             renderFabricFileList(config.files || []);
@@ -4701,6 +4730,41 @@
             updateFabricSummary();
         }
 
+        // 切换全衬里/局部衬里
+        function toggleFullLining(isFull) {
+            if (!activeFabricCat || !fabricSelection[activeFabricCat] || !fabricSelection[activeFabricCat].activeName) return;
+            const config = fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName];
+            
+            // 更新数据
+            config.fullLining = isFull;
+            
+            // UI 样式切换
+            document.getElementById('lining-mode-full').classList.toggle('active', isFull);
+            document.getElementById('lining-mode-partial').classList.toggle('active', !isFull);
+            
+            const partialArea = document.getElementById('lining-partial-area');
+            partialArea.classList.toggle('hidden', isFull);
+            
+            if (!isFull) {
+                // 选择局部里料时，滚动到文本框
+                setTimeout(() => scrollElementToCenter('lining-partial-area'), 50);
+            } else {
+                // 切换回全衬里时，清空之前填写的局部要求
+                config.liningPlacement = '';
+                document.getElementById('lining-placement-remark').value = '';
+            }
+            
+            updateFabricSummary();
+        }
+        
+        // 实时同步局部里料位置描述
+        function updateLiningPlacement() {
+            if (!activeFabricCat || !fabricSelection[activeFabricCat] || !fabricSelection[activeFabricCat].activeName) return;
+            const config = fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName];
+            config.liningPlacement = document.getElementById('lining-placement-remark').value.trim();
+            updateFabricSummary();
+        }
+
         function updateFabricSummary() {
             let html = '';
             let hasSelection = false;
@@ -4712,35 +4776,38 @@
                 
                 if (selection.activeName) {
                     hasSelection = true;
+                    const config = selection.configs[selection.activeName];
                     
                     if (selection.activeName === 'CUSTOM_SOURCING') {
-                        // 定制找样模式
                         statusText = `<span style="color:var(--primary-color); font-weight:600;">定制找样 / 开发</span>`;
                     } else {
-                        const config = selection.configs[selection.activeName];
-                        
                         if (config.mode === 'print') {
-                            // 印花模式
                             const typeName = config.printType === 'placement' ? '定位印花' : '无缝印花';
                             const refText = config.printRefColor ? ` | 对色: ${config.printRefColor}` : '';
                             const scaleText = config.printScale ? ` | 尺寸: ${config.printScale}` : '';
                             statusText = `${selection.activeName}<br><span style="font-size:10px; color:var(--primary-color);">${typeName}印花${refText}${scaleText}</span>`;
                         } else {
-                            // 纯色模式 (默认)
                             const colorDisplay = config.colorText ? `色号: ${config.colorText}` : '待填色号';
                             statusText = `${selection.activeName}<br><span style="font-size:10px; color:#64748b;">${colorDisplay}</span>`;
                         }
                     }
+        
+                    // --- 新增：里料的覆盖范围追加显示 ---
+                    if (catName.includes('里料') || catName.includes('Lining')) {
+                        if (config.fullLining === false) {
+                            const placementText = config.liningPlacement ? config.liningPlacement.substring(0, 10) + '...' : '待补充说明';
+                            statusText += `<br><span style="font-size:10px; color:#d97706; font-weight:600;">局部衬里: ${placementText}</span>`;
+                        }
+                    }
                 }
                 
-                // 拼接单个部位的汇总 HTML
                 html += `<div style="font-size:12px; margin-bottom:10px; color:var(--text-main); text-align:right; line-height: 1.4;">
                             <span style="color:#94a3b8; font-size: 11px;">[${catName}]</span><br>
                             ${statusText}
                          </div>`;
             }
-
-            // --- 新增：客供物料 (CMT) 汇总逻辑 ---
+        
+            // CMT 客供物料逻辑保持不变
             const isCmt = document.getElementById('fabric-cmt-check') && document.getElementById('fabric-cmt-check').checked;
             if (isCmt) {
                 hasSelection = true;
@@ -4752,13 +4819,13 @@
                             <span style="font-size:10px; color:#f59e0b;">${trackingText}</span>
                          </div>`;
             }
-
-            // 更新到右侧侧边栏
+        
             const sumFabricEl = document.getElementById('sum-fabric');
             if (sumFabricEl) {
                 sumFabricEl.innerHTML = hasSelection ? html : '<div style="text-align:right; font-size:12px; color:#94a3b8;">未选</div>';
             }
         }
+
 
         function switchHangtagMode(mode) {
             hangtagConfig.mode = mode;

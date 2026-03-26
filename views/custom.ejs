@@ -5080,28 +5080,69 @@
         function selectHangtagAttr(attrType, value, el) {
             hangtagConfig[attrType] = value;
             
-            // 核心修改：确保只在当前点击元素的父容器内移除选中状态，实现单选
+            // 1. 处理选项卡片的选中样式切换
             const container = el.parentNode;
             container.querySelectorAll('.option-item').forEach(item => {
                 item.classList.remove('selected');
             });
             el.classList.add('selected');
         
-            // 联动逻辑：根据选择显示/隐藏特定配置区
-            if (attrType === 'material') {
-                const area = document.getElementById('hangtag-material-other-area');
-                if (area) area.classList.toggle('hidden', value !== '其他');
-            } 
-            else if (attrType === 'shape') {
-                const area = document.getElementById('hangtag-custom-shape-area');
-                if (area) area.classList.toggle('hidden', value !== '尺寸或特殊异形定制');
-            }
-            else if (attrType === 'craft') {
-                const area = document.getElementById('hangtag-craft-other-area');
-                if (area) area.classList.toggle('hidden', value !== '其他');
+            // 2. 定义值与 ID 的映射关系
+            const customAreaMap = {
+                'material': { trigger: '其他', targetId: 'hangtag-material-other-area' },
+                'shape': { trigger: '尺寸或特殊异形定制', targetId: 'hangtag-custom-shape-area' },
+                'craft': { trigger: '其他', targetId: 'hangtag-craft-other-area' }
+            };
+        
+            const config = customAreaMap[attrType];
+        
+            // 3. 控制自定义区域的显隐
+            if (config) {
+                const targetArea = document.getElementById(config.targetId);
+                const isMatch = (value === config.trigger);
+                
+                if (targetArea) {
+                    targetArea.classList.toggle('hidden', !isMatch);
+                    
+                    // 4. 如果是选中了自定义项，执行滚动
+                    if (isMatch) {
+                        // 延迟 50ms 确保浏览器已经完成了 DOM 的显隐切换和重绘
+                        setTimeout(() => {
+                            scrollElementToCenter(config.targetId);
+                        }, 50);
+                    }
+                }
             }
             
             updateHangtagSummary();
+        }
+
+        /**
+         * 将指定的元素平滑滚动到滚动容器的中心位置
+         * @param {string} elementId 目标元素的ID
+         */
+        function scrollElementToCenter(elementId) {
+            const element = document.getElementById(elementId);
+            const scrollContainer = document.querySelector('.config-scroll-area');
+            
+            if (!element || !scrollContainer) return;
+        
+            // 获取元素和容器的尺寸/位置信息
+            const elementRect = element.getBoundingClientRect();
+            const containerRect = scrollContainer.getBoundingClientRect();
+        
+            // 计算元素相对于容器顶部的位移
+            const relativeTop = elementRect.top - containerRect.top;
+            
+            // 计算居中所需的滚动偏移量：
+            // 目标滚动位置 = 当前滚动位置 + 元素相对位置 - (容器高度/2) + (元素高度/2)
+            const scrollAmount = relativeTop - (containerRect.height / 2) + (elementRect.height / 2);
+        
+            // 执行平滑滚动
+            scrollContainer.scrollBy({
+                top: scrollAmount,
+                behavior: 'smooth'
+            });
         }
 
 

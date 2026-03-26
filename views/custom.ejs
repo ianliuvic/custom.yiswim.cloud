@@ -627,13 +627,26 @@
             z-index: 10; display: flex; align-items: center; gap: 3px; box-shadow: 0 2px 5px rgba(16, 185, 129, 0.3);
         }
         
+        /* 确保包装袋尺寸卡片样式与其他模块对齐 */
         .bag-size-card {
-            display: flex; flex-direction: column; justify-content: center; padding: 20px 15px;
-            border: 1px solid #e2e8f0; border-radius: 10px; background: #fff; cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); text-align: center; position: relative;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #fff;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
         }
-        .bag-size-card:hover { border-color: var(--primary-color); transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
-        .bag-size-card.selected { border-color: var(--primary-color); background: #fffafb; box-shadow: 0 0 0 1px var(--primary-color); }
+        
+        .bag-size-card:hover { border-color: var(--primary-color); background: #fffafb; }
+        
+        .bag-size-card.selected {
+            border-color: var(--primary-color);
+            background: #fff0f0;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
         .bag-size-card.selected::after {
             content: '✓'; position: absolute; top: 8px; right: 10px; color: var(--primary-color); font-weight: bold; font-size: 14px;
         }
@@ -1526,24 +1539,29 @@
                                     <div id="bag-list-container" class="option-grid"><p style="color:#999; font-size:12px; padding:20px;">正在加载包装袋库...</p></div>
 
                                     <!-- B. 行内动态展开面板 (仅包含尺寸) -->
-                                    <div id="bag-config-panel" class="fabric-config-panel hidden" style="padding: 25px 30px; margin-top: 20px;">
-                                        <div class="config-arrow"></div>
-                                        <h4 style="font-size: 14px; font-weight: 600; color: var(--text-main); margin: 0 0 15px;">选择/定义适用尺寸 (Dimensions)</h4>
-                                        <div id="bag-size-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px;"></div>
+                                    <div id="bag-config-panel" class="fabric-config-panel hidden" style="padding: 25px 30px; margin-left: 13px; background: #fffcfc; border-color: #fecaca; margin-bottom: 20px; width: 100%; box-sizing: border-box; grid-column: 1 / -1;">
+                                        <!-- 指向小箭头 -->
+                                        <div class="config-arrow" style="border-top-color: #fecaca; border-left-color: #fecaca;"></div>
+                                        
+                                        <!-- 尺寸选择网格 -->
+                                        <div id="bag-size-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px;">
+                                            <!-- JS 动态渲染尺寸卡片 -->
+                                        </div>
                                         
                                         <!-- 自定义尺寸输入区 -->
-                                        <div id="bag-custom-size-box" class="hidden" style="margin-top: 20px; padding-top: 15px; border-top: 1px dashed #e2e8f0; animation: fadeIn 0.3s;">
+                                        <div id="bag-custom-size-box" class="hidden" style="margin-top: 20px; padding-top: 15px; border-top: 1px dashed #fecaca; animation: fadeIn 0.3s;">
                                             <div class="metal-notice" style="margin-bottom: 10px; color: #f59e0b;">
                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                                                 自定义规格 MOQ 要求：通常需 5000 个起订
                                             </div>
                                             <div style="display: flex; gap: 10px; align-items: center;">
-                                                <input type="text" id="bag-custom-width" class="oem-input-mini" style="width: 120px; text-align: center;" placeholder="长 (cm)" oninput="updateBagCustomSize()">
+                                                <input type="text" id="bag-custom-width" class="oem-input-mini" style="width: 120px; text-align: center; background: #fff;" placeholder="长 (cm)" oninput="updateBagCustomSize()">
                                                 <span style="color: #94a3b8;">×</span>
-                                                <input type="text" id="bag-custom-height" class="oem-input-mini" style="width: 120px; text-align: center;" placeholder="宽 (cm)" oninput="updateBagCustomSize()">
+                                                <input type="text" id="bag-custom-height" class="oem-input-mini" style="width: 120px; text-align: center; background: #fff;" placeholder="宽 (cm)" oninput="updateBagCustomSize()">
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
 
                                 <!-- B/C 高级选项 (序号已调整) -->
@@ -6349,19 +6367,20 @@
 
         function onBagClick(bag, el) { 
             const panel = document.getElementById('bag-config-panel');
-            const advancedSection = document.getElementById('bag-advanced-section');
+            const gridContainer = document.getElementById('bag-list-container');
             
-            // 1. 折叠逻辑
+            // 1. 处理面板折叠逻辑
             if (bagConfig.material === bag.name && !panel.classList.contains('hidden')) {
                 panel.classList.add('hidden');
                 return;
             }
         
-            // 2. 选择当前材质
-            selectBagAttr('material', bag.name, el); 
-            
-            // 3. 搬运尺寸面板
-            const gridContainer = document.getElementById('bag-list-container');
+            // 2. 选择当前材质并更新 UI 状态
+            bagConfig.material = bag.name;
+            gridContainer.querySelectorAll('.bag-material').forEach(item => item.classList.remove('selected'));
+            el.classList.add('selected');
+        
+            // 3. 动态计算 DOM 插入位置 (实现与面料/标签一致的换行下方展开)
             let insertBeforeNode = null;
             let currentElement = el.nextElementSibling;
             while (currentElement) {
@@ -6369,6 +6388,7 @@
                     currentElement = currentElement.nextElementSibling; 
                     continue; 
                 }
+                // 检测换行：如果下一个元素的 top 坐标大于当前元素，说明它在下一行
                 if (currentElement.offsetTop > el.offsetTop) { 
                     insertBeforeNode = currentElement; 
                     break; 
@@ -6376,37 +6396,31 @@
                 currentElement = currentElement.nextElementSibling;
             }
             
-            if (insertBeforeNode) gridContainer.insertBefore(panel, insertBeforeNode);
-            else gridContainer.appendChild(panel);
+            if (insertBeforeNode) {
+                gridContainer.insertBefore(panel, insertBeforeNode);
+            } else {
+                gridContainer.appendChild(panel);
+            }
         
             // 4. 显示面板并渲染尺寸
             panel.classList.remove('hidden');
-            // 保证高级区域始终可见（即使之前被别的地方隐藏过）
-            if(advancedSection) advancedSection.classList.remove('hidden');
             renderBagSizes(bag.sizes);
             
-            // --- 新增：自动选中“由红绣推荐” ---
+            // 默认选中“红绣推荐”
             setTimeout(() => {
                 const recommendCard = document.querySelector('.bag-size-card[onclick*="红绣推荐"]');
-                if (recommendCard) {
-                    recommendCard.click(); // 强制执行默认推荐
-                }
+                if (recommendCard) recommendCard.click();
             }, 100);
-            // -----------------------------------
-            
-            // 延迟计算箭头位置，并平滑滚动
+        
+            // 5. 调整面板小箭头位置
             setTimeout(() => {
                 const arrow = panel.querySelector('.config-arrow');
-                if(arrow) {
+                if (arrow) {
                     const arrowPos = el.getBoundingClientRect().left - panel.getBoundingClientRect().left + (el.getBoundingClientRect().width / 2) - 8;
                     arrow.style.left = `${arrowPos}px`;
                 }
-                
-                const scrollArea = document.querySelector('.config-scroll-area');
-                const panelRect = panel.getBoundingClientRect();
-                const scrollAreaRect = scrollArea.getBoundingClientRect();
-                const scrollAmount = panelRect.top - scrollAreaRect.top - 120;
-                if(scrollArea) scrollArea.scrollBy({ top: scrollAmount, behavior: 'smooth' });
+                // 滚动居中
+                scrollElementToCenter('bag-config-panel');
             }, 50);
         
             updateBagSummary(); 

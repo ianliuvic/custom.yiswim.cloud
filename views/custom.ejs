@@ -2458,11 +2458,18 @@
                                                 </div>
                                             </div>
                                 
-                                            <!-- 3. 尺寸输入 -->
-                                            <div>
-                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">3. 标签尺寸 (Size)</label>
-                                                <input type="text" id="hygiene-custom-size" class="oem-input-mini" style="width: 100%; max-width: 300px; box-sizing: border-box;" placeholder="长(L) x 宽(W) cm，或填写：红绣常规尺寸" oninput="updateHygieneSummary()">
-                                                <div style="font-size: 11px; color: #94a3b8; margin-top: 6px;">注：如果是通用葫芦形，默认约为 5x11cm。</div>
+                                            <!-- 3. 尺寸输入 (优化为 Checkbox 展开) -->
+                                            <div style="margin-top: 15px; padding-top: 25px; border-top: 1px dashed #e2e8f0;">
+                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:12px;">3. 标签尺寸 (Size)</label>
+                                                
+                                                <label class="oem-checkbox-label" style="margin: 0; padding: 0;">
+                                                    <input type="checkbox" id="hygiene-custom-size-check" onchange="toggleHygieneCustomSize(this.checked)"> 我需要自定义特定尺寸 (否则默认使用红绣常规尺寸)
+                                                </label>
+                                                
+                                                <div id="hygiene-size-input-area" class="hidden" style="margin-top: 12px; animation: fadeIn 0.3s ease;">
+                                                    <input type="text" id="hygiene-custom-size" class="oem-input-mini" style="width: 100%; max-width: 300px; box-sizing: border-box; background: #fff;" placeholder="例如: 长(L) x 宽(W) cm" oninput="updateHygieneSummary()">
+                                                    <div style="font-size: 11px; color: #94a3b8; margin-top: 6px;">注：如果是通用葫芦形，常规尺寸默认约为 5x11cm。</div>
+                                                </div>
                                             </div>
                                 
                                         </div>
@@ -5371,7 +5378,27 @@
             applyRemark: '',           // 粘贴规则
             noApply: false             // 是否不代贴标
         };
-        
+
+
+        // 控制自定义尺寸输入框的显隐
+        function toggleHygieneCustomSize(isChecked) {
+            const area = document.getElementById('hygiene-size-input-area');
+            if (area) {
+                area.classList.toggle('hidden', !isChecked);
+                
+                if (isChecked) {
+                    // 展开时稍微向下滚动以便用户输入
+                    setTimeout(() => scrollElementToCenter('hygiene-size-input-area'), 50);
+                } else {
+                    // 收起时清空已填写的尺寸，恢复默认状态
+                    const sizeInput = document.getElementById('hygiene-custom-size');
+                    if (sizeInput) sizeInput.value = '';
+                    hygieneConfig.size = ''; // 同步清空数据
+                }
+            }
+            updateHygieneSummary();
+        }
+
         // 1. 切换主模式 (智能代配 / 自主定义细节)
         function switchHygieneMode(mode) {
             hygieneConfig.mode = mode;
@@ -5534,15 +5561,25 @@
             if (hygieneConfig.mode === 'auto') {
                 st.innerHTML = `<div style="text-align:right;"><span style="color:#10b981; font-weight:600;">红绣智能代配</span><br><span style="font-size:10px; opacity:0.8;">透明PET | 葫芦形 | 代贴标</span></div>`;
             } else {
-                // 抓取并同步全部输入框数据
-                hygieneConfig.size = document.getElementById('hygiene-custom-size')?.value.trim() || '';
+                // 判断是否勾选了自定义尺寸，如果是才抓取输入框的值，否则就是默认
+                const isCustomSize = document.getElementById('hygiene-custom-size-check')?.checked;
+                if (isCustomSize) {
+                    hygieneConfig.size = document.getElementById('hygiene-custom-size')?.value.trim() || '';
+                } else {
+                    hygieneConfig.size = '';
+                }
+                
+                // 抓取其他数据
                 hygieneConfig.remark = document.getElementById('hygiene-text')?.value.trim() || '';
                 hygieneConfig.shapeRemark = document.getElementById('hygiene-shape-remark')?.value.trim() || '';
                 hygieneConfig.applyRemark = document.getElementById('hygiene-apply-remark')?.value.trim() || '';
                 
                 const matText = hygieneConfig.material.split(' ')[0];
                 const shapeText = hygieneConfig.shape === '其他定制形状' ? '异形定制' : hygieneConfig.shape;
-                const sizeText = hygieneConfig.size ? `尺寸: ${hygieneConfig.size}` : '尺寸待定';
+                
+                // 核心改动：如果没勾选或者没填，显示常规尺寸；否则显示填入的尺寸
+                const sizeText = hygieneConfig.size ? `尺寸: ${hygieneConfig.size}` : '红绣常规尺寸';
+                
                 const serviceText = hygieneConfig.noApply ? '不代贴' : '工厂代贴';
                 
                 const hasContent = (hygieneConfig.remark !== '' || hygieneConfig.designFiles.length > 0) ? '已传内容' : '待补内容';
@@ -5558,8 +5595,6 @@
             st.style.color = 'var(--primary-color)'; 
             st.style.fontWeight = 'bold';
         }
-
-
 
         // ==========================================
         // 标签逻辑 (Label) - 智能代配与自主定义版 (最新材质/尺寸/缝制动态联动)

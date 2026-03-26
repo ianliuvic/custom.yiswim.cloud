@@ -5355,68 +5355,6 @@
         }
 
 
-        // 6. 交互式地图切换 (连体/分体)
-        function changeMapType(type) {
-            const mapContainer = document.getElementById('placement-map');
-            const switcher = mapContainer.nextElementSibling.querySelector('.mode-switcher');
-            
-            switcher.querySelectorAll('.mode-option').forEach(opt => {
-                opt.classList.remove('active');
-                if(opt.innerText.includes(type === 'onepiece' ? '连体' : '分体')) opt.classList.add('active');
-            });
-
-            const mapImg = mapContainer.querySelector('.map-svg');
-            const onepieceSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'%3E%3Cpath d='M30,20 Q50,10 70,20 L80,50 Q80,80 50,110 Q20,80 20,50 Z' fill='none' stroke='%23333' stroke-width='1'/%3E%3C/svg%3E";
-            const bikiniSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'%3E%3Cpath d='M30,20 Q50,10 70,20 L80,40 Q50,35 20,40 Z M30,70 Q50,60 70,70 L80,90 Q50,115 20,90 Z' fill='none' stroke='%23333' stroke-width='1'/%3E%3C/svg%3E";
-            mapImg.src = (type === 'onepiece') ? onepieceSvg : bikiniSvg;
-
-            mapContainer.querySelectorAll('.hotspot').forEach(h => h.remove());
-
-            const spots = (type === 'onepiece') ? [
-                { name: '领后中', top: '20%', left: '50%' },
-                { name: '左侧缝', top: '60%', left: '20%' },
-                { name: '后腰内侧', top: '85%', left: '50%' }
-            ] : [
-                { name: '上衣后中', top: '15%', left: '50%' },
-                { name: '泳裤后腰', top: '75%', left: '50%' },
-                { name: '上衣左侧', top: '30%', left: '20%' }
-            ];
-
-            spots.forEach(s => {
-                const hotspot = document.createElement('div');
-                hotspot.className = 'hotspot';
-                hotspot.style.top = s.top; hotspot.style.left = s.left;
-                hotspot.onclick = function() { selectLabelPlacement(s.name, this); };
-                hotspot.innerHTML = `<span class="hotspot-label">${s.name}</span>`;
-                if(labelConfig.placement === s.name) hotspot.classList.add('selected');
-                mapContainer.appendChild(hotspot);
-            });
-        }
-
-        // 7. 汇总更新
-        function updateLabelSummary() {
-            const st = document.getElementById('sum-trim-label');
-            const isEnabled = document.querySelector('input[name="need_label"][value="yes"]').checked;
-            
-            if (!isEnabled) {
-                handleTrimDisabledSummary('label', st);
-                return;
-            }
-        
-            const modeText = labelConfig.mode === 'combined' ? '集成标' : '分体标';
-            const matText = labelConfig.material;
-            
-            // 检查是否有文字或文件
-            const hasBrandContent = labelConfig.sections.brand.text.trim() !== '' || labelConfig.sections.brand.files.length > 0;
-            const hasCareContent = labelConfig.mode === 'split' ? (labelConfig.sections.care.text.trim() !== '' || labelConfig.sections.care.files.length > 0) : false;
-            
-            const contentStatus = (hasBrandContent || hasCareContent) ? '内容已就绪' : '待补充内容';
-        
-            st.innerHTML = `<div style="text-align:right;">${modeText} | ${matText}<br><span style="font-size:10px; opacity:0.8;">位置: ${labelConfig.placement} | ${contentStatus}</span></div>`;
-            st.style.color = 'var(--primary-color)'; st.style.fontWeight = 'bold';
-        }
-
-
         // 初始化加载一次
         document.addEventListener('DOMContentLoaded', () => { 
             if(currentStep === 3) {

@@ -5405,53 +5405,69 @@
             updateHangtagSummary();
         }
         
-        // 处理工艺多选逻辑
+        // 处理工艺多选逻辑 - 修复版
         function toggleHangtagCraft(val, el) {
+            const container = el.parentNode;
+            // 找到当前区域内的“无附加工艺”卡片（通常是第一个 metal-item）
+            const noneCard = container.querySelector('.metal-item');
+            
+            // 确保数组存在
+            if (!hangtagConfig.crafts) hangtagConfig.crafts = ['无附加工艺'];
             let arr = hangtagConfig.crafts;
         
             if (val === '无附加工艺') {
-                // 如果点的是第一项，清空数组并只保留自己
+                // --- 情况 A: 用户点击了“无附加工艺” ---
                 arr = ['无附加工艺'];
-                el.parentNode.querySelectorAll('.metal-item').forEach(item => item.classList.remove('selected'));
+                // UI处理：将该组内所有卡片取消选中，仅保留自己
+                container.querySelectorAll('.metal-item').forEach(item => item.classList.remove('selected'));
                 el.classList.add('selected');
             } else {
-                // 如果点的是其他项
-                // 1. 先确保把“无附加工艺”从数组里删掉
+                // --- 情况 B: 用户点击了其他高级工艺 ---
+                
+                // 1. 如果当前数组里有“无附加工艺”，先把它剔除
                 const noneIndex = arr.indexOf('无附加工艺');
                 if (noneIndex > -1) {
                     arr.splice(noneIndex, 1);
-                    el.parentNode.querySelector('.metal-item').classList.remove('selected');
+                    // 同时取消“无附加工艺”卡片的选中样式
+                    if (noneCard) noneCard.classList.remove('selected');
                 }
         
-                // 2. 正常执行多选切换
+                // 2. 正常执行当前点击项的选中/反选
                 const idx = arr.indexOf(val);
                 if (idx > -1) {
+                    // 已选中，则取消
                     arr.splice(idx, 1);
                     el.classList.remove('selected');
                 } else {
+                    // 未选中，则加入
                     arr.push(val);
                     el.classList.add('selected');
                 }
         
-                // 3. 如果把其他项都点没了，自动选回“无附加工艺”
+                // 3. 兜底逻辑：如果用户把所有选项都取消了，自动变回“无附加工艺”
                 if (arr.length === 0) {
                     arr = ['无附加工艺'];
-                    el.parentNode.querySelector('.metal-item').classList.add('selected');
+                    if (noneCard) noneCard.classList.add('selected');
                 }
             }
         
+            // 将修改后的数组写回配置
             hangtagConfig.crafts = arr;
             
-            // “其他”项的特殊联动（如果工艺里包含其他，显示描述区）
-            const area = document.getElementById('hangtag-craft-other-area');
-            if (area) {
+            // --- 联动显示“其他”工艺的补充说明区 ---
+            const otherArea = document.getElementById('hangtag-craft-other-area');
+            if (otherArea) {
                 const needsOther = arr.includes('其他');
-                area.classList.toggle('hidden', !needsOther);
-                if (needsOther) setTimeout(() => scrollElementToCenter('hangtag-craft-other-area'), 50);
+                otherArea.classList.toggle('hidden', !needsOther);
+                if (needsOther) {
+                    // 只有在显示时才执行滚动
+                    setTimeout(() => scrollElementToCenter('hangtag-craft-other-area'), 50);
+                }
             }
         
             updateHangtagSummary();
         }
+
 
 
         /**

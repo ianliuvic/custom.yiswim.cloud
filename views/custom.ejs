@@ -7402,11 +7402,35 @@
             updateLogisticsSummary();
         }
         
+        // 切换大货意向评估区域的显隐与平滑滚动
         function toggleSampleBulkIntent(needed) {
             sampleConfig.needBulkQuote = needed;
-            document.getElementById('sample-bulk-intent-fields').classList.toggle('hidden', !needed);
+            
+            const intentFields = document.getElementById('sample-bulk-intent-fields');
+            if (intentFields) {
+                intentFields.classList.toggle('hidden', !needed);
+                
+                if (needed) {
+                    // 延迟一点时间，确保元素已经从 hidden 状态中恢复并占位，然后执行平滑滚动居中
+                    setTimeout(() => {
+                        scrollElementToCenter('sample-bulk-intent-fields');
+                    }, 50);
+                } else {
+                    // 如果用户取消勾选，为了避免产生脏数据，我们应当清空已填写的内容
+                    const qtyInput = document.getElementById('sample-intent-qty');
+                    const priceInput = document.getElementById('sample-intent-price');
+                    if (qtyInput) qtyInput.value = '';
+                    if (priceInput) priceInput.value = '';
+                    
+                    // 恢复默认选中状态（可选，视您的业务逻辑而定）
+                    // selectSampleAttr('intentMethod', 'Sea Freight (海运)', document.querySelector('[onclick*="Sea Freight"]'));
+                    // selectSampleAttr('intentTerm', 'DDP', document.querySelector('[onclick*="\'DDP\'"]'));
+                }
+            }
+            
             updateLogisticsSummary();
         }
+
         
         function selectBulkLogistics(attr, value, el) {
             bulkLogisticsConfig[attr] = value;

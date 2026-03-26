@@ -4943,9 +4943,9 @@
                 if(autoHint) autoHint.classList.add('hidden');
                 if(customDetails) customDetails.classList.remove('hidden');
                 
-                // 新增：切换到自定义细节时，平滑滚动使区域居中可见
+                // 向上滚动，将 Switcher 停留在 Stepper 底部
                 setTimeout(() => {
-                    scrollElementToCenter('hangtag-custom-details');
+                    scrollElementToTop('hangtag-mode-custom', 60);
                 }, 50);
             }
             
@@ -5233,7 +5233,6 @@
         });
 
 
-        // 1. 切换代配/自主定义模式 (标签)
         function switchLabelMode(mode) {
             labelConfig.mode = mode;
             
@@ -5242,7 +5241,7 @@
             const activeBtn = document.getElementById(`label-mode-${mode}`);
             if (activeBtn) activeBtn.classList.add('active');
             
-            // 区域显隐切换 (注意：设计上传区不再切换，它是全局保留的)
+            // 区域显隐切换
             const autoHint = document.getElementById('label-auto-hint');
             const customDetails = document.getElementById('label-custom-details');
             
@@ -5253,16 +5252,15 @@
                 if(autoHint) autoHint.classList.add('hidden');
                 if(customDetails) customDetails.classList.remove('hidden');
                 
-                // 新增：切换到自定义细节时，平滑滚动使区域居中可见
+                // 向上滚动，将 Switcher 停留在 Stepper 底部
                 setTimeout(() => {
-                    scrollElementToCenter('label-custom-details');
+                    scrollElementToTop('label-mode-custom', 60);
                 }, 50);
             }
             
             updateLabelSummary();
         }
 
-        
         // 核心改动：选择材质时自动展开下方配置面板 (适配移除 Header)
         function selectLabelMaterial(name, el) {
             labelConfig.material = name;
@@ -5753,6 +5751,31 @@
             });
         }
 
+        /**
+         * 将指定的元素平滑滚动到滚动容器的顶部附近 (贴近 Stepper 底部)
+         * @param {string} elementId 目标元素的ID
+         * @param {number} offset 距离顶部的预留间距(px)，用于显示上方的标题
+         */
+        function scrollElementToTop(elementId, offset = 60) {
+            const element = document.getElementById(elementId);
+            const scrollContainer = document.querySelector('.config-scroll-area');
+            
+            if (!element || !scrollContainer) return;
+        
+            // 获取元素和容器的尺寸与位置信息
+            const elementRect = element.getBoundingClientRect();
+            const containerRect = scrollContainer.getBoundingClientRect();
+        
+            // 计算元素相对于容器顶部的位移，并减去 offset 以预留头部空间
+            const relativeTop = elementRect.top - containerRect.top;
+            
+            // 执行平滑滚动
+            scrollContainer.scrollBy({
+                top: relativeTop - offset,
+                behavior: 'smooth'
+            });
+        }
+
         // ==========================================
         // 吊牌辅助：通用动态面板展开与移动函数
         // ==========================================
@@ -6066,15 +6089,14 @@
                 if(autoHint) autoHint.classList.add('hidden');
                 if(customDetails) customDetails.classList.remove('hidden');
                 
-                // 新增：切换到自定义细节时，平滑滚动使区域居中可见
+                // 向上滚动，将 Switcher 停留在 Stepper 底部
                 setTimeout(() => {
-                    scrollElementToCenter('metal-custom-details');
+                    scrollElementToTop('metal-mode-custom', 60);
                 }, 50);
             }
             
             updateMetalSummary();
         }
-
 
         function toggleMetalLogoType(type, el) {
             const index = metalConfig.logoTypes.indexOf(type);

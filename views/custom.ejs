@@ -1631,31 +1631,37 @@
                                         </div>
                                     </div>
 
-                                    <!-- B. 形状与规格 (同步网格大小) -->
+                                    <!-- B. 形状与规格 (同步网格大小与样式) -->
                                     <div class="attr-section" style="margin-bottom: 30px;">
                                         <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 形状与规格 (Shape & Size)</h4>
-                                        <!-- 修改点：minmax 从 160px 改为 200px -->
                                         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-left: 13px;">
-                                            <div class="hangtag-shape-card selected" onclick="selectHangtagAttr('shape', '标准修长型 (约 4x9cm)', this)">
-                                                <div class="shape-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="7" y="3" width="10" height="18" rx="1"/><circle cx="12" cy="6" r="1.5"/></svg></div>
-                                                <div class="shape-name">修长型 (Slim)</div>
-                                                <div class="shape-desc">约 4x9cm<br>显瘦，裙装/裤装首选</div>
+                                            <!-- 1. 修长型 -->
+                                            <div class="option-item metal-item selected" onclick="selectHangtagAttr('shape', '标准修长型 (约 4x9cm)', this)">
+                                                <div class="option-img-alt" style="background: #fdfdfd; display:flex; align-items:center; justify-content:center; height:100px;">
+                                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="7" y="3" width="10" height="18" rx="1"/><circle cx="12" cy="6" r="1.5"/></svg>
+                                                </div>
+                                                <div class="option-info"><h4>修长型 (Slim)</h4><p>约 4x9cm<br>显瘦，裙装/裤装首选</p></div>
                                             </div>
-                                            <div class="hangtag-shape-card" onclick="selectHangtagAttr('shape', '标准矩形 (约 5x8cm)', this)">
-                                                <div class="shape-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="4" width="14" height="16" rx="1"/><circle cx="12" cy="7" r="1.5"/></svg></div>
-                                                <div class="shape-name">通用矩形 (Standard)</div>
-                                                <div class="shape-desc">约 5x8cm<br>通用性最强，百搭款</div>
+                                            <!-- 2. 通用矩形 -->
+                                            <div class="option-item metal-item" onclick="selectHangtagAttr('shape', '标准矩形 (约 5x8cm)', this)">
+                                                <div class="option-img-alt" style="background: #fdfdfd; display:flex; align-items:center; justify-content:center; height:100px;">
+                                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="4" width="14" height="16" rx="1"/><circle cx="12" cy="7" r="1.5"/></svg>
+                                                </div>
+                                                <div class="option-info"><h4>通用矩形 (Standard)</h4><p>约 5x8cm<br>通用性最强，百搭款</p></div>
                                             </div>
-                                            <div class="hangtag-shape-card" onclick="selectHangtagAttr('shape', '正方/圆形 (Square/Circle)', this)">
-                                                <div class="shape-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="14" height="14" rx="1"/><circle cx="12" cy="8" r="1.5"/></svg></div>
-                                                <div class="shape-name">正方/圆形</div>
-                                                <div class="shape-desc">视觉独特<br>童装、内衣、配饰推荐</div>
+                                            <!-- 3. 正方/圆形 -->
+                                            <div class="option-item metal-item" onclick="selectHangtagAttr('shape', '正方/圆形 (Square/Circle)', this)">
+                                                <div class="option-img-alt" style="background: #fdfdfd; display:flex; align-items:center; justify-content:center; height:100px;">
+                                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="14" height="14" rx="1"/><circle cx="12" cy="8" r="1.5"/></svg>
+                                                </div>
+                                                <div class="option-info"><h4>正方/圆形</h4><p>视觉独特<br>童装、内衣、配饰推荐</p></div>
                                             </div>
-                                            <!-- 4. 修改后的定制卡片 -->
-                                            <div class="hangtag-shape-card" onclick="selectHangtagAttr('shape', '尺寸或特殊异形定制', this)" style="background:#f8fafc;">
-                                                <div class="shape-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/><circle cx="12" cy="7" r="1"/></svg></div>
-                                                <div class="shape-name" style="color:#64748b;">尺寸或特殊异形定制</div>
-                                                <div class="shape-desc">Logo形状等<br><span style="color:#f59e0b; font-weight:bold;">需开刀模 (MOQ 5000起)</span></div>
+                                            <!-- 4. 定制卡片 -->
+                                            <div class="option-item metal-item" onclick="selectHangtagAttr('shape', '尺寸或特殊异形定制', this)" style="background:#f8fafc;">
+                                                <div class="option-img-alt" style="background: #fdfdfd; display:flex; align-items:center; justify-content:center; height:100px;">
+                                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/><circle cx="12" cy="7" r="1"/></svg>
+                                                </div>
+                                                <div class="option-info"><h4>异形定制</h4><p>Logo形状等<br><span style="color:#f59e0b; font-weight:bold;">需开刀模 (MOQ 5000起)</span></p></div>
                                             </div>
                                         </div>
 
@@ -5071,13 +5077,17 @@
             otherCraftFiles: [] // 新增存储数组
         };
 
-        // 2. 修改属性选择函数
         function selectHangtagAttr(attrType, value, el) {
             hangtagConfig[attrType] = value;
             
-            // 统一同级卡片选中态处理
-            el.parentNode.querySelectorAll('.option-item').forEach(item => item.classList.remove('selected'));
+            // 核心修改：确保只在当前点击元素的父容器内移除选中状态，实现单选
+            const container = el.parentNode;
+            container.querySelectorAll('.option-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            el.classList.add('selected');
         
+            // 联动逻辑：根据选择显示/隐藏特定配置区
             if (attrType === 'material') {
                 const area = document.getElementById('hangtag-material-other-area');
                 if (area) area.classList.toggle('hidden', value !== '其他');
@@ -5086,15 +5096,14 @@
                 const area = document.getElementById('hangtag-custom-shape-area');
                 if (area) area.classList.toggle('hidden', value !== '尺寸或特殊异形定制');
             }
-            // --- 新增：工艺显隐控制 ---
             else if (attrType === 'craft') {
                 const area = document.getElementById('hangtag-craft-other-area');
                 if (area) area.classList.toggle('hidden', value !== '其他');
             }
             
-            el.classList.add('selected');
             updateHangtagSummary();
         }
+
 
         function toggleHangtagCraft(craft, el) {
             const index = hangtagConfig.crafts.indexOf(craft);
@@ -5146,12 +5155,21 @@
         }
 
         function renderHangtagPreviews(type) {
-            let gridId = '';
+            // 映射 type 到对应的 HTML 容器 ID
+            const gridMap = {
+                'design': 'hangtagPreview',
+                'shape': 'hangtagShapePreview',
+                'material': 'hangtagMatPreview',
+                'craft': 'hangtagCraftPreview'
+            };
+            
+            const gridId = gridMap[type];
             const grid = document.getElementById(gridId);
             if (!grid) return;
+            
             grid.innerHTML = '';
             
-            // 这里使用传入的 type 获取正确的数组
+            // 获取对应的数据源
             let actualFiles = [];
             if(type === 'design') actualFiles = hangtagConfig.designFiles;
             else if(type === 'shape') actualFiles = hangtagConfig.shapeFiles;
@@ -5159,26 +5177,62 @@
             else if(type === 'craft') actualFiles = hangtagConfig.otherCraftFiles;
         
             actualFiles.forEach((file, index) => {
-                const url = URL.createObjectURL(file);
+                const isImage = file.type.startsWith('image/');
+                const ext = file.name.split('.').pop().toUpperCase();
+                
+                // 创建预览内容
+                let previewContent = '';
+                if (isImage) {
+                    const url = URL.createObjectURL(file);
+                    previewContent = `<img src="${url}" onclick="openOemPreview(this.src, '${file.name}')" style="cursor:zoom-in;">`;
+                } else {
+                    previewContent = `
+                        <div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#f1f5f9; color:#64748b;">
+                            <span style="font-size:10px; font-weight:800; margin-bottom:2px;">${ext}</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                        </div>`;
+                }
+        
                 grid.insertAdjacentHTML('beforeend', `
-                    <div class="oem-preview-item">
-                        <img src="${url}" onclick="openOemPreview('${url}', '${file.name}')">
+                    <div class="oem-preview-item" id="preview-tag-${type}-${index}">
+                        ${previewContent}
+                        <div style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.4); color:#fff; font-size:8px; padding:2px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${file.name}</div>
                         <button type="button" class="oem-preview-remove" onclick="removeHangtagFile(${index}, '${type}')">&times;</button>
-                    </div>`);
+                    </div>
+                `);
             });
         }
 
         function removeHangtagFile(index, type) {
-            const targetArray = type === 'design' ? hangtagConfig.designFiles : hangtagConfig.shapeFiles;
-            targetArray.splice(index, 1);
-            
-            const nameEl = document.getElementById(type === 'design' ? 'hangtagFileName' : 'hangtagShapeFileName');
-            if (targetArray.length > 0) {
-                nameEl.innerText = targetArray.length === 1 ? targetArray[0].name : `已选 ${targetArray.length} 个文件`;
-            } else {
-                nameEl.innerText = type === 'design' ? '选择矢量文件 (AI/PDF)' : '上传参考文件';
-                nameEl.style.color = '#94a3b8';
+            // 1. 获取对应的数据源
+            let targetArray;
+            if(type === 'design') targetArray = hangtagConfig.designFiles;
+            else if(type === 'shape') targetArray = hangtagConfig.shapeFiles;
+            else if(type === 'material') targetArray = hangtagConfig.otherMatFiles;
+            else if(type === 'craft') targetArray = hangtagConfig.otherCraftFiles;
+        
+            // 2. 删除数据
+            if (targetArray) {
+                targetArray.splice(index, 1);
             }
+            
+            // 3. 更新提示文字
+            const nameMap = {
+                'design': 'hangtagFileName',
+                'shape': 'hangtagShapeFileName',
+                'material': 'hangtagMatFileName',
+                'craft': 'hangtagCraftFileName'
+            };
+            const nameEl = document.getElementById(nameMap[type]);
+            if (nameEl) {
+                if (targetArray.length > 0) {
+                    nameEl.innerText = `已选 ${targetArray.length} 个文件`;
+                } else {
+                    nameEl.innerText = (type === 'design') ? '点击上传 AI / PDF / 高清图' : '点击上传参考文件';
+                }
+            }
+            
+            // 4. 重新渲染预览区
             renderHangtagPreviews(type);
             updateHangtagSummary();
         }

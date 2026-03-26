@@ -2159,10 +2159,29 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <!-- 上装自定义位置输入框 -->
-                                                    <div id="label-placement-custom-top" class="hidden" style="margin-top: 10px; animation: fadeIn 0.3s ease;">
-                                                        <input type="text" id="label-custom-top-text" class="oem-input-mini" style="width: 100%; max-width: 400px; box-sizing: border-box; background: #fff; border-color: #cbd5e1;" placeholder="请输入具体的上装标签安装位置..." oninput="updateLabelSummary()">
+                                                    <!-- 上装自定义位置输入框 (升级版: 文本+上传) -->
+                                                    <div id="label-placement-custom-top" class="fabric-config-panel hidden" style="margin-top: 10px; padding: 25px 30px; background: #fffcfc; border-color: #fecaca; width: 100%; box-sizing: border-box; grid-column: 1 / -1;">
+                                                        <div class="config-arrow" style="border-top-color: #fecaca; border-left-color: #fecaca; left: calc(100% - 100px);"></div>
+                                                        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; align-items: flex-start;">
+                                                            <div style="display: flex; flex-direction: column;">
+                                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">上装/连体 - 自定义位置描述 <span style="color:#ef4444;">*</span></label>
+                                                                <textarea id="label-custom-top-text" class="oem-textarea" style="flex: 1; min-height: 80px; resize: none; font-size:12px; background: #fff; box-sizing: border-box;" placeholder="请输入具体的上装标签安装位置，如：左胸前外露、右袖口..." oninput="updateLabelSummary()"></textarea>
+                                                            </div>
+                                                            <div style="display: flex; flex-direction: column;">
+                                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">位置参考图 (选填)</label>
+                                                                <div class="premium-upload-box" onclick="document.getElementById('labelPlacementTopFile').click()" style="flex: 1; min-height: 80px; padding: 0; border-style: dashed; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-sizing: border-box;">
+                                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="margin-bottom:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                                                                    <p id="labelPlacementTopFileName" style="font-size: 11px; color: #94a3b8; margin:0;">点击上传</p>
+                                                                    <input type="file" id="labelPlacementTopFile" class="hidden" multiple onchange="handleLabelPlacementFiles(this, 'top')">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; margin-top: 10px;">
+                                                            <div></div>
+                                                            <div id="labelPlacementTopPreview" class="tight-preview-grid"></div>
+                                                        </div>
                                                     </div>
+
                                                 </div>
                                     
                                                 <!-- 下装/裤装的选项 (默认隐藏) -->
@@ -2200,10 +2219,29 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <!-- 下装自定义位置输入框 -->
-                                                    <div id="label-placement-custom-bottom" class="hidden" style="margin-top: 10px; animation: fadeIn 0.3s ease;">
-                                                        <input type="text" id="label-custom-bottom-text" class="oem-input-mini" style="width: 100%; max-width: 400px; box-sizing: border-box; background: #fff; border-color: #cbd5e1;" placeholder="请输入具体的下装标签安装位置..." oninput="updateLabelSummary()">
+                                                    <!-- 下装自定义位置输入框 (升级版: 文本+上传) -->
+                                                    <div id="label-placement-custom-bottom" class="fabric-config-panel hidden" style="margin-top: 10px; padding: 25px 30px; background: #fffcfc; border-color: #fecaca; width: 100%; box-sizing: border-box; grid-column: 1 / -1;">
+                                                        <div class="config-arrow" style="border-top-color: #fecaca; border-left-color: #fecaca; left: calc(100% - 100px);"></div>
+                                                        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; align-items: flex-start;">
+                                                            <div style="display: flex; flex-direction: column;">
+                                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">下装/裤装 - 自定义位置描述 <span style="color:#ef4444;">*</span></label>
+                                                                <textarea id="label-custom-bottom-text" class="oem-textarea" style="flex: 1; min-height: 80px; resize: none; font-size:12px; background: #fff; box-sizing: border-box;" placeholder="请输入具体的下装标签安装位置，如：右后腰外置贴标..." oninput="updateLabelSummary()"></textarea>
+                                                            </div>
+                                                            <div style="display: flex; flex-direction: column;">
+                                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">位置参考图 (选填)</label>
+                                                                <div class="premium-upload-box" onclick="document.getElementById('labelPlacementBottomFile').click()" style="flex: 1; min-height: 80px; padding: 0; border-style: dashed; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-sizing: border-box;">
+                                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="margin-bottom:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                                                                    <p id="labelPlacementBottomFileName" style="font-size: 11px; color: #94a3b8; margin:0;">点击上传</p>
+                                                                    <input type="file" id="labelPlacementBottomFile" class="hidden" multiple onchange="handleLabelPlacementFiles(this, 'bottom')">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; margin-top: 10px;">
+                                                            <div></div>
+                                                            <div id="labelPlacementBottomPreview" class="tight-preview-grid"></div>
+                                                        </div>
                                                     </div>
+
                                                 </div>
                                                 
                                             </div>
@@ -5276,6 +5314,10 @@
                 'top': '领后中 (Center Back Neck)', // 上装位置
                 'bottom': '后腰内中 (Center Back Waist)' // 下装位置
             },
+            placementFiles: {
+                    'top': [],
+                    'bottom': []
+                },
             remark: '',          
             designFiles: [],      
             otherMatFiles: [] 
@@ -5603,6 +5645,65 @@
             if (nameEl) nameEl.innerText = labelConfig.designFiles.length > 0 ? `已选 ${labelConfig.designFiles.length} 个文件` : '点击上传 AI / PDF / 高清图';
             
             renderLabelPreviews();
+            updateLabelSummary();
+        }
+
+        // ==========================================
+        // 标签逻辑：自定义位置图片上传处理
+        // ==========================================
+        function handleLabelPlacementFiles(input, posType) {
+            const files = Array.from(input.files);
+            let targetArray = labelConfig.placementFiles[posType];
+            
+            files.forEach(file => {
+                if (file.size > 20 * 1024 * 1024) { alert(`文件 ${file.name} 超过 20MB`); return; }
+                if (!targetArray.some(f => f.name === file.name && f.size === file.size)) {
+                    targetArray.push(file);
+                }
+            });
+        
+            const nameId = posType === 'top' ? 'labelPlacementTopFileName' : 'labelPlacementBottomFileName';
+            const nameEl = document.getElementById(nameId);
+            if (nameEl) nameEl.innerText = targetArray.length > 0 ? `已选 ${targetArray.length} 个文件` : '点击上传';
+            
+            renderLabelPlacementPreviews(posType);
+            updateLabelSummary();
+            input.value = '';
+        }
+        
+        function renderLabelPlacementPreviews(posType) {
+            const gridId = posType === 'top' ? 'labelPlacementTopPreview' : 'labelPlacementBottomPreview';
+            const grid = document.getElementById(gridId);
+            if (!grid) return;
+            grid.innerHTML = '';
+            
+            const targetArray = labelConfig.placementFiles[posType];
+            
+            targetArray.forEach((file, index) => {
+                const isImage = file.type.startsWith('image/');
+                const ext = file.name.split('.').pop().toUpperCase();
+                let content = isImage 
+                    ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')" style="width:100%;height:100%;object-fit:cover;">` 
+                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;border-radius:4px;">${ext}</div>`;
+        
+                grid.insertAdjacentHTML('beforeend', `
+                    <div class="oem-preview-item" style="border-radius:4px;">
+                        ${content}
+                        <button type="button" class="oem-preview-remove" onclick="removeLabelPlacementFile(${index}, '${posType}')" style="width:16px;height:16px;font-size:12px;">&times;</button>
+                    </div>
+                `);
+            });
+        }
+        
+        function removeLabelPlacementFile(index, posType) {
+            let targetArray = labelConfig.placementFiles[posType];
+            targetArray.splice(index, 1);
+            
+            const nameId = posType === 'top' ? 'labelPlacementTopFileName' : 'labelPlacementBottomFileName';
+            const nameEl = document.getElementById(nameId);
+            if (nameEl) nameEl.innerText = targetArray.length > 0 ? `已选 ${targetArray.length} 个文件` : '点击上传';
+            
+            renderLabelPlacementPreviews(posType);
             updateLabelSummary();
         }
         

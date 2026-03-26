@@ -5146,13 +5146,26 @@
         }
 
         function renderHangtagPreviews(type) {
-            let gridId = (type==='design')?'hangtagPreview':(type==='shape'?'hangtagShapePreview':(type==='material'?'hangtagMatPreview':'hangtagCraftPreview'));
-            let targetArray = (type==='design')?hangtagConfig.designFiles:(type==='shape'?'hangtagShapeFiles':(type==='material'?'otherMatFiles':'otherCraftFiles'));
-            // 注意：如果是直接访问 hangtagConfig 里的属性，请确保写法正确：
-            const files = hangtagConfig[targetArray] || targetArray; // 兼容不同写法
-            
+            let gridId = '';
+            let actualFiles = [];
+        
+            // 根据类型锁定目标 ID 和 数组
+            if (type === 'design') {
+                gridId = 'hangtagPreview';
+                actualFiles = hangtagConfig.designFiles || [];
+            } else if (type === 'shape') {
+                gridId = 'hangtagShapePreview';
+                actualFiles = hangtagConfig.shapeFiles || [];
+            } else if (type === 'material') {
+                gridId = 'hangtagMatPreview';
+                actualFiles = hangtagConfig.otherMatFiles || [];
+            } else if (type === 'craft') {
+                gridId = 'hangtagCraftPreview';
+                actualFiles = hangtagConfig.otherCraftFiles || [];
+            }
+        
             const grid = document.getElementById(gridId);
-            if(!grid) return;
+            if (!grid) return;
             grid.innerHTML = '';
             
             // 这里使用传入的 type 获取正确的数组
@@ -5190,11 +5203,12 @@
         function updateHangtagSummary() {
             const st = document.getElementById('sum-trim-hangtag');
             const isEnabled = document.querySelector('input[name="need_hangtag"][value="yes"]').checked;
+            
+            // 如果未开启，调用工具函数处理 CMT 或显示“不需要”
             if (!isEnabled) {
                 handleTrimDisabledSummary('hangtag', st);
                 return;
             }
-
         
             if (hangtagConfig.mode === 'auto') {
                 const hasFile = hangtagConfig.designFiles.length > 0 ? '✓ 已传稿' : '× 待传稿';
@@ -5202,12 +5216,23 @@
             } else {
                 const matPart = hangtagConfig.material.split(' ')[0];
                 const shapePart = hangtagConfig.shape.split(' ')[0];
-                let craftText = hangtagConfig.crafts.length > 0 ? `+${hangtagConfig.crafts.length}工艺` : '基础印刷';
+                
+                // --- 核心修复：修改工艺展示逻辑 ---
+                let craftText = hangtagConfig.craft === '不需要' ? '常规印刷' : hangtagConfig.craft;
+                // 如果是“其他”且有文件，增加标识
+                if (hangtagConfig.craft === '其他' && hangtagConfig.otherCraftFiles && hangtagConfig.otherCraftFiles.length > 0) {
+                    craftText += ` (${hangtagConfig.otherCraftFiles.length}图)`;
+                }
+                // ------------------------------
+        
                 const hasFile = hangtagConfig.designFiles.length > 0 ? `<br><span style="font-size:10px; color:#10b981;">+已传设计稿</span>` : '';
+                
                 st.innerHTML = `<div style="text-align:right;">${matPart} | ${shapePart}<br><span style="font-size:10px; opacity:0.8;">${hangtagConfig.stringMat} | ${craftText}</span>${hasFile}</div>`;
             }
-            st.style.color = 'var(--primary-color)'; st.style.fontWeight = 'bold';
+            st.style.color = 'var(--primary-color)';
+            st.style.fontWeight = 'bold';
         }
+
 
 
         // ==========================================

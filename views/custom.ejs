@@ -1902,6 +1902,22 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <!-- 新增：子母吊牌配置 -->
+                                            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed #e2e8f0;">
+                                                <label class="oem-checkbox-label" style="margin: 0; padding: 0; font-weight: 600;">
+                                                    <input type="checkbox" id="hangtag-is-set" onchange="toggleHangtagSet(this.checked)"> 我需要子母吊牌 (两张及以上一套)
+                                                </label>
+                                                <div id="hangtag-set-detail-area" class="hidden" style="margin-top: 12px; animation: fadeIn 0.3s;">
+                                                    <div style="font-size: 11px; color: #f59e0b; margin-bottom: 8px; display: flex; align-items: center; gap: 5px;">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                                                        <span>注：子母牌通常涉及多种材质叠加，请在下方详细说明。</span>
+                                                    </div>
+                                                    <textarea id="hangtag-set-remark" class="oem-textarea" style="height: 80px; font-size: 12px;" 
+                                                              placeholder="请明确指出主牌和副牌各自的尺寸、材质及工艺要求。&#10;例如：主牌5x8cm白卡纸烫金，副牌4x10cm半透明硫酸纸黑色印刷..." 
+                                                              oninput="updateHangtagSummary()"></textarea>
+                                                </div>
+                                            </div>
+
                                         </div>
                                     </div>
                             
@@ -1913,7 +1929,7 @@
                                     <div style="margin-left: 13px;">
                                         <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px; align-items: stretch;">
                                             <div style="display: flex; flex-direction: column;">
-                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">设计稿/Logo上传 <span style="color:var(--primary-color);">(需包含正、反两面设计)</span></label>
+                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">设计稿上传 <span style="color:var(--primary-color);">(需包含主/副牌正、反两面设计稿)</span></label>
                                                 <div class="premium-upload-box" onclick="document.getElementById('hangtagDesignFile').click()" style="flex: 1; min-height: 120px; padding: 0; border-style: dashed; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-sizing: border-box;">
                                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="margin-bottom:8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
                                                     <p id="hangtagFileName" style="font-size: 11px; color: #94a3b8; margin:0;">点击上传 AI / PDF / 高清图</p>
@@ -5329,18 +5345,19 @@
         let hangtagConfig = {
             mode: 'auto',
             material: '白卡纸 (White Cardboard)',
-            weight: '400g',           // 新增默认克重
+            weight: '400g',
             shape: '标准修长型 (约 4x9cm)',
-            crafts: ['无附加工艺'],    // 修改为数组，默认选中第一项
+            crafts: ['无附加工艺'],
             stringType: '常规方块吊粒',
             stringColor: '白色',
+            isSet: false,             // 新增：是否为子母牌
+            setRemark: '',            // 新增：子母牌详细要求
             designFiles: [],
             shapeFiles: [],
             otherMatFiles: [],
             otherCraftFiles: [],
             stringFiles: []
         };
-
 
         function selectHangtagAttr(attrType, value, el) {
             hangtagConfig[attrType] = value;
@@ -5500,6 +5517,19 @@
             updateHangtagSummary();
         }
 
+        // 控制子母牌区域显隐
+        function toggleHangtagSet(checked) {
+            hangtagConfig.isSet = checked;
+            const area = document.getElementById('hangtag-set-detail-area');
+            if (area) {
+                area.classList.toggle('hidden', !checked);
+                if (checked) {
+                    // 平滑滚动到输入框
+                    setTimeout(() => scrollElementToCenter('hangtag-set-detail-area'), 50);
+                }
+            }
+            updateHangtagSummary();
+        }
 
         // 修改文件处理函数，支持 string 类型
         function handleHangtagFiles(input, type) {
@@ -5623,7 +5653,6 @@
         }
 
 
-        // 汇总逻辑更新
         function updateHangtagSummary() {
             const st = document.getElementById('sum-trim-hangtag');
             const isEnabled = document.querySelector('input[name="need_hangtag"][value="yes"]').checked;
@@ -5637,20 +5666,30 @@
                 const hasFile = hangtagConfig.designFiles.length > 0 ? '✓ 已传稿' : '× 待传稿';
                 st.innerHTML = `<div style="text-align:right;"><span style="color:#10b981; font-weight:600;">红绣智能代配</span><br><span style="font-size:10px; opacity:0.8;">设计稿: ${hasFile}</span></div>`;
             } else {
-                // 材质与克重
+                // 1. 材质与克重
                 let matDisplay = hangtagConfig.material.split(' ')[0];
                 if (!['其他'].includes(hangtagConfig.material)) {
                     matDisplay += ` (${hangtagConfig.weight})`;
                 }
         
-                // 工艺多选处理
+                // 2. 子母牌标记
+                const setText = hangtagConfig.isSet ? '<span style="color:var(--primary-color);"> [子母牌]</span>' : '';
+        
+                // 3. 工艺多选处理
                 const craftDisplay = hangtagConfig.crafts.join(', ');
+        
+                // 4. 颜色与吊粒
+                let colorDisplay = hangtagConfig.stringColor;
+                if (colorDisplay === '其他') {
+                    const val = document.getElementById('hangtag-string-color-other').value.trim();
+                    colorDisplay = val ? val : '其他色';
+                }
         
                 st.innerHTML = `
                     <div style="text-align:right;">
-                        ${matDisplay} | ${hangtagConfig.shape.split(' ')[0]}<br>
+                        ${matDisplay}${setText} | ${hangtagConfig.shape.split(' ')[0]}<br>
                         <span style="font-size:10px; opacity:0.8;">工艺: ${craftDisplay}</span><br>
-                        <span style="font-size:10px; opacity:0.8;">吊粒: ${hangtagConfig.stringColor}${hangtagConfig.stringType.includes('定制') ? '(定制)' : ''}</span>
+                        <span style="font-size:10px; opacity:0.8;">吊粒: ${colorDisplay}${hangtagConfig.stringType.includes('定制') ? '(定制)' : ''}</span>
                     </div>`;
             }
             st.style.color = 'var(--primary-color)';

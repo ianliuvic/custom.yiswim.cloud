@@ -2127,7 +2127,9 @@
                                                 <!-- 上装/连体的选项 (默认显示) -->
                                                 <div id="label-placement-top-area" style="margin-bottom: 20px; animation: fadeIn 0.3s ease;">
                                                     <div style="font-size: 11px; font-weight: 700; color: var(--primary-color); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">[上装/连体] 位置选择：</div>
-                                                    <div class="option-grid" id="label-placement-top-grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-top: 0;">
+                                                    
+                                                    <!-- 注意：网格增加了 position: relative -->
+                                                    <div class="option-grid" id="label-placement-top-grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-top: 0; position: relative;">
                                                         <div class="option-item metal-item selected" onclick="selectLabelPlacement('top', '领后中 (Center Back Neck)', this)">
                                                             <div class="option-img-alt" style="height:60px; background:#fff; font-weight:bold; color:var(--text-main);">领后中</div>
                                                             <div class="option-info" style="padding:10px; text-align:center;">
@@ -2158,36 +2160,38 @@
                                                                 <p style="font-size:10px;">如：左胸前等</p>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <!-- 上装自定义位置输入框 (升级版: 文本+上传) -->
-                                                    <div id="label-placement-custom-top" class="fabric-config-panel hidden" style="margin-top: 10px; padding: 25px 30px; background: #fffcfc; border-color: #fecaca; width: 100%; box-sizing: border-box; grid-column: 1 / -1;">
-                                                        <div class="config-arrow" style="border-top-color: #fecaca; border-left-color: #fecaca; left: calc(100% - 100px);"></div>
-                                                        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; align-items: flex-start;">
-                                                            <div style="display: flex; flex-direction: column;">
-                                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">上装/连体 - 自定义位置描述 <span style="color:#ef4444;">*</span></label>
-                                                                <textarea id="label-custom-top-text" class="oem-textarea" style="flex: 1; min-height: 80px; resize: none; font-size:12px; background: #fff; box-sizing: border-box;" placeholder="请输入具体的上装标签安装位置，如：左胸前外露、右袖口..." oninput="updateLabelSummary()"></textarea>
-                                                            </div>
-                                                            <div style="display: flex; flex-direction: column;">
-                                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">位置参考图 (选填)</label>
-                                                                <div class="premium-upload-box" onclick="document.getElementById('labelPlacementTopFile').click()" style="flex: 1; min-height: 80px; padding: 0; border-style: dashed; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-sizing: border-box;">
-                                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="margin-bottom:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-                                                                    <p id="labelPlacementTopFileName" style="font-size: 11px; color: #94a3b8; margin:0;">点击上传</p>
-                                                                    <input type="file" id="labelPlacementTopFile" class="hidden" multiple onchange="handleLabelPlacementFiles(this, 'top')">
+                                                        
+                                                        <!-- 核心修复：将配置面板放入网格内部，使用 grid-column 占满整行 -->
+                                                        <div id="label-placement-custom-top" class="fabric-config-panel hidden" style="padding: 25px 30px; background: #fffcfc; border-color: #fecaca; width: 100%; box-sizing: border-box; grid-column: 1 / -1; margin-top: 10px;">
+                                                            <!-- 箭头去掉了硬编码的 left -->
+                                                            <div class="config-arrow" style="border-top-color: #fecaca; border-left-color: #fecaca;"></div>
+                                                            <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; align-items: flex-start;">
+                                                                <div style="display: flex; flex-direction: column;">
+                                                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">上装/连体 - 自定义位置描述 <span style="color:#ef4444;">*</span></label>
+                                                                    <textarea id="label-custom-top-text" class="oem-textarea" style="flex: 1; min-height: 80px; resize: none; font-size:12px; background: #fff; box-sizing: border-box;" placeholder="请输入具体的上装标签安装位置，如：左胸前外露、右袖口..." oninput="updateLabelSummary()"></textarea>
+                                                                </div>
+                                                                <div style="display: flex; flex-direction: column;">
+                                                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">位置参考图 (选填)</label>
+                                                                    <div class="premium-upload-box" onclick="document.getElementById('labelPlacementTopFile').click()" style="flex: 1; min-height: 80px; padding: 0; border-style: dashed; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-sizing: border-box;">
+                                                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="margin-bottom:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                                                                        <p id="labelPlacementTopFileName" style="font-size: 11px; color: #94a3b8; margin:0;">点击上传</p>
+                                                                        <input type="file" id="labelPlacementTopFile" class="hidden" multiple onchange="handleLabelPlacementFiles(this, 'top')">
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; margin-top: 10px;">
-                                                            <div></div>
-                                                            <div id="labelPlacementTopPreview" class="tight-preview-grid"></div>
+                                                            <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; margin-top: 10px;">
+                                                                <div></div>
+                                                                <div id="labelPlacementTopPreview" class="tight-preview-grid"></div>
+                                                            </div>
                                                         </div>
                                                     </div>
-
                                                 </div>
-                                    
+                                            
                                                 <!-- 下装/裤装的选项 (默认隐藏) -->
                                                 <div id="label-placement-bottom-area" class="hidden" style="margin-bottom: 10px; animation: fadeIn 0.3s ease;">
                                                     <div style="font-size: 11px; font-weight: 700; color: var(--primary-color); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; padding-top: 15px; border-top: 1px dashed #e2e8f0;">[下装/裤装] 位置选择：</div>
-                                                    <div class="option-grid" id="label-placement-bottom-grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-top: 0;">
+                                                    
+                                                    <div class="option-grid" id="label-placement-bottom-grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-top: 0; position: relative;">
                                                         <div class="option-item metal-item selected" onclick="selectLabelPlacement('bottom', '后腰内中 (Center Back Waist)', this)">
                                                             <div class="option-img-alt" style="height:60px; background:#fff; font-weight:bold; color:var(--text-main);">后腰内中</div>
                                                             <div class="option-info" style="padding:10px; text-align:center;">
@@ -2218,34 +2222,35 @@
                                                                 <p style="font-size:10px;">在下方文本框描述</p>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <!-- 下装自定义位置输入框 (升级版: 文本+上传) -->
-                                                    <div id="label-placement-custom-bottom" class="fabric-config-panel hidden" style="margin-top: 10px; padding: 25px 30px; background: #fffcfc; border-color: #fecaca; width: 100%; box-sizing: border-box; grid-column: 1 / -1;">
-                                                        <div class="config-arrow" style="border-top-color: #fecaca; border-left-color: #fecaca; left: calc(100% - 100px);"></div>
-                                                        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; align-items: flex-start;">
-                                                            <div style="display: flex; flex-direction: column;">
-                                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">下装/裤装 - 自定义位置描述 <span style="color:#ef4444;">*</span></label>
-                                                                <textarea id="label-custom-bottom-text" class="oem-textarea" style="flex: 1; min-height: 80px; resize: none; font-size:12px; background: #fff; box-sizing: border-box;" placeholder="请输入具体的下装标签安装位置，如：右后腰外置贴标..." oninput="updateLabelSummary()"></textarea>
-                                                            </div>
-                                                            <div style="display: flex; flex-direction: column;">
-                                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">位置参考图 (选填)</label>
-                                                                <div class="premium-upload-box" onclick="document.getElementById('labelPlacementBottomFile').click()" style="flex: 1; min-height: 80px; padding: 0; border-style: dashed; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-sizing: border-box;">
-                                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="margin-bottom:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-                                                                    <p id="labelPlacementBottomFileName" style="font-size: 11px; color: #94a3b8; margin:0;">点击上传</p>
-                                                                    <input type="file" id="labelPlacementBottomFile" class="hidden" multiple onchange="handleLabelPlacementFiles(this, 'bottom')">
+                                                        
+                                                        <!-- 核心修复：将配置面板放入网格内部，使用 grid-column 占满整行 -->
+                                                        <div id="label-placement-custom-bottom" class="fabric-config-panel hidden" style="padding: 25px 30px; background: #fffcfc; border-color: #fecaca; width: 100%; box-sizing: border-box; grid-column: 1 / -1; margin-top: 10px;">
+                                                            <div class="config-arrow" style="border-top-color: #fecaca; border-left-color: #fecaca;"></div>
+                                                            <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; align-items: flex-start;">
+                                                                <div style="display: flex; flex-direction: column;">
+                                                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">下装/裤装 - 自定义位置描述 <span style="color:#ef4444;">*</span></label>
+                                                                    <textarea id="label-custom-bottom-text" class="oem-textarea" style="flex: 1; min-height: 80px; resize: none; font-size:12px; background: #fff; box-sizing: border-box;" placeholder="请输入具体的下装标签安装位置，如：右后腰外置贴标..." oninput="updateLabelSummary()"></textarea>
+                                                                </div>
+                                                                <div style="display: flex; flex-direction: column;">
+                                                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">位置参考图 (选填)</label>
+                                                                    <div class="premium-upload-box" onclick="document.getElementById('labelPlacementBottomFile').click()" style="flex: 1; min-height: 80px; padding: 0; border-style: dashed; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-sizing: border-box;">
+                                                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="margin-bottom:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                                                                        <p id="labelPlacementBottomFileName" style="font-size: 11px; color: #94a3b8; margin:0;">点击上传</p>
+                                                                        <input type="file" id="labelPlacementBottomFile" class="hidden" multiple onchange="handleLabelPlacementFiles(this, 'bottom')">
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; margin-top: 10px;">
-                                                            <div></div>
-                                                            <div id="labelPlacementBottomPreview" class="tight-preview-grid"></div>
+                                                            <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; margin-top: 10px;">
+                                                                <div></div>
+                                                                <div id="labelPlacementBottomPreview" class="tight-preview-grid"></div>
+                                                            </div>
                                                         </div>
                                                     </div>
-
                                                 </div>
-                                                
                                             </div>
+
                                         </div>
+
                                     </div>
                             
                                 </div> <!-- 结束自主定义细节包裹层 -->
@@ -5361,7 +5366,7 @@
             updateLabelSummary();
         }
         
-        // 2. 选择具体安装位置 (按 top/bottom 独立记录)
+        // 2. 选择具体安装位置 (按 top/bottom 独立记录并计算箭头指向)
         function selectLabelPlacement(gridType, posName, el) {
             // 记录数据
             labelConfig.placements[gridType] = posName;
@@ -5373,16 +5378,28 @@
                 el.classList.add('selected');
             }
             
-            // 控制对应网格下方的自定义文本框显隐
+            // 控制对应网格内面板的显隐并计算箭头位置
             const customArea = document.getElementById(`label-placement-custom-${gridType}`);
             if (customArea) {
-                const isCustom = posName === '自定义其他位置';
+                const isCustom = (posName === '自定义其他位置');
                 customArea.classList.toggle('hidden', !isCustom);
+                
                 if (isCustom) {
-                    setTimeout(() => scrollElementToCenter(`label-placement-custom-${gridType}`), 50);
+                    // 延迟计算以确保 DOM 更新完毕
+                    setTimeout(() => {
+                        const arrow = customArea.querySelector('.config-arrow');
+                        if (arrow && el) {
+                            // 计算小箭头的动态左偏移量 (居中对齐点击的卡片)
+                            const arrowPos = el.getBoundingClientRect().left - customArea.getBoundingClientRect().left + (el.getBoundingClientRect().width / 2) - 8;
+                            arrow.style.left = `${arrowPos}px`;
+                        }
+                        // 平滑滚动居中
+                        scrollElementToCenter(`label-placement-custom-${gridType}`);
+                    }, 50);
                 } else {
-                    // 清空未使用的文本框
-                    document.getElementById(`label-custom-${gridType}-text`).value = '';
+                    // 收起时清空多余文本
+                    const textInput = document.getElementById(`label-custom-${gridType}-text`);
+                    if (textInput) textInput.value = '';
                 }
             }
             

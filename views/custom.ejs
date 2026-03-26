@@ -1771,6 +1771,15 @@
                                     
                                                     <!-- 定制吊粒详情区 (默认隐藏) -->
                                                     <div id="hangtag-string-custom-area" class="hidden" style="margin-top: 20px; padding: 20px; background: #fff; border: 1px dashed #cbd5e1; border-radius: 8px;">
+                                                        
+                                                        <!-- 新增：定制形状/材质 MOQ 提示 -->
+                                                        <div style="margin-bottom: 18px; padding: 10px 12px; background: #fffbeb; border: 1px dashed #fcd34d; border-radius: 6px; display: flex; align-items: center; gap: 8px;">
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                                            <span style="font-size: 11.5px; color: #92400e;">
+                                                                <strong style="color: #b45309;">商业提示：</strong>定制特殊形状（如开模 Logo 吊粒）或特殊材质，起订量 (MOQ) 通常为 <strong>5000 套起</strong>。
+                                                            </span>
+                                                        </div>
+                                                    
                                                         <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px;">
                                                             <div>
                                                                 <label style="display:block; font-size:11px; font-weight:700; color:#94a3b8; margin-bottom:8px;">定制形状/材质描述</label>
@@ -1804,6 +1813,13 @@
                                     
                                                     <!-- 其他颜色输入框 (默认隐藏) -->
                                                     <div id="hangtag-string-color-other-area" class="hidden" style="margin-top: 15px; max-width: 300px;">
+                                                        
+                                                        <!-- 新增：特殊染色绳带 MOQ 提示 -->
+                                                        <div style="font-size: 10.5px; color: #b45309; display: flex; align-items: center; gap: 5px; margin-bottom: 8px; background: #fffbeb; padding: 4px 8px; border-radius: 4px; border: 1px solid #fde68a;">
+                                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                                            <span><strong>提醒：</strong>指定特殊颜色染色，MOQ 为 <strong>5000 根起</strong></span>
+                                                        </div>
+                                                    
                                                         <input type="text" id="hangtag-string-color-other" class="oem-input-mini" style="width:100%;" placeholder="请输入潘通色号或颜色描述..." oninput="updateHangtagSummary()">
                                                     </div>
                                                 </div>

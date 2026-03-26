@@ -2101,25 +2101,109 @@
                                         </div>
                                     </div>
 
-                                    <!-- B. 安装位置定位 (原先的 C) -->
+                                    <!-- C. 安装位置定位 (Placement) -->
                                     <div class="attr-section" style="margin-bottom: 25px;">
-                                        <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 安装位置定位 (Placement)</h4>
-                                        <div class="placement-container">
-                                            <div class="swimwear-map" id="placement-map">
-                                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'%3E%3Cpath d='M30,20 Q50,10 70,20 L80,50 Q80,80 50,110 Q20,80 20,50 Z' fill='none' stroke='%23333' stroke-width='1'/%3E%3C/svg%3E" class="map-svg">
-                                                <div class="hotspot selected" style="top:20%; left:50%;" onclick="selectLabelPlacement('领后中', this)"><span class="hotspot-label">领后中</span></div>
-                                                <div class="hotspot" style="top:60%; left:20%;" onclick="selectLabelPlacement('左侧缝', this)"><span class="hotspot-label">左侧缝</span></div>
-                                                <div class="hotspot" style="top:85%; left:50%;" onclick="selectLabelPlacement('后腰内侧', this)"><span class="hotspot-label">后腰内侧</span></div>
-                                            </div>
-                                            <div style="flex: 1;">
-                                                <div class="mode-switcher" style="margin-bottom: 15px;">
-                                                    <div class="mode-option active" style="padding: 4px 12px; font-size:11px;" onclick="changeMapType('onepiece')">连体式</div>
-                                                    <div class="mode-option" style="padding: 4px 12px; font-size:11px;" onclick="changeMapType('bikini')">分体式</div>
+                                        <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 标签安装部位与位置 (Component & Placement)</h4>
+                                        
+                                        <div style="margin-left: 13px; background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px; padding: 25px;">
+                                            
+                                            <!-- 第一层：选择安装的服装部件 (上装/连体 vs 下装/裤装) -->
+                                            <div style="margin-bottom: 25px;">
+                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:12px;">1. 目标服装部件 (Target Component)</label>
+                                                <div class="chip-container" style="gap: 15px;">
+                                                    <div class="chip selected" style="padding: 10px 20px; font-size: 13px;" onclick="switchLabelComponent('上装/连体', this)">
+                                                        <span style="margin-right: 5px;">👕</span> 上装 / 连体泳装 (Top / One-Piece)
+                                                    </div>
+                                                    <div class="chip" style="padding: 10px 20px; font-size: 13px;" onclick="switchLabelComponent('下装/裤装', this)">
+                                                        <span style="margin-right: 5px;">🩳</span> 下装 / 泳裤 (Bottom / Pants)
+                                                    </div>
                                                 </div>
-                                                <p style="font-size: 12px; color: #64748b; line-height: 1.6;">请点击左侧示意图中的圆点选择标签安装位置。<br><strong>推荐：</strong>泳装首选“领后中”进行无感烫印。</p>
+                                                <div style="font-size: 11px; color: #94a3b8; margin-top: 8px;">
+                                                    注：若您的设计包含上下套装，且需要分别打标，请在下方补充说明中详细备注。
+                                                </div>
+                                            </div>
+                                    
+                                            <!-- 第二层：动态显示的安装位置选项 -->
+                                            <div>
+                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:12px;">2. 详细缝制/烫印位置 (Placement Details)</label>
+                                                
+                                                <!-- 上装/连体的选项 (默认显示) -->
+                                                <div id="label-placement-top" class="option-grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-top: 0; animation: fadeIn 0.3s ease;">
+                                                    <div class="option-item metal-item selected" onclick="selectLabelPlacement('领后中 (Center Back Neck)', this)">
+                                                        <div class="option-img-alt" style="height:60px; background:#fff; font-weight:bold; color:var(--text-main);">领后中</div>
+                                                        <div class="option-info" style="padding:10px; text-align:center;">
+                                                            <h4 style="font-size:12px; margin-bottom:4px;">Center Back Neck</h4>
+                                                            <p style="font-size:10px;">主标/无感标首选</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="option-item metal-item" onclick="selectLabelPlacement('左侧缝下端 (Lower Left Side)', this)">
+                                                        <div class="option-img-alt" style="height:60px; background:#fff; font-weight:bold; color:var(--text-main);">左侧缝下端</div>
+                                                        <div class="option-info" style="padding:10px; text-align:center;">
+                                                            <h4 style="font-size:12px; margin-bottom:4px;">Lower Left Side</h4>
+                                                            <p style="font-size:10px;">水洗成分标常规位</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="option-item metal-item" onclick="selectLabelPlacement('下摆处 (Hem)', this)">
+                                                        <div class="option-img-alt" style="height:60px; background:#fff; font-weight:bold; color:var(--text-main);">下摆处</div>
+                                                        <div class="option-info" style="padding:10px; text-align:center;">
+                                                            <h4 style="font-size:12px; margin-bottom:4px;">Front/Back Hem</h4>
+                                                            <p style="font-size:10px;">外露品牌夹标</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="option-item metal-item" onclick="selectLabelPlacement('自定义其他位置', this)">
+                                                        <div class="option-img-alt" style="height:60px; background:#f1f5f9; color:#94a3b8;">
+                                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                                                        </div>
+                                                        <div class="option-info" style="padding:10px; text-align:center;">
+                                                            <h4 style="font-size:12px; margin-bottom:4px;">自定义其他位置</h4>
+                                                            <p style="font-size:10px;">如：左胸前等</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                    
+                                                <!-- 下装/裤装的选项 (默认隐藏) -->
+                                                <div id="label-placement-bottom" class="option-grid hidden" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-top: 0; animation: fadeIn 0.3s ease;">
+                                                    <div class="option-item metal-item" onclick="selectLabelPlacement('后腰内中 (Center Back Waist)', this)">
+                                                        <div class="option-img-alt" style="height:60px; background:#fff; font-weight:bold; color:var(--text-main);">后腰内中</div>
+                                                        <div class="option-info" style="padding:10px; text-align:center;">
+                                                            <h4 style="font-size:12px; margin-bottom:4px;">Center Back Waist</h4>
+                                                            <p style="font-size:10px;">泳裤主标常规位</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="option-item metal-item" onclick="selectLabelPlacement('左侧缝 (Left Side Seam)', this)">
+                                                        <div class="option-img-alt" style="height:60px; background:#fff; font-weight:bold; color:var(--text-main);">左侧缝</div>
+                                                        <div class="option-info" style="padding:10px; text-align:center;">
+                                                            <h4 style="font-size:12px; margin-bottom:4px;">Left Side Seam</h4>
+                                                            <p style="font-size:10px;">水洗标/夹标首选</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="option-item metal-item" onclick="selectLabelPlacement('裤脚边 (Leg Hem)', this)">
+                                                        <div class="option-img-alt" style="height:60px; background:#fff; font-weight:bold; color:var(--text-main);">裤脚边</div>
+                                                        <div class="option-info" style="padding:10px; text-align:center;">
+                                                            <h4 style="font-size:12px; margin-bottom:4px;">Leg Hem</h4>
+                                                            <p style="font-size:10px;">沙滩裤外露织唛</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="option-item metal-item" onclick="selectLabelPlacement('自定义其他位置', this)">
+                                                        <div class="option-img-alt" style="height:60px; background:#f1f5f9; color:#94a3b8;">
+                                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                                                        </div>
+                                                        <div class="option-info" style="padding:10px; text-align:center;">
+                                                            <h4 style="font-size:12px; margin-bottom:4px;">自定义其他位置</h4>
+                                                            <p style="font-size:10px;">在下方文本框描述</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                    
+                                                <!-- 自定义位置输入框 (无论选哪个部件的"自定义"，都在这里显示) -->
+                                                <div id="label-placement-custom-area" class="hidden" style="margin-top: 15px; animation: fadeIn 0.3s ease;">
+                                                    <input type="text" id="label-custom-placement-text" class="oem-input-mini" style="width: 100%; max-width: 400px; box-sizing: border-box; background: #fff;" placeholder="请输入具体的标签安装位置，如：左胸前外露、右袖口..." oninput="updateLabelSummary()">
+                                                </div>
+                                                
                                             </div>
                                         </div>
                                     </div>
+
                             
                                 </div> <!-- 结束自主定义细节包裹层 -->
                             
@@ -5179,14 +5263,70 @@
         
         let labelConfig = {
             mode: 'auto',
-            material: '印标', // 默认
+            material: '印标',
             size: '',
             method: '四边平缝', 
-            placement: '领后中',
+            component: '上装/连体',     // 新增：服装部件
+            placement: '领后中 (Center Back Neck)', // 更新默认值
             remark: '',          
             designFiles: [],      
             otherMatFiles: [] 
         };
+
+        // 1. 切换服装部件 (上装 vs 下装)
+        function switchLabelComponent(compName, el) {
+            labelConfig.component = compName;
+            
+            // 切换 Chip 样式
+            const container = el.parentNode;
+            container.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            
+            // 切换下方的选项网格显隐
+            const topGrid = document.getElementById('label-placement-top');
+            const bottomGrid = document.getElementById('label-placement-bottom');
+            const customArea = document.getElementById('label-placement-custom-area');
+            
+            if (compName === '上装/连体') {
+                if(topGrid) topGrid.classList.remove('hidden');
+                if(bottomGrid) bottomGrid.classList.add('hidden');
+                
+                // 自动选中该网格的第一个选项
+                const firstOpt = topGrid.querySelector('.option-item');
+                if(firstOpt) firstOpt.click();
+            } else {
+                if(topGrid) topGrid.classList.add('hidden');
+                if(bottomGrid) bottomGrid.classList.remove('hidden');
+                
+                // 自动选中该网格的第一个选项
+                const firstOpt = bottomGrid.querySelector('.option-item');
+                if(firstOpt) firstOpt.click();
+            }
+        }
+        
+        // 2. 选择具体安装位置
+        function selectLabelPlacement(posName, el) {
+            labelConfig.placement = posName;
+            
+            // 取消当前网格内所有卡片的选中状态
+            const grid = el.closest('.option-grid');
+            if (grid) {
+                grid.querySelectorAll('.option-item').forEach(card => card.classList.remove('selected'));
+                el.classList.add('selected');
+            }
+            
+            // 如果选了自定义，展示文本框
+            const customArea = document.getElementById('label-placement-custom-area');
+            if (customArea) {
+                const isCustom = posName === '自定义其他位置';
+                customArea.classList.toggle('hidden', !isCustom);
+                if (isCustom) {
+                    setTimeout(() => scrollElementToCenter('label-placement-custom-area'), 50);
+                }
+            }
+            
+            updateLabelSummary();
+        }
 
         // 预设定义：确保与您要求的一致
         const labelMaterialTypes = [
@@ -5393,57 +5533,6 @@
             updateLabelSummary();
         }
         
-        // 4. 选择位置定位
-        function selectLabelPlacement(pos, el) {
-            labelConfig.placement = pos;
-            const map = el.closest('.swimwear-map');
-            if (map) map.querySelectorAll('.hotspot').forEach(h => h.classList.remove('selected'));
-            el.classList.add('selected');
-            updateLabelSummary();
-        }
-        
-        // 5. 交互式地图切换 (连体/分体)
-        function changeMapType(type) {
-            const mapContainer = document.getElementById('placement-map');
-            if (!mapContainer) return;
-            
-            const switcher = mapContainer.nextElementSibling.querySelector('.mode-switcher');
-            if (switcher) {
-                switcher.querySelectorAll('.mode-option').forEach(opt => {
-                    opt.classList.remove('active');
-                    if(opt.innerText.includes(type === 'onepiece' ? '连体' : '分体')) opt.classList.add('active');
-                });
-            }
-        
-            const mapImg = mapContainer.querySelector('.map-svg');
-            if (mapImg) {
-                const onepieceSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'%3E%3Cpath d='M30,20 Q50,10 70,20 L80,50 Q80,80 50,110 Q20,80 20,50 Z' fill='none' stroke='%23333' stroke-width='1'/%3E%3C/svg%3E";
-                const bikiniSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'%3E%3Cpath d='M30,20 Q50,10 70,20 L80,40 Q50,35 20,40 Z M30,70 Q50,60 70,70 L80,90 Q50,115 20,90 Z' fill='none' stroke='%23333' stroke-width='1'/%3E%3C/svg%3E";
-                mapImg.src = (type === 'onepiece') ? onepieceSvg : bikiniSvg;
-            }
-        
-            mapContainer.querySelectorAll('.hotspot').forEach(h => h.remove());
-        
-            const spots = (type === 'onepiece') ? [
-                { name: '领后中', top: '20%', left: '50%' },
-                { name: '左侧缝', top: '60%', left: '20%' },
-                { name: '后腰内侧', top: '85%', left: '50%' }
-            ] : [
-                { name: '上衣后中', top: '15%', left: '50%' },
-                { name: '泳裤后腰', top: '75%', left: '50%' },
-                { name: '上衣左侧', top: '30%', left: '20%' }
-            ];
-        
-            spots.forEach(s => {
-                const hotspot = document.createElement('div');
-                hotspot.className = 'hotspot';
-                hotspot.style.top = s.top; hotspot.style.left = s.left;
-                hotspot.onclick = function() { selectLabelPlacement(s.name, this); };
-                hotspot.innerHTML = `<span class="hotspot-label">${s.name}</span>`;
-                if(labelConfig.placement === s.name) hotspot.classList.add('selected');
-                mapContainer.appendChild(hotspot);
-            });
-        }
         
         // 6. 统一的全局文件上传处理
         function handleLabelFiles(input) {
@@ -5530,11 +5619,21 @@
                     sizeText = sizeVal ? `尺寸: ${sizeVal}` : '尺寸待定';
                     sewingText = ` | ${labelConfig.method}`;
                 }
+                
+                // 抓取位置信息 (处理自定义输入的文本)
+                let finalPlacement = labelConfig.placement;
+                if (finalPlacement === '自定义其他位置') {
+                    const customVal = document.getElementById('label-custom-placement-text')?.value.trim();
+                    finalPlacement = customVal ? customVal : '其他指定位置';
+                } else {
+                    // 提取括号外的中文部分以保持侧边栏简洁
+                    finalPlacement = finalPlacement.split(' (')[0];
+                }
         
                 st.innerHTML = `
                     <div style="text-align:right;">
                         ${matText}<br>
-                        <span style="font-size:10px; opacity:0.8;">位置: ${labelConfig.placement}${sewingText}</span><br>
+                        <span style="font-size:10px; opacity:0.8;">[${labelConfig.component.split('/')[0]}] ${finalPlacement}${sewingText}</span><br>
                         <span style="font-size:10px; opacity:0.8;">${sizeText} | ${hasContent}</span>
                     </div>`;
             }

@@ -4937,15 +4937,21 @@
             const customDetails = document.getElementById('hangtag-custom-details');
             
             if (mode === 'auto') {
-                autoHint.classList.remove('hidden');
-                customDetails.classList.add('hidden');
+                if(autoHint) autoHint.classList.remove('hidden');
+                if(customDetails) customDetails.classList.add('hidden');
             } else {
-                autoHint.classList.add('hidden');
-                customDetails.classList.remove('hidden');
+                if(autoHint) autoHint.classList.add('hidden');
+                if(customDetails) customDetails.classList.remove('hidden');
+                
+                // 新增：切换到自定义细节时，平滑滚动使区域居中可见
+                setTimeout(() => {
+                    scrollElementToCenter('hangtag-custom-details');
+                }, 50);
             }
             
             updateHangtagSummary();
         }
+
 
         function switchSubTab(paneId, el) {
             document.querySelectorAll('.sub-pane').forEach(p => p.classList.remove('active')); document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
@@ -5227,7 +5233,7 @@
         });
 
 
-        // 1. 切换代配/自主定义模式
+        // 1. 切换代配/自主定义模式 (标签)
         function switchLabelMode(mode) {
             labelConfig.mode = mode;
             
@@ -5236,6 +5242,7 @@
             const activeBtn = document.getElementById(`label-mode-${mode}`);
             if (activeBtn) activeBtn.classList.add('active');
             
+            // 区域显隐切换 (注意：设计上传区不再切换，它是全局保留的)
             const autoHint = document.getElementById('label-auto-hint');
             const customDetails = document.getElementById('label-custom-details');
             
@@ -5245,10 +5252,16 @@
             } else {
                 if(autoHint) autoHint.classList.add('hidden');
                 if(customDetails) customDetails.classList.remove('hidden');
+                
+                // 新增：切换到自定义细节时，平滑滚动使区域居中可见
+                setTimeout(() => {
+                    scrollElementToCenter('label-custom-details');
+                }, 50);
             }
             
             updateLabelSummary();
         }
+
         
         // 核心改动：选择材质时自动展开下方配置面板 (适配移除 Header)
         function selectLabelMaterial(name, el) {
@@ -6047,15 +6060,21 @@
             const customDetails = document.getElementById('metal-custom-details');
             
             if (mode === 'auto') {
-                autoHint.classList.remove('hidden');
-                customDetails.classList.add('hidden');
+                if(autoHint) autoHint.classList.remove('hidden');
+                if(customDetails) customDetails.classList.add('hidden');
             } else {
-                autoHint.classList.add('hidden');
-                customDetails.classList.remove('hidden');
+                if(autoHint) autoHint.classList.add('hidden');
+                if(customDetails) customDetails.classList.remove('hidden');
+                
+                // 新增：切换到自定义细节时，平滑滚动使区域居中可见
+                setTimeout(() => {
+                    scrollElementToCenter('metal-custom-details');
+                }, 50);
             }
             
             updateMetalSummary();
         }
+
 
         function toggleMetalLogoType(type, el) {
             const index = metalConfig.logoTypes.indexOf(type);

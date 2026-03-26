@@ -718,6 +718,22 @@
         /* =========================================================
            10. OEM 模块与商业需求评估
            ========================================================= */
+        /* 新增：紧凑型预览网格，消除大间隙 */
+        .tight-preview-grid {
+            display: grid !important;
+            /* 强制列宽为 50px，不再自动撑开 */
+            grid-template-columns: repeat(auto-fill, 50px) !important;
+            gap: 8px !important;
+            margin-top: 10px;
+        }
+        
+        /* 确保内部预览项完全适配 50px */
+        .tight-preview-grid .oem-preview-item {
+            width: 50px !important;
+            height: 50px !important;
+            margin: 0 !important;
+        }
+
         .oem-input-mini { padding: 6px 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 13px; color: var(--text-main); transition: all 0.3s; }
         .oem-input-mini:focus { outline: none; border-color: var(--primary-color); }
         .oem-input-mini::placeholder {
@@ -1177,7 +1193,7 @@
                                         <input type="file" id="fabricCmtFile" class="hidden" multiple onchange="handleCmtFiles(this, 'fabric')">
                                         <button type="button" class="btn-outline" style="padding:2px 8px; font-size:10px;">浏览</button>
                                     </div>
-                                    <div id="fabricCmtPreview" class="oem-image-preview-grid" style="margin-top:10px;"></div>
+                                    <div id="fabricCmtPreview" class="tight-preview-grid" style="margin-top:10px;"></div>
                                 </div>
                                 
                                 <div style="display: flex; align-items: center; gap: 10px; margin-top: 5px; padding-top: 12px; border-top: 1px dashed #fde68a;">
@@ -1244,7 +1260,7 @@
                                             <span id="cmt-filename-metal" style="font-size:10px; color:#94a3b8;">点击上传</span>
                                             <input type="file" id="cmt-file-metal" class="hidden" multiple onchange="handleCmtFiles(this, 'metal')">
                                         </div>
-                                        <div id="cmt-preview-metal" class="oem-image-preview-grid" style="margin-top:8px;"></div>
+                                        <div id="cmt-preview-metal" class="tight-preview-grid" style="margin-top:8px;"></div>
                                     </div>
 
                                     <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px; padding-top: 10px; border-top: 1px dashed #fde68a;">
@@ -1477,7 +1493,7 @@
                                             <span id="cmt-filename-bag" style="font-size:10px; color:#94a3b8;">点击上传</span>
                                             <input type="file" id="cmt-file-bag" class="hidden" multiple onchange="handleCmtFiles(this, 'bag')">
                                         </div>
-                                        <div id="cmt-preview-bag" class="oem-image-preview-grid" style="margin-top:8px;"></div>
+                                        <div id="cmt-preview-bag" class="tight-preview-grid" style="margin-top:8px;"></div>
                                     </div>
 
                                     <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px; padding-top: 10px; border-top: 1px dashed #fde68a;">
@@ -1612,7 +1628,7 @@
                                             <span id="cmt-filename-hangtag" style="font-size:10px; color:#94a3b8;">点击上传</span>
                                             <input type="file" id="cmt-file-hangtag" class="hidden" multiple onchange="handleCmtFiles(this, 'hangtag')">
                                         </div>
-                                        <div id="cmt-preview-hangtag" class="oem-image-preview-grid" style="margin-top:8px;"></div>
+                                        <div id="cmt-preview-hangtag" class="tight-preview-grid" style="margin-top:8px;"></div>
                                     </div>
 
                                     <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px; padding-top: 10px; border-top: 1px dashed #fde68a;">
@@ -1942,7 +1958,7 @@
                                             <span id="cmt-filename-label" style="font-size:10px; color:#94a3b8;">点击上传</span>
                                             <input type="file" id="cmt-file-label" class="hidden" multiple onchange="handleCmtFiles(this, 'label')">
                                         </div>
-                                        <div id="cmt-preview-label" class="oem-image-preview-grid" style="margin-top:8px;"></div>
+                                        <div id="cmt-preview-label" class="tight-preview-grid" style="margin-top:8px;"></div>
                                     </div>
 
                                     <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px; padding-top: 10px; border-top: 1px dashed #fde68a;">
@@ -2030,7 +2046,7 @@
                                             <span id="cmt-filename-hygiene" style="font-size:10px; color:#94a3b8;">点击上传</span>
                                             <input type="file" id="cmt-file-hygiene" class="hidden" multiple onchange="handleCmtFiles(this, 'hygiene')">
                                         </div>
-                                        <div id="cmt-preview-hygiene" class="oem-image-preview-grid" style="margin-top:8px;"></div>
+                                        <div id="cmt-preview-hygiene" class="tight-preview-grid" style="margin-top:8px;"></div>
                                     </div>
 
                                     <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px; padding-top: 10px; border-top: 1px dashed #fde68a;">
@@ -2176,7 +2192,7 @@
                                             <span id="cmt-filename-other" style="font-size:10px; color:#94a3b8;">点击上传</span>
                                             <input type="file" id="cmt-file-other" class="hidden" multiple onchange="handleCmtFiles(this, 'other')">
                                         </div>
-                                        <div id="cmt-preview-other" class="oem-image-preview-grid" style="margin-top:8px;"></div>
+                                        <div id="cmt-preview-other" class="tight-preview-grid" style="margin-top:8px;"></div>
                                     </div>
                                     <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px; padding-top: 10px; border-top: 1px dashed #fde68a;">
                                         <span style="font-weight: 600; white-space: nowrap;">寄件单号：</span>
@@ -3182,7 +3198,7 @@
         }
         
         /**
-         * 渲染 CMT 预览网格
+         * 渲染 CMT 预览网格 - 优化版
          */
         function renderCmtPreviews(category) {
             const gridId = (category === 'fabric') ? 'fabricCmtPreview' : `cmt-preview-${category}`;
@@ -3195,18 +3211,25 @@
             files.forEach((file, index) => {
                 const isImage = file.type.startsWith('image/');
                 const ext = file.name.split('.').pop().toUpperCase();
-                let content = isImage 
-                    ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')">` 
-                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;">${ext}</div>`;
+                
+                // 缩短文件名显示，避免在小方块里撑开
+                const shortName = file.name.length > 6 ? file.name.substring(0, 3) + '...' : file.name;
         
+                let content = isImage 
+                    ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')" style="width:100%; height:100%; object-fit:cover;">` 
+                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;border-radius:4px;">${ext}</div>`;
+        
+                // 注意：这里移除了 div 上的 style="width:50px; height:50px;"，改由 CSS 类 .tight-preview-grid 控制
                 grid.insertAdjacentHTML('beforeend', `
-                    <div class="oem-preview-item" style="width:50px; height:50px;">
+                    <div class="oem-preview-item" id="preview-cmt-${category}-${index}">
                         ${content}
-                        <button type="button" class="oem-preview-remove" onclick="removeCmtFile(${index}, '${category}')">&times;</button>
+                        <div style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.5); color:#fff; font-size:8px; padding:1px; text-align:center; white-space:nowrap; overflow:hidden;">${shortName}</div>
+                        <button type="button" class="oem-preview-remove" onclick="removeCmtFile(${index}, '${category}')" style="width:16px; height:16px; font-size:12px;">&times;</button>
                     </div>
                 `);
             });
         }
+
         
         /**
          * 移除 CMT 文件

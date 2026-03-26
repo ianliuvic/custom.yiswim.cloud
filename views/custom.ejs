@@ -1771,27 +1771,27 @@
                                         <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 印刷工艺附加 (Printing Craft)</h4>
                                         <div class="option-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-left: 13px;">
                                             <!-- 1. 不需要 -->
-                                            <div class="option-item metal-item selected" onclick="toggleHangtagCraft('craft', '不需要', this)">
+                                            <div class="option-item metal-item selected" onclick="toggleHangtagCraft('不需要', this)">
                                                 <div class="option-img-alt" style="background: #fdfdfd; display:flex; align-items:center; justify-content:center; color:#cbd5e1;">无附加工艺</div>
                                                 <div class="option-info"><h4>无附加工艺</h4><p>常规油墨印刷</p></div>
                                             </div>
                                             <!-- 2. 烫金/烫银 -->
-                                            <div class="option-item metal-item" onclick="toggleHangtagCraft('craft', '烫金/烫银', this)">
+                                            <div class="option-item metal-item" onclick="toggleHangtagCraft('烫金/烫银', this)">
                                                 <div class="option-img-alt" style="background: linear-gradient(135deg, #e6be8a 0%, #f7e1ad 100%); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:bold; text-shadow:0 1px 2px rgba(0,0,0,0.2);">FOIL</div>
                                                 <div class="option-info"><h4>烫金 / 烫银</h4><p>金属质感高亮LOGO</p></div>
                                             </div>
                                             <!-- 3. 局部UV -->
-                                            <div class="option-item metal-item" onclick="toggleHangtagCraft('craft', '局部UV', this)">
+                                            <div class="option-item metal-item" onclick="toggleHangtagCraft('局部UV', this)">
                                                 <div class="option-img-alt" style="background: #334155; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.8);">SPOT UV</div>
                                                 <div class="option-info"><h4>局部 UV</h4><p>特定区域凸起发亮</p></div>
                                             </div>
                                             <!-- 4. 凹凸印 -->
-                                            <div class="option-item metal-item" onclick="toggleHangtagCraft('craft', '凹凸印', this)">
+                                            <div class="option-item metal-item" onclick="toggleHangtagCraft('凹凸印', this)">
                                                 <div class="option-img-alt" style="background: #f1f5f9; display:flex; align-items:center; justify-content:center; color:#94a3b8; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1);">EMBOSS</div>
                                                 <div class="option-info"><h4>凹凸印</h4><p>立体浮雕触感</p></div>
                                             </div>
                                             <!-- 5. 其他 -->
-                                            <div class="option-item metal-item" onclick="toggleHangtagCraft('craft', '其他', this)">
+                                            <div class="option-item metal-item" onclick="toggleHangtagCraft('其他', this)">
                                                 <div class="option-img-alt" style="background: #f1f5f9; display:flex; align-items:center; justify-content:center; color:#94a3b8;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14"/></svg></div>
                                                 <div class="option-info"><h4>其他</h4><p>丝印、磨砂等特殊工艺</p></div>
                                             </div>
@@ -5405,69 +5405,74 @@
             updateHangtagSummary();
         }
         
-        // 处理工艺多选逻辑 - 修复版
+        // 处理工艺多选逻辑 - 终极修复版
         function toggleHangtagCraft(val, el) {
-            const container = el.parentNode;
-            // 找到当前区域内的“无附加工艺”卡片（通常是第一个 metal-item）
-            const noneCard = container.querySelector('.metal-item');
+            // 1. 安全定位容器：无论点击卡片还是卡片内的图标，都向上找到最近的网格容器
+            const grid = el.closest('.option-grid');
+            if (!grid) {
+                console.error("找不到工艺网格容器");
+                return;
+            }
+        
+            // 2. 找到该容器内所有的工艺卡片
+            const allItems = Array.from(grid.querySelectorAll('.metal-item, .option-item'));
             
-            // 确保数组存在
+            // 3. 找到“无附加工艺”那张特定的卡片（通过文字匹配，最稳妥）
+            const noneCard = allItems.find(item => item.innerText.includes('无附加工艺'));
+            
+            // 确保配置数组存在
             if (!hangtagConfig.crafts) hangtagConfig.crafts = ['无附加工艺'];
             let arr = hangtagConfig.crafts;
         
             if (val === '无附加工艺') {
                 // --- 情况 A: 用户点击了“无附加工艺” ---
                 arr = ['无附加工艺'];
-                // UI处理：将该组内所有卡片取消选中，仅保留自己
-                container.querySelectorAll('.metal-item').forEach(item => item.classList.remove('selected'));
+                // 清除本组所有选中态，只给当前点击项加选中态
+                allItems.forEach(item => item.classList.remove('selected'));
                 el.classList.add('selected');
             } else {
                 // --- 情况 B: 用户点击了其他高级工艺 ---
                 
-                // 1. 如果当前数组里有“无附加工艺”，先把它剔除
+                // 1. 如果当前数组里有“无附加工艺”，先剔除它，并取消其 UI 样式
                 const noneIndex = arr.indexOf('无附加工艺');
                 if (noneIndex > -1) {
                     arr.splice(noneIndex, 1);
-                    // 同时取消“无附加工艺”卡片的选中样式
                     if (noneCard) noneCard.classList.remove('selected');
                 }
         
-                // 2. 正常执行当前点击项的选中/反选
+                // 2. 执行当前项的“开关”逻辑
                 const idx = arr.indexOf(val);
                 if (idx > -1) {
-                    // 已选中，则取消
-                    arr.splice(idx, 1);
+                    arr.splice(idx, 1); // 再次点击则取消
                     el.classList.remove('selected');
                 } else {
-                    // 未选中，则加入
-                    arr.push(val);
+                    arr.push(val); // 选中
                     el.classList.add('selected');
                 }
         
-                // 3. 兜底逻辑：如果用户把所有选项都取消了，自动变回“无附加工艺”
+                // 3. 兜底：如果用户取消了所有高级工艺，自动滚回到“无附加工艺”
                 if (arr.length === 0) {
                     arr = ['无附加工艺'];
                     if (noneCard) noneCard.classList.add('selected');
                 }
             }
         
-            // 将修改后的数组写回配置
+            // 写回配置
             hangtagConfig.crafts = arr;
             
-            // --- 联动显示“其他”工艺的补充说明区 ---
+            // 4. 联动：控制“其他工艺”描述区的显隐
             const otherArea = document.getElementById('hangtag-craft-other-area');
             if (otherArea) {
                 const needsOther = arr.includes('其他');
                 otherArea.classList.toggle('hidden', !needsOther);
                 if (needsOther) {
-                    // 只有在显示时才执行滚动
+                    // 使用之前定义的平滑滚动函数
                     setTimeout(() => scrollElementToCenter('hangtag-craft-other-area'), 50);
                 }
             }
         
             updateHangtagSummary();
         }
-
 
 
         /**

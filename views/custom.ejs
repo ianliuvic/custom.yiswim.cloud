@@ -2436,7 +2436,7 @@
                                                 
                                                 <!-- 自定义形状面板 -->
                                                 <div id="hygiene-custom-shape-area" class="fabric-config-panel hidden" style="padding: 25px 30px; background: #fffcfc; border-color: #fecaca; margin-top: 15px; width: 100%; box-sizing: border-box;">
-                                                    <div class="config-arrow" style="border-top-color: #fecaca; border-left-color: #fecaca; left: calc(83.33% - 8px);"></div>
+                                                    <div class="config-arrow" style="border-top-color: #fecaca; border-left-color: #fecaca;"></div>                                                    
                                                     <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; align-items: flex-start;">
                                                         <div style="display: flex; flex-direction: column;">
                                                             <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">补充形状说明 / 异形要求 <span style="color:#ef4444;">*</span></label>
@@ -5394,29 +5394,47 @@
             updateHygieneSummary();
         }
         
-        // 2. 选择基础属性 (材质、形状)
+        // 2. 选择基础属性 (材质、形状) - 修复箭头对齐版
         function selectHygieneAttr(attrType, value, el) {
             hygieneConfig[attrType] = value;
             
             if (attrType === 'material') {
                 el.parentNode.querySelectorAll('.hygiene-mat').forEach(item => item.classList.remove('selected'));
                 el.classList.add('selected');
-            } else if (attrType === 'shape') {
-                // 处理单选卡片样式
+            } 
+            else if (attrType === 'shape') {
+                // 1. 处理单选卡片内部的 radio 选中状态
                 const radio = el.querySelector('input[type="radio"]');
                 if (radio) radio.checked = true;
                 
-                // 控制自定义形状面板显隐
+                // 2. 控制自定义形状面板显隐与箭头对齐
                 const customArea = document.getElementById('hygiene-custom-shape-area');
                 if (customArea) {
                     const isCustom = (value === '其他定制形状');
                     customArea.classList.toggle('hidden', !isCustom);
-                    if (isCustom) setTimeout(() => scrollElementToCenter('hygiene-custom-shape-area'), 50);
+                    
+                    if (isCustom) {
+                        // 使用 setTimeout 确保 DOM 渲染(去除了 hidden 类)后能准确获取宽度
+                        setTimeout(() => {
+                            const arrow = customArea.querySelector('.config-arrow');
+                            if (arrow && el) {
+                                // 核心计算公式：卡片左侧距屏幕左侧的距离 - 面板左侧距屏幕左侧的距离 + (卡片自身宽度 / 2) - (箭头自身宽度的一半，约8px)
+                                const arrowPos = el.getBoundingClientRect().left - customArea.getBoundingClientRect().left + (el.getBoundingClientRect().width / 2) - 8;
+                                arrow.style.left = `${arrowPos}px`;
+                            }
+                            scrollElementToCenter('hygiene-custom-shape-area');
+                        }, 50);
+                    } else {
+                        // 如果用户又点回了常规形状，清空文本框避免产生脏数据
+                        const remarkInput = document.getElementById('hygiene-shape-remark');
+                        if(remarkInput) remarkInput.value = '';
+                    }
                 }
             }
             
             updateHygieneSummary();
         }
+
         
         // 3. 控制粘贴规则区域的显隐
         function toggleHygieneApply(isChecked) {

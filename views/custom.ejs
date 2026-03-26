@@ -1939,22 +1939,21 @@
                                                 </div>
                                             </div>
                                             
-                                            <!-- 子母吊牌配置 -->
-                                            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed #e2e8f0;">
-                                                <label class="oem-checkbox-label" style="margin: 0; padding: 0; font-weight: 600;">
-                                                    <input type="checkbox" id="hangtag-is-set" onchange="toggleHangtagSet(this.checked)"> 我需要子母吊牌 (两张及以上一套)
-                                                </label>
-                                                <div id="hangtag-set-detail-area" class="hidden" style="margin-top: 12px; animation: fadeIn 0.3s;">
-                                                    <div style="font-size: 11px; color: #f59e0b; margin-bottom: 8px; display: flex; align-items: center; gap: 5px;">
-                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-                                                        <span>注：子母牌通常涉及多种材质叠加，请在下方详细说明。</span>
-                                                    </div>
-                                                    <textarea id="hangtag-set-remark" class="oem-textarea" style="height: 80px; font-size: 12px; background: #fff;" 
-                                                              placeholder="请明确指出主牌和副牌各自的尺寸、材质及工艺要求。&#10;例如：主牌5x8cm白卡纸烫金，副牌4x10cm半透明硫酸纸黑色印刷..." 
-                                                              oninput="updateHangtagSummary()"></textarea>
+                                        </div>
+                                        <!-- 子母吊牌配置 -->
+                                        <div style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed #e2e8f0;">
+                                            <label class="oem-checkbox-label" style="margin: 0; padding: 0; font-weight: 600;">
+                                                <input type="checkbox" id="hangtag-is-set" onchange="toggleHangtagSet(this.checked)"> 我需要子母吊牌 (两张及以上一套)
+                                            </label>
+                                            <div id="hangtag-set-detail-area" class="hidden" style="margin-top: 12px; animation: fadeIn 0.3s;">
+                                                <div style="font-size: 11px; color: #f59e0b; margin-bottom: 8px; display: flex; align-items: center; gap: 5px;">
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                                                    <span>注：子母牌通常涉及多种材质叠加，请在下方详细说明。</span>
                                                 </div>
+                                                <textarea id="hangtag-set-remark" class="oem-textarea" style="height: 80px; font-size: 12px; background: #fff;" 
+                                                          placeholder="请明确指出主牌和副牌各自的尺寸、材质及工艺要求。&#10;例如：主牌5x8cm白卡纸烫金，副牌4x10cm半透明硫酸纸黑色印刷..." 
+                                                          oninput="updateHangtagSummary()"></textarea>
                                             </div>
-                                
                                         </div>
                                     </div>
                                 </div>

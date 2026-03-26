@@ -2251,6 +2251,24 @@
                                         </div>
 
                                     </div>
+
+                                    <!-- 新增：主/洗水标分开配置 (Split Label Option) -->
+                                    <div style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed #e2e8f0; margin-left: 13px;">
+                                        <label class="oem-checkbox-label" style="margin: 0; padding: 0; font-weight: 600;">
+                                            <input type="checkbox" id="label-is-split" onchange="toggleLabelSplit(this.checked)"> 我需要将品牌主标与洗水成分标分开定制 (Split Labels)
+                                        </label>
+                                        
+                                        <div id="label-split-detail-area" class="hidden" style="margin-top: 12px; animation: fadeIn 0.3s;">
+                                            <div style="font-size: 11px; color: #f59e0b; margin-bottom: 8px; display: flex; align-items: center; gap: 5px;">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                                                <span>注：若勾选此项，请在下方明确指出主标与洗水标各自的尺寸、材质及安装位置。</span>
+                                            </div>
+                                            <textarea id="label-split-remark" class="oem-textarea" style="height: 80px; font-size: 12px; background: #fff;" 
+                                                      placeholder="例如：主标用领后中无感烫印，洗水标用左侧缝高密织唛。尺寸分别为..." 
+                                                      oninput="updateLabelSummary()"></textarea>
+                                        </div>
+                                    </div>
+
                             
                                 </div> <!-- 结束自主定义细节包裹层 -->
                             
@@ -5313,15 +5331,17 @@
             material: '印标',
             size: '',
             method: '四边平缝', 
-            components: ['上装/连体'], // 默认选中上装
+            components: ['上装/连体'],
             placements: {
-                'top': '领后中 (Center Back Neck)', // 上装位置
-                'bottom': '后腰内中 (Center Back Waist)' // 下装位置
+                'top': '领后中 (Center Back Neck)',
+                'bottom': '后腰内中 (Center Back Waist)'
             },
             placementFiles: {
-                    'top': [],
-                    'bottom': []
-                },
+                'top': [],
+                'bottom': []
+            },
+            isSplit: false,        // 新增：是否分开定制主/洗水标
+            splitRemark: '',       // 新增：分开定制的详细要求
             remark: '',          
             designFiles: [],      
             otherMatFiles: [] 
@@ -5402,6 +5422,25 @@
                 }
             }
             
+            updateLabelSummary();
+        }
+
+        function toggleLabelSplit(checked) {
+            labelConfig.isSet = checked; // 与吊牌统一使用类似的概念
+            
+            const area = document.getElementById('label-split-detail-area');
+            if (area) {
+                area.classList.toggle('hidden', !checked);
+                if (checked) {
+                    // 平滑滚动到输入框
+                    setTimeout(() => scrollElementToCenter('label-split-detail-area'), 50);
+                } else {
+                    // 收起时清空文本框
+                    const textarea = document.getElementById('label-split-remark');
+                    if (textarea) textarea.value = '';
+                    labelConfig.splitRemark = '';
+                }
+            }
             updateLabelSummary();
         }
 
@@ -5723,7 +5762,7 @@
             updateLabelSummary();
         }
         
-        // 9. 更新侧边栏汇总
+        // 9. 更新侧边栏汇总 (支持部件组合与主/洗水分开提示)
         function updateLabelSummary() {
             const st = document.getElementById('sum-trim-label');
             const isEnabled = document.querySelector('input[name="need_label"][value="yes"]')?.checked;
@@ -5743,6 +5782,10 @@
                 const sizeVal = document.getElementById('label-custom-size')?.value.trim() || '';
                 labelConfig.size = sizeVal;
                 
+                // 抓取主洗标分开的详细备注
+                const splitVal = document.getElementById('label-split-remark')?.value.trim() || '';
+                labelConfig.splitRemark = splitVal;
+        
                 const matText = labelConfig.material;
                 let sizeText = '';
                 let sewingText = '';
@@ -5756,7 +5799,7 @@
                     sewingText = ` | ${labelConfig.method}`;
                 }
                 
-                // --- 核心改动：组装多个部件的位置文本 ---
+                // 组装多个部件的位置文本
                 let placementHtml = '';
                 const comps = labelConfig.components;
                 
@@ -5764,7 +5807,7 @@
                     let pos = labelConfig.placements.top;
                     if (pos === '自定义其他位置') {
                         const customVal = document.getElementById('label-custom-top-text')?.value.trim();
-                        pos = customVal ? customVal : '其他指定位置';
+                        pos = customVal ? customVal : '其他位置';
                     } else {
                         pos = pos.split(' (')[0];
                     }
@@ -5775,16 +5818,19 @@
                     let pos = labelConfig.placements.bottom;
                     if (pos === '自定义其他位置') {
                         const customVal = document.getElementById('label-custom-bottom-text')?.value.trim();
-                        pos = customVal ? customVal : '其他指定位置';
+                        pos = customVal ? customVal : '其他位置';
                     } else {
                         pos = pos.split(' (')[0];
                     }
                     placementHtml += `<span style="font-size:10px; opacity:0.8; display:block;">[下装] ${pos}${sewingText}</span>`;
                 }
         
+                // --- 新增：主洗标分开标记 ---
+                const splitText = labelConfig.isSet ? '<span style="color:var(--primary-color);"> [主洗标分开]</span>' : '';
+        
                 st.innerHTML = `
                     <div style="text-align:right;">
-                        ${matText}<br>
+                        ${matText}${splitText}<br>
                         ${placementHtml}
                         <span style="font-size:10px; opacity:0.8;">${sizeText} | ${hasContent}</span>
                     </div>`;
@@ -5792,6 +5838,7 @@
             st.style.color = 'var(--primary-color)'; 
             st.style.fontWeight = 'bold';
         }
+
         
 
         // ==========================================

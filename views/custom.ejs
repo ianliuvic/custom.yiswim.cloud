@@ -966,6 +966,45 @@
                                 <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">D. 补充说明 (Design Remarks)</h4>
                                 <textarea id="oem-remark" class="oem-textarea" style="height: 100px;" placeholder="请详细描述您的修改要求或特定工艺要求..." spellcheck="false" oninput="updateCombinedStyleSummary()"></textarea>
                             </div>
+
+                            <!-- 新增：E. 易漏设计细节核对单 -->
+                            <div class="oem-upload-section" id="oem-checklist-section" style="margin-bottom: 25px; background: #fffdf5; border: 1px solid #fde68a; padding: 20px; border-radius: 12px; transition: all 0.3s;">
+                                <div style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 15px;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5" style="margin-top: 2px; flex-shrink: 0;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                    <div>
+                                        <h4 style="font-size: 14px; margin: 0 0 6px; color: #92400e;">E. 易漏设计细节核对单 (Mandatory Checklist) <span style="color:#ef4444;">*</span></h4>
+                                        <p style="font-size: 11.5px; color: #b45309; margin: 0; line-height: 1.5;">以下是泳装定制中极易遗漏的工艺细节。请确认您已在上方图纸或描述中对以下事项做出了明确指示，并<strong style="color: #ef4444;">逐一打勾确认</strong>才能继续。</p>
+                                    </div>
+                                </div>
+                        
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                    <label class="premium-checkbox-box oem-checklist-item">
+                                        <input type="checkbox" onchange="this.parentElement.classList.toggle('selected', this.checked)">
+                                        <span style="font-size: 12px; font-weight: 600; color: #475569;">边缘缝制工艺 (如: 无缝包边 / 拷边外露等) 已明确</span>
+                                    </label>
+                                    <label class="premium-checkbox-box oem-checklist-item">
+                                        <input type="checkbox" onchange="this.parentElement.classList.toggle('selected', this.checked)">
+                                        <span style="font-size: 12px; font-weight: 600; color: #475569;">胸垫配置 (如: 是否含插片口袋、是否自带可拆卸胸垫等) 已明确</span>
+                                    </label>
+                                    <label class="premium-checkbox-box oem-checklist-item">
+                                        <input type="checkbox" onchange="this.parentElement.classList.toggle('selected', this.checked)">
+                                        <span style="font-size: 12px; font-weight: 600; color: #475569;">内衬层数要求 (如: 单层 / 双层 / 增加塑形网纱) 已明确</span>
+                                    </label>
+                                    <label class="premium-checkbox-box oem-checklist-item">
+                                        <input type="checkbox" onchange="this.parentElement.classList.toggle('selected', this.checked)">
+                                        <span style="font-size: 12px; font-weight: 600; color: #475569;">五金防锈要求及特殊拉链要求 (如: 防水 / 防卡) 已明确</span>
+                                    </label>
+                                    <label class="premium-checkbox-box oem-checklist-item">
+                                        <input type="checkbox" onchange="this.parentElement.classList.toggle('selected', this.checked)">
+                                        <span style="font-size: 12px; font-weight: 600; color: #475569;">松紧带 / 丈根规格 (如: 肩带或腰部的橡筋宽度) 已明确</span>
+                                    </label>
+                                    <label class="premium-checkbox-box oem-checklist-item">
+                                        <input type="checkbox" onchange="this.parentElement.classList.toggle('selected', this.checked)">
+                                        <span style="font-size: 12px; font-weight: 600; color: #475569;">整体版型偏好 (如: 偏向欧美高叉 或 亚洲保守遮臀) 已明确</span>
+                                    </label>
+                                </div>
+                            </div>
+
                         
                             <div style="background: #fff; border-radius: 12px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px;">
                                 <div>
@@ -3735,14 +3774,56 @@
         });
 
         // 绑定底部按钮事件
+        //document.getElementById('prevBtn').addEventListener('click', () => changeStep(-1));
+        //document.getElementById('nextBtn').addEventListener('click', () => {
+        //    if (currentStep === totalSteps) {
+        //        submitForm(); // 触发最终提交
+        / /   } else {
+        //        changeStep(1);
+        //    }
+        //});
+
+        // 绑定底部按钮事件
         document.getElementById('prevBtn').addEventListener('click', () => changeStep(-1));
         document.getElementById('nextBtn').addEventListener('click', () => {
+            
+            // --- 新增：Step 1 的 OEM 必填 Checklist 拦截逻辑 ---
+            if (currentStep === 1) {
+                const isOemActive = document.getElementById('mode-oem').classList.contains('active');
+                if (isOemActive) {
+                    const checklists = document.querySelectorAll('.oem-checklist-item input[type="checkbox"]');
+                    let allChecked = true;
+                    checklists.forEach(cb => { if (!cb.checked) allChecked = false; });
+                    
+                    if (!allChecked) {
+                        alert("⚠️ 请逐一勾选确认「E. 易漏设计细节核对单」中的所有事项，以确保定制要求的完整性。");
+                        
+                        // 自动滚动到该区域，并做一次警示闪烁动画
+                        const checklistArea = document.getElementById('oem-checklist-section');
+                        if (checklistArea) {
+                            const scrollArea = document.querySelector('.config-scroll-area');
+                            const rect = checklistArea.getBoundingClientRect();
+                            const scrollRect = scrollArea.getBoundingClientRect();
+                            // 平滑滚动
+                            scrollArea.scrollBy({ top: rect.top - scrollRect.top - 20, behavior: 'smooth' });
+                            
+                            // 红色呼吸闪烁反馈
+                            checklistArea.style.boxShadow = '0 0 0 4px rgba(239, 68, 68, 0.3)';
+                            setTimeout(() => { checklistArea.style.boxShadow = 'none'; }, 1500);
+                        }
+                        return; // 终止跳转，留在第一步
+                    }
+                }
+            }
+            // ----------------------------------------------------
+
             if (currentStep === totalSteps) {
                 submitForm(); // 触发最终提交
             } else {
                 changeStep(1);
             }
         });
+
 
         // ==========================================
         // 1. ODM 款式渲染与联动

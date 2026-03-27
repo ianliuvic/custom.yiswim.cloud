@@ -3976,16 +3976,18 @@
         document.getElementById('prevBtn').addEventListener('click', () => changeStep(-1));
         document.getElementById('nextBtn').addEventListener('click', () => {
             
-            // --- 新增：Step 1 的 OEM 必填 Checklist 拦截逻辑 ---
+            // --- 优化：Step 1 的 OEM 必填 Checklist 拦截逻辑 ---
             if (currentStep === 1) {
                 const isOemActive = document.getElementById('mode-oem').classList.contains('active');
-                if (isOemActive) {
+                
+                // 只有当处于 OEM 模式，并且用户确实填写了 OEM 内容时，才触发拦截校验
+                if (isOemActive && checkOemHasContent()) {
                     const checklists = document.querySelectorAll('.oem-checklist-item input[type="checkbox"]');
                     let allChecked = true;
                     checklists.forEach(cb => { if (!cb.checked) allChecked = false; });
                     
                     if (!allChecked) {
-                        alert("⚠️ 请逐一勾选确认「E. 易漏设计细节核对单」中的所有事项，以确保定制要求的完整性。");
+                        alert("⚠️ 既然您提交了自主设计 (OEM) 需求，请务必逐一勾选确认「E. 易漏设计细节核对单」中的所有事项，以确保定制要求的完整性。");
                         
                         // 自动滚动到该区域，并做一次警示闪烁动画
                         const checklistArea = document.getElementById('oem-checklist-section');
@@ -4012,6 +4014,7 @@
                 changeStep(1);
             }
         });
+
 
 
         // ==========================================

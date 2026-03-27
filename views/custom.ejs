@@ -1824,9 +1824,9 @@
                                             </div>
                                         </div>
                                         <div style="margin-left: 13px; margin-top: 15px;">
-                                            <label class="premium-checkbox-box">
+                                            <label class="oem-checkbox-label" style="margin: 0; padding: 0; font-size: 12px;">
                                                 <input type="checkbox" id="hangtag-rounded-corner" onchange="toggleHangtagRoundCorner(this.checked)">
-                                                <span style="font-size: 12px; font-weight: 600; color: #475569;">边缘做圆角处理 (Rounded Corners)</span>
+                                                边缘做圆角处理 (Rounded Corners)
                                             </label>
                                         </div>
                                     </div>
@@ -6498,11 +6498,6 @@
 
         function toggleHangtagRoundCorner(checked) {
             hangtagConfig.roundedCorner = checked;
-            // 动态控制父级 label 的高亮选中态
-            const checkbox = document.getElementById('hangtag-rounded-corner');
-            if (checkbox && checkbox.parentElement) {
-                checkbox.parentElement.classList.toggle('selected', checked);
-            }
             updateHangtagSummary();
         }
 
@@ -8044,10 +8039,7 @@
             document.querySelectorAll('#content-hangtag .hangtag-string-mat')[0]?.classList.add('selected');
             document.querySelectorAll('#content-hangtag .string-color-swatch')[0]?.classList.add('selected');
             const roundedCornerEl = document.getElementById('hangtag-rounded-corner');
-            if (roundedCornerEl) {
-                roundedCornerEl.checked = false;
-                roundedCornerEl.parentElement.classList.remove('selected');
-            }
+            if (roundedCornerEl) roundedCornerEl.checked = false;
             document.getElementById('hangtagFileName').innerText = '选择矢量文件 (AI/PDF)';
             document.getElementById('hangtagFileName').style.color = '#94a3b8';
             document.getElementById('hangtagShapeFileName').innerText = '上传参考文件';

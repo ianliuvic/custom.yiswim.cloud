@@ -4047,7 +4047,6 @@
                 contentContainer.insertAdjacentHTML('beforeend', `<div id="${catId}" class="cat-pane ${isActive}"><div class="option-grid" id="grid-${catId}"></div></div>`);
                 
                 const catStyles = styles.filter(s => s.category === cat);
-                catStyles.sort((a, b) => a.name.localeCompare(b.name, 'zh-CN', { numeric: true }));
 
                 const gridContainer = document.getElementById(`grid-${catId}`);
                 catStyles.forEach(style => {

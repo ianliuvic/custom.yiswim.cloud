@@ -160,8 +160,7 @@ app.get('/reset-password', (req, res) => {
 // ==========================================
 // API 接口
 // ==========================================
-
-// 1. 获取业务数据 (直连 PostgreSQL 并发查询)
+// 1. 获取业务数据 (直连 PostgreSQL 并发查询：款式、面料、包装袋)
 app.get('/api/get-data', authenticateToken, async (req, res) => {
     try {
         console.log('当前请求数据的用户:', req.user.username);
@@ -185,7 +184,7 @@ app.get('/api/get-data', authenticateToken, async (req, res) => {
             ORDER BY s.category ASC, s.name ASC;
         `;
 
-        // SQL 2: 查询面料与图片 (注意新增了 tags 字段)
+        // SQL 2: 查询面料与图片
         const fabricsQuery = `
             SELECT 
                 f.id,
@@ -205,20 +204,49 @@ app.get('/api/get-data', authenticateToken, async (req, res) => {
             ORDER BY f.category ASC, f.name ASC;
         `;
 
-        // 使用 Promise.all 并发执行两条 SQL 查询，极大地压榨性能
-        const [stylesResult, fabricsResult] = await Promise.all([
+        // SQL 3: 查询包装袋与图片
+        // 注意：b.id 是 uuid 类型，i.notion_page_id 是 varchar，必须用 b.id::text 转换才能 JOIN
+        const bagsQuery = `
+            SELECT 
+                b.id,
+                b.name,
+                b.description,
+                b.properties,
+                COALESCE(
+                    json_agg('https://files.yiswim.cloud/' || i.unique_image_id) FILTER (WHERE i.unique_image_id IS NOT NULL), 
+                    '[]'
+                ) as image_urls
+            FROM custom_accessory_packaging b
+            LEFT JOIN images i ON b.id::text = i.notion_page_id
+            WHERE b.is_active = true
+            GROUP BY b.id
+            ORDER BY b.name ASC;
+        `;
+
+        // 使用 Promise.all 并发执行 3 条 SQL 查询
+        const [stylesResult, fabricsResult, bagsResult] = await Promise.all([
             db.query(stylesQuery),
-            db.query(fabricsQuery)
+            db.query(fabricsQuery),
+            db.query(bagsQuery)
         ]);
 
-        // 数据平铺处理：将 properties (jsonb) 内部的字段解构到外层
-        // 这样前端直接调用 fabric.composition 就能拿到数据，和之前 n8n 传的一模一样
+        // 面料数据平铺处理 (解构 properties JSONB)
         const formattedFabrics = fabricsResult.rows.map(fabric => {
             const props = fabric.properties || {};
             return {
                 ...fabric,
-                ...props, // 把 properties 里面的属性全部铺平
-                properties: undefined // (可选) 铺平后删除原来的 properties 对象，让数据更干净
+                ...props,
+                properties: undefined
+            };
+        });
+
+        // 包装袋数据平铺处理 (解构 properties JSONB，释放 sizes 等字段)
+        const formattedBags = bagsResult.rows.map(bag => {
+            const props = bag.properties || {};
+            return {
+                ...bag,
+                ...props,
+                properties: undefined
             };
         });
 
@@ -228,8 +256,7 @@ app.get('/api/get-data', authenticateToken, async (req, res) => {
             data: {
                 odm_styles: stylesResult.rows,
                 fabrics: formattedFabrics,
-                // 包装袋同理，我们留个空位
-                bags: []     
+                bags: formattedBags
             }
         });
 
@@ -238,8 +265,6 @@ app.get('/api/get-data', authenticateToken, async (req, res) => {
         res.status(500).json({ success: false, message: '数据库查询异常' });
     }
 });
-
-
 
 // 2. 注册逻辑
 // 修复点 2：加上了 registerLimiter

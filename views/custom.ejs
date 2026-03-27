@@ -587,7 +587,25 @@
         .sewing-card.selected { border-color: var(--primary-color); background: #fff0f0; color: var(--primary-color); font-weight: 600; box-shadow: 0 2px 4px rgba(170, 0, 0, 0.05); }
         .sewing-card .sewing-name { font-size: 12px; display: block; }
         .sewing-card .sewing-desc { font-size: 10px; color: #94a3b8; font-weight: normal; }
-        .sewing-card.selected .sewing-desc { color: var(--primary-color); opacity: 0.8; }        
+        .sewing-card.selected .sewing-desc { color: var(--primary-color); opacity: 0.8; }   
+        /* 优化后的高级复选框容器 (圆角、动态边框、选中底色) */
+        .premium-checkbox-box {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 10px 16px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px;
+            cursor: pointer; transition: all 0.3s ease; user-select: none;
+        }
+        .premium-checkbox-box:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(170, 0, 0, 0.05);
+        }
+        .premium-checkbox-box input[type="checkbox"] {
+            width: 16px; height: 16px; accent-color: var(--primary-color); margin: 0; cursor: pointer;
+        }
+        .premium-checkbox-box.selected {
+            border-color: var(--primary-color);
+            background: #fffafb;
+        }
+
         /* 吊牌专属高级样式 */
         .hangtag-shape-card {
             display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 15px;
@@ -1805,10 +1823,10 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div style="margin-left: 13px; margin-top: 14px; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc; display: inline-flex; align-items: center;">
-                                            <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:#475569; cursor:pointer; user-select:none;">
+                                        <div style="margin-left: 13px; margin-top: 15px;">
+                                            <label class="premium-checkbox-box">
                                                 <input type="checkbox" id="hangtag-rounded-corner" onchange="toggleHangtagRoundCorner(this.checked)">
-                                                需要圆角
+                                                <span style="font-size: 12px; font-weight: 600; color: #475569;">边缘做圆角处理 (Rounded Corners)</span>
                                             </label>
                                         </div>
                                     </div>
@@ -6480,6 +6498,11 @@
 
         function toggleHangtagRoundCorner(checked) {
             hangtagConfig.roundedCorner = checked;
+            // 动态控制父级 label 的高亮选中态
+            const checkbox = document.getElementById('hangtag-rounded-corner');
+            if (checkbox && checkbox.parentElement) {
+                checkbox.parentElement.classList.toggle('selected', checked);
+            }
             updateHangtagSummary();
         }
 
@@ -8021,7 +8044,10 @@
             document.querySelectorAll('#content-hangtag .hangtag-string-mat')[0]?.classList.add('selected');
             document.querySelectorAll('#content-hangtag .string-color-swatch')[0]?.classList.add('selected');
             const roundedCornerEl = document.getElementById('hangtag-rounded-corner');
-            if (roundedCornerEl) roundedCornerEl.checked = false;
+            if (roundedCornerEl) {
+                roundedCornerEl.checked = false;
+                roundedCornerEl.parentElement.classList.remove('selected');
+            }
             document.getElementById('hangtagFileName').innerText = '选择矢量文件 (AI/PDF)';
             document.getElementById('hangtagFileName').style.color = '#94a3b8';
             document.getElementById('hangtagShapeFileName').innerText = '上传参考文件';

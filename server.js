@@ -165,7 +165,8 @@ app.get('/api/get-data', authenticateToken, async (req, res) => {
     try {
         console.log('当前请求数据的用户:', req.user.username);
 
-        // SQL 1: 查询款式与图片
+                // SQL 1: 查询款式与图片
+        // 增加 s.orders ASC NULLS LAST 进行排序
         const stylesQuery = `
             SELECT 
                 s.id,
@@ -181,10 +182,11 @@ app.get('/api/get-data', authenticateToken, async (req, res) => {
             LEFT JOIN images i ON s.id = i.notion_page_id
             WHERE s.is_active = true
             GROUP BY s.id
-            ORDER BY s.category ASC, s.name ASC;
+            ORDER BY s.category ASC, s.orders ASC NULLS LAST, s.name ASC;
         `;
 
         // SQL 2: 查询面料与图片
+        // 增加 f.orders ASC NULLS LAST 进行排序
         const fabricsQuery = `
             SELECT 
                 f.id,
@@ -201,11 +203,11 @@ app.get('/api/get-data', authenticateToken, async (req, res) => {
             LEFT JOIN images i ON f.id = i.notion_page_id
             WHERE f.is_active = true
             GROUP BY f.id
-            ORDER BY f.category ASC, f.name ASC;
+            ORDER BY f.category ASC, f.orders ASC NULLS LAST, f.name ASC;
         `;
 
         // SQL 3: 查询包装袋与图片
-        // 注意：b.id 是 uuid 类型，i.notion_page_id 是 varchar，必须用 b.id::text 转换才能 JOIN
+        // 增加 b.orders ASC NULLS LAST 进行排序
         const bagsQuery = `
             SELECT 
                 b.id,
@@ -220,7 +222,7 @@ app.get('/api/get-data', authenticateToken, async (req, res) => {
             LEFT JOIN images i ON b.id::text = i.notion_page_id
             WHERE b.is_active = true
             GROUP BY b.id
-            ORDER BY b.name ASC;
+            ORDER BY b.orders ASC NULLS LAST, b.name ASC;
         `;
 
         // 使用 Promise.all 并发执行 3 条 SQL 查询

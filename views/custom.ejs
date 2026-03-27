@@ -1789,10 +1789,6 @@
                                                     <div style="display: flex; flex-direction: column;">
                                                         <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;" id="label-shape-remark">补充尺寸说明 / 异形要求</label>
                                                         <textarea id="hangtag-shape-remark" class="oem-textarea" style="flex: 1; min-height: 80px; resize: none; font-size:12px; background: #fff; box-sizing: border-box;" placeholder="如：需要特定尺寸 4.5x10cm，或者圆角处理..." oninput="updateHangtagSummary()"></textarea>
-                                                        <label style="display:flex; align-items:center; gap:8px; margin-top:10px; font-size:12px; color:#475569; cursor:pointer;">
-                                                            <input type="checkbox" id="hangtag-rounded-corner" onchange="toggleHangtagRoundCorner(this.checked)">
-                                                            需要圆角
-                                                        </label>
                                                     </div>
                                                     <div style="display: flex; flex-direction: column;">
                                                         <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;" id="label-shape-file">刀模图/异形参考</label>
@@ -1808,6 +1804,12 @@
                                                     <div id="hangtagShapePreview" class="tight-preview-grid"></div>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div style="margin-left: 13px; margin-top: 14px; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc; display: inline-flex; align-items: center;">
+                                            <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:#475569; cursor:pointer; user-select:none;">
+                                                <input type="checkbox" id="hangtag-rounded-corner" onchange="toggleHangtagRoundCorner(this.checked)">
+                                                需要圆角
+                                            </label>
                                         </div>
                                     </div>
                                 

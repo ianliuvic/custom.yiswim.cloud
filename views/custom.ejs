@@ -2426,17 +2426,21 @@
                                             <!-- 1. 材质 -->
                                             <div>
                                                 <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:12px;">1. 贴纸材质 (Material)</label>
-                                                <div style="display: flex; gap: 15px; max-width: 500px;">
-                                                    <div class="option-item hygiene-mat selected" style="flex: 1; padding: 15px;" onclick="selectHygieneAttr('material', '透明 PET (标准)', this)">
-                                                        <div style="height:40px; background:rgba(200,220,255,0.15); border-radius:6px; margin-bottom:10px; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:10px;">[ 透明 PET ]</div>
-                                                        <h4 style="font-size:13px; margin:0;">透明 PET (标准)</h4>
-                                                        <p style="font-size:11px; margin:4px 0 0; color:#94a3b8;">防潮耐用，出货极快</p>
+                                                <div class="option-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-top:0;">
+                                                    <div class="option-item metal-item hygiene-mat selected" onclick="selectHygieneAttr('material', '透明 PET (标准)', this)">
+                                                        <div class="option-img-alt" style="height: 140px; background: url('https://files.yiswim.cloud/uploads/img_420d9a65-0846-47f7-aeea-5111fbb43148_hyg-1.webp') center/cover; border-bottom: 1px solid #e2e8f0;"></div>
+                                                        <div class="option-info">
+                                                            <h4>透明 PET (标准)</h4>
+                                                            <p>防潮耐用，出货极快</p>
+                                                        </div>
                                                     </div>
-                                                    <div class="option-item hygiene-mat" style="flex: 1; padding: 15px;" onclick="selectHygieneAttr('material', '环保哑光纸', this)">
-                                                        <div class="eco-badge" style="top:10px; right:10px;">ECO</div>
-                                                        <div style="height:40px; background:#f8fafc; border: 1px dashed #e2e8f0; border-radius:6px; margin-bottom:10px; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:10px;">[ 哑光纸质 ]</div>
-                                                        <h4 style="font-size:13px; margin:0;">环保哑光纸</h4>
-                                                        <p style="font-size:11px; margin:4px 0 0; color:#94a3b8;">100%可降解，触感高级</p>
+                                                    <div class="option-item metal-item hygiene-mat" onclick="selectHygieneAttr('material', '环保哑光纸', this)">
+                                                        <div class="eco-badge" style="top:10px; right:10px; z-index: 10;">ECO</div>
+                                                        <div class="option-img-alt" style="height: 140px; background: url('https://files.yiswim.cloud/uploads/img_b8a2e017-c1b1-4f23-bed0-13dc17dc9ebe_hyg-2.webp') center/cover; border-bottom: 1px solid #e2e8f0;"></div>
+                                                        <div class="option-info">
+                                                            <h4>环保哑光纸</h4>
+                                                            <p>100%可降解，触感高级</p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -2444,53 +2448,57 @@
                                             <!-- 2. 形状 (含其他形状定制) -->
                                             <div>
                                                 <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:12px;">2. 适配底裤剪裁 (Shape)</label>
-                                                <div style="display: flex; gap: 15px; max-width: 780px;">
-                                                    <div class="radio-card" style="flex: 1;" onclick="selectHygieneAttr('shape', '通用葫芦形', this)">
-                                                        <input type="radio" name="hygiene_shape" value="universal" checked>
-                                                        <div class="card-content" style="padding: 15px;">
-                                                            <h5 style="font-size: 13px; margin-bottom: 6px;">通用葫芦形</h5>
-                                                            <p style="font-size: 11px;">适配 95% 连体/三角款式</p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="radio-card" style="flex: 1;" onclick="selectHygieneAttr('shape', '丁字裤窄形', this)">
-                                                        <input type="radio" name="hygiene_shape" value="thong">
-                                                        <div class="card-content" style="padding: 15px;">
-                                                            <h5 style="font-size: 13px; margin-bottom: 6px;">丁字裤窄形</h5>
-                                                            <p style="font-size: 11px;">T-Back/高叉极窄裆部</p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="radio-card" style="flex: 1;" onclick="selectHygieneAttr('shape', '其他定制形状', this)">
-                                                        <input type="radio" name="hygiene_shape" value="custom">
-                                                        <div class="card-content" style="padding: 15px; background: #f8fafc;">
-                                                            <h5 style="font-size: 13px; margin-bottom: 6px; color: #64748b;">其他定制形状</h5>
-                                                            <p style="font-size: 11px; color: #f59e0b; font-weight: bold;">需开刀模 (MOQ 5000起)</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                                 
-                                                <!-- 自定义形状面板 -->
-                                                <div id="hygiene-custom-shape-area" class="fabric-config-panel hidden" style="padding: 25px 30px; background: #fffcfc; border-color: #fecaca; margin-top: 15px; width: 100%; box-sizing: border-box;">
-                                                    <div class="config-arrow" style="border-top-color: #fecaca; border-left-color: #fecaca;"></div>                                                    
-                                                    <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; align-items: flex-start;">
-                                                        <div style="display: flex; flex-direction: column;">
-                                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">补充形状说明 / 异形要求 <span style="color:#ef4444;">*</span></label>
-                                                            <textarea id="hygiene-shape-remark" class="oem-textarea" style="flex: 1; min-height: 80px; resize: none; font-size:12px; background: #fff; box-sizing: border-box;" placeholder="如：需要特定形状以适配特殊的镂空底裤设计，或者Logo轮廓异形..." oninput="updateHygieneSummary()"></textarea>
+                                                <div class="option-grid" id="hygiene-shape-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-top:0; position: relative;">
+                                                    <div class="option-item metal-item hygiene-shape selected" onclick="selectHygieneAttr('shape', '通用葫芦形', this)">
+                                                        <div class="option-img-alt" style="height: 140px; background: url('https://files.yiswim.cloud/uploads/img_35b53293-085e-44bf-a00f-6674082d2104_hulu.webp') center/cover; border-bottom: 1px solid #e2e8f0;"></div>
+                                                        <div class="option-info">
+                                                            <h4>通用葫芦形</h4>
+                                                            <p>适配 95% 连体/三角款式</p>
                                                         </div>
-                                                        <div style="display: flex; flex-direction: column;">
-                                                            <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">刀模图/异形参考 (选填)</label>
-                                                            <div class="premium-upload-box" onclick="document.getElementById('hygieneShapeFile').click()" style="flex: 1; min-height: 80px; padding: 0; border-style: dashed; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-sizing: border-box;">
-                                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="margin-bottom:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-                                                                <p id="hygieneShapeFileName" style="font-size: 11px; color: #94a3b8; margin:0;">点击上传</p>
-                                                                <input type="file" id="hygieneShapeFile" class="hidden" multiple onchange="handleHygieneFiles(this, 'shape')">
+                                                    </div>
+                                                    <div class="option-item metal-item hygiene-shape" onclick="selectHygieneAttr('shape', '丁字裤窄形', this)">
+                                                        <div class="option-img-alt" style="height: 140px; background: url('https://files.yiswim.cloud/uploads/img_f94d50c4-77cc-4194-a356-07eee8f7bc4e_thong.webp') center/cover; border-bottom: 1px solid #e2e8f0;"></div>
+                                                        <div class="option-info">
+                                                            <h4>丁字裤窄形</h4>
+                                                            <p>T-Back/高叉极窄裆部</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="option-item metal-item hygiene-shape" onclick="selectHygieneAttr('shape', '其他定制形状', this)">
+                                                        <div class="option-img-alt" style="height: 140px; background: #f1f5f9; display:flex; align-items:center; justify-content:center; color:#94a3b8;">
+                                                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14"/></svg>
+                                                        </div>
+                                                        <div class="option-info">
+                                                            <h4>其他定制形状</h4>
+                                                            <p><span style="color:#f59e0b; font-weight:bold;">需开刀模 (MOQ 5000起)</span></p>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <!-- 自定义形状面板 (移入 Grid 内部以确保箭头排版) -->
+                                                    <div id="hygiene-custom-shape-area" class="fabric-config-panel hidden" style="padding: 25px 30px; background: #fffcfc; border-color: #fecaca; margin-top: 10px; width: 100%; box-sizing: border-box; grid-column: 1 / -1;">
+                                                        <div class="config-arrow" style="border-top-color: #fecaca; border-left-color: #fecaca;"></div>                                                    
+                                                        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; align-items: flex-start;">
+                                                            <div style="display: flex; flex-direction: column;">
+                                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">补充形状说明 / 异形要求 <span style="color:#ef4444;">*</span></label>
+                                                                <textarea id="hygiene-shape-remark" class="oem-textarea" style="flex: 1; min-height: 80px; resize: none; font-size:12px; background: #fff; box-sizing: border-box;" placeholder="如：需要特定形状以适配特殊的镂空底裤设计，或者Logo轮廓异形..." oninput="updateHygieneSummary()"></textarea>
+                                                            </div>
+                                                            <div style="display: flex; flex-direction: column;">
+                                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">刀模图/异形参考 (选填)</label>
+                                                                <div class="premium-upload-box" onclick="document.getElementById('hygieneShapeFile').click()" style="flex: 1; min-height: 80px; padding: 0; border-style: dashed; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-sizing: border-box;">
+                                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="margin-bottom:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                                                                    <p id="hygieneShapeFileName" style="font-size: 11px; color: #94a3b8; margin:0;">点击上传</p>
+                                                                    <input type="file" id="hygieneShapeFile" class="hidden" multiple onchange="handleHygieneFiles(this, 'shape')">
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; margin-top: 10px;">
-                                                        <div></div>
-                                                        <div id="hygieneShapePreview" class="tight-preview-grid"></div>
+                                                        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; margin-top: 10px;">
+                                                            <div></div>
+                                                            <div id="hygieneShapePreview" class="tight-preview-grid"></div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
+
                                 
                                             <!-- 3. 尺寸输入 (优化为 Checkbox 展开) -->
                                             <div style="margin-top: 15px; padding-top: 25px; border-top: 1px dashed #e2e8f0;">
@@ -5455,7 +5463,7 @@
             updateHygieneSummary();
         }
         
-        // 2. 选择基础属性 (材质、形状) - 修复箭头对齐版
+        // 2. 选择基础属性 (材质、形状) - 修复箭头对齐与面板搬运
         function selectHygieneAttr(attrType, value, el) {
             hygieneConfig[attrType] = value;
             
@@ -5464,38 +5472,55 @@
                 el.classList.add('selected');
             } 
             else if (attrType === 'shape') {
-                // 1. 处理单选卡片内部的 radio 选中状态
-                const radio = el.querySelector('input[type="radio"]');
-                if (radio) radio.checked = true;
+                const grid = document.getElementById('hygiene-shape-grid');
+                grid.querySelectorAll('.hygiene-shape').forEach(item => item.classList.remove('selected'));
+                el.classList.add('selected');
                 
-                // 2. 控制自定义形状面板显隐与箭头对齐
                 const customArea = document.getElementById('hygiene-custom-shape-area');
                 if (customArea) {
                     const isCustom = (value === '其他定制形状');
-                    customArea.classList.toggle('hidden', !isCustom);
                     
                     if (isCustom) {
-                        // 使用 setTimeout 确保 DOM 渲染(去除了 hidden 类)后能准确获取宽度
+                        // 动态搬运面板到所点击卡片这一行的末尾
+                        let insertBeforeNode = null;
+                        let currentElement = el.nextElementSibling;
+                        while (currentElement) {
+                            if (currentElement.id === 'hygiene-custom-shape-area') { 
+                                currentElement = currentElement.nextElementSibling; 
+                                continue; 
+                            }
+                            if (currentElement.offsetTop > el.offsetTop) { 
+                                insertBeforeNode = currentElement; 
+                                break; 
+                            }
+                            currentElement = currentElement.nextElementSibling;
+                        }
+                        
+                        if (insertBeforeNode) grid.insertBefore(customArea, insertBeforeNode);
+                        else grid.appendChild(customArea);
+                        
+                        customArea.classList.remove('hidden');
+                        
+                        // 对齐箭头并滚动
                         setTimeout(() => {
                             const arrow = customArea.querySelector('.config-arrow');
                             if (arrow && el) {
-                                // 核心计算公式：卡片左侧距屏幕左侧的距离 - 面板左侧距屏幕左侧的距离 + (卡片自身宽度 / 2) - (箭头自身宽度的一半，约8px)
                                 const arrowPos = el.getBoundingClientRect().left - customArea.getBoundingClientRect().left + (el.getBoundingClientRect().width / 2) - 8;
                                 arrow.style.left = `${arrowPos}px`;
                             }
                             scrollElementToCenter('hygiene-custom-shape-area');
                         }, 50);
                     } else {
-                        // 如果用户又点回了常规形状，清空文本框避免产生脏数据
+                        // 隐藏并清空脏数据
+                        customArea.classList.add('hidden');
                         const remarkInput = document.getElementById('hygiene-shape-remark');
-                        if(remarkInput) remarkInput.value = '';
+                        if (remarkInput) remarkInput.value = '';
                     }
                 }
             }
             
             updateHygieneSummary();
         }
-
         
         // 3. 控制粘贴规则区域的显隐
         function toggleHygieneApply(isChecked) {

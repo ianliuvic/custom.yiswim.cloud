@@ -161,13 +161,12 @@ app.get('/reset-password', (req, res) => {
 // API 接口
 // ==========================================
 
-// 1. 获取业务数据 (直连 PostgreSQL 查询)
+// 1. 获取业务数据 (直连 PostgreSQL 并发查询)
 app.get('/api/get-data', authenticateToken, async (req, res) => {
     try {
         console.log('当前请求数据的用户:', req.user.username);
 
-        // 核心 SQL: 使用 LEFT JOIN 和 json_agg 将款式与图片一对多映射
-        // COALESCE 和 FILTER 确保了当款式没有图片时，返回空数组 [] 而不是 [null]
+        // SQL 1: 查询款式与图片
         const stylesQuery = `
             SELECT 
                 s.id,
@@ -186,17 +185,50 @@ app.get('/api/get-data', authenticateToken, async (req, res) => {
             ORDER BY s.category ASC, s.name ASC;
         `;
 
-        // 1. 执行查询
-        const { rows: odmStyles } = await db.query(stylesQuery);
+        // SQL 2: 查询面料与图片 (注意新增了 tags 字段)
+        const fabricsQuery = `
+            SELECT 
+                f.id,
+                f.name,
+                f.category,
+                f.description,
+                f.tags,
+                f.properties,
+                COALESCE(
+                    json_agg('https://files.yiswim.cloud/' || i.unique_image_id) FILTER (WHERE i.unique_image_id IS NOT NULL), 
+                    '[]'
+                ) as image_urls
+            FROM custom_fabrics f
+            LEFT JOIN images i ON f.id = i.notion_page_id
+            WHERE f.is_active = true
+            GROUP BY f.id
+            ORDER BY f.category ASC, f.name ASC;
+        `;
 
-        // 2. 组装并返回给前端
+        // 使用 Promise.all 并发执行两条 SQL 查询，极大地压榨性能
+        const [stylesResult, fabricsResult] = await Promise.all([
+            db.query(stylesQuery),
+            db.query(fabricsQuery)
+        ]);
+
+        // 数据平铺处理：将 properties (jsonb) 内部的字段解构到外层
+        // 这样前端直接调用 fabric.composition 就能拿到数据，和之前 n8n 传的一模一样
+        const formattedFabrics = fabricsResult.rows.map(fabric => {
+            const props = fabric.properties || {};
+            return {
+                ...fabric,
+                ...props, // 把 properties 里面的属性全部铺平
+                properties: undefined // (可选) 铺平后删除原来的 properties 对象，让数据更干净
+            };
+        });
+
+        // 组装并返回给前端
         res.json({
             success: true,
             data: {
-                odm_styles: odmStyles,
-                // 下面的面料和包装袋由于还没写 SQL，先传空数组占位
-                // 等后续加上对应的 SQL 后，把结果塞进来即可
-                fabrics: [], 
+                odm_styles: stylesResult.rows,
+                fabrics: formattedFabrics,
+                // 包装袋同理，我们留个空位
                 bags: []     
             }
         });
@@ -206,6 +238,7 @@ app.get('/api/get-data', authenticateToken, async (req, res) => {
         res.status(500).json({ success: false, message: '数据库查询异常' });
     }
 });
+
 
 
 // 2. 注册逻辑

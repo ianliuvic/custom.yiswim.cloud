@@ -300,50 +300,57 @@ app.post('/api/register', registerLimiter, async (req, res) => {
     }
 });
 
-// 3. 登录逻辑
+// 3. 登录逻辑 (直连 PostgreSQL)
 app.post('/api/login', loginLimiter, async (req, res) => {
     try {
         const { username, password } = req.body;
 
-        const n8nResponse = await fetch(`${N8N_BASE_URL}/custom-user-login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: username })
-        });
-
-        const data = await n8nResponse.json();
-
-        // 拦截未激活用户
-        if (data.user && data.user.is_active === false) {
-            return res.status(403).json({ success: false, message: '请先前往邮箱验证并激活您的账号' });
+        if (!username || !password) {
+            return res.status(400).json({ success: false, message: '请填写用户名/邮箱和密码' });
         }
 
-        if (!data.success || !data.user) {
+        // 1. 查询数据库：支持用户名或邮箱登录 (等同于您在 n8n 写的 SQL)
+        const loginQuery = `SELECT * FROM custom_users WHERE username = $1 OR email = $2`;
+        const result = await db.query(loginQuery, [username, username]);
+
+        // 2. 判断用户是否存在
+        if (result.rows.length === 0) {
+            // 出于安全考虑，哪怕是用户不存在，也统一提示“用户名或密码错误”，防止别人恶意试探账号
             return res.status(401).json({ success: false, message: '用户名或密码错误' });
         }
 
-        const validPassword = await bcrypt.compare(password, data.user.password_hash);
+        const user = result.rows[0];
+
+        // 3. 拦截未激活用户
+        if (user.is_active === false) {
+            return res.status(403).json({ success: false, message: '请先前往邮箱验证并激活您的账号' });
+        }
+
+        // 4. 比对密码 (使用 bcrypt 进行 Hash 对比)
+        const validPassword = await bcrypt.compare(password, user.password_hash);
         if (!validPassword) {
             return res.status(401).json({ success: false, message: '用户名或密码错误' });
         }
 
+        // 5. 密码验证通过，签发 JWT Token
         const token = jwt.sign(
-            { username: data.user.username, email: data.user.email },
+            { id: user.id, username: user.username, email: user.email }, // 可以顺便把用户 id 放进 token
             JWT_SECRET,
             { expiresIn: '24h' }
         );
 
+        // 6. 写入 Cookie
         res.cookie('auth_token', token, {
-            httpOnly: true,  
-            secure: false,   
-            maxAge: 24 * 60 * 60 * 1000 
+            httpOnly: true,  // 防止 XSS 攻击
+            secure: false,   // 如果您配置了 HTTPS(SSL)，建议在生产环境改为 true
+            maxAge: 24 * 60 * 60 * 1000 // 24小时有效
         });
 
         res.json({ success: true, message: '登录成功！' });
 
     } catch (error) {
-        console.error('登录错误:', error);
-        res.status(500).json({ success: false, message: '后端服务异常' });
+        console.error('登录错误:', error.message);
+        res.status(500).json({ success: false, message: '服务器验证异常，请稍后再试' });
     }
 });
 

@@ -4876,10 +4876,24 @@
                     const customForm = document.getElementById('fabric-custom-sourcing-form');
                     const notesArea = document.querySelector('.fabric-notes-area');
                     const isSimplified = ['里料', '网纱'].includes(selection.originalCatName);
+                    const isLining = selection.originalCatName.includes('里料') || selection.originalCatName.includes('Lining');
 
                     // --- 统一控制里料样式 ---
                     if (notesArea) notesArea.style.display = isSimplified  ? 'none' : 'block';
                     if (modeSwitcher) modeSwitcher.style.display = isSimplified  ? 'none' : 'inline-flex';
+
+                    // --- 核心修复：切换 Tab 时强制重置里料专属区域的显隐状态 ---
+                    const liningSpecialConfig = document.getElementById('lining-special-config');
+                    if (liningSpecialConfig) {
+                        liningSpecialConfig.classList.toggle('hidden', !isLining);
+                        if (isLining) {
+                            const isFull = config.fullLining !== false;
+                            document.getElementById('lining-mode-full').classList.toggle('active', isFull);
+                            document.getElementById('lining-mode-partial').classList.toggle('active', !isFull);
+                            document.getElementById('lining-partial-area').classList.toggle('hidden', isFull);
+                            document.getElementById('lining-placement-remark').value = config.liningPlacement || '';
+                        }
+                    }
 
                     if (isCustomSourcing) {
                         // 定制找样逻辑

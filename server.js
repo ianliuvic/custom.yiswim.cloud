@@ -161,26 +161,52 @@ app.get('/reset-password', (req, res) => {
 // API 接口
 // ==========================================
 
-// 1. 获取业务数据 (新增：替代原有的 get-catalog-data)
+// 1. 获取业务数据 (直连 PostgreSQL 查询)
 app.get('/api/get-data', authenticateToken, async (req, res) => {
-    // 【增加这行调试】
-    console.log('当前登录用户对象:', req.user); 
     try {
-        const n8nUrl = `${N8N_BASE_URL}/custom-get-data?username=${encodeURIComponent(req.user.username)}`;
-        console.log('请求 n8n 的完整 URL:', n8nUrl); // 【再增加这行调试】
-        
-        // 请求 n8n 获取定制所需的所有基础数据
-        // 注意：这里用的是 GET 方法，n8n 端的 Webhook 也需要设为 GET
-        const n8nResponse = await fetch(n8nUrl, {
-            method: 'GET'
+        console.log('当前请求数据的用户:', req.user.username);
+
+        // 核心 SQL: 使用 LEFT JOIN 和 json_agg 将款式与图片一对多映射
+        // COALESCE 和 FILTER 确保了当款式没有图片时，返回空数组 [] 而不是 [null]
+        const stylesQuery = `
+            SELECT 
+                s.id,
+                s.name,
+                s.category,
+                s.description,
+                s.properties,
+                COALESCE(
+                    json_agg(i.unique_image_id) FILTER (WHERE i.unique_image_id IS NOT NULL), 
+                    '[]'
+                ) as image_urls
+            FROM custom_odm_styles s
+            LEFT JOIN images i ON s.id = i.notion_page_id
+            WHERE s.is_active = true
+            GROUP BY s.id
+            ORDER BY s.category ASC, s.name ASC;
+        `;
+
+        // 1. 执行查询
+        const { rows: odmStyles } = await db.query(stylesQuery);
+
+        // 2. 组装并返回给前端
+        res.json({
+            success: true,
+            data: {
+                odm_styles: odmStyles,
+                // 下面的面料和包装袋由于还没写 SQL，先传空数组占位
+                // 等后续加上对应的 SQL 后，把结果塞进来即可
+                fabrics: [], 
+                bags: []     
+            }
         });
-        const data = await n8nResponse.json();
-        res.json(data);
+
     } catch (error) {
-        console.error('获取基础数据失败:', error);
-        res.status(500).json({ success: false, message: '无法连接到数据服务器' });
+        console.error('获取业务数据失败:', error.message);
+        res.status(500).json({ success: false, message: '数据库查询异常' });
     }
 });
+
 
 // 2. 注册逻辑
 // 修复点 2：加上了 registerLimiter

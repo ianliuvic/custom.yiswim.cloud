@@ -3664,27 +3664,33 @@
     </div>
 
     <div class="modal-overlay" id="customModal">
-        <!-- 将弹窗加宽到 800px -->
-        <div class="modal-content modal-md" style="max-width: 800px;">
+        <!-- 1. 将弹窗最大宽度加宽到 960px -->
+        <div class="modal-content modal-md" style="max-width: 960px;">
             <div class="custom-modal-header">
                 <h3><span style="background:var(--primary-color); color:#fff; padding:4px 8px; border-radius:6px; font-size:12px;">PLUS</span> 款式轻定制 <span id="customModalTarget" style="font-size: 14px; font-weight: normal; color: #94a3b8; margin-left: 10px;"></span></h3>
                 <button class="modal-close-abs" onclick="closeCustomModal()" style="top:25px; right:25px;">&times;</button>
             </div>
             
             <!-- 采用左右 Flex 布局 -->
-            <div class="custom-modal-body" style="display: flex; gap: 30px; padding: 30px 35px 35px;">
+            <div class="custom-modal-body" style="display: flex; gap: 35px; padding: 30px 35px 35px;">
                 
-                <!-- 新左侧：支持轮播的款式图片区 -->
-                <div style="flex: 0 0 280px; position: relative; border-radius: 10px; overflow: hidden; background: #f1f5f9; display: flex; align-items: center; justify-content: center; border: 1px solid #e2e8f0;">
+                <!-- 2. 左侧图片区：加宽到 400px，并增加最小高度，让泳装图更显修长 -->
+                <div style="flex: 0 0 400px; min-height: 480px; position: relative; border-radius: 12px; overflow: hidden; background: #f8fafc; display: flex; align-items: center; justify-content: center; border: 1px solid #e2e8f0;">
+                    
+                    <!-- 3. 修复左箭头：严格锁定宽高 36px，加入 display:flex 强制内容居中，彻底告别椭圆 -->
                     <button class="carousel-btn left" id="custom-carousel-prev" onclick="customCarouselMove(-1)" 
-                            style="width: 32px; height: 32px; min-width: 32px; font-size: 14px; left: 10px; padding: 0;">&#10094;</button>
+                            style="width: 36px; height: 36px; min-width: 36px; min-height: 36px; font-size: 16px; left: 15px; padding: 0; display: flex; align-items: center; justify-content: center; line-height: 1;">&#10094;</button>
+                    
                     <img id="customModalImg" src="" style="width: 100%; height: 100%; object-fit: contain;">
+                    
+                    <!-- 3. 修复右箭头：同理严格锁定宽高 -->
                     <button class="carousel-btn right" id="custom-carousel-next" onclick="customCarouselMove(1)" 
-                            style="width: 32px; height: 32px; min-width: 32px; font-size: 14px; right: 10px; padding: 0;">&#10095;</button>
+                            style="width: 36px; height: 36px; min-width: 36px; min-height: 36px; font-size: 16px; right: 15px; padding: 0; display: flex; align-items: center; justify-content: center; line-height: 1;">&#10095;</button>
+                    
                     <div class="carousel-dots" id="custom-carousel-dots" style="bottom: 15px;"></div>
                 </div>
 
-                <!-- 右侧：填写表单区 -->
+                <!-- 右侧：填写表单区 (保持原样即可) -->
                 <div style="flex: 1; display: flex; flex-direction: column;">
                     
                     <div style="font-size: 11px; color: #f59e0b; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 5px; line-height: 1.4;">
@@ -3693,7 +3699,7 @@
                     </div>
                     
                     <label style="display:block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 8px;">定制需求描述</label>
-                    <textarea id="customRemark" placeholder="请详细描述您的版型修改要求。&#10;例如：肩带加宽至2cm、后背改交叉带、罩杯容量加深等..." spellcheck="false" style="flex: 1; min-height: 100px; margin-bottom: 20px;"></textarea>
+                    <textarea id="customRemark" placeholder="请详细描述您的版型修改要求。&#10;例如：肩带加宽至2cm、后背改交叉带、罩杯容量加深等..." spellcheck="false" style="flex: 1; min-height: 120px; margin-bottom: 20px;"></textarea>
                     
                     <label style="display:block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 8px;">参考附件</label>
                     <div class="premium-upload-row" id="customDropzone" onclick="document.getElementById('customFile').click()" style="padding: 12px 15px;">
@@ -3714,6 +3720,7 @@
             </div>
         </div>
     </div>
+
 
     <div class="modal-overlay" id="ndaModal">
         <div class="modal-content modal-md" style="max-width: 580px; padding: 0;">

@@ -2125,10 +2125,31 @@
                                                 <!-- 缝制 (TPU、织唛显示) -->
                                                 <div id="label-sewing-area" class="hidden" style="margin-top: 25px;">
                                                     <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:12px;">缝制方式 (Sewing Method)</label>
-                                                    <div class="option-grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-top:0;" id="label-sewing-grid">
-                                                        <!-- JS 渲染 -->
+                                                    <div class="option-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top:0; position: relative;" id="label-sewing-grid">
+                                                        <!-- JS 动态渲染 -->
+                                                    </div>
+                                                    
+                                                    <!-- 新增：缝制方式自定义面板 -->
+                                                    <div id="label-sewing-other-area" class="fabric-config-panel hidden" style="padding: 25px 30px; background: #fffcfc; border-color: #fecaca; width: 100%; box-sizing: border-box; grid-column: 1 / -1; margin-top: 10px;">
+                                                        <div class="config-arrow" style="border-top-color: #fecaca; border-left-color: #fecaca;"></div>
+                                                        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px;">
+                                                            <div>
+                                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">特殊缝制要求描述</label>
+                                                                <textarea id="label-sewing-remark" class="oem-textarea" style="height: 80px; font-size:12px; background: #fff;" placeholder="请描述您需要的特殊缝制位置、折法或固定方式..." oninput="updateLabelSummary()"></textarea>
+                                                            </div>
+                                                            <div>
+                                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">参考样照上传</label>
+                                                                <div class="premium-upload-box" onclick="document.getElementById('labelSewingFile').click()" style="padding: 15px; border-style: dashed; background: #fff;">
+                                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="margin-bottom:5px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                                                                    <input type="file" id="labelSewingFile" class="hidden" multiple onchange="handleLabelSewingFiles(this)">
+                                                                    <p id="labelSewingFileName" style="font-size: 11px; color: #94a3b8; margin:0;">点击上传</p>
+                                                                </div>
+                                                                <div id="labelSewingPreview" class="tight-preview-grid" style="margin-top:10px;"></div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
+
                                             </div>
                                     
                                         </div>
@@ -5631,7 +5652,7 @@
             mode: 'auto',
             material: '印标',
             size: '',
-            method: '四边平缝', 
+            method: '对折环缝', // 默认选中项
             components: ['上装/连体'],
             placements: {
                 'top': '领后中 (Center Back Neck)',
@@ -5641,11 +5662,13 @@
                 'top': [],
                 'bottom': []
             },
-            isSplit: false,        // 新增：是否分开定制主/洗水标
-            splitRemark: '',       // 新增：分开定制的详细要求
+            isSplit: false,        
+            splitRemark: '',       
             remark: '',          
             designFiles: [],      
-            otherMatFiles: [] 
+            otherMatFiles: [],
+            sewingRemark: '',    // 新增：缝制方式备注
+            sewingFiles: []      // 新增：缝制方式附件
         };
 
         // 1. 切换服装部件 (多选控制，且至少保留一项)
@@ -5747,20 +5770,19 @@
 
         // 预设定义：确保与您要求的一致
         const labelMaterialTypes = [
-            { name: '印标', desc: '100%无触感, 泳装首选', image: 'https://files.yiswim.cloud/uploads/img_9c4e70dc-ed24-482f-95fd-290d99552eb2_yinbiao.webp', icon: '' },
-            { name: 'TPU标', desc: '高弹防水, 亲肤磨砂', image: 'https://files.yiswim.cloud/uploads/img_37906b41-68a0-444c-9310-4e3857aaf672_tpubiao.webp', icon: '' },
+            { name: '印标', desc: '100%无触感, 泳装首选', image: 'https://files.yiswim.cloud/uploads/img_12b71c3b-96ed-4d19-962c-af5d4d66bb8d_heattransfer.webp', icon: '' },
+            { name: 'TPU标', desc: '高弹防水, 亲肤磨砂', image: 'https://files.yiswim.cloud/uploads/img_345e3377-f8d5-479d-9437-c0caaa1fe532_tpu.webp', icon: '' },
             { name: '织唛标', desc: '经典品牌感, 质感厚实', image: 'https://files.yiswim.cloud/uploads/img_b54b91f9-e177-46cf-a636-df595ea1baa8_zhimaibiao.webp', icon: '' },
             { name: '其他', desc: '缎面标/特种标定制', icon: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14"/></svg>' }
         ];
         
+        // 更新为仅保留3个选项，并加入图片属性
         const sewingMethods = [
-            { name: '四边平缝', desc: '四周完全固定', icon: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 2"><rect x="4" y="6" width="16" height="12"/></svg>' },
-            { name: '两头折缝', desc: '左右/上下固定', icon: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16M4 18h16" stroke-dasharray="2 2"/><rect x="4" y="6" width="16" height="12" stroke="transparent"/></svg>' },
-            { name: '对折环缝', desc: '夹入侧缝/领缝', icon: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 4v16M8 8h8M8 16h8"/></svg>' },
-            { name: '单边吊缝', desc: '易于剪掉', icon: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 2"><path d="M4 6h16"/></svg>' }
+            { name: '对折环缝', desc: '夹入侧缝/领缝', image: 'https://files.yiswim.cloud/uploads/img_ef81a321-0e3f-4f28-9e37-b55e7f85b1a9_double-side.webp', icon: '' },
+            { name: '单边平缝', desc: '四周或单边车线', image: 'https://files.yiswim.cloud/uploads/img_d10c1d60-116f-4020-a85c-cdb20eddadec_single-side.webp', icon: '' },
+            { name: '其他', desc: '自定义特殊缝制', icon: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14"/></svg>' }
         ];
 
-        // 初始化渲染
         // 初始化渲染
         document.addEventListener('DOMContentLoaded', () => {
             const materialGrid = document.getElementById('label-material-grid');
@@ -5788,15 +5810,23 @@
         
             const sewingGrid = document.getElementById('label-sewing-grid');
             if (sewingGrid) {
-                sewingGrid.innerHTML = sewingMethods.map(m => `
+                sewingGrid.innerHTML = sewingMethods.map(m => {
+                    let imgHtml = '';
+                    if (m.image) {
+                        imgHtml = `<div class="option-img-alt" style="height:140px; background:url('${m.image}') center/cover; border-bottom: 1px solid #e2e8f0;"></div>`;
+                    } else {
+                        imgHtml = `<div class="option-img-alt" style="height:140px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; color:#94a3b8;">${m.icon}</div>`;
+                    }
+                    return `
                     <div class="option-item metal-item ${labelConfig.method === m.name ? 'selected' : ''}" onclick="selectLabelSewing('${m.name}', this)">
-                        <div class="option-img-alt" style="background:#f1f5f9; height:70px; display:flex; align-items:center; justify-content:center;">${m.icon}</div>
-                        <div class="option-info" style="padding:10px; text-align:center;">
+                        ${imgHtml}
+                        <div class="option-info">
                             <h4>${m.name}</h4>
-                            <p style="font-size:10px;">${m.desc}</p>
+                            <p>${m.desc}</p>
                         </div>
                     </div>
-                `).join('');
+                    `;
+                }).join('');
             }
         });
 
@@ -5966,11 +5996,100 @@
         // 3. 选择缝制方式
         function selectLabelSewing(name, el) {
             labelConfig.method = name;
-            el.parentNode.querySelectorAll('.option-item').forEach(c => c.classList.remove('selected'));
+            const grid = document.getElementById('label-sewing-grid');
+            grid.querySelectorAll('.option-item').forEach(c => c.classList.remove('selected'));
             el.classList.add('selected');
+            
+            const otherArea = document.getElementById('label-sewing-other-area');
+            if (otherArea) {
+                if (name === '其他') {
+                    // 搬运面板到当前行下方
+                    let insertBeforeNode = null;
+                    let currentElement = el.nextElementSibling;
+                    while (currentElement) {
+                        if (currentElement.id === 'label-sewing-other-area') { 
+                            currentElement = currentElement.nextElementSibling; 
+                            continue; 
+                        }
+                        if (currentElement.offsetTop > el.offsetTop) { 
+                            insertBeforeNode = currentElement; 
+                            break; 
+                        }
+                        currentElement = currentElement.nextElementSibling;
+                    }
+                    
+                    if (insertBeforeNode) grid.insertBefore(otherArea, insertBeforeNode);
+                    else grid.appendChild(otherArea);
+                    
+                    otherArea.classList.remove('hidden');
+                    
+                    // 对齐小箭头并平滑滚动
+                    setTimeout(() => {
+                        const arrow = otherArea.querySelector('.config-arrow');
+                        if (arrow) {
+                            const arrowPos = el.getBoundingClientRect().left - otherArea.getBoundingClientRect().left + (el.getBoundingClientRect().width / 2) - 8;
+                            arrow.style.left = `${arrowPos}px`;
+                        }
+                        scrollElementToCenter('label-sewing-other-area');
+                    }, 50);
+                } else {
+                    otherArea.classList.add('hidden');
+                    // 清除脏数据
+                    const remarkInput = document.getElementById('label-sewing-remark');
+                    if (remarkInput) remarkInput.value = '';
+                    labelConfig.sewingRemark = '';
+                }
+            }
+            
             updateLabelSummary();
         }
+
+        function handleLabelSewingFiles(input) {
+            const files = Array.from(input.files);
+            files.forEach(file => {
+                if (file.size > 20 * 1024 * 1024) { alert(`文件 ${file.name} 超过 20MB`); return; }
+                if (!labelConfig.sewingFiles.some(f => f.name === file.name && f.size === file.size)) {
+                    labelConfig.sewingFiles.push(file);
+                }
+            });
         
+            const nameEl = document.getElementById('labelSewingFileName');
+            if (nameEl) nameEl.innerText = labelConfig.sewingFiles.length > 0 ? `已选 ${labelConfig.sewingFiles.length} 个文件` : '点击上传';
+            
+            renderLabelSewingPreviews();
+            updateLabelSummary();
+            input.value = '';
+        }
+
+        function renderLabelSewingPreviews() {
+            const grid = document.getElementById('labelSewingPreview');
+            if(!grid) return;
+            grid.innerHTML = '';
+            
+            labelConfig.sewingFiles.forEach((file, index) => {
+                const isImage = file.type.startsWith('image/');
+                const ext = file.name.split('.').pop().toUpperCase();
+                let content = isImage 
+                    ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')" style="width:100%;height:100%;object-fit:cover;">` 
+                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;">${ext}</div>`;
+        
+                grid.insertAdjacentHTML('beforeend', `
+                    <div class="oem-preview-item" style="border-radius:4px;">
+                        ${content}
+                        <button type="button" class="oem-preview-remove" onclick="removeLabelSewingFile(${index})" style="width:16px;height:16px;font-size:12px;">&times;</button>
+                    </div>
+                `);
+            });
+        }
+
+        function removeLabelSewingFile(index) {
+            labelConfig.sewingFiles.splice(index, 1);
+            const nameEl = document.getElementById('labelSewingFileName');
+            if (nameEl) nameEl.innerText = labelConfig.sewingFiles.length > 0 ? `已选 ${labelConfig.sewingFiles.length} 个文件` : '点击上传';
+            renderLabelSewingPreviews();
+            updateLabelSummary();
+        }
+
         
         // 6. 统一的全局文件上传处理
         function handleLabelFiles(input) {
@@ -6118,7 +6237,14 @@
                     sizeText = sizeVal ? `尺寸: ${sizeVal}` : '尺寸待定';
                 } else {
                     sizeText = sizeVal ? `尺寸: ${sizeVal}` : '尺寸待定';
-                    sewingText = ` | ${labelConfig.method}`;
+                    
+                    // 抓取并展示自定义缝制的描述
+                    labelConfig.sewingRemark = document.getElementById('label-sewing-remark')?.value.trim() || '';
+                    if (labelConfig.method === '其他') {
+                        sewingText = labelConfig.sewingRemark ? ' | 自定义缝制' : ' | 缝制待说明';
+                    } else {
+                        sewingText = ` | ${labelConfig.method}`;
+                    }
                 }
                 
                 // 组装多个部件的位置文本

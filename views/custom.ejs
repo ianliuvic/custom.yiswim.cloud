@@ -1789,6 +1789,10 @@
                                                     <div style="display: flex; flex-direction: column;">
                                                         <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;" id="label-shape-remark">补充尺寸说明 / 异形要求</label>
                                                         <textarea id="hangtag-shape-remark" class="oem-textarea" style="flex: 1; min-height: 80px; resize: none; font-size:12px; background: #fff; box-sizing: border-box;" placeholder="如：需要特定尺寸 4.5x10cm，或者圆角处理..." oninput="updateHangtagSummary()"></textarea>
+                                                        <label style="display:flex; align-items:center; gap:8px; margin-top:10px; font-size:12px; color:#475569; cursor:pointer;">
+                                                            <input type="checkbox" id="hangtag-rounded-corner" onchange="toggleHangtagRoundCorner(this.checked)">
+                                                            需要圆角
+                                                        </label>
                                                     </div>
                                                     <div style="display: flex; flex-direction: column;">
                                                         <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;" id="label-shape-file">刀模图/异形参考</label>
@@ -6226,6 +6230,7 @@
             material: '白卡纸 (White Cardboard)',
             weight: '400g',
             shape: '标准修长型 (约 4x9cm)',
+            roundedCorner: false,
             crafts: ['无附加工艺'],
             stringType: '常规方块吊粒',
             stringColor: '白色',
@@ -6471,6 +6476,11 @@
             updateHangtagSummary();
         }
 
+        function toggleHangtagRoundCorner(checked) {
+            hangtagConfig.roundedCorner = checked;
+            updateHangtagSummary();
+        }
+
         // 修改文件处理函数，支持 string 类型
         function handleHangtagFiles(input, type) {
             const files = Array.from(input.files);
@@ -6627,7 +6637,7 @@
         
                 st.innerHTML = `
                     <div style="text-align:right;">
-                        ${matDisplay}${setText} | ${hangtagConfig.shape.split(' ')[0]}<br>
+                        ${matDisplay}${setText} | ${hangtagConfig.shape.split(' ')[0]}${hangtagConfig.roundedCorner ? ' [圆角]' : ''}<br>
                         <span style="font-size:10px; opacity:0.8;">工艺: ${craftDisplay}</span><br>
                         <span style="font-size:10px; opacity:0.8;">吊粒: ${colorDisplay}${hangtagConfig.stringType.includes('定制') ? '(定制)' : ''}</span>
                     </div>`;
@@ -8001,13 +8011,15 @@
             if(document.getElementById('bag-design-file')) document.getElementById('bag-design-file').value = '';
 
             // 重置吊牌
-            hangtagConfig = { material: '经典白卡 (350g/500g)', shape: '标准修长型 (约 4x9cm)', stringMat: '通用塑料吊粒', stringColor: '白色', crafts: [], designFiles: [], shapeFiles: [] };
+            hangtagConfig = { material: '经典白卡 (350g/500g)', shape: '标准修长型 (约 4x9cm)', stringMat: '通用塑料吊粒', stringColor: '白色', roundedCorner: false, crafts: [], designFiles: [], shapeFiles: [] };
             document.querySelectorAll('#content-hangtag .metal-item, #content-hangtag .hangtag-shape-card, #content-hangtag .hangtag-string-mat, #content-hangtag .string-color-swatch, #content-hangtag .chip').forEach(item => item.classList.remove('selected'));
             // 恢复默认选中
             document.querySelectorAll('#content-hangtag .metal-item')[0]?.classList.add('selected');
             document.querySelectorAll('#content-hangtag .hangtag-shape-card')[0]?.classList.add('selected');
             document.querySelectorAll('#content-hangtag .hangtag-string-mat')[0]?.classList.add('selected');
             document.querySelectorAll('#content-hangtag .string-color-swatch')[0]?.classList.add('selected');
+            const roundedCornerEl = document.getElementById('hangtag-rounded-corner');
+            if (roundedCornerEl) roundedCornerEl.checked = false;
             document.getElementById('hangtagFileName').innerText = '选择矢量文件 (AI/PDF)';
             document.getElementById('hangtagFileName').style.color = '#94a3b8';
             document.getElementById('hangtagShapeFileName').innerText = '上传参考文件';

@@ -176,7 +176,7 @@ app.get('/api/get-data', authenticateToken, async (req, res) => {
                 s.description,
                 s.properties,
                 COALESCE(
-                    json_agg('https://files/yiswim.cloud/' || i.unique_image_id) FILTER (WHERE i.unique_image_id IS NOT NULL), 
+                    json_agg('https://files.yiswim.cloud/' || i.unique_image_id) FILTER (WHERE i.unique_image_id IS NOT NULL), 
                     '[]'
                 ) as image_urls
             FROM custom_odm_styles s

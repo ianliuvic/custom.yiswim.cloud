@@ -4,9 +4,31 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
+const { Pool } = require('pg');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// 使用 process.env 读取 Coolify 传过来的环境变量，确保密码绝对安全
+const db = new Pool({
+    host: process.env.DB_HOST,         // 例如：postgresql-xxxxxx
+    port: process.env.DB_PORT || 5432, // 默认 5432
+    user: process.env.DB_USER,         // 数据库用户名
+    password: process.env.DB_PASSWORD, // 数据库密码
+    database: process.env.DB_NAME,     // 数据库名称
+    max: 20,                           // 最大并发连接数（保护数据库不被撑爆）
+    idleTimeoutMillis: 30000,          // 空闲连接 30 秒后自动释放
+    connectionTimeoutMillis: 2000,     // 2 秒连不上就报错，防止请求一直卡死
+});
+
+db.connect((err, client, release) => {
+    if (err) {
+        console.error('❌ 数据库连接失败! 请检查 Coolify 环境变量配置:', err.stack);
+    } else {
+        console.log('✅ 成功连接到 PostgreSQL 数据库!');
+        release(); // 测试成功后，必须把连接释放回池子里
+    }
+});
 
 // ==========================================
 // 核心配置：信任代理

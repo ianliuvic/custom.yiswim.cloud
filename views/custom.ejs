@@ -5747,9 +5747,9 @@
 
         // 预设定义：确保与您要求的一致
         const labelMaterialTypes = [
-            { name: '印标', desc: '100%无触感, 泳装首选', icon: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="8" width="16" height="8" rx="1"/><path d="M8 12h8"/></svg>' },
-            { name: 'TPU标', desc: '高弹防水, 亲肤磨砂', icon: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="14" height="14" rx="2"/><circle cx="12" cy="12" r="3"/></svg>' },
-            { name: '织唛标', desc: '经典品牌感, 质感厚实', icon: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16M4 12h16M4 18h16M8 4v16M16 4v16"/></svg>' },
+            { name: '印标', desc: '100%无触感, 泳装首选', image: 'https://files.yiswim.cloud/uploads/img_9c4e70dc-ed24-482f-95fd-290d99552eb2_yinbiao.webp', icon: '' },
+            { name: 'TPU标', desc: '高弹防水, 亲肤磨砂', image: 'https://files.yiswim.cloud/uploads/img_37906b41-68a0-444c-9310-4e3857aaf672_tpubiao.webp', icon: '' },
+            { name: '织唛标', desc: '经典品牌感, 质感厚实', image: 'https://files.yiswim.cloud/uploads/img_b54b91f9-e177-46cf-a636-df595ea1baa8_zhimaibiao.webp', icon: '' },
             { name: '其他', desc: '缎面标/特种标定制', icon: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14"/></svg>' }
         ];
         
@@ -5761,18 +5761,29 @@
         ];
 
         // 初始化渲染
+        // 初始化渲染
         document.addEventListener('DOMContentLoaded', () => {
             const materialGrid = document.getElementById('label-material-grid');
             if (materialGrid) {
-                materialGrid.innerHTML = labelMaterialTypes.map(t => `
+                materialGrid.innerHTML = labelMaterialTypes.map(t => {
+                    let imgHtml = '';
+                    // 动态判断：如果有 image 属性就渲染真图，否则渲染灰色 svg 占位
+                    if (t.image) {
+                        imgHtml = `<div class="option-img-alt" style="height:140px; background:url('${t.image}') center/cover; border-bottom: 1px solid #e2e8f0;"></div>`;
+                    } else {
+                        imgHtml = `<div class="option-img-alt" style="height:140px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; color:#94a3b8;">${t.icon}</div>`;
+                    }
+                    
+                    return `
                     <div class="option-item metal-item ${labelConfig.material === t.name ? 'selected' : ''}" onclick="selectLabelMaterial('${t.name}', this)">
-                        <div class="option-img-alt" style="background:#fdfdfd; height:100px; display:flex; align-items:center; justify-content:center; color:#cbd5e1;">${t.icon}</div>
+                        ${imgHtml}
                         <div class="option-info">
                             <h4>${t.name}</h4>
                             <p>${t.desc}</p>
                         </div>
                     </div>
-                `).join('');
+                    `;
+                }).join('');
             }
         
             const sewingGrid = document.getElementById('label-sewing-grid');

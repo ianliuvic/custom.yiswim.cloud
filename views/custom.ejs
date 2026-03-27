@@ -1609,19 +1609,21 @@
                                 <!-- 自主定义细节 -->
                                 <div id="pad-custom-details" class="hidden" style="animation: fadeIn 0.4s ease; padding-top: 5px;">
                                     
-                                    <!-- A. 形状 -->
+                                    <!-- A. 形状与尺码 -->
                                     <div class="attr-section" style="margin-bottom: 30px;">
-                                        <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 罩杯形状 (Shape)</h4>
+                                        <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 罩杯形状与尺码 (Shape & Size)</h4>
                                         <div style="margin-left: 13px;">
                                             <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #f1f5f9; margin-bottom: 15px; font-size: 12px; color: #475569; display: flex; gap: 10px; align-items: flex-start;">
                                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2" style="margin-top: 2px; flex-shrink: 0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                                                 <div>
-                                                    <strong>红绣专业建议：</strong>由于胸垫必须严格适配外部成衣裁片，系统已默认将杯型与您的款式绑定（如三角杯配三角垫，抹胸配圆垫等）。除非您有特殊的开模定制需求，否则建议交由我们自动匹配。
+                                                    <strong>红绣专业建议：</strong><br>
+                                                    1. <strong>形状适配：</strong> 由于胸垫必须严格适配外部成衣裁片，系统已默认将杯型与您的款式绑定（如三角杯配三角垫，抹胸配圆垫等）。<br>
+                                                    2. <strong>尺码放缩：</strong> 我们将在大货生产中，<strong>根据成衣的不同尺码 (如 S, M, L, XL)，自动为您放缩并匹配对应大小的胸垫</strong>，确保每件衣物呈现完美的穿着比例。除非您有特殊的开模定制需求，否则建议交由我们自动匹配。
                                                 </div>
                                             </div>
                                             
                                             <label class="oem-checkbox-label" style="margin: 0; padding: 0; font-weight: 600;">
-                                                <input type="checkbox" id="pad-custom-shape-check" onchange="togglePadCustomShape(this.checked)"> 我有特殊的定制形状需求 (需重新开模)
+                                                <input type="checkbox" id="pad-custom-shape-check" onchange="togglePadCustomShape(this.checked)"> 我有特殊的定制形状或特定尺寸需求 (需重新开模)
                                             </label>
                                             
                                             <!-- 开模自定义面板 -->
@@ -1634,8 +1636,8 @@
                                                 </div>
                                                 <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px;">
                                                     <div>
-                                                        <label style="display:block; font-size:11px; font-weight:700; color:#94a3b8; margin-bottom:8px;">定制形状尺寸描述 <span style="color:#ef4444;">*</span></label>
-                                                        <textarea id="pad-shape-remark" class="oem-textarea" style="height: 80px; font-size:12px; background: #fff;" placeholder="如：需要定制特殊的一体式连体胸垫，或者是带特殊透气孔的异形杯..." oninput="updatePadSummary()"></textarea>
+                                                        <label style="display:block; font-size:11px; font-weight:700; color:#94a3b8; margin-bottom:8px;">定制形状/特定尺寸描述 <span style="color:#ef4444;">*</span></label>
+                                                        <textarea id="pad-shape-remark" class="oem-textarea" style="height: 80px; font-size:12px; background: #fff;" placeholder="如：需要定制特殊的一体式连体胸垫，或者是指定每个尺码的具体杯长杯宽..." oninput="updatePadSummary()"></textarea>
                                                     </div>
                                                     <div>
                                                         <label style="display:block; font-size:11px; font-weight:700; color:#94a3b8; margin-bottom:8px;">形状参考图上传</label>
@@ -1655,24 +1657,19 @@
                                     <div class="attr-section" style="margin-bottom: 30px;">
                                         <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 厚度与聚拢需求 (Thickness & Effect)</h4>
                                         <div class="option-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-left: 13px;">
-                                            <div class="option-item metal-item pad-thick selected" onclick="selectPadAttr('thickness', '轻薄自然 (2-3mm)', this)">
-                                                <div class="option-img-alt" style="height: 140px; background: url('https://files.yiswim.cloud/uploads/img_77d0f2fe-acfe-4b50-b35d-4634bdf89eda_ring_sliders.webp') center/cover; border-bottom: 1px solid #e2e8f0;"></div>
-                                                <div class="option-info"><h4>轻薄自然</h4><p>约 2-3mm，仅防走光</p></div>
-                                            </div>
-                                            <div class="option-item metal-item pad-thick" onclick="selectPadAttr('thickness', '常规标准 (5-8mm)', this)">
-                                                <div class="option-img-alt" style="height: 140px; background: url('https://files.yiswim.cloud/uploads/img_77d0f2fe-acfe-4b50-b35d-4634bdf89eda_ring_sliders.webp') center/cover; border-bottom: 1px solid #e2e8f0;"></div>
+                                            <!-- 保留：常规标准 -->
+                                            <div class="option-item metal-item pad-thick selected" onclick="selectPadAttr('thickness', '常规标准 (5-8mm)', this)">
+                                                <div class="option-img-alt" style="height: 140px; background: url('https://files.yiswim.cloud/uploads/img_650e7045-e34f-4635-be85-9f7452e8a52d_pad-1.webp') center/cover; border-bottom: 1px solid #e2e8f0;"></div>
                                                 <div class="option-info"><h4>常规标准</h4><p>约 5-8mm，基础微托力</p></div>
                                             </div>
+                                            <!-- 保留：上薄下厚 -->
                                             <div class="option-item metal-item pad-thick" onclick="selectPadAttr('thickness', '上薄下厚/聚拢', this)">
-                                                <div class="option-img-alt" style="height: 140px; background: url('https://files.yiswim.cloud/uploads/img_77d0f2fe-acfe-4b50-b35d-4634bdf89eda_ring_sliders.webp') center/cover; border-bottom: 1px solid #e2e8f0;"></div>
+                                                <div class="option-img-alt" style="height: 140px; background: url('https://files.yiswim.cloud/uploads/img_a553b1d2-64cc-47c8-b5dc-1cf660249a38_pad-2.webp') center/cover; border-bottom: 1px solid #e2e8f0;"></div>
                                                 <div class="option-info"><h4>上薄下厚 (Push-up)</h4><p>底部加厚垫高 1.5cm+</p></div>
-                                            </div>
-                                            <div class="option-item metal-item pad-thick" onclick="selectPadAttr('thickness', '加厚加挺', this)">
-                                                <div class="option-img-alt" style="height: 140px; background: url('https://files.yiswim.cloud/uploads/img_77d0f2fe-acfe-4b50-b35d-4634bdf89eda_ring_sliders.webp') center/cover; border-bottom: 1px solid #e2e8f0;"></div>
-                                                <div class="option-info"><h4>加厚加挺</h4><p>强力定型与支撑</p></div>
                                             </div>
                                         </div>
                                     </div>
+
 
                                     <!-- C. 颜色 -->
                                     <div class="attr-section" style="margin-bottom: 30px;">
@@ -3863,7 +3860,7 @@
             mode: 'auto',
             customShape: false,
             shapeRemark: '',
-            thickness: '轻薄自然 (2-3mm)',
+            thickness: '常规标准 (5-8mm)', // 更改这里的默认值
             color: '海绵裸色 (Nude)',
             otherColor: '',
             remark: '',

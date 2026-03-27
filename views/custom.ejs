@@ -4751,6 +4751,26 @@
             // 1. 获取所有不重复的面料分类 (Category)
             const categories =[...new Set(fabrics.map(f => f.category).filter(Boolean))];
             
+            // --- 新增：强制分类排序逻辑 ---
+            const targetOrder = ['面料', '里料', '网纱']; // 您可以随时在这里增减或调整顺序
+            categories.sort((a, b) => {
+                const indexA = targetOrder.indexOf(a);
+                const indexB = targetOrder.indexOf(b);
+                
+                // 如果两个都在预设里，按预设的数组索引排序 (0, 1, 2...)
+                if (indexA !== -1 && indexB !== -1) return indexA - indexB; 
+                
+                // 如果 a 在预设里，b 不在，那么 a 肯定排在前面
+                if (indexA !== -1) return -1; 
+                
+                // 如果 b 在预设里，a 不在，那么 b 肯定排在前面
+                if (indexB !== -1) return 1;  
+                
+                // 都不在预设里，按默认的中文拼音排序兜底
+                return a.localeCompare(b, 'zh-CN'); 
+            });
+            // ------------------------------
+            
             tabsContainer.innerHTML = '';
             panesContainer.innerHTML = '';
             fabricSelection = {};

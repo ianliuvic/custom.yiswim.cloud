@@ -186,7 +186,6 @@ app.get('/api/get-data', authenticateToken, async (req, res) => {
         `;
 
         // SQL 2: 查询面料与图片
-        // 增加 f.orders ASC NULLS LAST 进行排序
         const fabricsQuery = `
             SELECT 
                 f.id,
@@ -194,6 +193,7 @@ app.get('/api/get-data', authenticateToken, async (req, res) => {
                 f.category,
                 f.description,
                 f.tags,
+                f.swatch_pic_names,  -- 新增：查出色卡图片名称列表
                 f.properties,
                 COALESCE(
                     json_agg('https://files.yiswim.cloud/' || i.unique_image_id) FILTER (WHERE i.unique_image_id IS NOT NULL), 

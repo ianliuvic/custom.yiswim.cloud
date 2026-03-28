@@ -1142,6 +1142,13 @@
                                 <div class="mode-option" id="mode-print" onclick="switchFabricMode('print')">定制印花 (Print)</div>
                             </div>
                             <div id="fabric-solid-area">
+                                <!-- 新增：里料专属颜色成本提示框 (默认隐藏) -->
+                                <div id="lining-color-hint" class="hidden" style="margin-bottom: 15px; padding: 10px 12px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 6px; display: flex; align-items: flex-start; gap: 8px;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5" style="margin-top: 2px; flex-shrink: 0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                    <div style="font-size: 11.5px; color: #475569; line-height: 1.5;">
+                                        <strong>常规工艺提醒：</strong>作为贴身且不外露的内衬，行业默认使用 <strong>黑色、白色或肤色</strong>。若您指定定染特殊颜色（如撞色里布），大货起订量 (MOQ) 将大幅提升，且可能产生额外费用。
+                                    </div>
+                                </div>
                                 <!-- 档案卡式包装色卡图 -->
                                 <div style="margin-bottom: 20px; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background: #f8fafc; cursor: zoom-in; transition: border-color 0.3s;" onclick="openFabricColorModal()" onmouseover="this.style.borderColor='var(--primary-color)'" onmouseout="this.style.borderColor='#e2e8f0'">
                                     <div style="padding: 10px 15px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #fff;">
@@ -5153,6 +5160,12 @@
             // 控制里料简化样式
             if (notesArea) notesArea.style.display = isSimplified ? 'none' : 'block';
             if (modeSwitcher) modeSwitcher.style.display = isSimplified ? 'none' : 'inline-flex';
+
+            // 新增：控制里料专属的颜色提示框
+            const liningHintBox = document.getElementById('lining-color-hint');
+            if (liningHintBox) {
+                liningHintBox.classList.toggle('hidden', !isLining);
+            }
         
             if (isCustomSourcing) {
                 // A. 定制找样模式 UI

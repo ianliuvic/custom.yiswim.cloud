@@ -4847,9 +4847,29 @@
                     const coverImg = (fabric.image_urls && fabric.image_urls.length > 0) ? fabric.image_urls[0] : '';
                     const fabricJson = JSON.stringify(fabric).replace(/"/g, '&quot;');
                     
-                    const compStr = (fabric.composition && fabric.composition.length > 0) ? fabric.composition[0] : '';
-                    const gsmStr = (fabric.gsm && fabric.gsm.length > 0) ? fabric.gsm[0] + 'g' : '';
-                    const subText = [compStr, gsmStr].filter(Boolean).join(' | ') || '精选定制材质';
+                    // --- 核心修复：高兼容性解析成分与克重 ---
+                    let compStr = '';
+                    if (Array.isArray(fabric.composition) && fabric.composition.length > 0) {
+                        compStr = fabric.composition[0];
+                    } else if (typeof fabric.composition === 'string' && fabric.composition.trim() !== '') {
+                        compStr = fabric.composition;
+                    }
+
+                    let gsmStr = '';
+                    if (Array.isArray(fabric.gsm) && fabric.gsm.length > 0) {
+                        gsmStr = fabric.gsm[0];
+                    } else if (typeof fabric.gsm === 'string' && fabric.gsm.trim() !== '') {
+                        gsmStr = fabric.gsm;
+                    }
+                    
+                    // 自动给克重补上单位 'g' (如果数据库没写的话)
+                    if (gsmStr && !gsmStr.toLowerCase().endsWith('g')) {
+                        gsmStr += 'g';
+                    }
+
+                    // 拼接并设置兜底文案
+                    const subText = [compStr, gsmStr].filter(Boolean).join(' | ') || '精选定制面料';
+                    // ----------------------------------------
                     
                     const cardHtml = `
                         <div class="option-item fabric-item" onclick="selectFabric('${fabric.name}', this, '${catId}')">

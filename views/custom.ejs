@@ -994,8 +994,8 @@
                                         <p style="font-size: 11.5px; color: #b45309; margin: 0; line-height: 1.5;">以下是泳装定制中极易遗漏的工艺细节。请确认您已在上方图纸或描述中对以下事项做出了明确指示，并<strong style="color: #ef4444;">逐一打勾确认</strong>才能继续。</p>
                                     </div>
                                 </div>
-                                <!-- 改为动态渲染容器 -->
-                                <div id="oem-checklist-container" style="display: flex; flex-direction: column; gap: 12px;">
+                                <!-- 改为无间距的连续列表 -->
+                                <div id="oem-checklist-container" style="display: flex; flex-direction: column; background: transparent;">
                                     <p style="font-size: 12px; color: #94a3b8; margin: 0;">正在加载必填核对单...</p>
                                 </div>
 
@@ -3958,27 +3958,50 @@
             } catch (error) { console.warn('加载数据API未就绪，使用静态展示框架:', error); }
         });
 
-        // 动态渲染 OEM Checklist
+        // 动态渲染 OEM Checklist (采用紧凑型清单样式)
         function renderOemChecklists(items) {
             const container = document.getElementById('oem-checklist-container');
             const section = document.getElementById('oem-checklist-section');
             if (!container) return;
 
-            // 如果数据库里一条数据都没有，优雅地隐藏整个区块，并且不会影响提交拦截
             if (!items || items.length === 0) {
                 if (section) section.style.display = 'none';
                 container.innerHTML = '';
                 return;
             }
 
-            // 遍历并动态生成之前写好的高级复选框样式
-            container.innerHTML = items.map(item => `
-                <label class="premium-checkbox-box oem-checklist-item" style="display: flex; width: 100%; box-sizing: border-box;">
-                    <input type="checkbox" onchange="this.parentElement.classList.toggle('selected', this.checked)">
-                    <span style="font-size: 13px; font-weight: 600; color: #475569;">${item.content}</span>
+            // 修改点：
+            // 1. 移除了厚重的 premium-checkbox-box 类
+            // 2. 减小了 padding (8px 12px) 
+            // 3. 移除了边框，改用浅色下划线分隔，并加入极其柔和的悬停底色
+            // 4. 给最后一项去掉了下划线
+            container.innerHTML = items.map((item, index) => {
+                const isLast = index === items.length - 1;
+                const borderBottom = isLast ? 'none' : '1px solid #fde68a'; // 使用与外框呼应的暖色细线
+                
+                return `
+                <label class="oem-checklist-item" style="display: flex; align-items: center; width: 100%; box-sizing: border-box; padding: 8px 12px; border-bottom: ${borderBottom}; cursor: pointer; transition: background 0.2s; border-radius: 6px;">
+                    <input type="checkbox" style="width: 16px; height: 16px; accent-color: var(--primary-color); margin: 0 12px 0 0; cursor: pointer; flex-shrink: 0;" onchange="this.parentElement.style.background = this.checked ? '#fff' : 'transparent'">
+                    <span style="font-size: 13px; font-weight: 500; color: #475569; line-height: 1.4;">${item.content}</span>
                 </label>
-            `).join('');
+                `;
+            }).join('');
+            
+            // 为所有的 label 增加鼠标悬停效果 (由于直接写 inline style hover 比较麻烦，通过 JS 绑定)
+            container.querySelectorAll('.oem-checklist-item').forEach(label => {
+                label.addEventListener('mouseenter', function() {
+                    if (!this.querySelector('input').checked) {
+                        this.style.background = 'rgba(255, 255, 255, 0.5)'; // 极轻微的悬停反馈
+                    }
+                });
+                label.addEventListener('mouseleave', function() {
+                    if (!this.querySelector('input').checked) {
+                        this.style.background = 'transparent';
+                    }
+                });
+            });
         }
+
 
         // 绑定底部按钮事件
         document.getElementById('prevBtn').addEventListener('click', () => changeStep(-1));

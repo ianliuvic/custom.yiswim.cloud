@@ -4847,27 +4847,30 @@
                     const coverImg = (fabric.image_urls && fabric.image_urls.length > 0) ? fabric.image_urls[0] : '';
                     const fabricJson = JSON.stringify(fabric).replace(/"/g, '&quot;');
                     
-                    // --- 核心修复：高兼容性解析成分与克重 ---
+                    // 1. 同时兼容中英文命名习惯，且因为是数组格式，提取第一个元素即可
+                    let rawComp = fabric.composition || fabric['成分'];
+                    let rawGsm = fabric.gsm || fabric.weight || fabric['克重'];
+
                     let compStr = '';
-                    if (Array.isArray(fabric.composition) && fabric.composition.length > 0) {
-                        compStr = fabric.composition[0];
-                    } else if (typeof fabric.composition === 'string' && fabric.composition.trim() !== '') {
-                        compStr = fabric.composition;
+                    if (Array.isArray(rawComp) && rawComp.length > 0) {
+                        compStr = String(rawComp[0]).trim();
+                    } else if (rawComp !== undefined && rawComp !== null) {
+                        compStr = String(rawComp).trim(); // 兼容万一存成了单行文本
                     }
 
                     let gsmStr = '';
-                    if (Array.isArray(fabric.gsm) && fabric.gsm.length > 0) {
-                        gsmStr = fabric.gsm[0];
-                    } else if (typeof fabric.gsm === 'string' && fabric.gsm.trim() !== '') {
-                        gsmStr = fabric.gsm;
+                    if (Array.isArray(rawGsm) && rawGsm.length > 0) {
+                        gsmStr = String(rawGsm[0]).trim();
+                    } else if (rawGsm !== undefined && rawGsm !== null) {
+                        gsmStr = String(rawGsm).trim();
                     }
                     
-                    // 自动给克重补上单位 'g' (如果数据库没写的话)
-                    if (gsmStr && !gsmStr.toLowerCase().endsWith('g')) {
+                    // 2. 自动补全克重单位 'g' (兼容输入了 220 或 220g)
+                    if (gsmStr && !gsmStr.toLowerCase().endsWith('g') && !gsmStr.toLowerCase().endsWith('gsm')) {
                         gsmStr += 'g';
                     }
 
-                    // 拼接并设置兜底文案
+                    // 3. 拼接并设置优雅的兜底文案
                     const subText = [compStr, gsmStr].filter(Boolean).join(' | ') || '精选定制面料';
                     // ----------------------------------------
                     

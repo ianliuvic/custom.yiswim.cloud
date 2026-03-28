@@ -4463,38 +4463,30 @@
             `);
         }
 
-        // --- 新增函数 ---
+        // 处理 OEM 及各种用户上传小图的点击放大
         function openOemPreview(clickedSrc, fileName) {
-            // 1. 通过唯一的 src 地址，反向找到页面中被点击的那个 <img> 元素
             const clickedImg = document.querySelector(`img[src="${clickedSrc}"]`);
-            
             let allImgs = [];
+            
             if (clickedImg) {
-                // 2. 向上查找到最近的“预览网格容器” (这就实现了作用域隔离)
-                // 使用可选链容错，防止找不到特定的 class
+                // 仅抓取当前局部网格内的所有图片，防止把别的区域的图也卷进轮播里
                 const grid = clickedImg.closest('.oem-image-preview-grid') || clickedImg.parentElement.parentElement;
-                
-                // 3. 仅在这个局部网格内部，抓取所有图片
                 allImgs = grid.querySelectorAll('img');
             } else {
-                // 兜底防错机制：如果找不到对应元素，退回全局抓取
                 allImgs = document.querySelectorAll('.oem-preview-item img');
             }
             
-            // 4. 提取图片链接并确定起始索引
-            const imageUrls = Array.from(allImgs).map(img => img.src);
+            let imageUrls = Array.from(allImgs).map(img => img.src);
+            // 兜底：如果找不到集合，至少把当前点击的图放进去
+            if (imageUrls.length === 0) imageUrls = [clickedSrc];
+            
             const startIndex = imageUrls.indexOf(clickedSrc);
             
-            // 5. 调用纯净版大图预览
-            openDetailModal({
-                name: fileName || '附件预览',
-                image_urls: imageUrls
-            }, true);
+            currentSwatchImages = imageUrls;
+            currentSwatchIndex = startIndex !== -1 ? startIndex : 0;
             
-            if (startIndex !== -1) {
-                currentImageIndex = startIndex;
-                renderModalCarousel(); 
-            }
+            updateSwatchCarouselUI();
+            document.getElementById('swatchFullModal').classList.add('active');
         }
 
 
@@ -4551,25 +4543,22 @@
         // 4. 多图轮播弹窗
         // ==========================================
         let currentModalImages = [], currentImageIndex = 0;
-        function openDetailModal(itemData, isPureMode = false) {
-            document.getElementById('modalTitle').innerText = itemData.name || '产品详情';
-            currentModalImages = itemData.image_urls || [];
-            if(typeof itemData.image_urls === 'string') currentModalImages = [itemData.image_urls];
+        // 处理款式、面料、包装袋卡片的右上角点击
+        function openDetailModal(itemData) {
+            let urls = itemData.image_urls || [];
+            if (typeof urls === 'string') urls = [urls];
             
-            currentImageIndex = 0; 
-            renderModalCarousel();
-            
-            document.getElementById('modalDesc').innerHTML = `<div style="background:#f9f9f9; padding:12px; border-radius:4px; margin-top:15px;"><strong style="color:var(--text-main);">详情简介：</strong><br><span style="color:#666;">${itemData.description || '暂无详细说明。'}</span></div>`;
-            
-            // --- 新增：动态控制右侧内容显隐 ---
-            const infoSide = document.querySelector('#detailModal .modal-info-side');
-            if (isPureMode) {
-                infoSide.style.display = 'none'; // 隐藏右侧，左侧图片将自动撑满 100% 宽度
-            } else {
-                infoSide.style.display = 'flex'; // 恢复默认布局
+            if (urls.length === 0) {
+                alert('抱歉，该项目暂无高清预览图。');
+                return;
             }
+
+            // 直接把数据交给高级沉浸式图库去渲染
+            currentSwatchImages = urls;
+            currentSwatchIndex = 0;
             
-            document.getElementById('detailModal').classList.add('active');
+            updateSwatchCarouselUI();
+            document.getElementById('swatchFullModal').classList.add('active');
         }
 
         function renderModalCarousel() {

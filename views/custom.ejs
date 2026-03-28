@@ -4696,6 +4696,18 @@
         // ==========================================
         window.globalFabricsMap = {}; // 用于全局根据名称快速查找面料详情
 
+        // 辅助函数：根据面料名称解析并拼接色卡完整的 URL 数组
+        function getFabricSwatches(fabricName) {
+            const fabric = window.globalFabricsMap[fabricName];
+            if (!fabric || !fabric.swatch_pic_names) return [];
+            
+            // 按逗号分割，去除前后空格，过滤掉空值，然后拼接完整的 URL
+            return fabric.swatch_pic_names.split(',')
+                .map(name => name.trim())
+                .filter(name => name.length > 0)
+                .map(name => `https://files.yiswim.cloud/uploads/${name}`);
+        }
+
         // 新增：动态渲染颜色面板的函数
         function renderColorPalette(fabricName, selectedColors) {
             const container = document.getElementById('color-palette-container');
@@ -5179,6 +5191,20 @@
                     });
                     document.getElementById('fabric-print-ref-color').value = config.printRefColor || '';
                 }
+
+                // --- 新增核心逻辑：动态更新纯色模式下的色卡预览小图 ---
+                const swatches = getFabricSwatches(name);
+                const previewDiv = document.getElementById('fabric-swatch-img-preview');
+                if (previewDiv) {
+                    if (swatches.length > 0) {
+                        previewDiv.style.backgroundImage = `url('${swatches[0]}')`; // 默认展示第一张作为封面
+                        previewDiv.innerHTML = ''; // 清空占位文字
+                    } else {
+                        previewDiv.style.backgroundImage = 'none';
+                        previewDiv.innerHTML = '<span style="color:#94a3b8; font-size:12px; font-weight:600;">[ 暂无高清色卡档案 ]</span>';
+                    }
+                }
+                // ----------------------------------------------------
             }
         
             // --- 新增核心逻辑：里料专属的“全衬/局部”区域控制 ---
@@ -5307,12 +5333,20 @@
         let currentSwatchIndex = 0;
         
         function openFabricColorModal() {
-            // 强制使用固定的高清物理色卡图片数组进行演示
-            currentSwatchImages = [
-                'https://files.yiswim.cloud/uploads/swatch-1.jpg',
-                'https://files.yiswim.cloud/uploads/swatch-1.jpg' // 这里用两张相同的图演示多图轮播
-            ];
+            // 安全性检查：确保当前有选中的面料
+            if(!activeFabricCat || !fabricSelection[activeFabricCat] || !fabricSelection[activeFabricCat].activeName) return;
             
+            const fabricName = fabricSelection[activeFabricCat].activeName;
+            const swatches = getFabricSwatches(fabricName);
+            
+            // 如果该面料没有配置色卡，直接拦截并提示
+            if (swatches.length === 0) {
+                alert('该面料暂未配置高清物理色卡照片，请直接填写您需要的色号或颜色描述。');
+                return;
+            }
+
+            // 动态注入当前面料的色卡数组
+            currentSwatchImages = swatches;
             currentSwatchIndex = 0;
             
             // 渲染 UI 并绑定第一张图

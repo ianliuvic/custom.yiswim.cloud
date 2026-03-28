@@ -225,31 +225,35 @@ app.get('/api/get-data', authenticateToken, async (req, res) => {
             ORDER BY b.orders ASC NULLS LAST, b.name ASC;
         `;
 
-        // 使用 Promise.all 并发执行 3 条 SQL 查询
-        const [stylesResult, fabricsResult, bagsResult] = await Promise.all([
+        // SQL 4: 查询 OEM 必填 Checklist
+        // 按照 orders 升序排列
+        const checklistQuery = `
+            SELECT 
+                id, 
+                content 
+            FROM custom_oem_checklist 
+            WHERE is_active = true 
+            ORDER BY orders ASC NULLS LAST;
+        `;
+
+        // 使用 Promise.all 并发执行 4 条 SQL 查询
+        const [stylesResult, fabricsResult, bagsResult, checklistResult] = await Promise.all([
             db.query(stylesQuery),
             db.query(fabricsQuery),
-            db.query(bagsQuery)
+            db.query(bagsQuery),
+            db.query(checklistQuery)
         ]);
 
         // 面料数据平铺处理 (解构 properties JSONB)
         const formattedFabrics = fabricsResult.rows.map(fabric => {
             const props = fabric.properties || {};
-            return {
-                ...fabric,
-                ...props,
-                properties: undefined
-            };
+            return { ...fabric, ...props, properties: undefined };
         });
 
-        // 包装袋数据平铺处理 (解构 properties JSONB，释放 sizes 等字段)
+        // 包装袋数据平铺处理
         const formattedBags = bagsResult.rows.map(bag => {
             const props = bag.properties || {};
-            return {
-                ...bag,
-                ...props,
-                properties: undefined
-            };
+            return { ...bag, ...props, properties: undefined };
         });
 
         // 组装并返回给前端
@@ -258,7 +262,8 @@ app.get('/api/get-data', authenticateToken, async (req, res) => {
             data: {
                 odm_styles: stylesResult.rows,
                 fabrics: formattedFabrics,
-                bags: formattedBags
+                bags: formattedBags,
+                oem_checklists: checklistResult.rows // 新增：将动态检查项发送给前端
             }
         });
 

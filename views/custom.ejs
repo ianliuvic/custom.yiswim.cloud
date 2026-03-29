@@ -3495,39 +3495,25 @@
                             </div>
                         </div>
                     
-                        <!-- 2. 团队服务指派 (老客户忠诚度模块 - 改为下拉框) -->
+                        <!-- 2. 团队服务指派 (老客户忠诚度模块 - 改为文本输入框) -->
                         <div class="attr-section" style="margin-bottom: 35px;">
                             <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 团队服务指派 (Dedicated Team Assignment)</h4>
                             <div style="margin-left: 13px; background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px; padding: 25px;">
                                 <p style="font-size: 12px; color: #64748b; margin-top: 0; margin-bottom: 20px; line-height: 1.5;">
-                                    <strong style="color:var(--primary-color);">如果您是红绣的老朋友：</strong> 我们建议您指定熟悉的团队继续服务，以确保产品风格的一致性。新客户请保持默认，我们将为您智能匹配最合适的专业人员。
+                                    <strong style="color:var(--primary-color);">如果您是红绣的老朋友：</strong> 您可以输入曾为您提供过优质服务的业务经理、打版师或样衣组的姓名/编号。新客户请留空，系统将为您智能匹配最合适的专业团队。
                                 </p>
                                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
                                     <div>
                                         <label style="display:block; font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; margin-bottom:8px;">期望指定的业务经理</label>
-                                        <select id="assign-sales" class="oem-input-mini" style="width:100%; height:38px; background:#fff; box-sizing: border-box;">
-                                            <option value="">[ 由系统智能分配 ]</option>
-                                            <option value="Sarah Chen">Sarah Chen (北美大客组)</option>
-                                            <option value="David Li">David Li (欧洲专线组)</option>
-                                            <option value="Jessica Wu">Jessica Wu (澳洲及新锐品牌组)</option>
-                                        </select>
+                                        <input type="text" id="assign-sales" class="oem-input-mini" style="width:100%; height:38px; background:#fff; box-sizing: border-box;" placeholder="如: Sarah Chen (选填)">
                                     </div>
                                     <div>
                                         <label style="display:block; font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; margin-bottom:8px;">期望指定的打版师</label>
-                                        <select id="assign-pattern" class="oem-input-mini" style="width:100%; height:38px; background:#fff; box-sizing: border-box;">
-                                            <option value="">[ 由红绣技术总监指派 ]</option>
-                                            <option value="Master Wang">王师傅 (Master Wang) - 擅长连体/塑形</option>
-                                            <option value="Master Zhang">张师傅 (Master Zhang) - 擅长比基尼/高叉</option>
-                                            <option value="Master Lin">林师傅 (Master Lin) - 擅长运动/大码</option>
-                                        </select>
+                                        <input type="text" id="assign-pattern" class="oem-input-mini" style="width:100%; height:38px; background:#fff; box-sizing: border-box;" placeholder="如: 王师傅 (选填)">
                                     </div>
                                     <div>
-                                        <label style="display:block; font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; margin-bottom:8px;">期望指定的样衣师</label>
-                                        <select id="assign-sewing" class="oem-input-mini" style="width:100%; height:38px; background:#fff; box-sizing: border-box;">
-                                            <option value="">[ 由车间主管指派 ]</option>
-                                            <option value="Group A">A 组 - 无缝包边专线</option>
-                                            <option value="Group B">B 组 - 复杂褶皱/手工专线</option>
-                                        </select>
+                                        <label style="display:block; font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; margin-bottom:8px;">期望指定的样衣组</label>
+                                        <input type="text" id="assign-sewing" class="oem-input-mini" style="width:100%; height:38px; background:#fff; box-sizing: border-box;" placeholder="如: A组 (选填)">
                                     </div>
                                 </div>
                             </div>

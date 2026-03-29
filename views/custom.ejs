@@ -5404,6 +5404,15 @@
             updateFabricSummary();
         }
 
+        // 修复：新增缺失的印花尺寸比例更新函数
+        function updatePrintScale() {
+            if(!activeFabricCat || !fabricSelection[activeFabricCat] || !fabricSelection[activeFabricCat].activeName) return;
+            const config = fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName];
+            
+            config.printScale = document.getElementById('fabric-print-scale').value.trim();
+            updateFabricSummary(); // 触发右侧侧边栏更新
+        }
+
         function switchFabricMode(mode) {
             if(!activeFabricCat || !fabricSelection[activeFabricCat] || !fabricSelection[activeFabricCat].activeName) return;
             const config = fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName];
@@ -7677,11 +7686,16 @@
             const targetArr = (type === 'logo') ? metalConfig.details[cat].logoFiles : metalConfig.details[cat].styleFiles;
         
             files.forEach(file => {
+                // 加个文件大小限制防呆
+                if (file.size > 20 * 1024 * 1024) { alert(`文件 ${file.name} 超过 20MB`); return; }
                 if (!targetArr.some(f => f.name === file.name)) targetArr.push(file);
             });
             
             renderMetalItemPreviews(cat, type);
             updateMetalSummary();
+            
+            // 核心修复：必须清空 input 的值，否则切换面板后无法触发 onchange 事件
+            input.value = '';
         }
 
         // 1. 彻底删除分类的逻辑

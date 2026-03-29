@@ -3135,10 +3135,7 @@
                                                 </label>
                                                 <div style="display: flex; align-items: center; gap: 8px;">
                                                     <span style="font-size: 15px; color: #94a3b8; font-weight: 600;">$</span>
-                                                    <input type="text" id="sample-intent-price" class="oem-input-mini" style="flex:1; height: 38px; font-size: 14px;" 
-                                                       placeholder="如: 12.50 - 15.00" 
-                                                       onkeyup="this.value = this.value.replace(/[^\d.-]/g, '')" 
-                                                       oninput="updateLogisticsSummary()">
+                                                    <input type="text" id="sample-intent-price" class="oem-input-mini" style="flex:1; height: 38px; font-size: 14px;" placeholder="如: 12.50 - 15.00" oninput="updateLogisticsSummary()">
                                                 </div>
                                             </div>
                                         </div>
@@ -3278,10 +3275,7 @@
                                                     <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:10px;">期望 EXW 大货单价范围 (Target Price)</label>
                                                     <div style="display: flex; align-items: center; gap: 10px;">
                                                         <span style="font-size: 16px; color: #94a3b8; font-weight: 600;">$</span>
-                                                        <input type="text" id="bulk-target-price" class="oem-input-mini" style="height: 38px; flex: 1;" 
-                                                           placeholder="如: 10.50 - 13.00" 
-                                                           onkeyup="this.value = this.value.replace(/[^\d.-]/g, '')" 
-                                                           oninput="updateLogisticsSummary()">
+                                                        <input type="text" id="bulk-target-price" class="oem-input-mini" style="height: 38px; flex: 1;" placeholder="如: 10.50 - 13.00" oninput="updateLogisticsSummary()">
                                                         <span style="font-size: 12px; color: #94a3b8; font-weight: 500;">/ 件</span>
                                                     </div>
                                                 </div>
@@ -7869,12 +7863,13 @@
             }
             renderBagSizes(rawSizes);
             
-            // --- 优化：使用纯数据流驱动默认选中，抛弃 setTimeout DOM Click ---
-            // 渲染完毕后直接调用状态更新函数
-            const recommendCard = container.querySelector('.bag-size-card:first-child');
-            if (recommendCard) {
-                selectBagAttr('size', '红绣推荐', recommendCard);
-            }
+            // 默认选中“红绣推荐”
+            
+            // 默认选中“红绣推荐”
+            setTimeout(() => {
+                const recommendCard = document.querySelector('.bag-size-card[onclick*="红绣推荐"]');
+                if (recommendCard) recommendCard.click();
+            }, 100);
         
             // 5. 调整面板小箭头位置
             setTimeout(() => {

@@ -7855,7 +7855,15 @@
         
             // 4. 显示面板并渲染尺寸
             panel.classList.remove('hidden');
-            renderBagSizes(bag.sizes);
+            
+            // 核心修复：兼容取值单复数，并兼容纯字符串和数组
+            let rawSizes = bag.size || bag.sizes || bag['尺寸'] || [];
+            if (typeof rawSizes === 'string') {
+                rawSizes = rawSizes.split(',').map(s => s.trim());
+            }
+            renderBagSizes(rawSizes);
+            
+            // 默认选中“红绣推荐”
             
             // 默认选中“红绣推荐”
             setTimeout(() => {

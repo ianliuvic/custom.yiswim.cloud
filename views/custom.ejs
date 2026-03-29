@@ -7264,23 +7264,30 @@
                 // 3. 工艺多选处理
                 const craftDisplay = hangtagConfig.crafts.join(', ');
         
-                // 4. 颜色与吊粒
+                // 4. 颜色处理
                 let colorDisplay = hangtagConfig.stringColor;
                 if (colorDisplay === '其他') {
-                    const val = document.getElementById('hangtag-string-color-other').value.trim();
+                    const val = document.getElementById('hangtag-string-color-other')?.value.trim();
                     colorDisplay = val ? val : '其他色';
                 }
+
+                // 5. 吊粒类型精简提取 (修复点：将类型真正显示出来)
+                let stringTypeDisplay = hangtagConfig.stringType;
+                if (stringTypeDisplay.includes('方块')) stringTypeDisplay = '方块';
+                else if (stringTypeDisplay.includes('子弹头')) stringTypeDisplay = '子弹头';
+                else if (stringTypeDisplay.includes('定制')) stringTypeDisplay = '定制';
         
                 st.innerHTML = `
                     <div style="text-align:right;">
                         ${matDisplay}${setText} | ${hangtagConfig.shape.split(' ')[0]}${hangtagConfig.roundedCorner ? ' [圆角]' : ''}<br>
                         <span style="font-size:10px; opacity:0.8;">工艺: ${craftDisplay}</span><br>
-                        <span style="font-size:10px; opacity:0.8;">吊粒: ${colorDisplay}${hangtagConfig.stringType.includes('定制') ? '(定制)' : ''}</span>
+                        <span style="font-size:10px; opacity:0.8;">吊粒: ${colorDisplay} | ${stringTypeDisplay}</span>
                     </div>`;
             }
             st.style.color = 'var(--primary-color)';
             st.style.fontWeight = 'bold';
         }
+
 
         // ==========================================
         // 罩杯/胸垫逻辑 (Pads)

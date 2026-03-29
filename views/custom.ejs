@@ -7035,37 +7035,48 @@
         }
 
         // ==========================================
-        // 吊牌 C 区域工艺多选逻辑 (互斥增强与面板移动版)
+        // 吊牌 C 区域工艺多选逻辑 (完美互斥与兜底版)
         // ==========================================
         function toggleHangtagCraft(val, el) {
             const grid = el.closest('.option-grid');
             if (!grid) return;
-            const allCards = grid.querySelectorAll('.option-item');
-            const noneCard = grid.querySelector('[data-is-none="true"]');
+            
+            // 获取网格内所有的选项卡片
+            const allCards = Array.from(grid.querySelectorAll('.option-item'));
+            
+            // 智能查找代表“无附加工艺”的卡片DOM (通过文本匹配)
+            const noneCard = allCards.find(card => card.innerText.includes('无附加工艺'));
         
             if (!hangtagConfig.crafts) hangtagConfig.crafts = ['无附加工艺'];
             let arr = hangtagConfig.crafts;
         
             if (val === '无附加工艺') {
-                arr = ['无附加工艺'];
-                allCards.forEach(card => card.classList.remove('selected'));
-                el.classList.add('selected');
+                // 1. 如果点击了“无附加”，进入排他逻辑
+                arr = ['无附加工艺']; // 数据重置
+                allCards.forEach(card => card.classList.remove('selected')); // UI 全部熄灭
+                el.classList.add('selected'); // 仅点亮自己
             } else {
+                // 2. 如果点击了其他工艺，进入多选逻辑
+                
+                // 首先，检查数据中是否还有“无附加”，有则剔除
                 const noneIdx = arr.indexOf('无附加工艺');
                 if (noneIdx > -1) {
                     arr.splice(noneIdx, 1);
                 }
+                // 强制熄灭UI上的“无附加”卡片
                 if (noneCard) noneCard.classList.remove('selected');
         
+                // 处理当前点击项的选中/取消
                 const currentIdx = arr.indexOf(val);
                 if (currentIdx > -1) {
-                    arr.splice(currentIdx, 1);
+                    arr.splice(currentIdx, 1); // 已选中则移除
                     el.classList.remove('selected');
                 } else {
-                    arr.push(val);
+                    arr.push(val); // 未选中则添加
                     el.classList.add('selected');
                 }
         
+                // 3. 兜底逻辑：如果用户取消了所有工艺，默认退回“无附加工艺”状态
                 if (arr.length === 0) {
                     arr = ['无附加工艺'];
                     if (noneCard) noneCard.classList.add('selected');
@@ -7076,15 +7087,16 @@
             
             // 联动控制“其他”面板的显隐与移动
             const needsOtherArea = arr.includes('其他');
-            const otherEl = Array.from(allCards).find(c => c.innerText.includes('其他'));
+            const otherEl = allCards.find(c => c.innerText.includes('其他'));
             
-            // 如果选了其他，就把面板移到“其他”卡片所在行的下方；否则隐藏
+            // 如果选中了“其他”，就把配置面板挂载到“其他”卡片所在行的下方
             if (otherEl) {
                 repositionHangtagPanel(otherEl, 'hangtag-craft-grid', 'hangtag-craft-other-area', needsOtherArea);
             }
         
-            updateHangtagSummary();
+            updateHangtagSummary(); // 更新侧边栏
         }
+
 
         // 控制子母牌区域显隐
         function toggleHangtagSet(checked) {

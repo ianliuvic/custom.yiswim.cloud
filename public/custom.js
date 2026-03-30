@@ -222,7 +222,7 @@
                     checklists.forEach(cb => { if (!cb.checked) allChecked = false; });
                     
                     if (!allChecked) {
-                        alert("⚠️ 提交前置校验失败：\n\n您提交了自主设计 (OEM) 需求，为避免后期版型开发与大货生产出现工艺偏差，请务必逐一勾选确认「核心工艺与细节确认单」中的所有必填核对项。");
+                        alert(_t("⚠️ 提交前置校验失败：\n\n您提交了自主设计 (OEM) 需求，为避免后期版型开发与大货生产出现工艺偏差，请务必逐一勾选确认「核心工艺与细节确认单」中的所有必填核对项。"));
                         
                         // 自动滚动到该区域，并做一次警示闪烁动画
                         const checklistArea = document.getElementById('oem-checklist-section');
@@ -777,7 +777,7 @@
             if (typeof urls === 'string') urls = [urls];
             
             if (urls.length === 0) {
-                alert('抱歉，该项目暂无高清预览图。');
+                alert(_t('抱歉，该项目暂无高清预览图。'));
                 return;
             }
 
@@ -827,12 +827,12 @@
 
             if (currentStep === totalSteps) { 
                 // 优化：不再使用绿色的丑按钮
-                nextBtn.innerText = '确认并提交定制需求'; 
+                nextBtn.innerText = _t('确认并提交定制需求'); 
                 // 我们可以加一个标识类名，或者干脆保持品牌红
                 nextBtn.classList.add('is-final');
                 // nextBtn.style.backgroundColor = ''; // 删掉原来的 green 赋值
             } else { 
-                nextBtn.innerText = '继续下一步'; 
+                nextBtn.innerText = _t('继续下一步'); 
                 nextBtn.classList.remove('is-final');
             }
             
@@ -856,14 +856,14 @@
         
             // 2. 基础合法性校验
             if (!contactName || !contactInfo || !brandName) {
-                alert("请完整填写商业身份档案中的必填项 (*)，以便我们能联系到您。");
+                alert(_t("请完整填写商业身份档案中的必填项 (*)，以便我们能联系到您。"));
                 // 如果不在第五步，自动切过去
                 if (currentStep !== 5) changeStep(5 - currentStep);
                 return;
             }
         
             if (!ndaChecked) {
-                alert("提交前请阅读并勾选同意商业保密协议 (NDA)。");
+                alert(_t("提交前请阅读并勾选同意商业保密协议 (NDA)。"));
                 return;
             }
         
@@ -904,7 +904,7 @@
         
             // 模拟后端响应
             setTimeout(() => {
-                alert("✅ 提交成功！\n\n您的需求编号为: HX20240508001\n专属业务经理将在 24 小时内为您提供正式报价。");
+                alert(_t("✅ 提交成功！\n\n您的需求编号为: HX20240508001\n专属业务经理将在 24 小时内为您提供正式报价。"));
                 // window.location.reload(); // 或者跳转到成功页
             }, 1500);
         }
@@ -1618,7 +1618,7 @@
             
             // 如果该面料没有配置色卡，直接拦截并提示
             if (swatches.length === 0) {
-                alert('该面料暂未配置高清物理色卡照片，请直接填写您需要的色号或颜色描述。');
+                alert(_t('该面料暂未配置高清物理色卡照片，请直接填写您需要的色号或颜色描述。'));
                 return;
             }
 
@@ -3818,7 +3818,7 @@
         
         // 新增：一键清空所有金属明细的函数
         function clearMetalCustomDetails() {
-            if (!confirm('确定要清空下方已选择的所有金属明细吗？')) return;
+            if (!confirm(_t('确定要清空下方已选择的所有金属明细吗？'))) return;
             
             // 1. 清空数据
             metalConfig.categories = [];
@@ -4987,7 +4987,7 @@
         }
 
         function clearAllSelections() {
-            if (!confirm('确定要清空所有已选配置并重头开始吗？')) return;
+            if (!confirm(_t('确定要清空所有已选配置并重头开始吗？'))) return;
 
             // 安全获取元素的辅助函数
             const _el = (id) => document.getElementById(id);
@@ -5135,7 +5135,7 @@
             if (fabricSelection[activeFabricCat].activeName === '') return; // 修正：判断 activeName
             
             const catName = fabricSelection[activeFabricCat].originalCatName;
-            if (!confirm(`确定要清空 [${catName}] 的选择吗？`)) return; // 建议加上防误触提示
+            if (!confirm(_t(`确定要清空 [${catName}] 的选择吗？`))) return; // 建议加上防误触提示
 
             // 1. 重置当前分类的数据 (colors和remark已经在清空configs时连带清空了)
             fabricSelection[activeFabricCat].activeName = '';

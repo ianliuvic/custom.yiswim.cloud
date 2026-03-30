@@ -597,6 +597,7 @@
         "若该款式为多件套且您仅需其中单件（如仅要上衣或仅要底裤），请务必在下方明确说明。": "If this is a multi-piece set and you only need one piece (top or bottom), specify below.",
         "定制需求描述": "Customization Description",
         "请详细描述您的轻定制需求。": "Describe your light customization needs in detail.",
+        "例如：肩带加宽至2cm、使用zigzag边缘工艺等...": "For example: the shoulder straps are widened to 2 cm, and zigzag edge finishing is applied, etc.",
         "参考附件": "Reference Attachments",
         "上传参考图或工艺单": "Upload reference images or tech packs",
         "取消": "Cancel",

@@ -393,4 +393,104 @@ router.post('/submit-inquiry', authenticateToken, upload.any(), async (req, res)
     }
 });
 
+// 7. 获取当前用户的询盘列表
+router.get('/my-inquiries', authenticateToken, async (req, res) => {
+    try {
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const limit = 10;
+        const offset = (page - 1) * limit;
+
+        const countResult = await db.query(
+            'SELECT COUNT(*) FROM custom_inquiries WHERE user_id = $1',
+            [req.user.id]
+        );
+        const total = parseInt(countResult.rows[0].count);
+
+        const listResult = await db.query(`
+            SELECT id, inquiry_no, status, delivery_mode,
+                   odm_styles, oem_project, oem_style_count,
+                   contact_name, brand_name,
+                   created_at, modified_at
+            FROM custom_inquiries 
+            WHERE user_id = $1 
+            ORDER BY created_at DESC
+            LIMIT $2 OFFSET $3`,
+            [req.user.id, limit, offset]
+        );
+
+        res.json({
+            success: true,
+            data: listResult.rows,
+            pagination: { page, limit, total, totalPages: Math.ceil(total / limit) }
+        });
+    } catch (error) {
+        console.error('获取询盘列表失败:', error);
+        res.status(500).json({ success: false, message: '服务器错误' });
+    }
+});
+
+// 8. 获取单条询盘详情
+router.get('/inquiry/:id', authenticateToken, async (req, res) => {
+    try {
+        const inquiryResult = await db.query(
+            'SELECT * FROM custom_inquiries WHERE id = $1 AND user_id = $2',
+            [req.params.id, req.user.id]
+        );
+        if (inquiryResult.rows.length === 0) {
+            return res.status(404).json({ success: false, message: '询盘不存在' });
+        }
+
+        const filesResult = await db.query(
+            'SELECT id, category, sub_key, orig_name, stored_name, mime_type, size_bytes, created_at FROM custom_inquiry_files WHERE inquiry_id = $1 ORDER BY category, sub_key',
+            [req.params.id]
+        );
+
+        res.json({
+            success: true,
+            data: { ...inquiryResult.rows[0], files: filesResult.rows }
+        });
+    } catch (error) {
+        console.error('获取询盘详情失败:', error);
+        res.status(500).json({ success: false, message: '服务器错误' });
+    }
+});
+
+// 9. 修改密码
+router.post('/change-password', authenticateToken, async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ success: false, message: '请填写完整' });
+        }
+        if (newPassword.length < 8) {
+            return res.status(400).json({ success: false, message: '新密码至少8位' });
+        }
+
+        const userResult = await db.query(
+            'SELECT password_hash FROM custom_users WHERE id = $1',
+            [req.user.id]
+        );
+        if (userResult.rows.length === 0) {
+            return res.status(404).json({ success: false, message: '用户不存在' });
+        }
+
+        const valid = await bcrypt.compare(currentPassword, userResult.rows[0].password_hash);
+        if (!valid) {
+            return res.status(401).json({ success: false, message: '当前密码错误' });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(newPassword, salt);
+        await db.query(
+            'UPDATE custom_users SET password_hash = $1 WHERE id = $2',
+            [hash, req.user.id]
+        );
+
+        res.json({ success: true, message: '密码修改成功' });
+    } catch (error) {
+        console.error('修改密码失败:', error);
+        res.status(500).json({ success: false, message: '服务器错误' });
+    }
+});
+
 module.exports = router;

@@ -41,6 +41,8 @@
         "拖拽或点击上传图片": "Drag or click to upload images",
         "工艺单/设计稿": "Tech Pack / Design Draft",
         "支持图片、PDF、AI、EPS 等格式": "Supports images, PDF, AI, EPS formats",
+        "支持图片、PDF、AI (Max 20MB)": "Images, PDF, AI supported (Max 20MB)",
+        "支持 AI / PDF / 图片格式 (Max 20MB)": "AI / PDF / Image formats supported (Max 20MB)",
         "拖拽或点击上传工艺文件": "Drag or click to upload tech files",
         "补充说明": "Additional Notes",
         "请详细描述您的修改要求或特定工艺要求...": "Please describe your modification requirements or specific craft requirements in detail...",
@@ -416,6 +418,17 @@
         "是的，请基于我的大货意向核算单价": "Yes, please calculate unit price based on my bulk intent",
         "预估大货数量": "Estimated Bulk Quantity",
         "件 / 套": "pcs / sets",
+        "例如: 500": "e.g., 500",
+        "如: 10.50 - 13.00": "e.g., 10.50 - 13.00",
+        "例: 循环单元 20cm 或 Logo 宽 10cm": "e.g., Repeat unit 20cm or Logo width 10cm",
+        "例如: 长(L) x 宽(W) cm": "e.g., Length(L) x Width(W) cm",
+        "如：需要特定形状以适配特殊的镂空底裤设计，或者Logo轮廓异形...": "e.g., Need a specific shape to match a special cutout bottom design, or irregular Logo contour...",
+        "例如：连体衣无需贴，仅分体下裤贴；或者要求贴纸偏后以遮盖后缝线...": "e.g., One-piece garments don't need stickers, only separate bottoms; or request sticker placed rearward to cover back seam...",
+        "请填入需要印刷的文字（如：HYGIENE LINER - PLEASE DO NOT REMOVE），或特殊的排版要求...": "Enter text to be printed (e.g., HYGIENE LINER - PLEASE DO NOT REMOVE), or special layout requirements...",
+        "请描述您需要的特殊标签材质...": "Describe your special label material requirements...",
+        "请详细输入辅料名称、材质、尺寸、颜色，以及预期用在衣物的哪个部位。\n例如：需要 15cm 长的黑色 YKK 隐形拉链，用于后背开襟...": "Enter trim name, material, size, color, and expected garment placement.\ne.g., Need a 15cm black YKK invisible zipper for back opening...",
+        "例如：自供 15cm YKK 金属拉链，金色，100条...": "e.g., Self-supplied 15cm YKK metal zipper, gold, 100 pcs...",
+        "请详细描述您的装箱需求。\n例如：\n1. 外箱需贴 Amazon FBA 标签\n2. 每箱重量不得超过 15kg\n3. 侧唛需印制单号和 SKU 信息": "Please describe your packing requirements in detail.\ne.g.:\n1. Outer cartons need Amazon FBA labels\n2. Each carton must not exceed 15kg\n3. Side marks should include tracking number and SKU info",
         "期望 EXW 单价": "Target EXW Unit Price",
         "预期发货方式": "Expected Shipping Method",
         "海运 (经济型)": "Sea Freight",
@@ -494,6 +507,9 @@
         "国际快递": "International Express",
         "空运专线": "Air Freight Line",
         "海运快船": "Sea Freight Express",
+        "3-5天": "3-5 Days",
+        "8-15天": "8-15 Days",
+        "25-40天": "25-40 Days",
         "单件入袋方式": "Individual Bagging Method",
         "独立包装": "Individual Packaging",
         "环保混装": "Eco Bulk Packing",
@@ -517,6 +533,10 @@
         "任何款式 + 特殊物料": "Any Style + Special Materials",
         "包含且不限于：面料定染指定 Pantone 色、定制定位印花、特殊肌理面料找样、品牌专属五金开模等。": "Including: custom Pantone dyeing, custom placement printing, special texture sourcing, brand exclusive hardware mold, etc.",
         "受限于面料染厂及辅料供应链的最低开机起订要求": "Subject to minimum production requirements of dyeing factories and trim supply chains",
+        "MOQ 50件": "MOQ 50 pcs",
+        "MOQ 100件": "MOQ 100 pcs",
+        "MOQ 100-300件": "MOQ 100-300 pcs",
+        "MOQ 300件起": "MOQ 300+ pcs",
 
         // ── Step 5 ──
         "您的定制需求已基本配置完成。最后，请留下您的商业名片并确认保密条款，我们将为您分派专属团队进行后续对接。": "Your customization requirements are mostly configured. Please leave your business contact and confirm the NDA. We will assign a dedicated team for follow-up.",
@@ -637,12 +657,14 @@
         "英国": "United Kingdom",
         "使用目标国官方语言表述的纤维成分。": "Fiber composition in the target country's official language.",
         "进口商或制造商在欧盟境内的注册地址。": "Importer's or manufacturer's registered EU address.",
+        "必须使用 ISO/GINETEX 体系标准的洗水符号 (通常5个基本符号按顺序排列：洗涤、漂白、干燥、熨烫、专业纺织品维护)。": "Must use ISO/GINETEX standard care symbols (typically 5 basic symbols in order: washing, bleaching, drying, ironing, professional textile care).",
         "澳大利亚": "Australia",
         "新西兰": "New Zealand",
         "强制使用英文的详细护理说明。": "Mandatory detailed care instructions in English.",
         "原产地标识要求非常严格（必须清晰且独立）。": "Country of origin marking must be clear and independent.",
         "如适用，特定功能性服装（如泳衣、防晒服）需提供 UPF 防晒等级声明。": "If applicable, functional garments (e.g., swimwear) require UPF rating declaration.",
         "均码 (OS)": "One Size (OS)",
+        "/ 件": "/ pc",
 
         // ── Login Page ──
         "用户登录": "Login",
@@ -679,7 +701,10 @@
         "返回登录": "Back to Login",
         "两次输入的密码不一致！": "Passwords do not match!",
         "密码重置成功！即将跳转到登录页...": "Password reset successful! Redirecting to login...",
-        "操作失败，请检查链接是否过期": "Operation failed, the link may be expired"
+        "操作失败，请检查链接是否过期": "Operation failed, the link may be expired",
+
+        // ── Missing placeholders ──
+        "例如：主标用领后中无感烫印，洗水标用左侧缝高密织唛。尺寸分别为...": "e.g., Main label: Center Back Neck heat transfer, care label: Left Side Seam high-density woven. Sizes are..."
     };
 
     // ── JS dynamic strings ──
@@ -846,7 +871,11 @@
         "成本提醒：": "Cost reminder:",
         "无感烫印标": "Tagless heat transfer",
         "⚠️ 提交前置校验失败：\n\n您提交了自主设计 (OEM) 需求，为避免后期版型开发与大货生产出现工艺偏差，请务必逐一勾选确认「核心工艺与细节确认单」中的所有必填核对项。": "⚠️ Validation failed:\n\nYou submitted a custom design (OEM) request. Please check all items in the \"Core Specifications Checklist\".",
-        "✅ 提交成功！\n\n您的需求编号为: HX20240508001\n专属业务经理将在 24 小时内为您提供正式报价。": "✅ Submitted successfully!\n\nYour request number: HX20240508001\nA dedicated account manager will provide a formal quote within 24 hours."
+        "✅ 提交成功！\n\n您的需求编号为: HX20240508001\n专属业务经理将在 24 小时内为您提供正式报价。": "✅ Submitted successfully!\n\nYour request number: HX20240508001\nA dedicated account manager will provide a formal quote within 24 hours.",
+        "例: 黑色碎花款": "e.g., Black floral style",
+        "例：\nS: 20\nM: 50\nL: 30": "e.g.,\nS: 20\nM: 50\nL: 30",
+        "例：\n主体黑色，撞色滚边\n注意防水拉链": "e.g.,\nBlack body, contrast piping\nNote: waterproof zipper",
+        "选或填": "Select or type"
     };
 
     // Fragment entries for partial matching in template literals
@@ -961,7 +990,19 @@
         // Fee modal: free adjustment
         { m: '免费微调：', h: '<strong>Free Adjustment:</strong> The pattern fee includes <strong style="color:var(--primary-color);">1 free</strong> fit adjustment based on the proto sample. From the 2nd revision onward, $10 adjustment fee per revision. (Major design changes require re-patterning as a new style).' },
         // Fee modal: bulk order refund plan
-        { m: '\uD83D\uDC8E 大货退还计划：', h: '<strong>\uD83D\uDC8E Bulk Order Refund Plan:</strong> When your style converts to a bulk order (\u2265 300 pieces per style), <strong style="text-decoration: underline;">all sample development fees</strong> for that style will be 100% credited and refunded in the bulk order final payment!' }
+        { m: '\uD83D\uDC8E 大货退还计划：', h: '<strong>\uD83D\uDC8E Bulk Order Refund Plan:</strong> When your style converts to a bulk order (\u2265 300 pieces per style), <strong style="text-decoration: underline;">all sample development fees</strong> for that style will be 100% credited and refunded in the bulk order final payment!' },
+        // Step 4: fee notice (sample shipping)
+        { m: '样品国际运费需由客户自理', h: '<strong style="color: #475569;">Fee Notice:</strong> International sample shipping is at the customer\u2019s expense. Due to uncertain sample weight and parcel size, exact shipping costs can only be quoted after we obtain your <strong style="color: var(--primary-color);">detailed shipping address</strong> and complete packing calculations.' },
+        // Step 4: price calculation notice
+        { m: '此处填写的为您对大货单价的预期', h: '<strong style="color: #64748b;">Price Calculation Notice:</strong> This field is for your expected bulk unit price. Since bulk pricing is affected by <strong style="color:#475569;">total order quantity, real-time fabric/trim market prices, craft complexity, and exchange rates</strong>, the system cannot provide a real-time fixed price. The final accurate quotation will be confirmed by the sales manager after detailed cost analysis, based on the official <strong>Proforma Invoice (PI)</strong>.' },
+        // MOQ modal: core principle
+        { m: '以下所有起订量', h: '<strong style="color: #475569;">Core Principle:</strong> All MOQs below refer to <strong>\u201cPer Style, Per Color\u201d</strong>. Within the same color, sizes can be mixed and packed according to your ratio requirements.' },
+        // Care label: ISO/GINETEX
+        { m: 'ISO/GINETEX', h: 'Must use <strong>ISO/GINETEX standard care symbols</strong> (typically 5 basic symbols in order: washing, bleaching, drying, ironing, professional textile care).' },
+        // Step 4: cost estimate note (in sampling section)
+        { m: '上述金额仅为', h: '<strong style="color: #64748b;">Cost Estimation Note:</strong> The amounts above are only <span style="color: var(--text-main);">preliminary estimates based on pattern-making and basic labor</span>.<br>This estimate <strong style="color: #ef4444;">does not include</strong> digital print/Logo screen setup fees, multi-size grading fees, special hardware molding, or imported fabric surcharges. The final development cost will be confirmed in the official PI (Proforma Invoice) after comprehensive evaluation by the sales manager.' },
+        // MOQ modal: Level 4 special materials
+        { m: '包含且不限于', h: 'Including: custom Pantone dyeing, custom placement printing, special texture sourcing, brand exclusive hardware mold, etc. <strong>(Subject to minimum production requirements of dyeing factories and trim supply chains)</strong>' }
     ];
 
     // Merge jsDynamic into dict

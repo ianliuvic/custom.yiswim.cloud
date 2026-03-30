@@ -1103,6 +1103,27 @@
                         }
                     }
                 }
+                // hygiene: custom mode checks
+                if (t === 'hygiene') {
+                    if (typeof hygieneConfig !== 'undefined' && hygieneConfig.mode === 'custom') {
+                        // A. 形状选"其他定制形状"需有描述或文件
+                        if (hygieneConfig.shape === '其他定制形状') {
+                            const r = (document.getElementById('hygiene-shape-remark')?.value || '').trim() !== '';
+                            const f = hygieneConfig.shapeFiles && hygieneConfig.shapeFiles.length > 0;
+                            if (!r && !f) { allOk = false; }
+                        }
+                        // A. 自定义尺寸勾选后需有输入
+                        const sizeCheck = document.getElementById('hygiene-custom-size-check');
+                        if (sizeCheck && sizeCheck.checked) {
+                            const size = (document.getElementById('hygiene-custom-size')?.value || '').trim();
+                            if (!size) { allOk = false; }
+                        }
+                        // B. 印刷内容不能为空（文件或文字至少一项）
+                        const hasText = (document.getElementById('hygiene-text')?.value || '').trim() !== '';
+                        const hasDesign = hygieneConfig.designFiles && hygieneConfig.designFiles.length > 0;
+                        if (!hasText && !hasDesign) { allOk = false; }
+                    }
+                }
             }
             setDot('dot-trims', allOk);
             return allOk;

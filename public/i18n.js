@@ -354,6 +354,7 @@
         "卫生贴配置模式": "Hygiene Sticker Configuration Mode",
         "材质、形状与尺寸": "Material, Shape & Size",
         "贴纸材质": "Sticker Material",
+        "透明": "Transparent",
         "透明 PET (标准)": "Transparent PET",
         "防潮耐用，出货极快": "Moisture-proof, durable, very fast delivery",
         "环保哑光纸": "Eco Matte Paper",

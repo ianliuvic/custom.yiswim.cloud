@@ -1575,10 +1575,13 @@
             if (notesArea) notesArea.style.display = isSimplified ? 'none' : 'block';
             if (modeSwitcher) modeSwitcher.style.display = isSimplified ? 'none' : 'inline-flex';
 
-            // 新增：控制里料专属的颜色提示框
+            // 新增：控制里料专属的颜色提示框与快速选色
             const liningHintBox = document.getElementById('lining-color-hint');
-            if (liningHintBox) {
-                liningHintBox.classList.toggle('hidden', !isLining);
+            if (liningHintBox) liningHintBox.classList.toggle('hidden', !isLining);
+            const liningQuickPick = document.getElementById('lining-quick-pick');
+            if (liningQuickPick) {
+                liningQuickPick.classList.toggle('hidden', !isLining);
+                if (isLining) syncLiningQuickBtns();
             }
         
             if (isCustomSourcing) {
@@ -1750,10 +1753,34 @@
         }
 
         // 记录用户输入的面料色号并触发汇总更新
+        function pickLiningQuickColor(btnEl, color) {
+            if (!activeFabricCat || !fabricSelection[activeFabricCat] || !fabricSelection[activeFabricCat].activeName) return;
+            const config = fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName];
+            // Toggle: click again to deselect
+            if (config.colorText === color) {
+                config.colorText = '';
+            } else {
+                config.colorText = color;
+            }
+            document.getElementById('fabric-color-input').value = config.colorText;
+            syncLiningQuickBtns();
+            updateFabricSummary();
+        }
+
+        function syncLiningQuickBtns() {
+            const currentColor = document.getElementById('fabric-color-input')?.value.trim() || '';
+            document.querySelectorAll('.lining-quick-btn').forEach(btn => {
+                const isActive = btn.dataset.color === currentColor;
+                btn.style.borderColor = isActive ? 'var(--primary-color)' : '#e2e8f0';
+                btn.style.background = isActive ? '#fef2f2' : '#fff';
+            });
+        }
+
         function updateSolidColorInput() {
             if(!activeFabricCat || !fabricSelection[activeFabricCat] || !fabricSelection[activeFabricCat].activeName) return;
             const config = fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName];
             config.colorText = document.getElementById('fabric-color-input').value.trim();
+            syncLiningQuickBtns();
             updateFabricSummary();
         }
         

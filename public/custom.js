@@ -1049,6 +1049,11 @@
                             const v = (document.getElementById('hangtag-string-color-other')?.value || '').trim();
                             if (!v) { allOk = false; }
                         }
+                        // 子母牌勾选后需有描述
+                        if (hangtagConfig.isSet) {
+                            const v = (document.getElementById('hangtag-set-remark')?.value || '').trim();
+                            if (!v) { allOk = false; }
+                        }
                     }
                 }
             }

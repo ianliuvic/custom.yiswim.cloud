@@ -453,6 +453,7 @@
             } else {
                 sumStyleEl.innerHTML = `<div style="text-align: right; line-height: 1.4;">${html}</div>`;
             }
+            validateStyle();
         }
 
         // ==========================================
@@ -846,28 +847,140 @@
                 }
         }
 
+        // ==========================================
+        // 实时表单验证系统 (Real-time Validation)
+        // ==========================================
+        function setDot(id, state) {
+            const dot = document.getElementById(id);
+            if (!dot) return;
+            dot.classList.remove('ok', 'warn');
+            if (state === true) dot.classList.add('ok');
+            else if (state === false) dot.classList.add('warn');
+            // state === null → neutral (grey, no class)
+        }
+
+        function validateStyle() {
+            const hasOdm = selectedOdmStyles.length > 0;
+            const hasOem = typeof checkOemHasContent === 'function' && checkOemHasContent();
+            const ok = hasOdm || hasOem;
+            setDot('dot-style', ok);
+            return ok;
+        }
+
+        function validateFabric() {
+            let ok = false;
+            if (typeof fabricSelection !== 'undefined') {
+                for (const catId in fabricSelection) {
+                    if (fabricSelection[catId] && fabricSelection[catId].activeName) { ok = true; break; }
+                }
+            }
+            setDot('dot-fabric', ok);
+            return ok;
+        }
+
+        function validateTrims() {
+            // Step 3 overall: at least one trim decision made (enabled or disabled) — always passes
+            // We just mark green if all enabled trims are configured
+            const trimChecks = ['metal', 'pad', 'bag', 'hangtag', 'label', 'hygiene', 'other'];
+            let allOk = true;
+            for (const t of trimChecks) {
+                const enabledRadio = document.querySelector(`input[name="need_${t}"][value="yes"]`);
+                if (!enabledRadio || !enabledRadio.checked) continue; // disabled = skip
+                
+                if (t === 'other') {
+                    const hasRemark = typeof otherConfig !== 'undefined' && otherConfig.remark && otherConfig.remark.trim() !== '';
+                    const hasFiles = typeof otherConfig !== 'undefined' && otherConfig.files && otherConfig.files.length > 0;
+                    if (!hasRemark && !hasFiles) { allOk = false; }
+                }
+                if (t === 'bag') {
+                    if (typeof bagConfig !== 'undefined' && bagConfig.material === '未选材质') { allOk = false; }
+                }
+                // metal custom mode with no categories
+                if (t === 'metal') {
+                    if (typeof metalConfig !== 'undefined' && metalConfig.mode === 'custom' && metalConfig.categories.length === 0) { allOk = false; }
+                }
+            }
+            setDot('dot-trims', allOk);
+            return allOk;
+        }
+
+        function validateShipping() {
+            let ok = false;
+            if (typeof currentDeliveryMode !== 'undefined') {
+                if (currentDeliveryMode === 'sample') {
+                    if (typeof sampleRows !== 'undefined') {
+                        ok = sampleRows.some(r => r.style && r.style !== '');
+                    }
+                } else {
+                    if (typeof bulkRows !== 'undefined') {
+                        ok = bulkRows.some(r => r.style && r.style !== '');
+                    }
+                }
+            }
+            setDot('dot-shipping', ok);
+            return ok;
+        }
+
+        function validateContact() {
+            const name = document.getElementById('final-contact-name')?.value.trim() || '';
+            const info = document.getElementById('final-contact-info')?.value.trim() || '';
+            const brand = document.getElementById('final-brand-name')?.value.trim() || '';
+            const ok = name !== '' && info !== '' && brand !== '';
+            setDot('dot-contact', ok);
+            return ok;
+        }
+
+        function validateAll() {
+            const results = {
+                style: validateStyle(),
+                fabric: validateFabric(),
+                trims: validateTrims(),
+                shipping: validateShipping(),
+                contact: validateContact()
+            };
+            results.allValid = Object.values(results).every(v => v === true);
+            return results;
+        }
+
         // --- 最终表单提交出口 (新增) ---
         function submitForm() {
-            // 1. 获取 Step 5 的必填项
-            const contactName = document.getElementById('final-contact-name').value.trim();
-            const contactInfo = document.getElementById('final-contact-info').value.trim();
-            const brandName = document.getElementById('final-brand-name').value.trim();
-            const ndaChecked = document.getElementById('nda-agree').checked;
-        
-            // 2. 基础合法性校验
-            if (!contactName || !contactInfo || !brandName) {
-                alert(_t("请完整填写商业身份档案中的必填项 (*)，以便我们能联系到您。"));
-                // 如果不在第五步，自动切过去
-                if (currentStep !== 5) changeStep(5 - currentStep);
+            // 1. 全量验证
+            const v = validateAll();
+            
+            if (!v.allValid) {
+                // 构造缺失项提示
+                const missing = [];
+                if (!v.style) missing.push(_t('① 款式定义：请至少选择一个 ODM 款式或上传 OEM 设计'));
+                if (!v.fabric) missing.push(_t('② 面料材质：请至少选择一种面料'));
+                if (!v.trims) missing.push(_t('③ 品牌辅料：已启用的辅料需完善配置'));
+                if (!v.shipping) missing.push(_t('④ 物流交付：请在表格中至少选择一个款式'));
+                if (!v.contact) missing.push(_t('⑤ 客户档案：请填写姓名、联系方式和品牌名称'));
+                
+                alert(_t('提交前请完善以下必填内容：') + '\n\n' + missing.join('\n'));
+                
+                // 跳转到第一个有问题的步骤
+                const stepMap = { style: 1, fabric: 2, trims: 3, shipping: 4, contact: 5 };
+                for (const key of ['style', 'fabric', 'trims', 'shipping', 'contact']) {
+                    if (!v[key]) {
+                        const target = stepMap[key];
+                        if (currentStep !== target) changeStep(target - currentStep);
+                        break;
+                    }
+                }
                 return;
             }
-        
+            
+            // 2. NDA 校验 (仅提交时检查)
+            const ndaChecked = document.getElementById('nda-agree').checked;
             if (!ndaChecked) {
                 alert(_t("提交前请阅读并勾选同意商业保密协议 (NDA)。"));
                 return;
             }
         
             // 3. 数据构造 (合并之前的表格数据、物流数据等)
+            const contactName = document.getElementById('final-contact-name').value.trim();
+            const contactInfo = document.getElementById('final-contact-info').value.trim();
+            const brandName = document.getElementById('final-brand-name').value.trim();
             const finalOrderData = {
                 identity: {
                     name: contactName,
@@ -1876,6 +1989,7 @@
             if (sumFabricEl) {
                 sumFabricEl.innerHTML = hasSelection ? html : '<div style="text-align:right; font-size:12px; color:#94a3b8;">' + _t('未选') + '</div>';
             }
+            validateFabric();
         }
 
 
@@ -1981,11 +2095,13 @@
                         ${detailHtml}${fileHtml}
                         <br><span style="font-size:10px; opacity:0.8; color:#92400e;">${tracking ? _t('单号:')+' '+tracking : _t('待填单号')}</span>
                     </div>`;
+                validateTrims();
                 return true; 
             }
             stEl.innerText = '不需要';
             stEl.style.color = '#64748b'; 
             stEl.style.fontWeight = 'normal';
+            validateTrims();
             return false;
         }
 
@@ -2276,6 +2392,7 @@
             
             st.style.color = 'var(--primary-color)'; 
             st.style.fontWeight = 'bold';
+            validateTrims();
         }
 
         // ==========================================
@@ -2923,6 +3040,7 @@
             }
             st.style.color = 'var(--primary-color)'; 
             st.style.fontWeight = 'bold';
+            validateTrims();
         }
 
         
@@ -3019,6 +3137,7 @@
             st.innerHTML = `<div style="text-align:right;">${_t('定制特殊辅料')}<br><span style="font-size:10px; opacity:0.8;">${textStatus}${fileStatus}</span></div>`;
             st.style.color = 'var(--primary-color)'; 
             st.style.fontWeight = 'bold';
+            validateTrims();
         }
 
         // ==========================================
@@ -3462,6 +3581,7 @@
             }
             st.style.color = 'var(--primary-color)';
             st.style.fontWeight = 'bold';
+            validateTrims();
         }
 
 
@@ -3622,6 +3742,7 @@
             }
             st.style.color = 'var(--primary-color)'; 
             st.style.fontWeight = 'bold';
+            validateTrims();
         }
 
 
@@ -3972,6 +4093,7 @@
                     st.innerHTML = `<div style="text-align:right;">${colorPart}<br>${detailText}</div>`;
                 }
             }
+            validateTrims();
         }
 
         // 扩展 bagConfig 数据结构
@@ -4264,6 +4386,7 @@
             st.innerHTML = `<div style="text-align:right;">${matPart} | ${sizePart}<br><span style="font-size:10px; opacity:0.8;">${printText}</span>${hasFile}</div>`;
             st.style.color = 'var(--primary-color)'; 
             st.style.fontWeight = 'bold';
+            validateTrims();
         }
 
         // ==========================================
@@ -4535,6 +4658,7 @@
                 `;
 
             }
+            validateShipping();
         }
 
         let bulkRows = []; // 存储大货数据 [{style:'', qty:100, sizeDetail:'', desc:''}]
@@ -4930,6 +5054,7 @@
             }
         
             sumEl.innerHTML = contactText + extraText;
+            validateContact();
         }
 
         // --- 修复：OEM 模式一键清空逻辑（无弹窗打扰，完整覆盖 A 区域数据） ---

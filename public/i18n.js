@@ -894,7 +894,13 @@
         "例: 黑色碎花款": "e.g., Black floral style",
         "例：\nS: 20\nM: 50\nL: 30": "e.g.,\nS: 20\nM: 50\nL: 30",
         "例：\n主体黑色，撞色滚边\n注意防水拉链": "e.g.,\nBlack body, contrast piping\nNote: waterproof zipper",
-        "选或填": "Select or type"
+        "选或填": "Select or type",
+
+        // ── Chinese Numerals ──
+        "一、 ": "I. ",
+        "二、 ": "II. ",
+        "三、 ": "III. ",
+        "四、 ": "IV. "
     };
 
     // Fragment entries for partial matching in template literals
@@ -933,11 +939,7 @@
         "，该类型单款最低起订量为 ": ", minimum order quantity per style is ",
         " 件。\n\n系统已自动为您调整为最低起订量。": " pcs.\n\nSystem has auto-adjusted to minimum.",
         "局部衬里: ": "Partial lining: ",
-        "目标 $": "Target $",
-        "一、 ": "I. ",
-        "二、 ": "II. ",
-        "三、 ": "III. ",
-        "四、 ": "IV. "
+        "目标 $": "Target $"
     };
 
     // ==================== Rich Text (HTML) Dictionary ====================

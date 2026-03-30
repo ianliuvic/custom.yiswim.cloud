@@ -977,7 +977,14 @@
                     if (!hasRemark && !hasFiles) { allOk = false; }
                 }
                 if (t === 'bag') {
-                    if (typeof bagConfig !== 'undefined' && bagConfig.material === '未选材质') { allOk = false; }
+                    if (typeof bagConfig !== 'undefined') {
+                        if (bagConfig.material === '未选材质') { allOk = false; }
+                        if (bagConfig.print && bagConfig.print !== '空白无印') {
+                            const hasRemark = (document.getElementById('bag-remark')?.value || '').trim() !== '';
+                            const hasFiles = bagConfig.designFiles && bagConfig.designFiles.length > 0;
+                            if (!hasRemark && !hasFiles) { allOk = false; }
+                        }
+                    }
                 }
                 // pad: custom shape needs remark or files
                 if (t === 'pad') {

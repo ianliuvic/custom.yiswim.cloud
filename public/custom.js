@@ -926,8 +926,11 @@
 
                     if (isMain) mainFabricOk = true;
 
-                    // 定制找样模式跳过色号检查
-                    if (sel.activeName === 'CUSTOM_SOURCING') continue;
+                    // 定制找样模式需有描述
+                    if (sel.activeName === 'CUSTOM_SOURCING') {
+                        if (!config.customDesc || config.customDesc.trim() === '') allComplete = false;
+                        continue;
+                    }
 
                     // 纯色模式需有色号，印花模式需有设计图
                     if (config.mode === 'print') {

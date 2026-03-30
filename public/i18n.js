@@ -200,6 +200,7 @@
         "常规标准": "Standard Regular",
         "约 5-8mm，基础微托力": "About 5-8mm, basic light support",
         "上薄下厚": "Top Thin Bottom Thick",
+        "聚拢": "Push-up",
         "底部加厚垫高 1.5cm+": "Bottom thickened, raised 1.5cm+",
         "胸垫颜色": "Chest Pad Color",
         "海绵裸色": "Nude Sponge",

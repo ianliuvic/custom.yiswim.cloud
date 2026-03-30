@@ -2,10 +2,39 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const path = require('path');
+const fs = require('fs');
+const multer = require('multer');
+const { v4: uuidv4 } = require('uuid');
 const db = require('../config/db');
 const { JWT_SECRET, N8N_BASE_URL } = require('../config/constants');
 const authenticateToken = require('../middleware/auth');
 const { loginLimiter, registerLimiter } = require('../middleware/rateLimiters');
+
+// 文件上传配置
+const UPLOAD_BASE = process.env.UPLOAD_PATH || path.join(__dirname, '..', 'uploads');
+const upload = multer({
+    storage: multer.diskStorage({
+        destination: (req, file, cb) => {
+            const dir = path.join(UPLOAD_BASE, 'inquiries');
+            fs.mkdirSync(dir, { recursive: true });
+            cb(null, dir);
+        },
+        filename: (req, file, cb) => {
+            const ext = path.extname(file.originalname).toLowerCase();
+            cb(null, uuidv4() + ext);
+        }
+    }),
+    limits: { fileSize: 20 * 1024 * 1024 }, // 20MB
+    fileFilter: (req, file, cb) => {
+        const allowed = /\.(jpg|jpeg|png|gif|webp|pdf|ai|eps|svg|doc|docx|xls|xlsx|zip|rar)$/i;
+        if (allowed.test(path.extname(file.originalname))) {
+            cb(null, true);
+        } else {
+            cb(new Error('不支持的文件格式'));
+        }
+    }
+});
 
 // 1. 获取业务数据 (直连 PostgreSQL 并发查询：款式、面料、包装袋)
 router.get('/get-data', authenticateToken, async (req, res) => {
@@ -235,6 +264,126 @@ router.post('/reset-password', loginLimiter, async (req, res) => {
     } catch (error) {
         console.error('重置密码错误:', error);
         res.status(500).json({ success: false, message: req.t('api.backendError') });
+    }
+});
+
+// 6. 提交询盘
+router.post('/submit-inquiry', authenticateToken, upload.any(), async (req, res) => {
+    const client = await db.connect();
+    try {
+        await client.query('BEGIN');
+
+        // 解析 JSON 字段
+        const d = req.body;
+        const parseJSON = (str, fallback) => { try { return JSON.parse(str); } catch { return fallback; } };
+
+        // 生成询盘编号
+        const seqResult = await client.query('SELECT generate_inquiry_no() AS no');
+        const inquiryNo = seqResult.rows[0].no;
+
+        // 插入主表
+        const insertSQL = `
+            INSERT INTO custom_inquiries (
+                inquiry_no, user_id,
+                odm_styles, odm_custom_data, oem_project, oem_style_count, oem_descriptions, oem_checklist, oem_remark,
+                fabric_selection,
+                cmt_enabled, metal_config, pad_config, bag_config, hangtag_config, label_config, hygiene_config, other_config,
+                delivery_mode, sample_rows, sample_config, sample_dest, bulk_rows, bulk_logistics, bulk_dest, bulk_target_price, bulk_packing_remark,
+                contact_name, contact_info, brand_name, website, final_remark,
+                assign_sales, assign_pattern, assign_sewing,
+                nda_agreed_at
+            ) VALUES (
+                $1, $2,
+                $3, $4, $5, $6, $7, $8, $9,
+                $10,
+                $11, $12, $13, $14, $15, $16, $17, $18,
+                $19, $20, $21, $22, $23, $24, $25, $26, $27,
+                $28, $29, $30, $31, $32,
+                $33, $34, $35,
+                $36
+            ) RETURNING id`;
+
+        const values = [
+            inquiryNo, req.user.id,
+            // Step 1
+            parseJSON(d.odm_styles, []),
+            parseJSON(d.odm_custom_data, {}),
+            d.oem_project || null,
+            parseInt(d.oem_style_count) || 0,
+            parseJSON(d.oem_descriptions, []),
+            parseJSON(d.oem_checklist, []),
+            d.oem_remark || null,
+            // Step 2
+            parseJSON(d.fabric_selection, {}),
+            // Step 3
+            parseJSON(d.cmt_enabled, {}),
+            parseJSON(d.metal_config, {}),
+            parseJSON(d.pad_config, {}),
+            parseJSON(d.bag_config, {}),
+            parseJSON(d.hangtag_config, {}),
+            parseJSON(d.label_config, {}),
+            parseJSON(d.hygiene_config, {}),
+            parseJSON(d.other_config, {}),
+            // Step 4
+            d.delivery_mode || 'sample',
+            parseJSON(d.sample_rows, []),
+            parseJSON(d.sample_config, {}),
+            d.sample_dest || null,
+            parseJSON(d.bulk_rows, []),
+            parseJSON(d.bulk_logistics, {}),
+            d.bulk_dest || null,
+            d.bulk_target_price || null,
+            d.bulk_packing_remark || null,
+            // Step 5
+            d.contact_name,
+            d.contact_info,
+            d.brand_name,
+            d.website || null,
+            d.final_remark || null,
+            // 分派
+            d.assign_sales || null,
+            d.assign_pattern || null,
+            d.assign_sewing || null,
+            // NDA
+            d.nda_agreed ? new Date() : null
+        ];
+
+        const insertResult = await client.query(insertSQL, values);
+        const inquiryId = insertResult.rows[0].id;
+
+        // 处理上传的文件 — fieldname 格式: "files[category][sub_key]"
+        if (req.files && req.files.length > 0) {
+            const fileInsertSQL = `
+                INSERT INTO custom_inquiry_files (inquiry_id, category, sub_key, orig_name, stored_name, mime_type, size_bytes)
+                VALUES ($1, $2, $3, $4, $5, $6, $7)`;
+            
+            for (const file of req.files) {
+                // 解析 fieldname: "files[oem][tech]" → category="oem", sub_key="tech"
+                const match = file.fieldname.match(/^files\[(\w+)\](?:\[(\w+)\])?$/);
+                const category = match ? match[1] : 'unknown';
+                const subKey = match ? (match[2] || '') : '';
+
+                await client.query(fileInsertSQL, [
+                    inquiryId,
+                    category,
+                    subKey,
+                    file.originalname,
+                    file.filename,
+                    file.mimetype,
+                    file.size
+                ]);
+            }
+        }
+
+        await client.query('COMMIT');
+        res.json({ success: true, inquiry_no: inquiryNo });
+
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error('提交询盘失败:', error);
+        res.status(500).json({ success: false, message: req.t ? req.t('api.backendError') : '服务器错误' });
+    } finally {
+        client.release();
     }
 });
 

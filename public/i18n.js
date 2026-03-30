@@ -904,6 +904,7 @@
         "共": "Total",
         "款设计": "design(s)",
         "单号:": "Tracking #:",
+        "色号:": "Color:",
 
         // ── Chinese Numerals ──
         "一、 ": "I. ",

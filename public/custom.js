@@ -979,9 +979,20 @@
                 if (t === 'bag') {
                     if (typeof bagConfig !== 'undefined' && bagConfig.material === '未选材质') { allOk = false; }
                 }
-                // metal custom mode with no categories
+                // metal custom mode with no categories, or categories missing remark/files
                 if (t === 'metal') {
-                    if (typeof metalConfig !== 'undefined' && metalConfig.mode === 'custom' && metalConfig.categories.length === 0) { allOk = false; }
+                    if (typeof metalConfig !== 'undefined' && metalConfig.mode === 'custom') {
+                        if (metalConfig.categories.length === 0) { allOk = false; }
+                        else {
+                            for (const cat of metalConfig.categories) {
+                                const d = metalConfig.details[cat];
+                                if (!d) { allOk = false; break; }
+                                const hasRemark = d.remark && d.remark.trim() !== '';
+                                const hasFiles = d.styleFiles && d.styleFiles.length > 0;
+                                if (!hasRemark && !hasFiles) { allOk = false; break; }
+                            }
+                        }
+                    }
                 }
             }
             setDot('dot-trims', allOk);

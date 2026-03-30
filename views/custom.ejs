@@ -311,6 +311,20 @@
                                         <strong>常规工艺提醒：</strong>作为贴身且不外露的内衬，行业默认使用 <strong>黑色或白色</strong>。若您指定定染特殊颜色（如撞色里布），大货起订量 (MOQ) 将大幅提升，且可能产生额外费用。
                                     </div>
                                 </div>
+                                <!-- 里料快速选择：黑色/白色 (默认隐藏，里料 Tab 时显示) -->
+                                <div id="lining-quick-pick" class="hidden" style="margin-bottom: 18px; animation: fadeIn 0.3s ease;">
+                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:10px;">快速选色</label>
+                                    <div style="display:flex; gap:12px;">
+                                        <div class="lining-quick-btn" data-color="黑色" onclick="pickLiningQuickColor(this, '黑色')" style="flex:1; display:flex; align-items:center; gap:10px; padding:10px 14px; border:2px solid #e2e8f0; border-radius:8px; cursor:pointer; transition:all 0.2s; background:#fff;">
+                                            <span style="width:28px; height:28px; border-radius:50%; background:#1a1a1a; border:2px solid #cbd5e1; flex-shrink:0;"></span>
+                                            <span style="font-size:13px; font-weight:600; color:#334155;">黑色</span>
+                                        </div>
+                                        <div class="lining-quick-btn" data-color="白色" onclick="pickLiningQuickColor(this, '白色')" style="flex:1; display:flex; align-items:center; gap:10px; padding:10px 14px; border:2px solid #e2e8f0; border-radius:8px; cursor:pointer; transition:all 0.2s; background:#fff;">
+                                            <span style="width:28px; height:28px; border-radius:50%; background:#fff; border:2px solid #cbd5e1; flex-shrink:0;"></span>
+                                            <span style="font-size:13px; font-weight:600; color:#334155;">白色</span>
+                                        </div>
+                                    </div>
+                                </div>
                                 <!-- 档案卡式包装色卡图 -->
                                 <div style="margin-bottom: 20px; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background: #f8fafc; cursor: zoom-in; transition: border-color 0.3s;" onclick="openFabricColorModal()" onmouseover="this.style.borderColor='var(--primary-color)'" onmouseout="this.style.borderColor='#e2e8f0'">
                                     <div style="padding: 10px 15px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #fff;">
@@ -329,7 +343,7 @@
                             
                                 <!-- 色号输入 -->
                                 <div>
-                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">请输入您选定的色号 (可多选，请用逗号隔开) <span style="color:#ef4444;">*</span></label>
+                                    <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">请输入您选定的色号 (可多选，请用逗号隔开)</label>
                                     <input type="text" id="fabric-color-input" class="oem-input-mini" style="width: 100%; box-sizing: border-box;" placeholder="对照上方色卡，输入数字编号。例如：24, 36..." oninput="updateSolidColorInput()">
                                     <div style="margin-top: 8px; font-size: 11px; color: #94a3b8; display: flex; align-items: flex-start; gap: 4px; line-height: 1.4;">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0; margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>

@@ -34,7 +34,7 @@
         "包含款式数": "Style Count",
         "款": "style(s)",
         "简要标识": "Brief identifier",
-        "上传对应提示：": "Upload Note:",
+        "上传对应提示：": "Upload Note: ",
         "若申报了多款设计，请确保下方上传的参考图文件名或工艺单页码能与 A 区域填写的\u201c款 1、款 2...\u201d描述清晰对应。": "If you've declared multiple designs, please ensure the uploaded reference image filenames or tech pack page numbers clearly correspond to the \"Style 1, Style 2...\" descriptions in Section A.",
         "参考图与灵感": "Reference & Inspiration",
         "请上传款式参考图或草图 (仅限图片)": "Please upload style reference images or sketches",
@@ -887,6 +887,83 @@
         "目标 $": "Target $"
     };
 
+    // ==================== Rich Text (HTML) Dictionary ====================
+    // For elements where <strong>/<span>/<br> split text into multiple DOM nodes.
+    // m = unique Chinese substring to identify the element's textContent
+    // h = complete English innerHTML replacement
+    var richDict = [
+        // Step 1 OEM: upload tip
+        { m: '上传对应提示：', h: '<strong>Upload Tip:</strong> If you submitted multiple designs, please ensure the <strong>reference image filenames</strong> or <strong>tech pack page numbers</strong> uploaded below clearly correspond to the "Style 1, Style 2\u2026" descriptions in Area A.' },
+        // Step 1 OEM: sample shipping address (2x)
+        { m: '收件地址：', h: '<strong>Shipping Address:</strong> Hongxiu Garment Co., Ltd., 10-8A Tiexi Rd, Xingcheng, Liaoning, China (Recipient: Mr. Liu 177-1101-4152)' },
+        // Step 1 OEM: core process checklist intro
+        { m: '为确保大货落地的极致精准度', h: 'To ensure ultimate precision in bulk production, below are the <strong>most critical and easily overlooked process specifications</strong> in your custom design. Please verify that your uploaded design files or supplementary notes above cover all the following items, and <strong style="color: #ef4444;">check each box to confirm</strong> before proceeding.' },
+        // Step 2: fabric sourcing note
+        { m: '找样特别说明：', h: '<strong>Fabric Sourcing Note:</strong><br>\u2022 Lead time: Approx. <strong>3\u20137 business days</strong>, depending on material availability.<br>\u2022 Service fee: Special sourcing may incur additional procurement and shipping surcharges.<br>\u2022 <strong>Key Recommendation:</strong> To ensure 100% accuracy in texture, weight, and color matching, we strongly recommend sending <strong>physical fabric swatches / sample garments</strong> for reference.' },
+        // Step 2: lining reminder
+        { m: '常规工艺提醒：', h: '<strong>Standard Process Reminder:</strong> As a body-contact, non-visible lining, the industry default is <strong>black or white</strong>. If you specify custom-dyed special colors (e.g., contrast lining), the bulk MOQ will increase significantly and additional fees may apply.' },
+        // Step 2: print size tip
+        { m: '如果您对尺寸没有概念', h: 'If you have no concept of the dimensions, please upload a <strong>garment mockup image</strong> in the area above. By showing the print\'s proportional placement on the swimwear, our pattern maker will accurately reproduce it for you.' },
+        // Step 2: material warehouse (fabric)
+        { m: '收件仓库：', h: '<strong>Receiving Warehouse:</strong> Hongxiu Garment Co., Ltd. Material Warehouse, 10-8A Tiexi Rd, Xingcheng, Liaoning (Recipient: Material Dept. 191-6891-9352)' },
+        // Step 3: development stage note
+        { m: '开发阶段说明：', h: '<strong style="color: #475569;">Development Stage Note:</strong><br>All brand trims configured in this step are primarily for <strong>bulk production cost estimation and planning</strong>. During the sampling phase, factory standard trims will be used by default. Note that trims involving Logo molding or custom printing are subject to MOQ requirements and typically <strong>will not be fulfilled separately during sampling</strong>.' },
+        // Step 3: trim warehouse address (7x)
+        { m: '收件仓：', h: '<strong>Receiving Warehouse:</strong> Hongxiu Garment Co., Ltd. Material Warehouse, 10-8A Tiexi Rd, Xingcheng, Liaoning<br><strong>Recipient:</strong> Trim Dept. 191-6891-9352' },
+        // Step 3: pad expert advice
+        { m: '红绣专业建议：', h: '<strong>Hongxiu Expert Advice:</strong><br>1. <strong>Shape Matching:</strong> Since breast pads must precisely conform to the outer garment panels, the system has automatically linked the cup type to your style (e.g., triangle cups with triangle pads, bandeau with round pads, etc.).<br>2. <strong>Size Grading:</strong> During bulk production, we will <strong>automatically grade and match appropriately sized breast pads based on garment sizes (e.g., S, M, L, XL)</strong>, ensuring perfect proportions for each piece. Unless you have special molding requirements, we recommend leaving this to our automatic matching.' },
+        // Step 3: pad molding commercial tip
+        { m: '重新开发特殊形状的模杯', h: '<strong style="color: #b45309;">Commercial Note:</strong> Developing custom-shaped molded cups/pads requires a mold fee, and the bulk MOQ is typically <strong>3,000 pairs/size</strong> minimum.' },
+        // Step 3: pad dye reminder
+        { m: '特殊染色需送染厂', h: '<strong>Reminder:</strong> Special dyeing requires factory processing, MOQ <strong>3,000 pairs min.</strong>' },
+        // Step 3: default packaging
+        { m: '默认包装方案：', h: '<strong>Default Packaging:</strong> Since you did not select custom packaging, we will use the <strong>Hongxiu standard unprinted frosted zip bag</strong>.' },
+        // Step 3: hangtag auto-match
+        { m: '经典白卡纸+标准矩形', h: '<strong style="color:var(--primary-color);">Smart Auto-Match:</strong> We will match you with the best-selling <strong>classic white cardboard + standard rectangular size + white/black universal string fastener</strong>. Simply upload your Logo or design below; the Hongxiu visual team will handle material selection and process matching.' },
+        // Step 3: hangtag string commercial tip
+        { m: '如开模 Logo 吊粒', h: '<strong style="color: #b45309;">Commercial Note:</strong> Custom shapes (e.g., molded Logo string fasteners) or special materials typically require a MOQ of <strong>5,000 sets min.</strong>' },
+        // Step 3: hangtag string dye reminder
+        { m: '指定特殊颜色染色', h: '<strong>Reminder:</strong> Custom color dyeing requires a MOQ of <strong>5,000 pieces min.</strong>' },
+        // Step 3: label auto-match
+        { m: '最舒适的无感烫印标', h: '<strong style="color:var(--primary-color);">Smart Auto-Match:</strong> We will default to the most comfortable <strong>tagless heat-transfer label</strong>, printed at the <strong>center back neck</strong> position. Simply provide the text content or design below; the Hongxiu visual team will handle compliant layout.' },
+        // Step 3: care label compliance
+        { m: '法规与合规性提醒：', h: '<strong>Regulatory Compliance Reminder:</strong><br>Please ensure you understand your target market\'s mandatory care label regulations. Required information typically includes: <strong>country of origin</strong>, accurate <strong>fiber composition percentages</strong>, and applicable <strong>care instruction symbols</strong>. The factory cannot be held responsible for customs seizure or market penalties caused by missing mandatory label information.' },
+        // Step 3: hygiene sticker auto-match
+        { m: '透明 PET 材质 + 通用葫芦形', h: '<strong style="color:var(--primary-color);">Smart Auto-Match:</strong> We will configure the best-selling <strong>\u201cTransparent PET + Universal Gourd Shape\u201d</strong> hygiene sticker with international standard English safety text. Before shipment, we will <strong>apply them to the crotch area of bottoms at no extra charge</strong>. No additional configuration needed.' },
+        // Step 4: extra fee warning
+        { m: '\u26A0\uFE0F 收费提示：', h: '<strong>\u26A0\uFE0F Fee Notice:</strong> Sampling more than 2 pieces per style will incur additional small-batch development fees.' },
+        // Step 4: cost estimate note
+        { m: '费用核算说明：', h: '<strong style="color: #64748b;">Cost Estimation Note:</strong> The amounts above are only <span style="color: var(--text-main);">preliminary estimates based on pattern-making and basic labor</span>.<br>This estimate <strong style="color: #ef4444;">does not include</strong> digital print/Logo screen setup fees, multi-size grading fees, special hardware molding, or imported fabric surcharges. The final development cost will be confirmed in the official PI (Proforma Invoice) after comprehensive evaluation.' },
+        // Sample guide: sample types
+        { m: '初版样(Proto):', h: '<strong>Proto Sample:</strong> Review silhouette and proportions. Substitute fabrics allowed.<br><br><strong>Fit Sample:</strong> Fine-tune details and fit comfort.<br><br><strong>Pre-Production Sample (PP):</strong> Final approval sample. Must use correct bulk fabrics and trims.' },
+        // Sample guide: size recommendation
+        { m: '建议选择', h: 'We recommend selecting <strong>Size M (US 6-8)</strong> as the sampling base size.<br><br>If you need to verify the grading ratio, consider adding the largest or smallest size during the PP sample stage.' },
+        // Sample guide: quantity explanation
+        { m: '个人核对', h: '<strong>1 piece:</strong> Personal review.<br><br><strong>2 pieces (recommended):</strong> One for you, one for the pattern room \u2014 more efficient communication.<br><br><strong>&gt;2 pieces:</strong> Involves sales samples; additional fees apply.' },
+        // Fee modal: OEM pattern-making
+        { m: '自主设计 (OEM) 制版：', h: '<strong>Custom Design (OEM) Pattern-making:</strong> $20 / style' },
+        // Fee modal: ODM pattern loan
+        { m: '现有款式 (ODM) 借版：', h: '<strong>Existing Style (ODM) Pattern Loan:</strong> <span style="color: #27ae60; font-weight: 600;">Free ($0)</span>' },
+        // Fee modal: dev management fee
+        { m: '开发管理费：', h: '<strong>Development Management Fee:</strong> $10 / style (includes technical evaluation, trim sourcing, and dedicated project follow-up)' },
+        // Fee modal: proto sample
+        { m: '初版样 (Proto)：', h: '<strong>Proto Sample:</strong> $10 / piece' },
+        // Fee modal: fit / pre-production sample
+        { m: '修改样 / 产前样：', h: '<strong>Fit / Pre-Production Sample:</strong> $20 / piece (precision sewing with correct bulk fabrics)' },
+        // Fee modal: Logo print setup
+        { m: 'Logo 胶印/烫印开机：', h: '<strong>Logo Screen/Heat Print Setup:</strong> Est. $25 / style' },
+        // Fee modal: digital print setup
+        { m: '数码定位印花/满印调试：', h: '<strong>Digital Placement/All-over Print Setup:</strong> Est. $10 / style' },
+        // Fee modal: multi-size grading
+        { m: '多尺码放码费：', h: '<strong>Multi-size Grading Fee:</strong> $10 / style (if more than 2 sizes needed during sampling)' },
+        // Fee modal: special material surcharge
+        { m: '特殊物料溢价：', h: '<strong>Special Material Surcharge:</strong> Using imported fabrics (e.g., Carvico recycled yarn) or custom-molded hardware requires covering the material cost difference.' },
+        // Fee modal: free adjustment
+        { m: '免费微调：', h: '<strong>Free Adjustment:</strong> The pattern fee includes <strong style="color:var(--primary-color);">1 free</strong> fit adjustment based on the proto sample. From the 2nd revision onward, $10 adjustment fee per revision. (Major design changes require re-patterning as a new style).' },
+        // Fee modal: bulk order refund plan
+        { m: '\uD83D\uDC8E 大货退还计划：', h: '<strong>\uD83D\uDC8E Bulk Order Refund Plan:</strong> When your style converts to a bulk order (\u2265 300 pieces per style), <strong style="text-decoration: underline;">all sample development fees</strong> for that style will be 100% credited and refunded in the bulk order final payment!' }
+    ];
+
     // Merge jsDynamic into dict
     for (var k in jsDynamic) {
         if (jsDynamic.hasOwnProperty(k) && !dict[k]) {
@@ -962,11 +1039,52 @@
     }
 
     /**
+     * Translate elements containing inline HTML (<strong>, <span>, etc.)
+     * that split text into multiple DOM nodes the text-walker cannot match.
+     */
+    function translateRichElements(root) {
+        if (LANG === 'zh' || richDict.length === 0) return;
+        root = root || document.body;
+        var els = root.querySelectorAll('div, span, p, li, td, label');
+        for (var i = 0; i < els.length; i++) {
+            var el = els[i];
+            if (el.getAttribute('data-i18n-done')) continue;
+            var tag = el.tagName;
+            if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'TEXTAREA') continue;
+            // Must have at least one direct inline-element child
+            var hasInline = false;
+            for (var c = 0; c < el.children.length; c++) {
+                var ct = el.children[c].tagName;
+                if (ct === 'STRONG' || ct === 'SPAN' || ct === 'EM' || ct === 'B') {
+                    hasInline = true;
+                    break;
+                }
+            }
+            if (!hasInline) continue;
+            var tc = el.textContent;
+            if (!tc || !/[\u4e00-\u9fff]/.test(tc)) continue;
+            var norm = tc.replace(/\s+/g, ' ').trim();
+            for (var j = 0; j < richDict.length; j++) {
+                if (norm.indexOf(richDict[j].m) !== -1) {
+                    el.innerHTML = richDict[j].h;
+                    el.setAttribute('data-i18n-done', '1');
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
      * Walk all text nodes in the DOM and replace Chinese text with English.
      */
     function translateDOM(root) {
         if (LANG === 'zh') return;
         root = root || document.body;
+
+        // First pass: translate elements with inline HTML children
+        translateRichElements(root);
+
+        // Second pass: translate individual text nodes
         var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false);
         var node;
         var replacements = [];

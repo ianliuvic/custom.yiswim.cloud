@@ -1019,6 +1019,36 @@
                         const hasRemark = (document.getElementById('label-remark')?.value || '').trim() !== '';
                         const hasFiles = labelConfig.designFiles && labelConfig.designFiles.length > 0;
                         if (!hasRemark && !hasFiles) { allOk = false; }
+
+                        if (labelConfig.mode === 'custom') {
+                            // A. 材质选"其他"需有描述或文件
+                            if (labelConfig.material === '其他') {
+                                const r = (document.getElementById('label-material-remark')?.value || '').trim() !== '';
+                                const f = labelConfig.otherMatFiles && labelConfig.otherMatFiles.length > 0;
+                                if (!r && !f) { allOk = false; }
+                            }
+                            // B. 缝制方式选"其他"需有描述或文件
+                            if (labelConfig.method === '其他') {
+                                const r = (document.getElementById('label-sewing-remark')?.value || '').trim() !== '';
+                                const f = labelConfig.sewingFiles && labelConfig.sewingFiles.length > 0;
+                                if (!r && !f) { allOk = false; }
+                            }
+                            // C. 上装位置选"自定义其他位置"需有描述
+                            if (labelConfig.components.includes('上装/连体') && labelConfig.placements.top === '自定义其他位置') {
+                                const v = (document.getElementById('label-custom-top-text')?.value || '').trim();
+                                if (!v) { allOk = false; }
+                            }
+                            // D. 下装位置选"自定义其他位置"需有描述
+                            if (labelConfig.components.includes('下装/裤装') && labelConfig.placements.bottom === '自定义其他位置') {
+                                const v = (document.getElementById('label-custom-bottom-text')?.value || '').trim();
+                                if (!v) { allOk = false; }
+                            }
+                            // E. 主洗标分开需有说明
+                            if (labelConfig.isSplit) {
+                                const v = (document.getElementById('label-split-remark')?.value || '').trim();
+                                if (!v) { allOk = false; }
+                            }
+                        }
                     }
                 }
                 // hangtag: design files or remark needed (both auto and custom modes)

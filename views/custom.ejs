@@ -8764,12 +8764,12 @@
             sumEl.innerHTML = contactText + extraText;
         }
 
-        // --- 新增函数 ---
+        // --- 修复：OEM 模式一键清空逻辑（无弹窗打扰，完整覆盖 A 区域数据） ---
         function clearCurrentMode() {
             const isOdmActive = document.getElementById('mode-odm').classList.contains('active');
             
             if (isOdmActive) {
-                // 仅清除 ODM 逻辑
+                // 【清空 ODM 逻辑】
                 if (selectedOdmStyles.length === 0) return;
                 
                 selectedOdmStyles = [];
@@ -8778,22 +8778,55 @@
                 document.querySelectorAll('.custom-badge').forEach(badge => badge.classList.remove('active'));
                 
             } else {
-                // 仅清除 OEM 逻辑
-                const hasOemData = oemFilesData.tech.length > 0 || oemFilesData.ref.length > 0 || document.getElementById('oem-remark').value.trim() !== '' || document.getElementById('oem-physical').checked;
-                if (!hasOemData) return;
-                if (!confirm('确定要清空当前的 OEM 设计包（含上传文件与备注）吗？')) return;
+                // 【清空 OEM 逻辑】
                 
+                // 1. 释放图片预览的 Blob 内存 (防止内存泄漏)
+                ['tech', 'ref'].forEach(type => {
+                    if (oemFilesData[type] && oemFilesData[type].length > 0) {
+                        oemFilesData[type].forEach(file => {
+                            if (file.previewUrl) URL.revokeObjectURL(file.previewUrl);
+                        });
+                    }
+                });
+
+                // 2. 清空全局数据对象
                 oemFilesData = { tech: [], ref: [] };
+                oemStyleDescriptions = []; // 清空款式简述数组
+                
+                // 3. 清空 DOM 输入与预览区域
                 document.getElementById('oemRefPreview').innerHTML = '';
                 document.getElementById('oemTechPreview').innerHTML = '';
                 document.getElementById('oem-remark').value = '';
-                document.getElementById('oem-physical').checked = false;
-                togglePhysicalInfo(false);
+                
+                // --- 修复点：彻底清空 A. 项目基本信息 ---
+                const collectionNameInput = document.getElementById('oem-collection-name');
+                if (collectionNameInput) collectionNameInput.value = '';
+                
+                const collectionCountInput = document.getElementById('oem-collection-count');
+                if (collectionCountInput) {
+                    collectionCountInput.value = '0'; // 恢复默认值 0
+                    renderOemStyleDescInputs(); // 触发联动，销毁下方的动态输入框，并同步 Step 4 的徽章
+                }
+                
+                // 4. 清空寄样与物流单号
+                const physicalCheckbox = document.getElementById('oem-physical');
+                if (physicalCheckbox) {
+                    physicalCheckbox.checked = false;
+                    togglePhysicalInfo(false);
+                }
                 const addrInput = document.querySelector('#oem-address-info input');
                 if (addrInput) addrInput.value = '';
+
+                // 5. 清空 Checklist 必填核对单的打勾状态 (如果有的话)
+                const checklists = document.querySelectorAll('.oem-checklist-item input[type="checkbox"]');
+                checklists.forEach(cb => {
+                    cb.checked = false;
+                    if(cb.parentElement) cb.parentElement.style.background = 'transparent';
+                });
+                if (typeof syncOemCheckAllBtn === 'function') syncOemCheckAllBtn(); // 同步“一键全选”按钮状态
             }
             
-            // 同步更新右侧汇总
+            // 同步更新右侧侧边栏汇总
             updateCombinedStyleSummary();
         }
 

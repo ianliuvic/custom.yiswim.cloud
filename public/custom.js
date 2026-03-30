@@ -1013,9 +1013,9 @@
                         }
                     }
                 }
-                // label custom mode: design files or remark needed
+                // label: design files or remark needed (both auto and custom modes)
                 if (t === 'label') {
-                    if (typeof labelConfig !== 'undefined' && labelConfig.mode === 'custom') {
+                    if (typeof labelConfig !== 'undefined') {
                         const hasRemark = (document.getElementById('label-remark')?.value || '').trim() !== '';
                         const hasFiles = labelConfig.designFiles && labelConfig.designFiles.length > 0;
                         if (!hasRemark && !hasFiles) { allOk = false; }

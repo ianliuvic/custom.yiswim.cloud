@@ -138,7 +138,8 @@
                 const borderBottom = isLast ? 'none' : '1px solid #fde68a'; 
                 
                 // 核心修改：在 onchange 里加入了 syncOemCheckAllBtn() 联动检查
-                const displayText = (typeof window._t === 'function') ? window._t(item.content) : item.content;
+                const lang = window.__lang || 'zh';
+                const displayText = (lang === 'en' && item.content_en) ? item.content_en : item.content;
                 return `
                 <label class="oem-checklist-item" style="display: flex; align-items: center; width: 100%; box-sizing: border-box; padding: 8px 12px; border-bottom: ${borderBottom}; cursor: pointer; transition: background 0.2s; border-radius: 6px;">
                     <input type="checkbox" style="width: 16px; height: 16px; accent-color: var(--primary-color); margin: 0 12px 0 0; cursor: pointer; flex-shrink: 0;" onchange="this.parentElement.style.background = this.checked ? '#fff' : 'transparent'; syncOemCheckAllBtn();">

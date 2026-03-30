@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="<%= lng === 'en' ? 'en' : 'zh-CN' %>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
     <link rel="stylesheet" href="/custom.css">
+    <script>window.__lang = '<%= lng %>';</script>
+    <script src="/i18n.js"></script>
 </head>
 <body>
 
@@ -13,9 +15,12 @@
             <img src="/logo.png" alt="Hongxiu Logo" class="site-logo" onerror="this.style.display='none'">
             <span class="site-title">Hongxiu Custom System</span>
         </div>
-        <div style="font-size: 14px; color: var(--text-light);">
-            当前用户：<strong><%= user.username %></strong> | 
-            <a href="/logout" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">安全退出</a>
+        <div style="font-size: 14px; color: var(--text-light); display: flex; align-items: center; gap: 12px;">
+            <button onclick="setLanguage('<%= lng === 'en' ? 'zh' : 'en' %>')" style="background: none; border: 1px solid var(--border-color); border-radius: 6px; padding: 4px 10px; font-size: 12px; cursor: pointer; color: var(--text-light); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--primary-color)';this.style.color='var(--primary-color)'" onmouseout="this.style.borderColor='var(--border-color)';this.style.color='var(--text-light)'">
+                🌐 <%= lng === 'en' ? '中文' : 'EN' %>
+            </button>
+            <span>当前用户：<strong><%= user.username %></strong> | 
+            <a href="/logout" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">安全退出</a></span>
         </div>
     </header>
 

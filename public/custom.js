@@ -1087,7 +1087,7 @@
                             </div>
                             ${coverImg ? `<img src="${coverImg}" class="option-img" loading="lazy">` : `...`}
                             <div class="option-info">
-                                <h4>${fabric.name}</h4>
+                                <h4>${(window.__lang === 'en' && fabric.name_en) ? fabric.name_en : fabric.name}</h4>
                                 <p style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${subText}">${subText}</p>
                                 <!-- 插入标签区域 -->
                                 ${tagsHtml}

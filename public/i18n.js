@@ -112,7 +112,7 @@
         "局部衬里": "Partial Lining",
         "局部里料位置说明": "Partial Lining Placement Description",
         "例如：仅前幅加里料，后幅单层；或仅裆部加里料...": "E.g.: Only front panel lined, back panel single layer; or only crotch area lined...",
-        "我将自行采购并寄送面辅料 (CMT 模式 / Customer Supplied Material)": "I will purchase and ship fabrics/materials myself",
+        "我将自行采购并寄送面辅料 (CMT 模式)": "I will purchase and ship fabrics/materials myself",
         "收件仓库：": "Receiving Warehouse:",
         "辽宁省兴城市铁西路10-8A红绣服饰有限公司 物料仓": "Hongxiu Clothing Co., Ltd Material Warehouse, 10-8A Tiexi Road, Xingcheng, Liaoning",
         "收件人：物料核发部 191-6891-9352": "Recipient: Material Distribution Dept 191-6891-9352",

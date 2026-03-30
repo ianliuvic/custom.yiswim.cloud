@@ -1,0 +1,20 @@
+{
+  "pageTitle": {
+    "home": "定制系统主页",
+    "auth": "用户验证",
+    "reset": "重置密码"
+  },
+  "api": {
+    "dbError": "数据库查询异常",
+    "registerPasswordShort": "注册失败：密码长度不能少于 8 位",
+    "backendError": "后端服务异常",
+    "loginRequired": "请填写用户名/邮箱和密码",
+    "loginFailed": "用户名或密码错误",
+    "activateFirst": "请先前往邮箱验证并激活您的账号",
+    "loginSuccess": "登录成功！",
+    "serverAuthError": "服务器验证异常，请稍后再试",
+    "paramMissing": "参数缺失",
+    "activateInvalid": "激活链接无效或已过期，请联系客服。",
+    "serverError": "服务器错误，请稍后再试"
+  }
+}

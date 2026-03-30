@@ -1,0 +1,20 @@
+{
+  "pageTitle": {
+    "home": "Custom System Home",
+    "auth": "User Authentication",
+    "reset": "Reset Password"
+  },
+  "api": {
+    "dbError": "Database query error",
+    "registerPasswordShort": "Registration failed: password must be at least 8 characters",
+    "backendError": "Backend service error",
+    "loginRequired": "Please enter username/email and password",
+    "loginFailed": "Invalid username or password",
+    "activateFirst": "Please verify and activate your account via email first",
+    "loginSuccess": "Login successful!",
+    "serverAuthError": "Server authentication error, please try later",
+    "paramMissing": "Missing parameters",
+    "activateInvalid": "Activation link is invalid or expired. Please contact support.",
+    "serverError": "Server error, please try later"
+  }
+}

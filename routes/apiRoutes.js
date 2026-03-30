@@ -70,7 +70,8 @@ router.get('/get-data', authenticateToken, async (req, res) => {
         const checklistQuery = `
             SELECT 
                 id, 
-                content 
+                content,
+                COALESCE(content_en, content) AS content_en
             FROM custom_oem_checklist 
             WHERE is_active = true 
             ORDER BY orders ASC NULLS LAST;

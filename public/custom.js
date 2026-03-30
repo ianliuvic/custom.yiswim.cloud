@@ -417,35 +417,35 @@
             const oemPhysical = document.getElementById('oem-physical').checked; // 新增：获取寄样勾选状态
             if (hasOemFiles || oemRemark !== '' || oemPhysical || collectionName !== '') {
                 html += `<div style="border-top: 1px dashed #e2e8f0; padding-top: 8px;">`;
-                html += `<strong style="color:var(--primary-color);">OEM 自主设计包:</strong><br>`;
+                html += `<strong style="color:var(--primary-color);">${_t('OEM 自主设计包:')}</strong><br>`;
                 
                 // 【新增】显示项目名称和数量
                 if (collectionName) {
-                    html += `<span style="font-size: 11px; color: #1e293b; display:block; font-weight:600;">[ ${collectionName} ] - 共 ${collectionCount} 款</span>`;
+                    html += `<span style="font-size: 11px; color: #1e293b; display:block; font-weight:600;">[ ${collectionName} ] - ${_t('共')} ${collectionCount} ${_t('款')}</span>`;
                 } else if (collectionCount > 0) {
-                    html += `<span style="font-size: 11px; color: #1e293b; display:block; font-weight:600;">共 ${collectionCount} 款设计</span>`;
+                    html += `<span style="font-size: 11px; color: #1e293b; display:block; font-weight:600;">${_t('共')} ${collectionCount} ${_t('款设计')}</span>`;
                 }
                 
                 // 显示上传状态
                 if (hasOemFiles) {
-                    html += `<span style="font-size: 11px; color: #64748b; display:block;">- 已传: ${oemFilesData.ref.length}图 / ${oemFilesData.tech.length}文件</span>`;
+                    html += `<span style="font-size: 11px; color: #64748b; display:block;">- ${_t('已传:')} ${oemFilesData.ref.length}${_t('图 /')} ${oemFilesData.tech.length}${_t('文件')}</span>`;
                 }
                 
                 // 新增：显示寄样状态
                 if (oemPhysical) {
-                    html += `<span style="font-size: 11px; color: #64748b; display:block;">- <span style="color:#27ae60;">●</span> 寄送实体样衣</span>`;
+                    html += `<span style="font-size: 11px; color: #64748b; display:block;">- <span style="color:#27ae60;">●</span> ${_t('寄送实体样衣')}</span>`;
                     const trackingInput = document.querySelector('#oem-address-info input');
                     const trackingNo = trackingInput ? trackingInput.value.trim() : '';
                     if (trackingNo) {
-                        html += `<span style="font-size: 10px; color: #94a3b8; display:block; padding-left:15px;">单号: ${trackingNo}</span>`;
+                        html += `<span style="font-size: 10px; color: #94a3b8; display:block; padding-left:15px;">${_t('单号:')} ${trackingNo}</span>`;
                     } else if (oemPhysical) {
-                        html += `<span style="font-size: 10px; color: #f59e0b; display:block; padding-left:15px;">待更新物流单号</span>`;
+                        html += `<span style="font-size: 10px; color: #f59e0b; display:block; padding-left:15px;">${_t('待更新物流单号')}</span>`;
                     }                
                 }
         
                 // 如果只有备注没有文件和寄样，显示提示
                 if (!hasOemFiles && !oemPhysical && oemRemark !== '') {
-                    html += `<span style="font-size: 11px; color: #64748b; display:block;">- 仅文字需求说明</span>`;
+                    html += `<span style="font-size: 11px; color: #64748b; display:block;">- ${_t('仅文字需求说明')}</span>`;
                 }
                 html += `</div>`;
             }

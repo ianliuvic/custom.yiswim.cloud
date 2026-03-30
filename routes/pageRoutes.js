@@ -5,7 +5,7 @@ const { N8N_BASE_URL } = require('../config/constants');
 
 // 1. 根目录：受保护，登录后才能看
 router.get('/', authenticateToken, (req, res) => {
-    res.render('custom', { title: '定制系统主页', user: req.user });
+    res.render('custom', { title: req.t('pageTitle.home'), user: req.user });
 });
 
 // 2. 处理用户点击邮箱里的激活链接
@@ -24,10 +24,10 @@ router.get('/activate', async (req, res) => {
         if (data.success) {
             res.redirect('/login?activated=true');
         } else {
-            res.send('激活链接无效或已过期，请联系客服。');
+            res.send(req.t('api.activateInvalid'));
         }
     } catch (err) {
-        res.send('服务器错误，请稍后再试');
+        res.send(req.t('api.serverError'));
     }
 });
 
@@ -36,7 +36,7 @@ router.get('/login', (req, res) => {
     if (req.cookies.auth_token) {
         return res.redirect('/');
     }
-    res.render('login', { title: '用户验证' });
+    res.render('login', { title: req.t('pageTitle.auth') });
 });
 
 // 4. 退出登录
@@ -51,7 +51,7 @@ router.get('/reset-password', (req, res) => {
     if (!token) {
         return res.redirect('/login');
     }
-    res.render('reset', { title: '重置密码', token: token });
+    res.render('reset', { title: req.t('pageTitle.reset'), token: token });
 });
 
 module.exports = router;

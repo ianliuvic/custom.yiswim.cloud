@@ -411,7 +411,7 @@
             const hasOemFiles = oemFilesData.tech.length > 0 || oemFilesData.ref.length > 0;
             const oemRemark = document.getElementById('oem-remark').value.trim();
             const collectionName = document.getElementById('oem-collection-name') ? document.getElementById('oem-collection-name').value.trim() : '';
-            const collectionCount = document.getElementById('oem-collection-count') ? parseInt(document.getElementById('oem-collection-count').value) : 0;
+            const collectionCount = parseInt(document.getElementById('oem-collection-count')?.value) || 0;
             const oemPhysical = document.getElementById('oem-physical').checked; // 新增：获取寄样勾选状态
             if (hasOemFiles || oemRemark !== '' || oemPhysical || collectionName !== '') {
                 html += `<div style="border-top: 1px dashed #e2e8f0; padding-top: 8px;">`;
@@ -592,9 +592,13 @@
             
             const physicalEl = document.getElementById('oem-physical');
             const hasPhysical = physicalEl && physicalEl.checked;
+
+            const collectionName = (document.getElementById('oem-collection-name')?.value || '').trim();
+            const collectionCount = parseInt(document.getElementById('oem-collection-count')?.value) || 0;
+            const hasCollection = collectionName !== '' || collectionCount > 0;
             
             // 只要有任何一项满足，就认为用户有 OEM 需求
-            return hasRef || hasTech || hasRemark || hasPhysical;
+            return hasRef || hasTech || hasRemark || hasPhysical || hasCollection;
         }
 
         // ==========================================

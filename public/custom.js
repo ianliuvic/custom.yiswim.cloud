@@ -4000,8 +4000,7 @@
                         </div>
                         ${imgHtml}
                         <div class="option-info">
-                            <h4>${bag.name}</h4>
-                            <p style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${bag.description || '优质定制包装'}">${bag.description || '优质定制包装'}</p>
+                            <h4>${(window.__lang === 'en' && bag.name_en) ? bag.name_en : bag.name}</h4>
                         </div>
                     </div>
                 `);

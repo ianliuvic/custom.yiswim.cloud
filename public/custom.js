@@ -16,7 +16,7 @@
             customShape: false,
             shapeRemark: '',
             thickness: '常规标准 (5-8mm)', // 更改这里的默认值
-            color: '海绵裸色 (Nude)',
+            color: '海绵裸色',
             otherColor: '',
             remark: '',
             shapeFiles: [],
@@ -2286,8 +2286,8 @@
             method: '对折环缝', // 默认选中项
             components: ['上装/连体'],
             placements: {
-                'top': '领后中 (Center Back Neck)',
-                'bottom': '后腰内中 (Center Back Waist)'
+                'top': '领后中',
+                'bottom': '后腰内中'
             },
             placementFiles: {
                 'top': [],
@@ -3019,7 +3019,7 @@
         // ==========================================
         let hangtagConfig = {
             mode: 'auto',
-            material: '白卡纸 (White Cardboard)',
+            material: '白卡纸',
             weight: '400g',
             shape: '标准修长型 (约 4x9cm)',
             roundedCorner: false,
@@ -3052,7 +3052,7 @@
                 const weightArea = document.getElementById('hangtag-weight-area');
                 
                 // 点击前三项显示克重
-                const isStandardMat = ['白卡纸 (White Cardboard)', '铜版纸 (Coated Paper)', '牛皮纸 (Kraft Paper)'].includes(value);
+                const isStandardMat = ['白卡纸', '铜版纸', '牛皮纸'].includes(value);
                 if(weightArea) weightArea.classList.toggle('hidden', !isStandardMat);
                 
                 // 判断是否展开面板
@@ -3622,7 +3622,7 @@
         // ==========================================
         let metalConfig = {
             mode: 'auto', // 新增：默认智能代配
-            finish: '亮金色 (Shiny Gold)',
+            finish: '亮金色',
             activeCategory: '', // 当前正在编辑的分类名
             details: {},
             categories: [],
@@ -5042,7 +5042,7 @@
             const bagDesignPreview = _el('bagDesignPreview'); if (bagDesignPreview) bagDesignPreview.innerHTML = '';
             const bagRemark = _el('bag-remark'); if (bagRemark) bagRemark.value = '';
             // 重置金属饰品
-            metalConfig = { finish: '亮金色 (Shiny Gold)', categories: [], logoCustom: false, logoTypes: [], logoFiles: [], sourceFiles: [] };
+            metalConfig = { finish: '亮金色', categories: [], logoCustom: false, logoTypes: [], logoFiles: [], sourceFiles: [] };
             document.querySelectorAll('.finish-item').forEach(item => item.classList.remove('selected'));
             document.querySelectorAll('.finish-item')[0]?.classList.add('selected'); 
             document.querySelectorAll('.metal-item').forEach(item => item.classList.remove('selected'));

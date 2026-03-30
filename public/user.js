@@ -133,25 +133,38 @@
             if (d.files && d.files.length) stats.push(pill('file', d.files.length + ' 个附件'));
             statsEl.innerHTML = stats.join('');
 
+            // Build file map by category
+            var fileMap = {};
+            (d.files || []).forEach(function (f) {
+                var cat = f.category || 'other';
+                if (!fileMap[cat]) fileMap[cat] = [];
+                fileMap[cat].push(f);
+            });
+
             var html = '';
 
             // ─── Section 1: Styles ───
-            html += renderStyleSection(d);
+            html += renderStyleSection(d, fileMap);
 
             // ─── Section 2: Fabric ───
-            html += renderFabricSection(d);
+            html += renderFabricSection(d, fileMap);
 
             // ─── Section 3: Trims ───
-            html += renderTrimsSection(d);
+            html += renderTrimsSection(d, fileMap);
 
             // ─── Section 4: Shipping ───
-            html += renderShippingSection(d);
+            html += renderShippingSection(d, fileMap);
 
             // ─── Section 5: Contact ───
             html += renderContactSection(d);
 
-            // ─── Files ───
-            if (d.files && d.files.length) html += renderFilesSection(d.files);
+            // ─── Uncategorized files ───
+            var shownCats = ['odmCustom', 'oem', 'fabric', 'cmt', 'metal', 'pad', 'bag', 'hangtag', 'label', 'hygiene', 'other', 'bulkPacking', 'finalDocs'];
+            var remainFiles = [];
+            Object.keys(fileMap).forEach(function (cat) {
+                if (shownCats.indexOf(cat) === -1) remainFiles = remainFiles.concat(fileMap[cat]);
+            });
+            if (remainFiles.length) html += renderFilesSection(remainFiles, '其他附件');
 
             // ─── Timeline ───
             html += renderTimelineSection(d);
@@ -164,9 +177,10 @@
 
     /* ── Section Renderers ── */
 
-    function renderStyleSection(d) {
+    function renderStyleSection(d, fileMap) {
         var odmArr = tryParse(d.odm_styles);
         var odmCustom = tryParse(d.odm_custom_data);
+        var odmImages = d.odm_style_images || {};
         var oemDescs = tryParse(d.oem_descriptions);
         var oemCk = tryParse(d.oem_checklist);
         var hasODM = Array.isArray(odmArr) && odmArr.length;
@@ -180,17 +194,40 @@
             h += '<div class="u-sub-label">ODM 已选款式</div>';
             h += '<div class="u-style-grid">';
             odmArr.forEach(function (name) {
+                var displayName = typeof name === 'object' ? (name.name || name.id || JSON.stringify(name)) : name;
                 var remark = '';
                 if (odmCustom && typeof odmCustom === 'object') {
-                    var key = typeof name === 'object' ? (name.name || name.id || '') : name;
-                    var cd = odmCustom[key];
+                    var cd = odmCustom[displayName];
                     if (cd && cd.remark) remark = cd.remark;
                 }
-                var displayName = typeof name === 'object' ? (name.name || name.id || JSON.stringify(name)) : name;
-                h += '<div class="u-style-card">' +
-                    '<div class="u-style-card-name">' + esc(displayName) + '</div>' +
-                    (remark ? '<div class="u-style-card-remark">' + esc(remark) + '</div>' : '') +
-                    '</div>';
+                // Style images from DB
+                var imgs = odmImages[displayName];
+                var coverImg = Array.isArray(imgs) && imgs.length ? imgs[0] : '';
+
+                // User-uploaded custom files for this style
+                var customFiles = (fileMap['odmCustom'] || []).filter(function (f) { return f.sub_key === displayName; });
+
+                h += '<div class="u-style-card' + (coverImg ? ' has-img' : '') + '">';
+                if (coverImg) {
+                    h += '<div class="u-style-card-img"><img src="' + esc(coverImg) + '" alt="' + esc(displayName) + '" loading="lazy" onerror="this.parentElement.style.display=\'none\'"></div>';
+                }
+                h += '<div class="u-style-card-body">';
+                h += '<div class="u-style-card-name">' + esc(displayName) + '</div>';
+                if (remark) h += '<div class="u-style-card-remark">' + esc(remark) + '</div>';
+                if (customFiles.length) {
+                    h += '<div class="u-style-card-files">';
+                    customFiles.forEach(function (f) {
+                        var url = FILE_BASE + encodeURIComponent(f.stored_name);
+                        var isImg = /\.(jpg|jpeg|png|gif|webp)$/i.test(f.orig_name);
+                        if (isImg) {
+                            h += '<a href="' + url + '" target="_blank" rel="noopener noreferrer" class="u-style-card-thumb"><img src="' + url + '" alt="' + esc(f.orig_name) + '" loading="lazy"></a>';
+                        } else {
+                            h += renderFileItem(f);
+                        }
+                    });
+                    h += '</div>';
+                }
+                h += '</div></div>';
             });
             h += '</div>';
         }
@@ -206,10 +243,19 @@
                 h += '<div class="u-style-grid">';
                 oemDescs.forEach(function (desc, i) {
                     h += '<div class="u-style-card">' +
+                        '<div class="u-style-card-body">' +
                         '<div class="u-style-card-name">款 ' + (i + 1) + '</div>' +
                         '<div class="u-style-card-remark">' + esc(typeof desc === 'object' ? JSON.stringify(desc) : desc) + '</div>' +
-                        '</div>';
+                        '</div></div>';
                 });
+                h += '</div>';
+            }
+            // OEM files inline
+            var oemFiles = fileMap['oem'] || [];
+            if (oemFiles.length) {
+                h += '<div class="u-sub-label" style="margin-top:12px">设计文件</div>';
+                h += '<div class="u-file-grid">';
+                oemFiles.forEach(function (f) { h += renderFileItem(f); });
                 h += '</div>';
             }
             if (Array.isArray(oemCk) && oemCk.length) {
@@ -228,9 +274,12 @@
         return h;
     }
 
-    function renderFabricSection(d) {
+    function renderFabricSection(d, fileMap) {
         var fab = tryParse(d.fabric_selection);
         if (!fab || typeof fab !== 'object' || !Object.keys(fab).length) return '';
+
+        var fabricFiles = fileMap['fabric'] || [];
+        var cmtFabricFiles = (fileMap['cmt'] || []).filter(function (f) { return f.sub_key === 'fabric'; });
 
         var h = secStart('fabric', '面料信息');
 
@@ -250,7 +299,6 @@
                 h += '<div class="u-fabric-card-head"><strong>' + esc(fabricName) + '</strong><span class="u-fabric-mode ' + mode + '">' + modeLabel + '</span></div>';
 
                 if (mode === 'solid') {
-                    // Colors
                     var colors = cfg.colors;
                     if (Array.isArray(colors) && colors.length) {
                         h += '<div class="u-color-list">';
@@ -280,31 +328,47 @@
                 if (cfg.liningPlacement) h += kv('衬里位置', esc(cfg.liningPlacement));
                 if (cfg.remark) h += kv('备注', esc(cfg.remark));
 
+                // Inline fabric files matching this fabric
+                var subKey = catName + '__' + fabricName;
+                var matched = fabricFiles.filter(function (f) { return f.sub_key === subKey; });
+                if (matched.length) {
+                    h += renderInlineFiles(matched, '参考文件');
+                }
+
                 h += '</div>';
             });
         });
+
+        // CMT customer-supplied fabric files
+        if (cmtFabricFiles.length) {
+            h += '<div class="u-sub-label" style="margin-top:14px">客供面料文件</div>';
+            h += '<div class="u-file-grid">';
+            cmtFabricFiles.forEach(function (f) { h += renderFileItem(f); });
+            h += '</div>';
+        }
 
         h += secEnd();
         return h;
     }
 
-    function renderTrimsSection(d) {
-        var cmt = tryParse(d.cmt_enabled);
+    function renderTrimsSection(d, fileMap) {
         var trimDefs = [
-            { key: 'metal_config', name: '五金配件', icon: '⚙️' },
-            { key: 'pad_config', name: '胸垫', icon: '🧵' },
-            { key: 'bag_config', name: '包装袋', icon: '👜' },
-            { key: 'hangtag_config', name: '吊牌', icon: '🏷️' },
-            { key: 'label_config', name: '标签', icon: '📋' },
-            { key: 'hygiene_config', name: '卫生贴', icon: '🩹' },
-            { key: 'other_config', name: '其他', icon: '📦' }
+            { key: 'metal_config', cat: 'metal', name: '五金配件', icon: '⚙️' },
+            { key: 'pad_config', cat: 'pad', name: '胸垫', icon: '🧵' },
+            { key: 'bag_config', cat: 'bag', name: '包装袋', icon: '👜' },
+            { key: 'hangtag_config', cat: 'hangtag', name: '吊牌', icon: '🏷️' },
+            { key: 'label_config', cat: 'label', name: '标签', icon: '📋' },
+            { key: 'hygiene_config', cat: 'hygiene', name: '卫生贴', icon: '🩹' },
+            { key: 'other_config', cat: 'other', name: '其他', icon: '📦' }
         ];
 
         var cards = [];
         trimDefs.forEach(function (td) {
             var val = tryParse(d[td.key]);
             if (!val || typeof val !== 'object' || !Object.keys(val).length) return;
-            cards.push(renderOneTrimCard(td, val));
+            var trimFiles = (fileMap[td.cat] || []);
+            var cmtFiles = (fileMap['cmt'] || []).filter(function (f) { return f.sub_key === td.cat; });
+            cards.push(renderOneTrimCard(td, val, trimFiles, cmtFiles));
         });
         if (cards.length === 0) return '';
 
@@ -314,7 +378,7 @@
         return h;
     }
 
-    function renderOneTrimCard(td, val) {
+    function renderOneTrimCard(td, val, trimFiles, cmtFiles) {
         var h = '<div class="u-trim-card">';
         h += '<div class="u-trim-card-head"><div class="u-trim-dot on"></div>' + td.icon + ' ' + td.name + '</div>';
 
@@ -377,66 +441,78 @@
         }
 
         if (val.remark) h += kv('备注', esc(val.remark));
+        // Inline files for this trim
+        var allTrimFiles = trimFiles.concat(cmtFiles);
+        if (allTrimFiles.length) {
+            h += renderInlineFiles(allTrimFiles, '相关文件');
+        }
         h += '</div>';
         return h;
     }
 
-    function renderShippingSection(d) {
+    function renderShippingSection(d, fileMap) {
         var h = secStart('shipping', '交付信息');
 
         h += kv('交付模式', '<span class="u-chip accent">' + (d.delivery_mode === 'bulk' ? '大货订单' : '样衣订单') + '</span>');
 
-        // Sample rows
-        var sampleRows = tryParse(d.sample_rows);
-        if (Array.isArray(sampleRows) && sampleRows.length) {
-            h += '<div class="u-sub-label" style="margin-top:16px">样衣明细</div>';
-            h += '<div class="u-table-wrap"><table class="u-table"><thead><tr>' +
-                '<th>款式</th><th>类型</th><th>尺码</th><th>数量</th><th>备注</th>' +
-                '</tr></thead><tbody>';
-            sampleRows.forEach(function (r) {
-                h += '<tr><td>' + esc(r.style) + '</td><td>' + esc(r.type) + '</td>' +
-                    '<td>' + esc(r.size) + '</td><td>' + esc(r.qty) + '</td>' +
-                    '<td>' + esc(r.desc || '-') + '</td></tr>';
-            });
-            h += '</tbody></table></div>';
+        var isSample = d.delivery_mode !== 'bulk';
+
+        if (isSample) {
+            // ── Sample only ──
+            var sampleRows = tryParse(d.sample_rows);
+            if (Array.isArray(sampleRows) && sampleRows.length) {
+                h += '<div class="u-sub-label" style="margin-top:16px">样衣明细</div>';
+                h += '<div class="u-table-wrap"><table class="u-table"><thead><tr>' +
+                    '<th>款式</th><th>类型</th><th>尺码</th><th>数量</th><th>备注</th>' +
+                    '</tr></thead><tbody>';
+                sampleRows.forEach(function (r) {
+                    h += '<tr><td>' + esc(r.style) + '</td><td>' + esc(r.type) + '</td>' +
+                        '<td>' + esc(r.size) + '</td><td>' + esc(r.qty) + '</td>' +
+                        '<td>' + esc(r.desc || '-') + '</td></tr>';
+                });
+                h += '</tbody></table></div>';
+            }
+            var sampleCfg = tryParse(d.sample_config);
+            if (sampleCfg && typeof sampleCfg === 'object' && Object.keys(sampleCfg).length) {
+                h += '<div class="u-sub-label" style="margin-top:16px">样衣物流</div>';
+                if (sampleCfg.carrier) h += kv('物流方式', esc(sampleCfg.carrier));
+                if (sampleCfg.needBulkQuote) h += kv('需大货报价', '是');
+                if (sampleCfg.intentTerm) h += kv('贸易术语', esc(sampleCfg.intentTerm));
+                if (sampleCfg.intentMethod) h += kv('运输方式', esc(sampleCfg.intentMethod));
+            }
+            if (d.sample_dest) h += kv('样衣目的地', esc(d.sample_dest));
+        } else {
+            // ── Bulk only ──
+            var bulkRows = tryParse(d.bulk_rows);
+            if (Array.isArray(bulkRows) && bulkRows.length) {
+                h += '<div class="u-sub-label" style="margin-top:16px">大货明细</div>';
+                h += '<div class="u-table-wrap"><table class="u-table"><thead><tr>' +
+                    '<th>款式</th><th>数量</th><th>尺码分配</th><th>备注</th>' +
+                    '</tr></thead><tbody>';
+                bulkRows.forEach(function (r) {
+                    h += '<tr><td>' + esc(r.style) + '</td><td>' + esc(r.qty) + '</td>' +
+                        '<td>' + esc(r.sizeDetail || '-') + '</td>' +
+                        '<td>' + esc(r.desc || '-') + '</td></tr>';
+                });
+                h += '</tbody></table></div>';
+            }
+            var bulkLog = tryParse(d.bulk_logistics);
+            if (bulkLog && typeof bulkLog === 'object' && Object.keys(bulkLog).length) {
+                h += '<div class="u-sub-label" style="margin-top:16px">大货物流</div>';
+                if (bulkLog.term) h += kv('贸易术语', esc(bulkLog.term));
+                if (bulkLog.method) h += kv('运输方式', esc(bulkLog.method));
+            }
+            if (d.bulk_dest) h += kv('大货目的地', esc(d.bulk_dest));
+            if (d.bulk_target_price) h += kv('目标价格', esc(d.bulk_target_price));
+            if (d.bulk_packing_remark) h += kv('包装备注', esc(d.bulk_packing_remark));
+            // Bulk packing files
+            var bpFiles = fileMap['bulkPacking'] || [];
+            if (bpFiles.length) h += renderInlineFiles(bpFiles, '包装参考文件');
         }
 
-        // Sample config
-        var sampleCfg = tryParse(d.sample_config);
-        if (sampleCfg && typeof sampleCfg === 'object' && Object.keys(sampleCfg).length) {
-            h += '<div class="u-sub-label" style="margin-top:16px">样衣物流</div>';
-            if (sampleCfg.carrier) h += kv('物流方式', esc(sampleCfg.carrier));
-            if (sampleCfg.needBulkQuote) h += kv('需大货报价', '是');
-            if (sampleCfg.intentTerm) h += kv('贸易术语', esc(sampleCfg.intentTerm));
-            if (sampleCfg.intentMethod) h += kv('运输方式', esc(sampleCfg.intentMethod));
-        }
-        if (d.sample_dest) h += kv('样衣目的地', esc(d.sample_dest));
-
-        // Bulk rows
-        var bulkRows = tryParse(d.bulk_rows);
-        if (Array.isArray(bulkRows) && bulkRows.length) {
-            h += '<div class="u-sub-label" style="margin-top:16px">大货明细</div>';
-            h += '<div class="u-table-wrap"><table class="u-table"><thead><tr>' +
-                '<th>款式</th><th>数量</th><th>尺码分配</th><th>备注</th>' +
-                '</tr></thead><tbody>';
-            bulkRows.forEach(function (r) {
-                h += '<tr><td>' + esc(r.style) + '</td><td>' + esc(r.qty) + '</td>' +
-                    '<td>' + esc(r.sizeDetail || '-') + '</td>' +
-                    '<td>' + esc(r.desc || '-') + '</td></tr>';
-            });
-            h += '</tbody></table></div>';
-        }
-
-        // Bulk logistics
-        var bulkLog = tryParse(d.bulk_logistics);
-        if (bulkLog && typeof bulkLog === 'object' && Object.keys(bulkLog).length) {
-            h += '<div class="u-sub-label" style="margin-top:16px">大货物流</div>';
-            if (bulkLog.term) h += kv('贸易术语', esc(bulkLog.term));
-            if (bulkLog.method) h += kv('运输方式', esc(bulkLog.method));
-        }
-        if (d.bulk_dest) h += kv('大货目的地', esc(d.bulk_dest));
-        if (d.bulk_target_price) h += kv('目标价格', esc(d.bulk_target_price));
-        if (d.bulk_packing_remark) h += kv('包装备注', esc(d.bulk_packing_remark));
+        // Final docs files (relevant to both modes)
+        var fdFiles = fileMap['finalDocs'] || [];
+        if (fdFiles.length) h += renderInlineFiles(fdFiles, '综合工艺单 / 企划书');
 
         h += secEnd();
         return h;
@@ -456,46 +532,53 @@
         return h;
     }
 
-    function renderFilesSection(files) {
-        // Group files by category
-        var grouped = {};
-        files.forEach(function (f) {
-            var cat = f.category || 'other';
-            if (!grouped[cat]) grouped[cat] = [];
-            grouped[cat].push(f);
-        });
-
-        var catLabels = { oem: 'OEM 文件', fabric: '面料文件', metal: '五金文件', pad: '胸垫文件', bag: '包装袋文件', hangtag: '吊牌文件', label: '标签文件', hygiene: '卫生贴文件', bulk: '大货文件', final: '最终文件', other: '其他文件' };
-
-        var h = secStart('files', '附件', files.length + ' 个');
-
-        Object.keys(grouped).forEach(function (cat) {
-            var label = catLabels[cat] || cat;
-            h += '<div class="u-sub-label">' + esc(label) + '</div>';
-            h += '<div class="u-file-grid">';
-            grouped[cat].forEach(function (f) {
-                var url = FILE_BASE + encodeURIComponent(f.stored_name);
-                var ext = (f.orig_name || '').split('.').pop().toLowerCase();
-                var iconClass = 'other';
-                var iconText = ext.toUpperCase();
-                if (/^(jpg|jpeg|png|gif|webp|svg)$/.test(ext)) { iconClass = 'img'; iconText = 'IMG'; }
-                else if (ext === 'pdf') { iconClass = 'pdf'; iconText = 'PDF'; }
-                else if (/^(doc|docx)$/.test(ext)) { iconClass = 'doc'; iconText = 'DOC'; }
-                else if (/^(zip|rar)$/.test(ext)) { iconClass = 'zip'; iconText = 'ZIP'; }
-                else if (/^(xls|xlsx)$/.test(ext)) { iconClass = 'doc'; iconText = 'XLS'; }
-                else if (/^(ai|eps)$/.test(ext)) { iconClass = 'doc'; iconText = 'AI'; }
-
-                var sizeStr = f.size_bytes ? formatSize(f.size_bytes) : '';
-                h += '<a href="' + url + '" target="_blank" rel="noopener noreferrer" class="u-file-item">' +
-                    '<div class="u-file-icon ' + iconClass + '">' + iconText + '</div>' +
-                    '<div class="u-file-info"><div class="u-file-name">' + esc(f.orig_name) + '</div>' +
-                    '<div class="u-file-meta">' + sizeStr + (f.sub_key ? ' · ' + esc(f.sub_key) : '') + '</div>' +
-                    '</div></a>';
-            });
-            h += '</div>';
-        });
-
+    function renderFilesSection(files, title) {
+        if (!files || !files.length) return '';
+        var h = secStart('files', title || '附件', files.length + ' 个');
+        h += '<div class="u-file-grid">';
+        files.forEach(function (f) { h += renderFileItem(f); });
+        h += '</div>';
         h += secEnd();
+        return h;
+    }
+
+    // Shared file item renderer
+    function renderFileItem(f) {
+        var url = FILE_BASE + encodeURIComponent(f.stored_name);
+        var ext = (f.orig_name || '').split('.').pop().toLowerCase();
+        var iconClass = 'other';
+        var iconText = ext.toUpperCase();
+        if (/^(jpg|jpeg|png|gif|webp|svg)$/.test(ext)) { iconClass = 'img'; iconText = 'IMG'; }
+        else if (ext === 'pdf') { iconClass = 'pdf'; iconText = 'PDF'; }
+        else if (/^(doc|docx)$/.test(ext)) { iconClass = 'doc'; iconText = 'DOC'; }
+        else if (/^(zip|rar)$/.test(ext)) { iconClass = 'zip'; iconText = 'ZIP'; }
+        else if (/^(xls|xlsx)$/.test(ext)) { iconClass = 'doc'; iconText = 'XLS'; }
+        else if (/^(ai|eps)$/.test(ext)) { iconClass = 'doc'; iconText = 'AI'; }
+        var sizeStr = f.size_bytes ? formatSize(f.size_bytes) : '';
+        return '<a href="' + url + '" target="_blank" rel="noopener noreferrer" class="u-file-item">' +
+            '<div class="u-file-icon ' + iconClass + '">' + iconText + '</div>' +
+            '<div class="u-file-info"><div class="u-file-name">' + esc(f.orig_name) + '</div>' +
+            '<div class="u-file-meta">' + sizeStr + (f.sub_key ? ' · ' + esc(f.sub_key) : '') + '</div>' +
+            '</div></a>';
+    }
+
+    // Inline files block within a section
+    function renderInlineFiles(files, label) {
+        var h = '<div class="u-inline-files">';
+        if (label) h += '<div class="u-sub-label" style="margin-top:12px">' + esc(label) + '</div>';
+        h += '<div class="u-file-grid">';
+        files.forEach(function (f) {
+            var url = FILE_BASE + encodeURIComponent(f.stored_name);
+            var isImg = /\.(jpg|jpeg|png|gif|webp)$/i.test(f.orig_name);
+            if (isImg) {
+                h += '<a href="' + url + '" target="_blank" rel="noopener noreferrer" class="u-inline-img-wrap">' +
+                    '<img src="' + url + '" alt="' + esc(f.orig_name) + '" loading="lazy">' +
+                    '<span>' + esc(f.orig_name) + '</span></a>';
+            } else {
+                h += renderFileItem(f);
+            }
+        });
+        h += '</div></div>';
         return h;
     }
 

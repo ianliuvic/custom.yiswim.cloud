@@ -5035,7 +5035,7 @@
                         document.getElementById('custom-fabric-address-info').classList.toggle('hidden', !config.physical);
                         renderCustomFabricPreview(config.customFiles || []);
                     } else {
-                        // 标准面料逻辑 (删掉了原有的 notesArea.style.display 行)
+                        // 标准面料逻辑
                         document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：${selection.activeName}`;
                         [solidArea, printArea].forEach(area => area?.classList.remove('hidden'));
                         if(customForm) customForm.classList.add('hidden');
@@ -5052,7 +5052,22 @@
                             });
                             document.getElementById('fabric-print-ref-color').value = config.printRefColor || '';
                         }
+
+                        // --- 核心修复：切换 Tab 时，同步恢复该面料的色卡封面图 ---
+                        const swatches = getFabricSwatches(selection.activeName);
+                        const previewDiv = document.getElementById('fabric-swatch-img-preview');
+                        if (previewDiv) {
+                            if (swatches.length > 0) {
+                                previewDiv.style.backgroundImage = `url('${swatches[0]}')`;
+                                previewDiv.innerHTML = ''; 
+                            } else {
+                                previewDiv.style.backgroundImage = 'none';
+                                previewDiv.innerHTML = '<span style="color:#94a3b8; font-size:12px; font-weight:600;">[ 暂无高清色卡档案 ]</span>';
+                            }
+                        }
+                        // -----------------------------------------------------------
                     }
+
 
                     // 通用项恢复
                     document.getElementById('fabric-remark').value = config.remark || '';

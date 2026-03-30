@@ -896,6 +896,15 @@
         "例：\n主体黑色，撞色滚边\n注意防水拉链": "e.g.,\nBlack body, contrast piping\nNote: waterproof zipper",
         "选或填": "Select or type",
 
+        // ── OEM Detail Panel ──
+        "OEM 自主设计包:": "OEM Custom Design Package:",
+        "已传:": "Uploaded:",
+        "图 /": "image(s) /",
+        "文件": "file(s)",
+        "共": "Total",
+        "款设计": "design(s)",
+        "单号:": "Tracking #:",
+
         // ── Chinese Numerals ──
         "一、 ": "I. ",
         "二、 ": "II. ",

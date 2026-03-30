@@ -16,8 +16,9 @@
             <span class="site-title">Hongxiu Custom System</span>
         </div>
         <div style="font-size: 14px; color: var(--text-light); display: flex; align-items: center; gap: 12px;">
-            <button onclick="setLanguage('<%= lng === 'en' ? 'zh' : 'en' %>')" style="background: none; border: 1px solid var(--border-color); border-radius: 6px; padding: 4px 10px; font-size: 12px; cursor: pointer; color: var(--text-light); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--primary-color)';this.style.color='var(--primary-color)'" onmouseout="this.style.borderColor='var(--border-color)';this.style.color='var(--text-light)'">
-                🌐 <%= lng === 'en' ? '中文' : 'EN' %>
+            <button onclick="setLanguage('<%= lng === 'en' ? 'zh' : 'en' %>')" style="background: none; border: 1px solid var(--border-color); border-radius: 20px; padding: 5px 14px; font-size: 12px; cursor: pointer; color: var(--text-light); transition: all 0.25s; display: inline-flex; align-items: center; gap: 5px; font-weight: 500; letter-spacing: 0.3px;" onmouseover="this.style.borderColor='var(--primary-color)';this.style.color='var(--primary-color)';this.querySelector('svg').style.stroke='var(--primary-color)'" onmouseout="this.style.borderColor='var(--border-color)';this.style.color='var(--text-light)';this.querySelector('svg').style.stroke='currentColor'">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition: stroke 0.25s;"><path d="M5 8l6 0"/><path d="M4 12l7 0"/><path d="M8 8c0 2.5-1.5 5-4 6.5"/><path d="M6 8c0 1.5.8 3 2.5 4.5"/><path d="M14 12l3.5 8"/><path d="M14 12l-3.5 8"/><path d="M11.5 17h5"/></svg>
+                <%= lng === 'en' ? '中文' : 'EN' %>
             </button>
             <span>当前用户：<strong><%= user.username %></strong> | 
             <a href="/logout" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">安全退出</a></span>
@@ -430,7 +431,7 @@
                         <div style="margin-top: 30px; padding-top: 25px; border-top: 2px dashed #f1f5f9;">
                             <label class="oem-checkbox-label" style="margin: 0; padding: 0;">
                                 <input type="checkbox" id="fabric-cmt-check" onchange="toggleFabricCmtInfo(this.checked)"> 
-                                <span style="font-size: 13px; font-weight: 600; color: #334155;">我将自行采购并寄送面辅料 (CMT 模式)</span>
+                                <span style="font-size: 13px; font-weight: 600; color: #334155;">我将自行采购并寄送面辅料 (CMT 模式 / Customer Supplied Material)</span>
                             </label>
                             
                             <!-- Step 2: 面料 CMT 展开区 -->
@@ -1547,7 +1548,7 @@
                                             
                                             <!-- 第一层：选择安装的服装部件 (多选) -->
                                             <div style="margin-bottom: 25px;">
-                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:12px;">1. 目标服装部件 (可多选)</label>
+                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:12px;">1. 目标服装部件 (Target Component - 可多选)</label>
                                                 <div class="chip-container" style="gap: 15px;">
                                                     <div class="chip selected" style="padding: 10px 20px; font-size: 13px;" onclick="toggleLabelComponent('上装/连体', this)">
                                                         上装 / 连体泳装

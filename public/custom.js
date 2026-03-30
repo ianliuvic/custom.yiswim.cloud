@@ -1053,7 +1053,7 @@
                                 if (!v) { allOk = false; }
                             }
                             // E. 主洗标分开需有说明
-                            if (labelConfig.isSplit) {
+                            if (labelConfig.isSet) {
                                 const v = (document.getElementById('label-split-remark')?.value || '').trim();
                                 if (!v) { allOk = false; }
                             }

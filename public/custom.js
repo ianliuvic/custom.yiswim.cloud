@@ -1027,6 +1027,15 @@
                                 const f = labelConfig.otherMatFiles && labelConfig.otherMatFiles.length > 0;
                                 if (!r && !f) { allOk = false; }
                             }
+                            // A2. 前三个材质(印标/TPU标/织唛标)需有尺寸
+                            if (['印标', 'TPU标', '织唛标'].includes(labelConfig.material)) {
+                                const size = (document.getElementById('label-custom-size')?.value || '').trim();
+                                if (!size) { allOk = false; }
+                            }
+                            // A3. TPU标/织唛标需选择缝制方式
+                            if (['TPU标', '织唛标'].includes(labelConfig.material)) {
+                                if (!labelConfig.method || labelConfig.method.trim() === '') { allOk = false; }
+                            }
                             // B. 缝制方式选"其他"需有描述或文件
                             if (labelConfig.method === '其他') {
                                 const r = (document.getElementById('label-sewing-remark')?.value || '').trim() !== '';

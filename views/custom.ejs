@@ -2533,11 +2533,11 @@
                                         </div>
 
                                         <!-- 描述与上传行 -->
-                                        <div style="display:grid; grid-template-columns:1.5fr 1fr; gap:30px;">
+                                        <div style="display:grid; grid-template-columns:1.5fr 1fr; gap:30px; align-items: stretch;">
                                             <!-- 描述文本框 -->
-                                            <div>
+                                            <div style="display: flex; flex-direction: column;">
                                                 <label style="font-size:11px; font-weight:700; color:#94a3b8; margin-bottom:8px; display:block; text-transform:uppercase;">装箱与包装需求描述</label>
-                                                <textarea id="bulk-shipping-remark" class="oem-textarea" style="height:140px; font-size:12px;" placeholder="请详细描述您的包装与装箱需求。&#10;例如：&#10;1. 单件入袋方式：独立 OPP 袋 + 吊牌外挂&#10;2. 外箱规则：独色独码，每箱不超过 15kg&#10;3. 侧唛需印：SKU / 颜色 / 尺码 / 数量&#10;4. 需贴 Amazon FBA 入仓标签" oninput="updateLogisticsSummary()"></textarea>
+                                                <textarea id="bulk-shipping-remark" class="oem-textarea" style="flex: 1; min-height:140px; font-size:12px; resize: none; box-sizing: border-box;" placeholder="请详细描述您的包装与装箱需求。&#10;例如：&#10;1. 单件入袋方式：独立 OPP 袋 + 吊牌外挂&#10;2. 外箱规则：独色独码，每箱不超过 15kg&#10;3. 侧唛需印：SKU / 颜色 / 尺码 / 数量&#10;4. 需贴 Amazon FBA 入仓标签" oninput="updateLogisticsSummary()"></textarea>
                                             </div>
                                             <!-- 附件上传区 -->
                                             <div style="display: flex; flex-direction: column;">

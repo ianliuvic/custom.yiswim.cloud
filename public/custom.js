@@ -1013,6 +1013,14 @@
                         }
                     }
                 }
+                // label custom mode: design files or remark needed
+                if (t === 'label') {
+                    if (typeof labelConfig !== 'undefined' && labelConfig.mode === 'custom') {
+                        const hasRemark = (document.getElementById('label-remark')?.value || '').trim() !== '';
+                        const hasFiles = labelConfig.designFiles && labelConfig.designFiles.length > 0;
+                        if (!hasRemark && !hasFiles) { allOk = false; }
+                    }
+                }
                 // hangtag: design files or remark needed (both auto and custom modes)
                 if (t === 'hangtag') {
                     if (typeof hangtagConfig !== 'undefined') {

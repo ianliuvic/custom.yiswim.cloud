@@ -979,6 +979,14 @@
                 if (t === 'bag') {
                     if (typeof bagConfig !== 'undefined' && bagConfig.material === '未选材质') { allOk = false; }
                 }
+                // pad: custom shape needs remark or files
+                if (t === 'pad') {
+                    if (typeof padConfig !== 'undefined' && padConfig.customShape) {
+                        const hasRemark = padConfig.shapeRemark && padConfig.shapeRemark.trim() !== '';
+                        const hasFiles = padConfig.shapeFiles && padConfig.shapeFiles.length > 0;
+                        if (!hasRemark && !hasFiles) { allOk = false; }
+                    }
+                }
                 // metal custom mode with no categories, or categories missing remark/files
                 if (t === 'metal') {
                     if (typeof metalConfig !== 'undefined' && metalConfig.mode === 'custom') {

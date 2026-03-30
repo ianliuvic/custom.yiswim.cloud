@@ -428,6 +428,9 @@
         "请描述您需要的特殊标签材质...": "Describe your special label material requirements...",
         "请详细输入辅料名称、材质、尺寸、颜色，以及预期用在衣物的哪个部位。\n例如：需要 15cm 长的黑色 YKK 隐形拉链，用于后背开襟...": "Enter trim name, material, size, color, and expected garment placement.\ne.g., Need a 15cm black YKK invisible zipper for back opening...",
         "例如：自供 15cm YKK 金属拉链，金色，100条...": "e.g., Self-supplied 15cm YKK metal zipper, gold, 100 pcs...",
+        "例如：自供透气直立棉胸垫，肤色，500副...": "e.g., Self-supplied breathable standing cotton chest pads, nude, 500 pairs...",
+        "如：需要定制特殊的一体式连体胸垫，或者是指定每个尺码的具体杯长杯宽...": "e.g., Need a custom one-piece chest pad, or specify cup length and width for each size...",
+        "A. 材质与袋型": "A. Material & Bag Type",
         "请详细描述您的装箱需求。\n例如：\n1. 外箱需贴 Amazon FBA 标签\n2. 每箱重量不得超过 15kg\n3. 侧唛需印制单号和 SKU 信息": "Please describe your packing requirements in detail.\ne.g.:\n1. Outer cartons need Amazon FBA labels\n2. Each carton must not exceed 15kg\n3. Side marks should include tracking number and SKU info",
         "期望 EXW 单价": "Target EXW Unit Price",
         "预期发货方式": "Expected Shipping Method",
@@ -939,6 +942,10 @@
         { m: '开发阶段说明：', h: '<strong style="color: #475569;">Development Stage Note:</strong><br>All brand trims configured in this step are primarily for <strong>bulk production cost estimation and planning</strong>. During the sampling phase, factory standard trims will be used by default. Note that trims involving Logo molding or custom printing are subject to MOQ requirements and typically <strong>will not be fulfilled separately during sampling</strong>.' },
         // Step 3: trim warehouse address (7x)
         { m: '收件仓：', h: '<strong>Receiving Warehouse:</strong> Hongxiu Garment Co., Ltd. Material Warehouse, 10-8A Tiexi Rd, Xingcheng, Liaoning<br><strong>Recipient:</strong> Trim Dept. 191-6891-9352' },
+        // Step 3: metal smart match (inner div with <strong>)
+        { m: '逐一挑选基础五金', h: '<strong style="color:var(--primary-color);">Smart Match Description:</strong> No need to individually select basic hardware. The pattern maker will auto-match high-quality, rust-proof and chlorine-resistant standard parts (e.g., figure-8 clasps, O-rings, back clasps) based on your style structure, ensuring colors perfectly match your selection above.' },
+        // Step 3: pad smart match (inner div with <strong>)
+        { m: '确定的款式轮廓', h: '<strong style="color:var(--primary-color);">Smart Match Description:</strong> Based on the style silhouette(s) confirmed in Step 1, we will automatically match the best-fitting chest pad shape, thickness (default: light and natural), and color (default: Nude/Black). Ensuring perfect integration with the garment pattern for optimal wearing experience \u2014 no additional configuration needed.' },
         // Step 3: pad expert advice
         { m: '红绣专业建议：', h: '<strong>Hongxiu Expert Advice:</strong><br>1. <strong>Shape Matching:</strong> Since breast pads must precisely conform to the outer garment panels, the system has automatically linked the cup type to your style (e.g., triangle cups with triangle pads, bandeau with round pads, etc.).<br>2. <strong>Size Grading:</strong> During bulk production, we will <strong>automatically grade and match appropriately sized breast pads based on garment sizes (e.g., S, M, L, XL)</strong>, ensuring perfect proportions for each piece. Unless you have special molding requirements, we recommend leaving this to our automatic matching.' },
         // Step 3: pad molding commercial tip

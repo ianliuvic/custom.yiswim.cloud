@@ -2543,10 +2543,14 @@
             let hasWarning = false;
             if (name === '印标') {
                 hasWarning = true;
-                warningText.innerHTML = "<strong>成本提醒：</strong>无感印标建议设计为 <strong>单色 (黑色或白色)</strong>。如需彩色渐变或多色套印，开版费及单价较高。";
+                warningText.innerHTML = (window.__lang === 'en')
+                    ? "<strong>Cost reminder:</strong> Heat transfer labels are recommended in <strong>single color (Black or White)</strong>. Multi-color gradient or overprint designs incur higher plate fees and unit costs."
+                    : "<strong>成本提醒：</strong>无感印标建议设计为 <strong>单色 (黑色或白色)</strong>。如需彩色渐变或多色套印，开版费及单价较高。";
             } else if (name === 'TPU标') {
                 hasWarning = true;
-                warningText.innerHTML = "<strong>成本提醒：</strong>TPU 柔感标建议选择 <strong>常规黑色</strong>。如需指定特殊底色或彩色字，需满足较高的起订量 (MOQ) 且成本较高。";
+                warningText.innerHTML = (window.__lang === 'en')
+                    ? "<strong>Cost reminder:</strong> TPU labels are recommended in <strong>standard Black</strong>. Special base colors or colored text require higher MOQ and cost more."
+                    : "<strong>成本提醒：</strong>TPU 柔感标建议选择 <strong>常规黑色</strong>。如需指定特殊底色或彩色字，需满足较高的起订量 (MOQ) 且成本较高。";
             }
             
             if (warningBox) {
@@ -2851,10 +2855,10 @@
         
             // 抓取全局备注文本
             labelConfig.remark = document.getElementById('label-remark')?.value.trim() || '';
-            const hasContent = (labelConfig.remark !== '' || labelConfig.designFiles.length > 0) ? '✓ 已传稿/内容' : '× 待补内容';
+            const hasContent = (labelConfig.remark !== '' || labelConfig.designFiles.length > 0) ? _t('✓ 已传稿/内容') : _t('× 待补内容');
         
             if (labelConfig.mode === 'auto') {
-                st.innerHTML = `<div style="text-align:right;"><span style="color:#10b981; font-weight:600;">红绣智能代配</span><br><span style="font-size:10px; opacity:0.8;">内容: ${hasContent}</span></div>`;
+                st.innerHTML = `<div style="text-align:right;"><span style="color:#10b981; font-weight:600;">${_t('红绣智能代配')}</span><br><span style="font-size:10px; opacity:0.8;">${_t('内容:')} ${hasContent}</span></div>`;
             } else {
                 const sizeVal = document.getElementById('label-custom-size')?.value.trim() || '';
                 labelConfig.size = sizeVal;
@@ -2863,23 +2867,23 @@
                 const splitVal = document.getElementById('label-split-remark')?.value.trim() || '';
                 labelConfig.splitRemark = splitVal;
         
-                const matText = labelConfig.material;
+                const matText = _t(labelConfig.material);
                 let sizeText = '';
                 let sewingText = '';
         
-                if (matText === '其他') {
-                    sizeText = '尺寸与缝制详见描述';
-                } else if (matText === '印标') {
-                    sizeText = sizeVal ? `尺寸: ${sizeVal}` : '尺寸待定';
+                if (labelConfig.material === '其他') {
+                    sizeText = _t('尺寸与缝制详见描述');
+                } else if (labelConfig.material === '印标') {
+                    sizeText = sizeVal ? `${_t('尺寸:')} ${sizeVal}` : _t('尺寸待定');
                 } else {
-                    sizeText = sizeVal ? `尺寸: ${sizeVal}` : '尺寸待定';
+                    sizeText = sizeVal ? `${_t('尺寸:')} ${sizeVal}` : _t('尺寸待定');
                     
                     // 抓取并展示自定义缝制的描述
                     labelConfig.sewingRemark = document.getElementById('label-sewing-remark')?.value.trim() || '';
                     if (labelConfig.method === '其他') {
-                        sewingText = labelConfig.sewingRemark ? ' | 自定义缝制' : ' | 缝制待说明';
+                        sewingText = labelConfig.sewingRemark ? ` | ${_t('自定义缝制')}` : ` | ${_t('缝制待说明')}`;
                     } else {
-                        sewingText = ` | ${labelConfig.method}`;
+                        sewingText = ` | ${_t(labelConfig.method)}`;
                     }
                 }
                 
@@ -2891,26 +2895,26 @@
                     let pos = labelConfig.placements.top;
                     if (pos === '自定义其他位置') {
                         const customVal = document.getElementById('label-custom-top-text')?.value.trim();
-                        pos = customVal ? customVal : '其他位置';
+                        pos = customVal ? customVal : _t('其他位置');
                     } else {
-                        pos = pos.split(' (')[0];
+                        pos = _t(pos.split(' (')[0]);
                     }
-                    placementHtml += `<span style="font-size:10px; opacity:0.8; display:block;">[上装] ${pos}${sewingText}</span>`;
+                    placementHtml += `<span style="font-size:10px; opacity:0.8; display:block;">[${_t('上装')}] ${pos}${sewingText}</span>`;
                 }
                 
                 if (comps.includes('下装/裤装')) {
                     let pos = labelConfig.placements.bottom;
                     if (pos === '自定义其他位置') {
                         const customVal = document.getElementById('label-custom-bottom-text')?.value.trim();
-                        pos = customVal ? customVal : '其他位置';
+                        pos = customVal ? customVal : _t('其他位置');
                     } else {
-                        pos = pos.split(' (')[0];
+                        pos = _t(pos.split(' (')[0]);
                     }
-                    placementHtml += `<span style="font-size:10px; opacity:0.8; display:block;">[下装] ${pos}${sewingText}</span>`;
+                    placementHtml += `<span style="font-size:10px; opacity:0.8; display:block;">[${_t('下装')}] ${pos}${sewingText}</span>`;
                 }
         
                 // --- 新增：主洗标分开标记 ---
-                const splitText = labelConfig.isSet ? '<span style="color:var(--primary-color);"> [主洗标分开]</span>' : '';
+                const splitText = labelConfig.isSet ? '<span style="color:var(--primary-color);"> [' + _t('主洗标分开') + ']</span>' : '';
         
                 st.innerHTML = `
                     <div style="text-align:right;">

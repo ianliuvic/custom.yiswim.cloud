@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="<%= lng === 'en' ? 'en' : 'zh-CN' %>">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/user.css">
+    <script>window.__lang = '<%= lng %>';</script>
+    <script src="/i18n.js"></script>
+</head>
+<body>
+
+    <header class="u-header">
+        <div class="u-header-left">
+            <img src="/logo.png" alt="Logo" class="u-logo" onerror="this.style.display='none'">
+            <span class="u-header-title">Hongxiu Custom System</span>
+        </div>
+        <div class="u-header-right">
+            <button onclick="setLanguage('<%= lng === 'en' ? 'zh' : 'en' %>')" class="u-lang-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l6 0"/><path d="M4 12l7 0"/><path d="M8 8c0 2.5-1.5 5-4 6.5"/><path d="M6 8c0 1.5.8 3 2.5 4.5"/><path d="M14 12l3.5 8"/><path d="M14 12l-3.5 8"/><path d="M11.5 17h5"/></svg>
+                <%= lng === 'en' ? '中文' : 'EN' %>
+            </button>
+            <span class="u-user-info">
+                <strong><%= user.username %></strong>
+                <a href="/" class="u-nav-link">返回询盘</a>
+                <a href="/logout" class="u-nav-link u-logout">退出</a>
+            </span>
+        </div>
+    </header>
+
+    <div class="u-container">
+        <!-- 左侧菜单 -->
+        <nav class="u-sidebar">
+            <div class="u-menu-item active" data-tab="inquiries" onclick="switchTab('inquiries')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                <span>询盘记录</span>
+            </div>
+            <div class="u-menu-item" data-tab="account" onclick="switchTab('account')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>账户设置</span>
+            </div>
+        </nav>
+
+        <!-- 右侧主内容 -->
+        <main class="u-main">
+            <!-- Tab 1: 询盘列表 -->
+            <section id="tab-inquiries" class="u-tab active">
+                <div class="u-page-title">
+                    <h2>询盘记录</h2>
+                    <a href="/" class="u-btn-primary">+ 新建询盘</a>
+                </div>
+                <div id="inquiry-list" class="u-inquiry-list">
+                    <div class="u-loading">加载中...</div>
+                </div>
+                <div id="inquiry-pagination" class="u-pagination"></div>
+
+                <!-- 询盘详情面板（点击展开） -->
+                <div id="inquiry-detail" class="u-detail-panel" style="display:none;">
+                    <div class="u-detail-header">
+                        <button class="u-back-btn" onclick="closeDetail()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                            返回列表
+                        </button>
+                        <h3 id="detail-title"></h3>
+                        <span id="detail-status" class="u-status-tag"></span>
+                    </div>
+                    <div id="detail-content" class="u-detail-content"></div>
+                </div>
+            </section>
+
+            <!-- Tab 2: 账户设置 -->
+            <section id="tab-account" class="u-tab">
+                <div class="u-page-title"><h2>账户设置</h2></div>
+
+                <div class="u-card">
+                    <h3>基本信息</h3>
+                    <div class="u-info-row">
+                        <label>用户名</label>
+                        <span><%= user.username %></span>
+                    </div>
+                    <div class="u-info-row">
+                        <label>邮箱</label>
+                        <span><%= user.email %></span>
+                    </div>
+                </div>
+
+                <div class="u-card" style="margin-top:24px;">
+                    <h3>修改密码</h3>
+                    <form id="changePwdForm" class="u-form" onsubmit="return handleChangePwd(event)">
+                        <div class="u-form-group">
+                            <label>当前密码</label>
+                            <input type="password" id="currentPwd" required placeholder="输入当前密码">
+                        </div>
+                        <div class="u-form-group">
+                            <label>新密码</label>
+                            <input type="password" id="newPwd" required minlength="8" placeholder="至少8位">
+                        </div>
+                        <div class="u-form-group">
+                            <label>确认新密码</label>
+                            <input type="password" id="confirmPwd" required minlength="8" placeholder="再次输入新密码">
+                        </div>
+                        <div id="pwd-msg" class="u-form-msg"></div>
+                        <button type="submit" class="u-btn-primary" style="margin-top:12px;">保存修改</button>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/user.js"></script>
+</body>
+</html>

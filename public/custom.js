@@ -1763,11 +1763,12 @@
         function pickLiningQuickColor(btnEl, color) {
             if (!activeFabricCat || !fabricSelection[activeFabricCat] || !fabricSelection[activeFabricCat].activeName) return;
             const config = fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName];
+            const translated = _t(color);
             // Toggle: click again to deselect
-            if (config.colorText === color) {
+            if (config.colorText === translated) {
                 config.colorText = '';
             } else {
-                config.colorText = color;
+                config.colorText = translated;
             }
             document.getElementById('fabric-color-input').value = config.colorText;
             syncLiningQuickBtns();
@@ -1777,7 +1778,8 @@
         function syncLiningQuickBtns() {
             const currentColor = document.getElementById('fabric-color-input')?.value.trim() || '';
             document.querySelectorAll('.lining-quick-btn').forEach(btn => {
-                const isActive = btn.dataset.color === currentColor;
+                const raw = btn.dataset.color;
+                const isActive = currentColor === raw || currentColor === _t(raw);
                 btn.style.borderColor = isActive ? 'var(--primary-color)' : '#e2e8f0';
                 btn.style.background = isActive ? '#fef2f2' : '#fff';
             });

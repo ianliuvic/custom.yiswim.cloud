@@ -1136,6 +1136,15 @@
                     if (typeof sampleRows !== 'undefined') {
                         ok = sampleRows.some(r => r.style && r.style !== '');
                     }
+                    // 必须选择样品接收目的地
+                    const dest = document.getElementById('sample-destination')?.value || '';
+                    if (!dest) { ok = false; }
+                    // 勾选核算大货价时，预估大货数量不能为空
+                    const bulkQuoteCheck = document.getElementById('sample-need-bulk-quote');
+                    if (bulkQuoteCheck && bulkQuoteCheck.checked) {
+                        const qty = (document.getElementById('sample-intent-qty')?.value || '').trim();
+                        if (!qty || parseInt(qty) <= 0) { ok = false; }
+                    }
                 } else {
                     if (typeof bulkRows !== 'undefined') {
                         ok = bulkRows.some(r => r.style && r.style !== '');

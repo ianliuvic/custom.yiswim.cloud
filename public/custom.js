@@ -3422,39 +3422,40 @@
             }
         
             if (hangtagConfig.mode === 'auto') {
-                const hasFile = hangtagConfig.designFiles.length > 0 ? '✓ 已传稿' : '× 待传稿';
-                st.innerHTML = `<div style="text-align:right;"><span style="color:#10b981; font-weight:600;">红绣智能代配</span><br><span style="font-size:10px; opacity:0.8;">设计稿: ${hasFile}</span></div>`;
+                const hasFile = hangtagConfig.designFiles.length > 0 ? _t('✓ 已传稿') : _t('× 待传稿');
+                st.innerHTML = `<div style="text-align:right;"><span style="color:#10b981; font-weight:600;">${_t('红绣智能代配')}</span><br><span style="font-size:10px; opacity:0.8;">${_t('设计稿:')} ${hasFile}</span></div>`;
             } else {
                 // 1. 材质与克重
-                let matDisplay = hangtagConfig.material.split(' ')[0];
+                let matDisplay = _t(hangtagConfig.material.split(' ')[0]);
                 if (!['其他'].includes(hangtagConfig.material)) {
                     matDisplay += ` (${hangtagConfig.weight})`;
                 }
         
                 // 2. 子母牌标记
-                const setText = hangtagConfig.isSet ? '<span style="color:var(--primary-color);"> [子母牌]</span>' : '';
+                const setText = hangtagConfig.isSet ? '<span style="color:var(--primary-color);"> [' + _t('子母牌') + ']</span>' : '';
         
                 // 3. 工艺多选处理
-                const craftDisplay = hangtagConfig.crafts.join(', ');
+                const craftDisplay = hangtagConfig.crafts.map(c => _t(c)).join(', ');
         
                 // 4. 颜色处理
-                let colorDisplay = hangtagConfig.stringColor;
-                if (colorDisplay === '其他') {
+                let colorDisplay = _t(hangtagConfig.stringColor);
+                if (colorDisplay === '其他' || hangtagConfig.stringColor === '其他') {
                     const val = document.getElementById('hangtag-string-color-other')?.value.trim();
-                    colorDisplay = val ? val : '其他色';
+                    colorDisplay = val ? val : _t('其他色');
                 }
 
                 // 5. 吊粒类型精简提取 (修复点：将类型真正显示出来)
                 let stringTypeDisplay = hangtagConfig.stringType;
-                if (stringTypeDisplay.includes('方块')) stringTypeDisplay = '方块';
-                else if (stringTypeDisplay.includes('子弹头')) stringTypeDisplay = '子弹头';
-                else if (stringTypeDisplay.includes('定制')) stringTypeDisplay = '定制';
+                if (stringTypeDisplay.includes('方块')) stringTypeDisplay = _t('方块');
+                else if (stringTypeDisplay.includes('子弹头')) stringTypeDisplay = _t('子弹头');
+                else if (stringTypeDisplay.includes('定制')) stringTypeDisplay = _t('定制');
         
+                const shapeDisplay = _t(hangtagConfig.shape.split(' ')[0]);
                 st.innerHTML = `
                     <div style="text-align:right;">
-                        ${matDisplay}${setText} | ${hangtagConfig.shape.split(' ')[0]}${hangtagConfig.roundedCorner ? ' [圆角]' : ''}<br>
-                        <span style="font-size:10px; opacity:0.8;">工艺: ${craftDisplay}</span><br>
-                        <span style="font-size:10px; opacity:0.8;">吊粒: ${colorDisplay} | ${stringTypeDisplay}</span>
+                        ${matDisplay}${setText} | ${shapeDisplay}${hangtagConfig.roundedCorner ? ' [' + _t('圆角') + ']' : ''}<br>
+                        <span style="font-size:10px; opacity:0.8;">${_t('工艺')}: ${craftDisplay}</span><br>
+                        <span style="font-size:10px; opacity:0.8;">${_t('吊粒')}: ${colorDisplay} | ${stringTypeDisplay}</span>
                     </div>`;
             }
             st.style.color = 'var(--primary-color)';

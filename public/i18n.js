@@ -460,6 +460,7 @@
         "离岸港口": "Port of Loading",
         "到岸交货": "Delivered at Destination",
         "工厂提货": "Factory Pickup",
+        "如：": "e.g.,",
 
         // ── Sampling Guide Modal ──
         "打样规格与专业建议": "Sampling Specifications & Professional Advice",

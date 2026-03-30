@@ -1019,6 +1019,36 @@
                         const hasRemark = (document.getElementById('hangtag-remark')?.value || '').trim() !== '';
                         const hasFiles = hangtagConfig.designFiles && hangtagConfig.designFiles.length > 0;
                         if (!hasRemark && !hasFiles) { allOk = false; }
+
+                        // A. 材质选"其他"需有描述或文件
+                        if (hangtagConfig.material === '其他') {
+                            const r = (document.getElementById('hangtag-material-remark')?.value || '').trim() !== '';
+                            const f = hangtagConfig.otherMatFiles && hangtagConfig.otherMatFiles.length > 0;
+                            if (!r && !f) { allOk = false; }
+                        }
+                        // B. 形状选"异形定制"需有描述或文件
+                        if (hangtagConfig.shape === '尺寸或特殊异形定制') {
+                            const r = (document.getElementById('hangtag-shape-remark')?.value || '').trim() !== '';
+                            const f = hangtagConfig.shapeFiles && hangtagConfig.shapeFiles.length > 0;
+                            if (!r && !f) { allOk = false; }
+                        }
+                        // C. 工艺选"其他"需有描述或文件
+                        if (hangtagConfig.crafts && hangtagConfig.crafts.includes('其他')) {
+                            const r = (document.getElementById('hangtag-craft-remark')?.value || '').trim() !== '';
+                            const f = hangtagConfig.otherCraftFiles && hangtagConfig.otherCraftFiles.length > 0;
+                            if (!r && !f) { allOk = false; }
+                        }
+                        // D. 吊粒选"定制材质与形状"需有描述或文件
+                        if (hangtagConfig.stringType === '定制材质与形状') {
+                            const r = (document.getElementById('hangtag-string-remark')?.value || '').trim() !== '';
+                            const f = hangtagConfig.stringFiles && hangtagConfig.stringFiles.length > 0;
+                            if (!r && !f) { allOk = false; }
+                        }
+                        // D. 吊粒颜色选"其他"需有输入
+                        if (hangtagConfig.stringColor === '其他') {
+                            const v = (document.getElementById('hangtag-string-color-other')?.value || '').trim();
+                            if (!v) { allOk = false; }
+                        }
                     }
                 }
             }

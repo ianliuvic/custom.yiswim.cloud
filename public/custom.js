@@ -1974,14 +1974,14 @@
                 const descVal = document.getElementById(descId)?.value.trim();
                 const fileCount = cmtFilesData[category].length;
                 
-                let detailHtml = descVal ? `<br><span style="font-size:10px; color:#b45309;">描述: ${descVal.substring(0, 12)}...</span>` : '<br><span style="font-size:10px; color:#ef4444;">待写描述</span>';
-                let fileHtml = fileCount > 0 ? ` <span style="color:#10b981;">(附${fileCount}图)</span>` : '';
+                let detailHtml = descVal ? `<br><span style="font-size:10px; color:#b45309;">${_t('描述:')} ${descVal.substring(0, 12)}...</span>` : '<br><span style="font-size:10px; color:#ef4444;">' + _t('待写描述') + '</span>';
+                let fileHtml = fileCount > 0 ? ` <span style="color:#10b981;">(${fileCount} ${_t('图')})</span>` : '';
         
                 stEl.innerHTML = `
                     <div style="text-align:right;">
-                        <span style="color:#d97706; font-weight:600;">客户自行提供 (CMT)</span>
+                        <span style="color:#d97706; font-weight:600;">${_t('客户自行提供 (CMT)')}</span>
                         ${detailHtml}${fileHtml}
-                        <br><span style="font-size:10px; opacity:0.8; color:#92400e;">${tracking ? '单号: '+tracking : '待填单号'}</span>
+                        <br><span style="font-size:10px; opacity:0.8; color:#92400e;">${tracking ? _t('单号:')+' '+tracking : _t('待填单号')}</span>
                     </div>`;
                 return true; 
             }

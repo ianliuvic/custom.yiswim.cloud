@@ -4019,6 +4019,7 @@
         
             // 2. 选择当前材质并更新 UI 状态
             bagConfig.material = bag.name;
+            bagConfig.materialEn = bag.name_en || bag.name;
             gridContainer.querySelectorAll('.bag-material').forEach(item => item.classList.remove('selected'));
             el.classList.add('selected');
         
@@ -4093,13 +4094,13 @@
             // 2. 动态渲染具体尺寸
             if (sizes && sizes.length > 0) {
                 sizes.forEach(size => {
-                    let sceneDesc = "适配常规衣物";
+                    let sceneDesc = _t("适配常规衣物");
                     const match = size.match(/(\d+)/);
                     if (match) {
                         const width = parseInt(match[1]);
-                        if (width < 25) sceneDesc = "适合内衣/泳装/小配件";
-                        else if (width >= 25 && width <= 32) sceneDesc = "适合常规T恤/背心";
-                        else if (width > 32) sceneDesc = "适合卫衣/长裤/外套";
+                        if (width < 25) sceneDesc = _t("适合内衣/泳装/小配件");
+                        else if (width >= 25 && width <= 32) sceneDesc = _t("适合常规T恤/背心");
+                        else if (width > 32) sceneDesc = _t("适合卫衣/长裤/外套");
                     }
                     container.insertAdjacentHTML('beforeend', `
                         <div class="bag-size-card bag-size" onclick="selectBagAttr('size', '${size}', this)">
@@ -4113,8 +4114,8 @@
             // 3. 增加“自定义尺寸”卡片
             container.insertAdjacentHTML('beforeend', `
                 <div class="bag-size-card bag-size" onclick="selectBagAttr('size', '自定义尺寸', this)">
-                    <div class="size-val" style="color:#64748b;">自定义规格</div>
-                    <div class="size-scene">MOQ 5000起订</div>
+                    <div class="size-val" style="color:#64748b;">${_t('自定义规格')}</div>
+                    <div class="size-scene">${_t('MOQ 5000起订')}</div>
                 </div>
             `);
         }
@@ -4243,19 +4244,19 @@
             }
 
             if (bagConfig.material === '未选材质') { 
-                st.innerText = '已开启 (待选择材质)'; 
+                st.innerText = _t('已开启 (待选择材质)'); 
                 st.style.color = 'var(--primary-color)'; st.style.fontWeight = 'bold';
                 return; 
             } 
             
-            const matPart = bagConfig.material;
-            const sizePart = bagConfig.size !== '未选尺寸' ? bagConfig.size.split(' ')[0] : '尺寸待定';
+            const matPart = (window.__lang === 'en' && bagConfig.materialEn) ? bagConfig.materialEn : bagConfig.material;
+            const sizePart = bagConfig.size !== '未选尺寸' ? bagConfig.size.split(' ')[0] : _t('尺寸待定');
             
             // 组装工艺文字
-            let printText = bagConfig.print === '空白无印' ? '无印' : bagConfig.print;
-            if (bagConfig.crafts.length > 0) printText += `+${bagConfig.crafts.length}工艺`;
+            let printText = bagConfig.print === '空白无印' ? _t('无印') : _t(bagConfig.print);
+            if (bagConfig.crafts.length > 0) printText += `+${bagConfig.crafts.length}${_t('工艺')}`;
 
-            const hasFile = bagConfig.designFiles.length > 0 ? `<br><span style="font-size:10px; color:#10b981;">+已传设计图(${bagConfig.designFiles.length})</span>` : '';
+            const hasFile = bagConfig.designFiles.length > 0 ? `<br><span style="font-size:10px; color:#10b981;">+${_t('已传设计图')}(${bagConfig.designFiles.length})</span>` : '';
 
             st.innerHTML = `<div style="text-align:right;">${matPart} | ${sizePart}<br><span style="font-size:10px; opacity:0.8;">${printText}</span>${hasFile}</div>`;
             st.style.color = 'var(--primary-color)'; 

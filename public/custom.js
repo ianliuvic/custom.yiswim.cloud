@@ -990,12 +990,18 @@
                         }
                     }
                 }
-                // pad: custom shape needs remark or files
+                // pad: custom shape needs remark or files; custom color needs input
                 if (t === 'pad') {
-                    if (typeof padConfig !== 'undefined' && padConfig.customShape) {
-                        const hasRemark = padConfig.shapeRemark && padConfig.shapeRemark.trim() !== '';
-                        const hasFiles = padConfig.shapeFiles && padConfig.shapeFiles.length > 0;
-                        if (!hasRemark && !hasFiles) { allOk = false; }
+                    if (typeof padConfig !== 'undefined') {
+                        if (padConfig.customShape) {
+                            const hasRemark = padConfig.shapeRemark && padConfig.shapeRemark.trim() !== '';
+                            const hasFiles = padConfig.shapeFiles && padConfig.shapeFiles.length > 0;
+                            if (!hasRemark && !hasFiles) { allOk = false; }
+                        }
+                        if (padConfig.color === '其他定制色') {
+                            const v = (document.getElementById('pad-color-other')?.value || '').trim();
+                            if (!v) { allOk = false; }
+                        }
                     }
                 }
                 // metal custom mode with no categories, or categories missing remark/files

@@ -5042,11 +5042,16 @@
             document.querySelectorAll('.finish-item')[0].classList.add('selected'); 
             document.querySelectorAll('.metal-item').forEach(item => item.classList.remove('selected')); // 修正类名
             document.querySelectorAll('.chip').forEach(item => item.classList.remove('selected')); // 重置标签
-            document.getElementById('metal-logo-needed').checked = false;
-            document.getElementById('metal-logo-config').classList.add('hidden');
-            document.getElementById('metalLogoFileName').innerText = '未选择文件';
-            document.getElementById('metalLogoPreview').innerHTML = '';
-            document.getElementById('metalSourcePreview').innerHTML = '';
+            const metalLogoNeeded = document.getElementById('metal-logo-needed');
+            if (metalLogoNeeded) metalLogoNeeded.checked = false;
+            const metalLogoConfig = document.getElementById('metal-logo-config');
+            if (metalLogoConfig) metalLogoConfig.classList.add('hidden');
+            const metalLogoFileName = document.getElementById('metalLogoFileName');
+            if (metalLogoFileName) metalLogoFileName.innerText = '未选择文件';
+            const metalLogoPreview = document.getElementById('metalLogoPreview');
+            if (metalLogoPreview) metalLogoPreview.innerHTML = '';
+            const metalSourcePreview = document.getElementById('metalSourcePreview');
+            if (metalSourcePreview) metalSourcePreview.innerHTML = '';
             document.getElementById('sum-trim-metal').innerText = '不需要';
             document.getElementById('sum-trim-metal').style.color = '#666';
             document.getElementById('sum-trim-metal').style.fontWeight = 'normal';

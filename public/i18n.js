@@ -233,6 +233,7 @@
         "点击上传 AI / PDF / 高清图": "Click to upload AI / PDF / HD images",
         "印刷排版要求": "Print Layout Requirements",
         "请详细描述印刷位置与排版要求。": "Please describe print position and layout requirements in detail.",
+        "请详细描述印刷位置与排版要求。\n例如：Logo 位于袋子正中心，宽度占袋宽 1/3；底部需印环保循环标识...": "Please describe print position and layout requirements in detail.\ne.g.: Logo centered on bag, width 1/3 of bag width; eco recycling mark at the bottom...",
 
         // ── Hang Tag ──
         "是否需要品牌吊牌？": "Do you need branded hang tags?",
@@ -844,6 +845,10 @@
         "自定义尺寸": "Custom size",
         "已开启 (待选择材质)": "Enabled",
         "无印": "No print",
+        "彩色印刷": "Multi-Color Print",
+        "单色印刷": "1-Color Print",
+        "MOQ 5000起订": "MOQ 5000 min.",
+        "工艺": "craft(s)",
         "未命名品牌": "Unnamed brand",
         "未填姓名": "Name not filled",
         "有补充说明": "Has supplementary notes",

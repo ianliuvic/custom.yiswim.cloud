@@ -34,6 +34,7 @@ router.get('/get-data', authenticateToken, async (req, res) => {
             SELECT 
                 f.id,
                 f.name,
+                COALESCE(f.name_en, f.name) AS name_en,
                 f.category,
                 f.description,
                 f.tags,

@@ -816,7 +816,7 @@
         "有需求描述": "Has description",
         "无文字描述": "No text description",
         "定制特殊辅料": "Custom special trims",
-        "附件": "attachment(s)",
+        "附件": "file(s)",
         "白卡纸": "White Cardboard",
         "铜版纸": "Coated Paper",
         "牛皮纸": "Kraft Paper",

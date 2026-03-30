@@ -3015,10 +3015,10 @@
                 return;
             }
         
-            const textStatus = hasText ? '有需求描述' : '无文字描述';
-            const fileStatus = fileCount > 0 ? ` + ${fileCount}附件` : '';
+            const textStatus = hasText ? _t('有需求描述') : _t('无文字描述');
+            const fileStatus = fileCount > 0 ? ` + ${fileCount} ${_t('附件')}` : '';
         
-            st.innerHTML = `<div style="text-align:right;">定制特殊辅料<br><span style="font-size:10px; opacity:0.8;">${textStatus}${fileStatus}</span></div>`;
+            st.innerHTML = `<div style="text-align:right;">${_t('定制特殊辅料')}<br><span style="font-size:10px; opacity:0.8;">${textStatus}${fileStatus}</span></div>`;
             st.style.color = 'var(--primary-color)'; 
             st.style.fontWeight = 'bold';
         }
@@ -4453,7 +4453,7 @@
             if (currentDeliveryMode === 'sample') {
                 // 目的地安全读取
                 const destEl = document.getElementById('sample-destination');
-                const dest = destEl ? (destEl.value || '待定国') : '待定国';
+                const dest = destEl ? (destEl.value || _t('待定国')) : _t('待定国');
                 
                 let totalItems = 0;
                 let validRowsCount = 0;
@@ -4466,29 +4466,29 @@
                 }
         
                 // 快递方式安全读取 (增加默认值防止 split 报错)
-                const carrier = (sampleConfig && sampleConfig.carrier) ? sampleConfig.carrier.split(' ')[0] : '待定';
+                const carrier = (sampleConfig && sampleConfig.carrier) ? _t(sampleConfig.carrier.split(' ')[0]) : _t('待定');
 
                 let intentText = '';
                 if (sampleConfig && sampleConfig.needBulkQuote) {
                     // 获取数量
                     const qtyEl = document.getElementById('sample-intent-qty');
-                    const qtyText = (qtyEl && qtyEl.value) ? `${qtyEl.value}件` : '数量待定';
+                    const qtyText = (qtyEl && qtyEl.value) ? `${qtyEl.value} ${_t('件')}` : _t('数量待定');
                     
                     // 【新增】获取目标单价
                     const priceEl = document.getElementById('sample-intent-price');
-                    const priceText = (priceEl && priceEl.value) ? `(目标 $${priceEl.value})` : '';
+                    const priceText = (priceEl && priceEl.value) ? `(${_t('目标')} $${priceEl.value})` : '';
         
                     const term = sampleConfig.intentTerm || 'DDP';
-                    const method = sampleConfig.intentMethod ? sampleConfig.intentMethod.split(' ')[0] : '海运';
+                    const method = sampleConfig.intentMethod ? sampleConfig.intentMethod.split(' ')[0] : 'Sea';
                     
                     // 将单价拼接到汇总文本中
-                    intentText = `<br><span style="font-size:10px; color:var(--primary-color);">评估大货: ${qtyText} ${priceText} | ${term} | ${method}</span>`;
+                    intentText = `<br><span style="font-size:10px; color:var(--primary-color);">${_t('评估大货:')} ${qtyText} ${priceText} | ${term} | ${method}</span>`;
                 }
         
                 sumEl.innerHTML = `
                     <div style="text-align:right;">
-                        <span style="color:var(--text-main); font-weight:700;">打样阶段 (${dest})</span><br>
-                        <span style="font-size:11px; color:#64748b;">清单: ${validRowsCount}项 / 共${totalItems}件 | 快递: ${carrier}</span>
+                        <span style="color:var(--text-main); font-weight:700;">${_t('打样阶段')} (${dest})</span><br>
+                        <span style="font-size:11px; color:#64748b;">${_t('清单:')} ${validRowsCount}${_t('项')} / ${_t('共')}${totalItems}${_t('件')} | ${_t('快递:')} ${carrier}</span>
                         ${intentText}
                     </div>
                 `;
@@ -4496,7 +4496,7 @@
             } else {
                 // 大货模式安全读取
                 const destEl = document.getElementById('bulk-destination');
-                const dest = destEl ? (destEl.value || '待定国') : '待定国';
+                const dest = destEl ? (destEl.value || _t('待定国')) : _t('待定国');
                 
                 const stylesEl = document.getElementById('bulk-style-count');
                 const styles = stylesEl ? (stylesEl.value || '0') : '0';
@@ -4505,10 +4505,10 @@
                 const qty = qtyEl ? (qtyEl.value || '0') : '0';
                 
                 const sizeEl = document.getElementById('bulk-size-range');
-                const sizeRange = (sizeEl && sizeEl.value) ? sizeEl.value.split(' ')[0] : '待定尺码';
+                const sizeRange = (sizeEl && sizeEl.value) ? sizeEl.value.split(' ')[0] : _t('待定尺码');
                 
-                const term = (bulkLogisticsConfig && bulkLogisticsConfig.term) ? bulkLogisticsConfig.term.split(' ')[0] : 'DDP';
-                const method = (bulkLogisticsConfig && bulkLogisticsConfig.method) ? bulkLogisticsConfig.method : '海运';
+                const term = (bulkLogisticsConfig && bulkLogisticsConfig.term) ? _t(bulkLogisticsConfig.term.split(' ')[0]) : 'DDP';
+                const method = (bulkLogisticsConfig && bulkLogisticsConfig.method) ? bulkLogisticsConfig.method : 'Sea';
                 
                 // 在 updateLogisticsSummary 里的 bulk 模式分支中：
                 let totalBulkQty = 0;
@@ -4525,14 +4525,14 @@
                 
                 // 获取填写的期望价格
                 const targetPriceEl = document.getElementById('bulk-target-price');
-                const targetPrice = (targetPriceEl && targetPriceEl.value) ? `(目标 $${targetPriceEl.value})` : '';
-                const hasPackingFiles = bulkPackingFiles.length > 0 ? `<br><span style="font-size:10px; color:#10b981;">+已传包装要求图(${bulkPackingFiles.length})</span>` : '';
+                const targetPrice = (targetPriceEl && targetPriceEl.value) ? `(${_t('目标')} $${targetPriceEl.value})` : '';
+                const hasPackingFiles = bulkPackingFiles.length > 0 ? `<br><span style="font-size:10px; color:#10b981;">+${_t('已传包装要求图')}(${bulkPackingFiles.length})</span>` : '';
         
                 sumEl.innerHTML = `
                     <div style="text-align:right;">
-                        <span style="color:var(--primary-color); font-weight:700;">大货订单 (${dest})</span><br>
-                        <span style="font-size:11px; color:#64748b;">清单: ${bulkStylesCount}款 / 共${totalBulkQty}件 ${targetPrice}</span><br>
-                        <span style="font-size:10px; color:#94a3b8;">${bulkLogisticsConfig.term} | ${bulkLogisticsConfig.method}</span>
+                        <span style="color:var(--primary-color); font-weight:700;">${_t('大货订单')} (${dest})</span><br>
+                        <span style="font-size:11px; color:#64748b;">${_t('清单:')} ${bulkStylesCount}${_t('款')} / ${_t('共')}${totalBulkQty}${_t('件')} ${targetPrice}</span><br>
+                        <span style="font-size:10px; color:#94a3b8;">${_t(bulkLogisticsConfig.term)} | ${bulkLogisticsConfig.method}</span>
                     </div>
                 `;
 

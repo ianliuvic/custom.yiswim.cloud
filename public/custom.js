@@ -1149,6 +1149,12 @@
                     if (typeof bulkRows !== 'undefined') {
                         ok = bulkRows.some(r => r.style && r.style !== '');
                     }
+                    // 必须填写期望 EXW 大货单价范围
+                    const price = (document.getElementById('bulk-target-price')?.value || '').trim();
+                    if (!price) { ok = false; }
+                    // 必须选择目的地国家
+                    const dest = document.getElementById('bulk-destination')?.value || '';
+                    if (!dest) { ok = false; }
                 }
             }
             setDot('dot-shipping', ok);

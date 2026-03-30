@@ -1823,37 +1823,40 @@
             for (const key in fabricSelection) {
                 const selection = fabricSelection[key];
                 const catName = selection.originalCatName;
-                let statusText = '<span style="color:#cbd5e1;">未选</span>';
+                const catDisplayName = _t(catName);
+                let statusText = '<span style="color:#cbd5e1;">' + _t('未选') + '</span>';
                 
                 if (selection.activeName) {
                     hasSelection = true;
                     const config = selection.configs[selection.activeName];
+                    const fabricData = window.globalFabricsMap[selection.activeName];
+                    const displayName = (window.__lang === 'en' && fabricData && fabricData.name_en) ? fabricData.name_en : selection.activeName;
                     
                     if (selection.activeName === 'CUSTOM_SOURCING') {
-                        statusText = `<span style="color:var(--primary-color); font-weight:600;">定制找样 / 开发</span>`;
+                        statusText = `<span style="color:var(--primary-color); font-weight:600;">${_t('定制找样 / 开发')}</span>`;
                     } else {
                         if (config.mode === 'print') {
-                            const typeName = config.printType === 'placement' ? '定位印花' : '无缝印花';
-                            const refText = config.printRefColor ? ` | 对色: ${config.printRefColor}` : '';
-                            const scaleText = config.printScale ? ` | 尺寸: ${config.printScale}` : '';
-                            statusText = `${selection.activeName}<br><span style="font-size:10px; color:var(--primary-color);">${typeName}印花${refText}${scaleText}</span>`;
+                            const typeName = config.printType === 'placement' ? _t('定位印花') : _t('无缝印花');
+                            const refText = config.printRefColor ? ` | ${_t('对色:')} ${config.printRefColor}` : '';
+                            const scaleText = config.printScale ? ` | ${_t('尺寸:')} ${config.printScale}` : '';
+                            statusText = `${displayName}<br><span style="font-size:10px; color:var(--primary-color);">${typeName}${refText}${scaleText}</span>`;
                         } else {
-                            const colorDisplay = config.colorText ? `色号: ${config.colorText}` : '待填色号';
-                            statusText = `${selection.activeName}<br><span style="font-size:10px; color:#64748b;">${colorDisplay}</span>`;
+                            const colorDisplay = config.colorText ? `${_t('色号:')} ${config.colorText}` : _t('待填色号');
+                            statusText = `${displayName}<br><span style="font-size:10px; color:#64748b;">${colorDisplay}</span>`;
                         }
                     }
         
                     // --- 新增：里料的覆盖范围追加显示 ---
                     if (catName.includes('里料') || catName.includes('Lining')) {
                         if (config.fullLining === false) {
-                            const placementText = config.liningPlacement ? config.liningPlacement.substring(0, 10) + '...' : '待补充说明';
-                            statusText += `<br><span style="font-size:10px; color:#d97706; font-weight:600;">局部衬里: ${placementText}</span>`;
+                            const placementText = config.liningPlacement ? config.liningPlacement.substring(0, 10) + '...' : _t('待补充说明');
+                            statusText += `<br><span style="font-size:10px; color:#d97706; font-weight:600;">${_t('局部衬里:')} ${placementText}</span>`;
                         }
                     }
                 }
                 
                 html += `<div style="font-size:12px; margin-bottom:10px; color:var(--text-main); text-align:right; line-height: 1.4;">
-                            <span style="color:#94a3b8; font-size: 11px;">[${catName}]</span><br>
+                            <span style="color:#94a3b8; font-size: 11px;">[${catDisplayName}]</span><br>
                             ${statusText}
                          </div>`;
             }
@@ -1863,17 +1866,17 @@
             if (isCmt) {
                 hasSelection = true;
                 const trackingNo = document.getElementById('fabric-cmt-tracking').value.trim();
-                const trackingText = trackingNo ? `单号: ${trackingNo}` : '待更新单号';
+                const trackingText = trackingNo ? `${_t('单号:')} ${trackingNo}` : _t('待更新单号');
                 
                 html += `<div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #e2e8f0; font-size:12px; color:var(--text-main); text-align:right;">
-                            <span style="color:var(--primary-color); font-weight:600;">客户自行提供物料 (CMT)</span><br>
+                            <span style="color:var(--primary-color); font-weight:600;">${_t('客户自行提供物料 (CMT)')}</span><br>
                             <span style="font-size:10px; color:#f59e0b;">${trackingText}</span>
                          </div>`;
             }
         
             const sumFabricEl = document.getElementById('sum-fabric');
             if (sumFabricEl) {
-                sumFabricEl.innerHTML = hasSelection ? html : '<div style="text-align:right; font-size:12px; color:#94a3b8;">未选</div>';
+                sumFabricEl.innerHTML = hasSelection ? html : '<div style="text-align:right; font-size:12px; color:#94a3b8;">' + _t('未选') + '</div>';
             }
         }
 

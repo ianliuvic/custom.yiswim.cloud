@@ -4989,19 +4989,24 @@
         function clearAllSelections() {
             if (!confirm('确定要清空所有已选配置并重头开始吗？')) return;
 
+            // 安全获取元素的辅助函数
+            const _el = (id) => document.getElementById(id);
+            const _q = (sel) => document.querySelector(sel);
+
             // 1. 重置 ODM/OEM
             selectedOdmStyles = []; 
             document.querySelectorAll('.style-item').forEach(item => item.classList.remove('selected'));
-            document.getElementById('sum-style').innerText = '未选择';
+            const sumStyle = _el('sum-style'); if (sumStyle) sumStyle.innerText = '未选择';
             odmCustomData = {}; currentEditingStyle = '';
 
             document.querySelectorAll('.custom-badge').forEach(badge => badge.classList.remove('active'));
             
             oemFilesData = { tech: [], ref: [] };
-            document.getElementById('oemRefPreview').innerHTML = ''; document.getElementById('oemTechPreview').innerHTML = '';
-            document.getElementById('oem-remark').value = '';
-            document.getElementById('oem-physical').checked = false; togglePhysicalInfo(false);
-            const oemAddr = document.querySelector('#oem-address-info input'); if(oemAddr) oemAddr.value = '';
+            const oemRefPreview = _el('oemRefPreview'); if (oemRefPreview) oemRefPreview.innerHTML = '';
+            const oemTechPreview = _el('oemTechPreview'); if (oemTechPreview) oemTechPreview.innerHTML = '';
+            const oemRemark = _el('oem-remark'); if (oemRemark) oemRemark.value = '';
+            const oemPhysical = _el('oem-physical'); if (oemPhysical) { oemPhysical.checked = false; togglePhysicalInfo(false); }
+            const oemAddr = _q('#oem-address-info input'); if(oemAddr) oemAddr.value = '';
 
             // 2. 重置面料
             for (let key in fabricSelection) {
@@ -5009,101 +5014,100 @@
                 fabricSelection[key].configs = {};
             }
             document.querySelectorAll('.fabric-item, .color-swatch').forEach(item => item.classList.remove('selected'));
-            document.getElementById('fabric-config-panel').classList.add('hidden'); 
-            const textEl = document.getElementById('selected-colors-text'); 
+            const fabricConfigPanel = _el('fabric-config-panel'); if (fabricConfigPanel) fabricConfigPanel.classList.add('hidden'); 
+            const textEl = _el('selected-colors-text'); 
             if (textEl) {
                 textEl.innerText = '未选择颜色'; 
                 textEl.style.color = '#999';
             }
-            document.getElementById('fabric-remark').value = '';
+            const fabricRemark = _el('fabric-remark'); if (fabricRemark) fabricRemark.value = '';
             
             let resetHtml = '';
             for (let key in fabricSelection) {
                 resetHtml += `<div style="font-size:12px; margin-bottom:4px; color:var(--text-main); text-align:right;">${fabricSelection[key].originalCatName}: 未选</div>`;
             }
-            document.getElementById('sum-fabric').innerHTML = resetHtml || '未选';
+            const sumFabric = _el('sum-fabric'); if (sumFabric) sumFabric.innerHTML = resetHtml || '未选';
 
             // 3. 重置辅料
             ['metal', 'pad', 'bag', 'hangtag', 'label', 'hygiene', 'other'].forEach(category => {
-                const noRadio = document.querySelector(`input[name="need_${category}"][value="no"]`);
+                const noRadio = _q(`input[name="need_${category}"][value="no"]`);
                 if(noRadio) noRadio.checked = true; toggleTrim(category, false); 
             });
             // 重置包装袋
             bagConfig = { material: '未选材质', size: '未选尺寸', print: '空白无印', crafts: [], designFiles: [] };
             document.querySelectorAll('.bag-material, .bag-size, .bag-print').forEach(item => item.classList.remove('selected'));
             document.querySelectorAll('#content-bag .chip').forEach(item => item.classList.remove('selected'));
-            document.getElementById('bag-config-panel').classList.add('hidden');
-            document.getElementById('bag-advanced-section').classList.add('hidden');
-            document.getElementById('bagDesignPreview').innerHTML = '';
-            document.getElementById('bag-remark').value = '';
+            const bagConfigPanel = _el('bag-config-panel'); if (bagConfigPanel) bagConfigPanel.classList.add('hidden');
+            const bagAdvanced = _el('bag-advanced-section'); if (bagAdvanced) bagAdvanced.classList.add('hidden');
+            const bagDesignPreview = _el('bagDesignPreview'); if (bagDesignPreview) bagDesignPreview.innerHTML = '';
+            const bagRemark = _el('bag-remark'); if (bagRemark) bagRemark.value = '';
             // 重置金属饰品
             metalConfig = { finish: '亮金色 (Shiny Gold)', categories: [], logoCustom: false, logoTypes: [], logoFiles: [], sourceFiles: [] };
             document.querySelectorAll('.finish-item').forEach(item => item.classList.remove('selected'));
-            document.querySelectorAll('.finish-item')[0].classList.add('selected'); 
-            document.querySelectorAll('.metal-item').forEach(item => item.classList.remove('selected')); // 修正类名
-            document.querySelectorAll('.chip').forEach(item => item.classList.remove('selected')); // 重置标签
-            const metalLogoNeeded = document.getElementById('metal-logo-needed');
+            document.querySelectorAll('.finish-item')[0]?.classList.add('selected'); 
+            document.querySelectorAll('.metal-item').forEach(item => item.classList.remove('selected'));
+            document.querySelectorAll('.chip').forEach(item => item.classList.remove('selected'));
+            const metalLogoNeeded = _el('metal-logo-needed');
             if (metalLogoNeeded) metalLogoNeeded.checked = false;
-            const metalLogoConfig = document.getElementById('metal-logo-config');
+            const metalLogoConfig = _el('metal-logo-config');
             if (metalLogoConfig) metalLogoConfig.classList.add('hidden');
-            const metalLogoFileName = document.getElementById('metalLogoFileName');
+            const metalLogoFileName = _el('metalLogoFileName');
             if (metalLogoFileName) metalLogoFileName.innerText = '未选择文件';
-            const metalLogoPreview = document.getElementById('metalLogoPreview');
+            const metalLogoPreview = _el('metalLogoPreview');
             if (metalLogoPreview) metalLogoPreview.innerHTML = '';
-            const metalSourcePreview = document.getElementById('metalSourcePreview');
+            const metalSourcePreview = _el('metalSourcePreview');
             if (metalSourcePreview) metalSourcePreview.innerHTML = '';
-            document.getElementById('sum-trim-metal').innerText = '不需要';
-            document.getElementById('sum-trim-metal').style.color = '#666';
-            document.getElementById('sum-trim-metal').style.fontWeight = 'normal';
-            if(document.getElementById('bag-design-file')) document.getElementById('bag-design-file').value = '';
+            const sumTrimMetal = _el('sum-trim-metal');
+            if (sumTrimMetal) { sumTrimMetal.innerText = '不需要'; sumTrimMetal.style.color = '#666'; sumTrimMetal.style.fontWeight = 'normal'; }
+            const bagDesignFile = _el('bag-design-file'); if (bagDesignFile) bagDesignFile.value = '';
 
             // 重置吊牌
             hangtagConfig = { material: '经典白卡 (350g/500g)', shape: '标准修长型 (约 4x9cm)', stringMat: '通用塑料吊粒', stringColor: '白色', roundedCorner: false, crafts: [], designFiles: [], shapeFiles: [] };
             document.querySelectorAll('#content-hangtag .metal-item, #content-hangtag .hangtag-shape-card, #content-hangtag .hangtag-string-mat, #content-hangtag .string-color-swatch, #content-hangtag .chip').forEach(item => item.classList.remove('selected'));
-            // 恢复默认选中
             document.querySelectorAll('#content-hangtag .metal-item')[0]?.classList.add('selected');
             document.querySelectorAll('#content-hangtag .hangtag-shape-card')[0]?.classList.add('selected');
             document.querySelectorAll('#content-hangtag .hangtag-string-mat')[0]?.classList.add('selected');
             document.querySelectorAll('#content-hangtag .string-color-swatch')[0]?.classList.add('selected');
-            const roundedCornerEl = document.getElementById('hangtag-rounded-corner');
+            const roundedCornerEl = _el('hangtag-rounded-corner');
             if (roundedCornerEl) roundedCornerEl.checked = false;
-            document.getElementById('hangtagFileName').innerText = '选择矢量文件 (AI/PDF)';
-            document.getElementById('hangtagFileName').style.color = '#94a3b8';
-            document.getElementById('hangtagShapeFileName').innerText = '上传参考文件';
-            document.getElementById('hangtagShapeFileName').style.color = '#94a3b8';
-            document.getElementById('hangtagPreview').innerHTML = '';
-            document.getElementById('hangtagShapePreview').innerHTML = '';
-            document.getElementById('hangtag-remark').value = '';
-            document.getElementById('hangtag-shape-remark').value = '';
+            const hangtagFileName = _el('hangtagFileName');
+            if (hangtagFileName) { hangtagFileName.innerText = '选择矢量文件 (AI/PDF)'; hangtagFileName.style.color = '#94a3b8'; }
+            const hangtagShapeFileName = _el('hangtagShapeFileName');
+            if (hangtagShapeFileName) { hangtagShapeFileName.innerText = '上传参考文件'; hangtagShapeFileName.style.color = '#94a3b8'; }
+            const hangtagPreview = _el('hangtagPreview'); if (hangtagPreview) hangtagPreview.innerHTML = '';
+            const hangtagShapePreview = _el('hangtagShapePreview'); if (hangtagShapePreview) hangtagShapePreview.innerHTML = '';
+            const hangtagRemark = _el('hangtag-remark'); if (hangtagRemark) hangtagRemark.value = '';
+            const hangtagShapeRemark = _el('hangtag-shape-remark'); if (hangtagShapeRemark) hangtagShapeRemark.value = '';
 
             // 重置标签
             labelConfig = { mode: 'combined', brand: { type: '无感烫印标', size: '', method: '', colors: [] }, care: { type: '无感烫印标', size: '', method: '', colors: [] }, placement: '领后中', designFiles: [] };
-            document.getElementById('sum-trim-label').innerText = '不需要';
-            document.getElementById('label-text-content').value = '';
-            document.getElementById('label-remark').value = '';
-            document.getElementById('labelPreviewGrid').innerHTML = '';
+            const sumTrimLabel = _el('sum-trim-label'); if (sumTrimLabel) sumTrimLabel.innerText = '不需要';
+            const labelTextContent = _el('label-text-content'); if (labelTextContent) labelTextContent.value = '';
+            const labelRemark = _el('label-remark'); if (labelRemark) labelRemark.value = '';
+            const labelPreviewGrid = _el('labelPreviewGrid'); if (labelPreviewGrid) labelPreviewGrid.innerHTML = '';
 
             // 4. 重置物流
-            document.getElementById('logistics-destination').value = '';
-            document.querySelector('input[name="trade_term"][value="DDP"]').checked = true;
-            document.getElementById('logistics-single-pack').selectedIndex = 0;
-            document.getElementById('logistics-carton-rule').selectedIndex = 0;
-            document.getElementById('logistics-remark').value = '';
+            const logDest = _el('logistics-destination'); if (logDest) logDest.value = '';
+            const tradeTerm = _q('input[name="trade_term"][value="DDP"]') || _q('input[name="bulk_trade_term"][value="DDP"]');
+            if (tradeTerm) tradeTerm.checked = true;
+            const logSinglePack = _el('logistics-single-pack'); if (logSinglePack) logSinglePack.selectedIndex = 0;
+            const logCartonRule = _el('logistics-carton-rule'); if (logCartonRule) logCartonRule.selectedIndex = 0;
+            const logRemark = _el('logistics-remark'); if (logRemark) logRemark.value = '';
             
             document.querySelectorAll('.logistics-method').forEach((item, idx) => {
-                if(idx === 2) item.classList.add('selected'); // 默认选中海运
+                if(idx === 2) item.classList.add('selected');
                 else item.classList.remove('selected');
             });
             
             document.querySelectorAll('.logistics-addon').forEach(item => item.classList.remove('selected'));
             
             logisticsConfig = { term: 'DDP 双清包税到门', method: 'Sea Freight (海运快船)', addons: [] };
-            updateLogisticsSummary();
+            if (typeof updateLogisticsSummary === 'function') updateLogisticsSummary();
 
             // 5. 重置商业评估 (Step 5)
-            const stageRadio = document.querySelector('input[name="project_stage"][value="concept"]');
+            const stageRadio = _q('input[name="project_stage"][value="concept"]');
             if (stageRadio) stageRadio.checked = true;
-            const volumeRadio = document.querySelector('input[name="est_volume"][value="sample_only"]');
+            const volumeRadio = _q('input[name="est_volume"][value="sample_only"]');
             if (volumeRadio) { volumeRadio.checked = true; updateSummaryVolume('仅开发样衣'); }
             
             // 清空所有 Step 5 的输入框
@@ -5112,14 +5116,14 @@
                 'final-contact-name', 'final-contact-info', 'final-brand-name', 'final-website',
                 'assign-sales', 'assign-pattern', 'assign-sewing', 'final-remark'
             ].forEach(id => {
-                const el = document.getElementById(id); 
+                const el = _el(id); 
                 if(el) el.value = '';
             });
             
             // 取消勾选保密协议
-            const ndaAgree = document.getElementById('nda-agree');
+            const ndaAgree = _el('nda-agree');
             if(ndaAgree) ndaAgree.checked = false;
-            updateStep5Summary();
+            if (typeof updateStep5Summary === 'function') updateStep5Summary();
 
             // 6. 返回第一步
             if (currentStep !== 1) changeStep(1 - currentStep); 

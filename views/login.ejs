@@ -1,13 +1,18 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="<%= typeof lng !== 'undefined' && lng === 'en' ? 'en' : 'zh-CN' %>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/style.css">
     <title><%= title %></title>
+    <script>window.__lang = '<%= typeof lng !== 'undefined' ? lng : "zh" %>';</script>
+    <script src="/i18n.js"></script>
 </head>
 <body>
     <div class="auth-container">
+        <div style="position: absolute; top: 15px; right: 20px;">
+            <button onclick="setLanguage(window.__lang === 'en' ? 'zh' : 'en')" style="background: none; border: 1px solid #e0e0e0; border-radius: 6px; padding: 4px 10px; font-size: 12px; cursor: pointer; color: #64748b;">🌐 <%= typeof lng !== 'undefined' && lng === 'en' ? '中文' : 'EN' %></button>
+        </div>
         <!-- 新增：消息提示区域 -->
         <div id="status-msg" class="status-msg hidden"></div>
 

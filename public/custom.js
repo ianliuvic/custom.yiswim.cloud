@@ -3218,7 +3218,7 @@
             const allCards = Array.from(grid.querySelectorAll('.option-item'));
             
             // 智能查找代表“无附加工艺”的卡片DOM (通过文本匹配)
-            const noneCard = allCards.find(card => card.innerText.includes('无附加工艺'));
+            const noneCard = allCards.find(card => (card.getAttribute('onclick') || '').includes('无附加工艺'));
         
             if (!hangtagConfig.crafts) hangtagConfig.crafts = ['无附加工艺'];
             let arr = hangtagConfig.crafts;
@@ -3260,7 +3260,7 @@
             
             // 联动控制“其他”面板的显隐与移动
             const needsOtherArea = arr.includes('其他');
-            const otherEl = allCards.find(c => c.innerText.includes('其他'));
+            const otherEl = allCards.find(c => (c.getAttribute('onclick') || '').includes("'其他'"));
             
             // 如果选中了“其他”，就把配置面板挂载到“其他”卡片所在行的下方
             if (otherEl) {

@@ -1331,6 +1331,13 @@
                             document.getElementById('lining-placement-remark').value = config.liningPlacement || '';
                         }
                     }
+                    const liningHintBox2 = document.getElementById('lining-color-hint');
+                    if (liningHintBox2) liningHintBox2.classList.toggle('hidden', !isLining);
+                    const liningQuickPick2 = document.getElementById('lining-quick-pick');
+                    if (liningQuickPick2) {
+                        liningQuickPick2.classList.toggle('hidden', !isLining);
+                        if (isLining) syncLiningQuickBtns();
+                    }
 
                     if (isCustomSourcing) {
                         // 定制找样逻辑

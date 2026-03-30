@@ -908,20 +908,44 @@
                 return ok;
             }
 
-            // 非 CMT：面料 tab 必须选中，里料和网纱可选
-            let fabricSelected = false;
+            // 非 CMT：面料 tab 必须选中且配置完整，里料和网纱可选但若选了也需完整
+            let mainFabricOk = false;
+            let allComplete = true;
+
             if (typeof fabricSelection !== 'undefined') {
                 for (const catId in fabricSelection) {
                     const sel = fabricSelection[catId];
                     if (!sel || !sel.activeName) continue;
                     const catName = sel.originalCatName || '';
-                    if (catName.includes('里料') || catName.includes('网纱')) continue;
-                    fabricSelected = true;
-                    break;
+                    const config = sel.configs[sel.activeName];
+                    if (!config) continue;
+
+                    const isLining = catName.includes('里料');
+                    const isMesh = catName.includes('网纱');
+                    const isMain = !isLining && !isMesh;
+
+                    if (isMain) mainFabricOk = true;
+
+                    // 定制找样模式跳过色号检查
+                    if (sel.activeName === 'CUSTOM_SOURCING') continue;
+
+                    // 纯色模式需有色号，印花模式需有设计图
+                    if (config.mode === 'print') {
+                        if (!config.prints || config.prints.length === 0) allComplete = false;
+                    } else {
+                        if (!config.colorText || config.colorText.trim() === '') allComplete = false;
+                    }
+
+                    // 里料局部模式需有描述
+                    if (isLining && config.fullLining === false) {
+                        if (!config.liningPlacement || config.liningPlacement.trim() === '') allComplete = false;
+                    }
                 }
             }
-            setDot('dot-fabric', fabricSelected);
-            return fabricSelected;
+
+            const ok = mainFabricOk && allComplete;
+            setDot('dot-fabric', ok);
+            return ok;
         }
 
         function validateTrims() {

@@ -959,6 +959,15 @@
             for (const t of trimChecks) {
                 const enabledRadio = document.querySelector(`input[name="need_${t}"][value="yes"]`);
                 if (!enabledRadio || !enabledRadio.checked) continue; // disabled = skip
+
+                // CMT 模式：描述或文件至少有一项
+                const cmtCheck = document.getElementById(`cmt-check-${t}`);
+                if (cmtCheck && cmtCheck.checked) {
+                    const desc = (document.getElementById(`cmt-desc-${t}`)?.value || '').trim();
+                    const hasFiles = typeof cmtFilesData !== 'undefined' && cmtFilesData[t] && cmtFilesData[t].length > 0;
+                    if (!desc && !hasFiles) { allOk = false; }
+                    continue; // CMT 模式下跳过常规检查
+                }
                 
                 if (t === 'other') {
                     const hasRemark = typeof otherConfig !== 'undefined' && otherConfig.remark && otherConfig.remark.trim() !== '';

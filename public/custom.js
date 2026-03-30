@@ -1013,9 +1013,9 @@
                         }
                     }
                 }
-                // hangtag custom mode: design files or remark needed
+                // hangtag: design files or remark needed (both auto and custom modes)
                 if (t === 'hangtag') {
-                    if (typeof hangtagConfig !== 'undefined' && hangtagConfig.mode === 'custom') {
+                    if (typeof hangtagConfig !== 'undefined') {
                         const hasRemark = (document.getElementById('hangtag-remark')?.value || '').trim() !== '';
                         const hasFiles = hangtagConfig.designFiles && hangtagConfig.designFiles.length > 0;
                         if (!hasRemark && !hasFiles) { allOk = false; }

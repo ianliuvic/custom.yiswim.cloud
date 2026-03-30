@@ -56,13 +56,18 @@
 
                 <!-- 询盘详情面板（点击展开） -->
                 <div id="inquiry-detail" class="u-detail-panel" style="display:none;">
-                    <div class="u-detail-header">
-                        <button class="u-back-btn" onclick="closeDetail()">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-                            返回列表
-                        </button>
-                        <h3 id="detail-title"></h3>
-                        <span id="detail-status" class="u-status-tag"></span>
+                    <div class="u-detail-hero">
+                        <div class="u-detail-hero-top">
+                            <button class="u-back-btn" onclick="closeDetail()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                                返回列表
+                            </button>
+                            <span id="detail-status" class="u-status-tag"></span>
+                        </div>
+                        <div class="u-detail-hero-title">
+                            <h2 id="detail-title"></h2>
+                        </div>
+                        <div id="detail-stats" class="u-detail-stats"></div>
                     </div>
                     <div id="detail-content" class="u-detail-content"></div>
                 </div>

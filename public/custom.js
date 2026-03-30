@@ -978,7 +978,11 @@
                 }
                 if (t === 'bag') {
                     if (typeof bagConfig !== 'undefined') {
+                        // 必须选择材质卡片
                         if (bagConfig.material === '未选材质') { allOk = false; }
+                        // 自定义尺寸需有长宽
+                        if (bagConfig.size === '自定义尺寸' || bagConfig.size === '自定义尺寸 (未输入)') { allOk = false; }
+                        // 单色/彩色印刷需有文件或文本
                         if (bagConfig.print && bagConfig.print !== '空白无印') {
                             const hasRemark = (document.getElementById('bag-remark')?.value || '').trim() !== '';
                             const hasFiles = bagConfig.designFiles && bagConfig.designFiles.length > 0;

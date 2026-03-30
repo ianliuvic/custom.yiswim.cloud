@@ -1013,6 +1013,14 @@
                         }
                     }
                 }
+                // hangtag custom mode: design files or remark needed
+                if (t === 'hangtag') {
+                    if (typeof hangtagConfig !== 'undefined' && hangtagConfig.mode === 'custom') {
+                        const hasRemark = (document.getElementById('hangtag-remark')?.value || '').trim() !== '';
+                        const hasFiles = hangtagConfig.designFiles && hangtagConfig.designFiles.length > 0;
+                        if (!hasRemark && !hasFiles) { allOk = false; }
+                    }
+                }
             }
             setDot('dot-trims', allOk);
             return allOk;

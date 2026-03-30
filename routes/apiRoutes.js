@@ -275,7 +275,13 @@ router.post('/submit-inquiry', authenticateToken, upload.any(), async (req, res)
 
         // 解析 JSON 字段
         const d = req.body;
-        const parseJSON = (str, fallback) => { try { return JSON.parse(str); } catch { return fallback; } };
+        // 确保 JSONB 字段传入的是 JSON 字符串（pg 会把 JS 数组转成 PG 数组语法，导致 JSONB 解析失败）
+        const safeJSON = (str, fallback) => {
+            if (typeof str === 'string' && str.trim()) {
+                try { JSON.parse(str); return str; } catch { return JSON.stringify(fallback); }
+            }
+            return JSON.stringify(fallback);
+        };
 
         // 生成询盘编号
         const seqResult = await client.query('SELECT generate_inquiry_no() AS no');
@@ -306,31 +312,31 @@ router.post('/submit-inquiry', authenticateToken, upload.any(), async (req, res)
         const values = [
             inquiryNo, req.user.id,
             // Step 1
-            parseJSON(d.odm_styles, []),
-            parseJSON(d.odm_custom_data, {}),
+            safeJSON(d.odm_styles, []),
+            safeJSON(d.odm_custom_data, {}),
             d.oem_project || null,
             parseInt(d.oem_style_count) || 0,
-            parseJSON(d.oem_descriptions, []),
-            parseJSON(d.oem_checklist, []),
+            safeJSON(d.oem_descriptions, []),
+            safeJSON(d.oem_checklist, []),
             d.oem_remark || null,
             // Step 2
-            parseJSON(d.fabric_selection, {}),
+            safeJSON(d.fabric_selection, {}),
             // Step 3
-            parseJSON(d.cmt_enabled, {}),
-            parseJSON(d.metal_config, {}),
-            parseJSON(d.pad_config, {}),
-            parseJSON(d.bag_config, {}),
-            parseJSON(d.hangtag_config, {}),
-            parseJSON(d.label_config, {}),
-            parseJSON(d.hygiene_config, {}),
-            parseJSON(d.other_config, {}),
+            safeJSON(d.cmt_enabled, {}),
+            safeJSON(d.metal_config, {}),
+            safeJSON(d.pad_config, {}),
+            safeJSON(d.bag_config, {}),
+            safeJSON(d.hangtag_config, {}),
+            safeJSON(d.label_config, {}),
+            safeJSON(d.hygiene_config, {}),
+            safeJSON(d.other_config, {}),
             // Step 4
             d.delivery_mode || 'sample',
-            parseJSON(d.sample_rows, []),
-            parseJSON(d.sample_config, {}),
+            safeJSON(d.sample_rows, []),
+            safeJSON(d.sample_config, {}),
             d.sample_dest || null,
-            parseJSON(d.bulk_rows, []),
-            parseJSON(d.bulk_logistics, {}),
+            safeJSON(d.bulk_rows, []),
+            safeJSON(d.bulk_logistics, {}),
             d.bulk_dest || null,
             d.bulk_target_price || null,
             d.bulk_packing_remark || null,

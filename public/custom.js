@@ -897,14 +897,31 @@
         }
 
         function validateFabric() {
-            let ok = false;
+            const isCmt = document.getElementById('fabric-cmt-check')?.checked;
+
+            if (isCmt) {
+                // CMT 模式：有描述或文件即可
+                const desc = (document.getElementById('fabric-cmt-desc')?.value || '').trim();
+                const hasFiles = typeof cmtFilesData !== 'undefined' && cmtFilesData.fabric.length > 0;
+                const ok = desc !== '' || hasFiles;
+                setDot('dot-fabric', ok);
+                return ok;
+            }
+
+            // 非 CMT：面料 tab 必须选中，里料和网纱可选
+            let fabricSelected = false;
             if (typeof fabricSelection !== 'undefined') {
                 for (const catId in fabricSelection) {
-                    if (fabricSelection[catId] && fabricSelection[catId].activeName) { ok = true; break; }
+                    const sel = fabricSelection[catId];
+                    if (!sel || !sel.activeName) continue;
+                    const catName = sel.originalCatName || '';
+                    if (catName.includes('里料') || catName.includes('网纱')) continue;
+                    fabricSelected = true;
+                    break;
                 }
             }
-            setDot('dot-fabric', ok);
-            return ok;
+            setDot('dot-fabric', fabricSelected);
+            return fabricSelected;
         }
 
         function validateTrims() {

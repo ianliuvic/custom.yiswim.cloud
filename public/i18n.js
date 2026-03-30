@@ -933,7 +933,11 @@
         "，该类型单款最低起订量为 ": ", minimum order quantity per style is ",
         " 件。\n\n系统已自动为您调整为最低起订量。": " pcs.\n\nSystem has auto-adjusted to minimum.",
         "局部衬里: ": "Partial lining: ",
-        "目标 $": "Target $"
+        "目标 $": "Target $",
+        "一、 ": "I. ",
+        "二、 ": "II. ",
+        "三、 ": "III. ",
+        "四、 ": "IV. "
     };
 
     // ==================== Rich Text (HTML) Dictionary ====================

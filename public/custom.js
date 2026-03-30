@@ -1748,10 +1748,12 @@
             }
             
             const textEl = document.getElementById('selected-colors-text');
-            if (arr.length === 0) { 
-                textEl.innerText = '未选择颜色'; textEl.style.color = '#999'; 
-            } else { 
-                textEl.innerText = `已选色号 (${arr.length})：${arr.join(', ')}`; textEl.style.color = 'var(--primary-color)'; 
+            if (textEl) {
+                if (arr.length === 0) { 
+                    textEl.innerText = '未选择颜色'; textEl.style.color = '#999'; 
+                } else { 
+                    textEl.innerText = `已选色号 (${arr.length})：${arr.join(', ')}`; textEl.style.color = 'var(--primary-color)'; 
+                }
             }
             
             updateFabricSummary();
@@ -5008,7 +5010,11 @@
             }
             document.querySelectorAll('.fabric-item, .color-swatch').forEach(item => item.classList.remove('selected'));
             document.getElementById('fabric-config-panel').classList.add('hidden'); 
-            const textEl = document.getElementById('selected-colors-text'); textEl.innerText = '未选择颜色'; textEl.style.color = '#999';
+            const textEl = document.getElementById('selected-colors-text'); 
+            if (textEl) {
+                textEl.innerText = '未选择颜色'; 
+                textEl.style.color = '#999';
+            }
             document.getElementById('fabric-remark').value = '';
             
             let resetHtml = '';

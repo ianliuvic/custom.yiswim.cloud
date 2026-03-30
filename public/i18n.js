@@ -1129,10 +1129,14 @@
     function translateRichElements(root) {
         if (LANG === 'zh' || richDict.length === 0) return;
         root = root || document.body;
-        var els = root.querySelectorAll('div, span, p, li, td, label');
+        var els = Array.prototype.slice.call(root.querySelectorAll('div, span, p, li, td, label'));
+        // Process innermost elements first so parent doesn't clobber children
+        els.reverse();
         for (var i = 0; i < els.length; i++) {
             var el = els[i];
             if (el.getAttribute('data-i18n-done')) continue;
+            // Skip if a child was already translated (parent should not override)
+            if (el.querySelector('[data-i18n-done]')) continue;
             var tag = el.tagName;
             if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'TEXTAREA') continue;
             // Must have at least one direct inline-element child

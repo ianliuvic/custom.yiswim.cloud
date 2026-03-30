@@ -1189,7 +1189,48 @@
         }
 
         // --- 最终表单提交出口 (新增) ---
-        function submitForm() {
+        // 辅助：从 config 对象中剥离 File 对象，返回纯 JSON 和文件清单
+        function stripFiles(obj, category, subKey) {
+            const files = [];
+            const clean = {};
+            for (const [k, v] of Object.entries(obj)) {
+                if (v instanceof File) {
+                    files.push({ file: v, category, subKey: subKey || k });
+                } else if (Array.isArray(v)) {
+                    const fileItems = v.filter(i => i instanceof File);
+                    const dataItems = v.filter(i => !(i instanceof File));
+                    if (fileItems.length > 0) files.push(...fileItems.map(f => ({ file: f, category, subKey: subKey || k })));
+                    clean[k] = dataItems;
+                } else if (v && typeof v === 'object' && !(v instanceof Date)) {
+                    const nested = stripFiles(v, category, k);
+                    clean[k] = nested.clean;
+                    files.push(...nested.files);
+                } else {
+                    clean[k] = v;
+                }
+            }
+            return { clean, files };
+        }
+
+        // 辅助：将 fabricSelection 中的 File 对象提取出来
+        function stripFabricFiles(fabSel) {
+            const allFiles = [];
+            const clean = {};
+            for (const [catName, catObj] of Object.entries(fabSel)) {
+                const catClean = { ...catObj, configs: {} };
+                if (catObj.configs) {
+                    for (const [fabName, fabConf] of Object.entries(catObj.configs)) {
+                        const s = stripFiles(fabConf, 'fabric', `${catName}__${fabName}`);
+                        catClean.configs[fabName] = s.clean;
+                        allFiles.push(...s.files);
+                    }
+                }
+                clean[catName] = catClean;
+            }
+            return { clean, files: allFiles };
+        }
+
+        async function submitForm() {
             // 1. 全量验证
             const v = validateAll();
             
@@ -1223,49 +1264,117 @@
                 return;
             }
         
-            // 3. 数据构造 (合并之前的表格数据、物流数据等)
-            const contactName = document.getElementById('final-contact-name').value.trim();
-            const contactInfo = document.getElementById('final-contact-info').value.trim();
-            const brandName = document.getElementById('final-brand-name').value.trim();
-            const finalOrderData = {
-                identity: {
-                    name: contactName,
-                    contact: contactInfo,
-                    brand: brandName,
-                    website: document.getElementById('final-website').value
-                },
-                assignment: {
-                    sales: document.getElementById('assign-sales').value,
-                    patternMaker: document.getElementById('assign-pattern').value,
-                    sampleMaker: document.getElementById('assign-sewing').value
-                },
-                // 这里继承之前步骤定义的全局变量
-                config: {
-                    styles: selectedOdmStyles,
-                    sampleList: sampleRows, // 第四步的打样表格
-                    bulkList: bulkRows,     // 第四步的大货表格
-                    deliveryMode: currentDeliveryMode, // sample or bulk
-                    // ... 其他面料、辅料数据 ...
-                },
-                finalRemark: document.getElementById('final-remark').value,
-                finalDocs: finalDocsFiles // 提交这个数组给后端
-            };
-        
-            console.log("🚀 正式提交询盘数据:", finalOrderData);
-        
+            // 3. 构造 FormData
+            const fd = new FormData();
+
+            // —— Step 1: 款式 ——
+            fd.append('odm_styles', JSON.stringify(selectedOdmStyles));
+            // odmCustomData: 剥离文件
+            const odmClean = {};
+            for (const [styleName, data] of Object.entries(odmCustomData)) {
+                odmClean[styleName] = { remark: data.remark };
+                (data.files || []).forEach(f => fd.append(`files[odmCustom][${styleName}]`, f));
+            }
+            fd.append('odm_custom_data', JSON.stringify(odmClean));
+            fd.append('oem_project', document.getElementById('oem-collection-name')?.value || '');
+            fd.append('oem_style_count', document.getElementById('oem-collection-count')?.value || '0');
+            // OEM 每款简述
+            fd.append('oem_descriptions', JSON.stringify(oemStyleDescriptions));
+            // OEM checklist
+            const checkedIds = [];
+            document.querySelectorAll('.oem-checklist-item input[type="checkbox"]:checked').forEach(cb => {
+                checkedIds.push(cb.value);
+            });
+            fd.append('oem_checklist', JSON.stringify(checkedIds));
+            fd.append('oem_remark', document.getElementById('oem-remark')?.value || '');
+            // OEM 文件
+            (oemFilesData.tech || []).forEach(f => fd.append('files[oem][tech]', f));
+            (oemFilesData.ref || []).forEach(f => fd.append('files[oem][ref]', f));
+
+            // —— Step 2: 面料 ——
+            const fabResult = stripFabricFiles(fabricSelection);
+            fd.append('fabric_selection', JSON.stringify(fabResult.clean));
+            fabResult.files.forEach(item => fd.append(`files[fabric][${item.subKey}]`, item.file));
+
+            // —— Step 3: 辅料 ——
+            // CMT 状态
+            const cmtEnabled = {};
+            const trimCategories = ['metal', 'pad', 'bag', 'hangtag', 'label', 'hygiene', 'other'];
+            trimCategories.forEach(cat => {
+                const cmtCb = document.getElementById(`cmt-check-${cat}`);
+                cmtEnabled[cat] = cmtCb ? cmtCb.checked : false;
+            });
+            // fabric CMT
+            const fabricCmtCb = document.getElementById('fabric-cmt-check');
+            cmtEnabled.fabric = fabricCmtCb ? fabricCmtCb.checked : false;
+            fd.append('cmt_enabled', JSON.stringify(cmtEnabled));
+
+            // CMT 文件
+            for (const [cat, files] of Object.entries(cmtFilesData)) {
+                files.forEach(f => fd.append(`files[cmt][${cat}]`, f));
+            }
+
+            // 辅料配置对象：剥离文件后附加
+            const trimConfigs = { metal: metalConfig, pad: padConfig, bag: bagConfig, hangtag: hangtagConfig, label: labelConfig, hygiene: hygieneConfig, other: otherConfig };
+            for (const [cat, conf] of Object.entries(trimConfigs)) {
+                const s = stripFiles(conf, cat);
+                fd.append(`${cat}_config`, JSON.stringify(s.clean));
+                s.files.forEach(item => fd.append(`files[${cat}][${item.subKey}]`, item.file));
+            }
+
+            // —— Step 4: 物流 ——
+            fd.append('delivery_mode', currentDeliveryMode);
+            fd.append('sample_rows', JSON.stringify(sampleRows));
+            fd.append('sample_config', JSON.stringify(sampleConfig));
+            fd.append('sample_dest', document.getElementById('sample-destination')?.value || '');
+            fd.append('bulk_rows', JSON.stringify(bulkRows));
+            fd.append('bulk_logistics', JSON.stringify(bulkLogisticsConfig));
+            fd.append('bulk_dest', document.getElementById('bulk-destination')?.value || '');
+            fd.append('bulk_target_price', document.getElementById('bulk-target-price')?.value || '');
+            fd.append('bulk_packing_remark', document.getElementById('bulk-shipping-remark')?.value || '');
+            // 大货包装文件
+            bulkPackingFiles.forEach(f => fd.append('files[bulkPacking][ref]', f));
+
+            // —— Step 5: 客户档案 ——
+            fd.append('contact_name', document.getElementById('final-contact-name').value.trim());
+            fd.append('contact_info', document.getElementById('final-contact-info').value.trim());
+            fd.append('brand_name', document.getElementById('final-brand-name').value.trim());
+            fd.append('website', document.getElementById('final-website')?.value || '');
+            fd.append('final_remark', document.getElementById('final-remark')?.value || '');
+            fd.append('assign_sales', document.getElementById('assign-sales')?.value || '');
+            fd.append('assign_pattern', document.getElementById('assign-pattern')?.value || '');
+            fd.append('assign_sewing', document.getElementById('assign-sewing')?.value || '');
+            fd.append('nda_agreed', '1');
+            // 最终补充文件
+            finalDocsFiles.forEach(f => fd.append('files[finalDocs][doc]', f));
+
             // 4. 执行提交动画
             const nextBtn = document.getElementById('nextBtn');
+            const originalBtnHTML = nextBtn.innerHTML;
             nextBtn.innerHTML = `
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="animation: rotate 1s linear infinite; margin-right:8px;">
                     <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
-                </svg> 正在加密传输并分派团队...`;
+                </svg> ${_t('正在加密传输并分派团队...')}`;
             nextBtn.disabled = true;
-        
-            // 模拟后端响应
-            setTimeout(() => {
-                alert(_t("✅ 提交成功！\n\n您的需求编号为: HX20240508001\n专属业务经理将在 24 小时内为您提供正式报价。"));
-                // window.location.reload(); // 或者跳转到成功页
-            }, 1500);
+
+            // 5. 发送请求
+            try {
+                const resp = await fetch('/api/submit-inquiry', { method: 'POST', body: fd });
+                const result = await resp.json();
+                if (result.success) {
+                    alert(_t("✅ 提交成功！") + `\n\n${_t('您的需求编号为:')} ${result.inquiry_no}\n${_t('专属业务经理将在 24 小时内为您提供正式报价。')}`);
+                    window.location.reload();
+                } else {
+                    alert(_t('提交失败，请稍后重试。') + (result.message ? `\n${result.message}` : ''));
+                    nextBtn.innerHTML = originalBtnHTML;
+                    nextBtn.disabled = false;
+                }
+            } catch (err) {
+                console.error('提交异常:', err);
+                alert(_t('网络异常，请检查网络后重试。'));
+                nextBtn.innerHTML = originalBtnHTML;
+                nextBtn.disabled = false;
+            }
         }
 
         function selectItem(category, displayName) {

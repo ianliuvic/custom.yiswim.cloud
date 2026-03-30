@@ -142,7 +142,7 @@
                 const displayText = (lang === 'en' && item.content_en) ? item.content_en : item.content;
                 return `
                 <label class="oem-checklist-item" style="display: flex; align-items: center; width: 100%; box-sizing: border-box; padding: 8px 12px; border-bottom: ${borderBottom}; cursor: pointer; transition: background 0.2s; border-radius: 6px;">
-                    <input type="checkbox" style="width: 16px; height: 16px; accent-color: var(--primary-color); margin: 0 12px 0 0; cursor: pointer; flex-shrink: 0;" onchange="this.parentElement.style.background = this.checked ? '#fff' : 'transparent'; syncOemCheckAllBtn();">
+                    <input type="checkbox" style="width: 16px; height: 16px; accent-color: var(--primary-color); margin: 0 12px 0 0; cursor: pointer; flex-shrink: 0;" onchange="this.parentElement.style.background = this.checked ? '#fff' : 'transparent'; syncOemCheckAllBtn(); validateStyle();">
                     <span style="font-size: 13px; font-weight: 500; color: #475569; line-height: 1.4;">${displayText}</span>
                 </label>
                 `;
@@ -186,6 +186,7 @@
 
             // 同步更新按钮文案
             syncOemCheckAllBtn();
+            validateStyle();
         }
 
         // 2. 双向联动：根据当前打勾数量，自动更新按钮的文字和颜色
@@ -867,12 +868,26 @@
             const hasOdm = selectedOdmStyles.length > 0;
             const hasOem = typeof checkOemHasContent === 'function' && checkOemHasContent();
 
-            // 如果 OEM 有任何内容，则必须保证完整性（项目名称 + 款式数量）
+            // 如果 OEM 有任何内容，则必须保证完整性
             let oemComplete = true;
             if (hasOem) {
+                // 1) 项目名称 + 款式数量 必填
                 const collectionName = (document.getElementById('oem-collection-name')?.value || '').trim();
                 const collectionCount = parseInt(document.getElementById('oem-collection-count')?.value) || 0;
                 if (!collectionName || collectionCount <= 0) oemComplete = false;
+
+                // 2) 描述、参考图、技术文件 至少有一项
+                const hasDesc = typeof oemStyleDescriptions !== 'undefined' && oemStyleDescriptions.some(d => d.trim() !== '');
+                const hasRef = typeof oemFilesData !== 'undefined' && oemFilesData.ref.length > 0;
+                const hasTech = typeof oemFilesData !== 'undefined' && oemFilesData.tech.length > 0;
+                if (!hasDesc && !hasRef && !hasTech) oemComplete = false;
+
+                // 3) checklist 全部勾选
+                const checklists = document.querySelectorAll('.oem-checklist-item input[type="checkbox"]');
+                if (checklists.length > 0) {
+                    const allChecked = Array.from(checklists).every(cb => cb.checked);
+                    if (!allChecked) oemComplete = false;
+                }
             }
 
             // 至少有一种模式，且 OEM 若有内容则必须完整
@@ -964,7 +979,7 @@
             if (!v.allValid) {
                 // 构造缺失项提示
                 const missing = [];
-                if (!v.style) missing.push(_t('① 款式定义：请至少选择一个 ODM 款式或上传 OEM 设计；OEM 需填写项目名称和款式数量'));
+                if (!v.style) missing.push(_t('① 款式定义：请至少选择一个 ODM 款式或上传 OEM 设计；OEM 需填写项目名称、款式数量，提供描述/图片/文件之一，并勾选全部确认项'));
                 if (!v.fabric) missing.push(_t('② 面料材质：请至少选择一种面料'));
                 if (!v.trims) missing.push(_t('③ 品牌辅料：已启用的辅料需完善配置'));
                 if (!v.shipping) missing.push(_t('④ 物流交付：请在表格中至少选择一个款式'));

@@ -876,11 +876,11 @@
                 const collectionCount = parseInt(document.getElementById('oem-collection-count')?.value) || 0;
                 if (!collectionName || collectionCount <= 0) oemComplete = false;
 
-                // 2) 描述、参考图、技术文件 至少有一项
-                const hasDesc = typeof oemStyleDescriptions !== 'undefined' && oemStyleDescriptions.some(d => d.trim() !== '');
+                // 2) 备注、参考图、技术文件 至少有一项
+                const hasRemark = (document.getElementById('oem-remark')?.value || '').trim() !== '';
                 const hasRef = typeof oemFilesData !== 'undefined' && oemFilesData.ref.length > 0;
                 const hasTech = typeof oemFilesData !== 'undefined' && oemFilesData.tech.length > 0;
-                if (!hasDesc && !hasRef && !hasTech) oemComplete = false;
+                if (!hasRemark && !hasRef && !hasTech) oemComplete = false;
 
                 // 3) checklist 全部勾选
                 const checklists = document.querySelectorAll('.oem-checklist-item input[type="checkbox"]');

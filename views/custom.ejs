@@ -2523,26 +2523,29 @@
                                     </div>
                         
                                     <div style="background:#f8fafc; padding:25px; border-radius:12px; border: 1px solid #f1f5f9;">
-                                        <!-- 下拉选择行 -->
-                                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:30px; margin-bottom: 25px;">
-                                            <div><label style="font-size:11px; font-weight:700; color:#94a3b8; margin-bottom:8px; display:block; text-transform:uppercase;">单件入袋方式</label><select id="bulk-pack-rule" class="oem-input-mini" style="width:100%; height:38px;" onchange="updateLogisticsSummary()"><option>独立包装</option><option>环保混装</option></select></div>
-                                            <div><label style="font-size:11px; font-weight:700; color:#94a3b8; margin-bottom:8px; display:block; text-transform:uppercase;">外箱装箱规则</label><select id="bulk-carton-rule" class="oem-input-mini" style="width:100%; height:38px;" onchange="updateLogisticsSummary()"><option>独色独码</option><option>混色混码</option></select></div>
+                                        <!-- 填写提示横幅 -->
+                                        <div style="margin-bottom: 20px; padding: 12px 15px; background: #fffdf5; border: 1px dashed #fcd34d; border-radius: 8px; display: flex; align-items: flex-start; gap: 10px;">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" style="margin-top:2px; flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                            <div style="font-size: 11.5px; color: #92400e; line-height: 1.6;">
+                                                <strong>装箱包装说明：</strong>请在下方描述您对单件包装、外箱装箱、唛头贴标等方面的要求。<br>
+                                                常见需求如：独立 OPP 袋封装、Amazon FBA 标签、每箱限重、混色混码规则等。如无特殊要求，工厂将使用行业标准方案。
+                                            </div>
                                         </div>
-                        
+
                                         <!-- 描述与上传行 -->
                                         <div style="display:grid; grid-template-columns:1.5fr 1fr; gap:30px;">
                                             <!-- 描述文本框 -->
                                             <div>
-                                                <label style="font-size:11px; font-weight:700; color:#94a3b8; margin-bottom:8px; display:block; text-transform:uppercase;">装箱与唛头细节描述</label>
-                                                <textarea id="bulk-shipping-remark" class="oem-textarea" style="height:110px; font-size:12px;" placeholder="请详细描述您的装箱需求。&#10;例如：&#10;1. 外箱需贴 Amazon FBA 标签&#10;2. 每箱重量不得超过 15kg&#10;3. 侧唛需印制单号和 SKU 信息" oninput="updateLogisticsSummary()"></textarea>
+                                                <label style="font-size:11px; font-weight:700; color:#94a3b8; margin-bottom:8px; display:block; text-transform:uppercase;">装箱与包装需求描述</label>
+                                                <textarea id="bulk-shipping-remark" class="oem-textarea" style="height:140px; font-size:12px;" placeholder="请详细描述您的包装与装箱需求。&#10;例如：&#10;1. 单件入袋方式：独立 OPP 袋 + 吊牌外挂&#10;2. 外箱规则：独色独码，每箱不超过 15kg&#10;3. 侧唛需印：SKU / 颜色 / 尺码 / 数量&#10;4. 需贴 Amazon FBA 入仓标签" oninput="updateLogisticsSummary()"></textarea>
                                             </div>
                                             <!-- 附件上传区 -->
-                                            <div>
-                                                <label style="font-size:11px; font-weight:700; color:#94a3b8; margin-bottom:8px; display:block; text-transform:uppercase;">包装参考/贴标样照</label>
-                                                <div class="premium-upload-row" style="padding:15px; background:#fff; height: 38px; box-sizing: border-box;" onclick="document.getElementById('bulkPackingFile').click()">
-                                                    <span id="bulkPackingFileName" style="font-size:11px; color:#94a3b8; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">上传参考文件</span>
+                                            <div style="display: flex; flex-direction: column;">
+                                                <label style="font-size:11px; font-weight:700; color:#94a3b8; margin-bottom:8px; display:block; text-transform:uppercase;">包装参考 / 贴标样照</label>
+                                                <div class="premium-upload-box" onclick="document.getElementById('bulkPackingFile').click()" style="flex: 1; min-height: 120px; padding: 0; border-style: dashed; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-sizing: border-box;">
+                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="margin-bottom:8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                                                    <p id="bulkPackingFileName" style="font-size: 11px; color: #94a3b8; margin:0;">点击上传唛头样式 / FBA标签 / 包装参考图</p>
                                                     <input type="file" id="bulkPackingFile" class="hidden" multiple onchange="handleBulkPackingFiles(this)">
-                                                    <button type="button" class="btn-outline" style="padding:2px 8px; font-size:10px; flex-shrink:0;">浏览</button>
                                                 </div>
                                                 <!-- 预览网格 -->
                                                 <div id="bulkPackingPreview" class="oem-image-preview-grid" style="margin-top:12px; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));"></div>

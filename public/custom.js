@@ -1189,6 +1189,70 @@
         }
 
         // --- 最终表单提交出口 (新增) ---
+        // 图片压缩：Canvas 缩放到最大 1920px，质量 0.85
+        function compressImage(file, maxSize = 1920, quality = 0.85) {
+            return new Promise((resolve) => {
+                if (!file.type.match(/^image\/(jpeg|png|webp)$/)) { resolve(file); return; }
+                if (file.size < 200 * 1024) { resolve(file); return; } // <200KB 不压缩
+                const img = new Image();
+                img.onload = () => {
+                    let { width, height } = img;
+                    if (width > maxSize || height > maxSize) {
+                        const ratio = Math.min(maxSize / width, maxSize / height);
+                        width = Math.round(width * ratio);
+                        height = Math.round(height * ratio);
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width; canvas.height = height;
+                    canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                    canvas.toBlob((blob) => {
+                        if (blob && blob.size < file.size) {
+                            resolve(new File([blob], file.name, { type: blob.type, lastModified: file.lastModified }));
+                        } else {
+                            resolve(file); // 压缩后更大就用原图
+                        }
+                    }, file.type === 'image/png' ? 'image/png' : 'image/jpeg', quality);
+                };
+                img.onerror = () => resolve(file);
+                img.src = URL.createObjectURL(file);
+            });
+        }
+
+        // 批量压缩 FormData 中的所有文件
+        async function compressFormDataFiles(fd) {
+            const newFd = new FormData();
+            const entries = [...fd.entries()];
+            for (const [key, value] of entries) {
+                if (value instanceof File) {
+                    newFd.append(key, await compressImage(value));
+                } else {
+                    newFd.append(key, value);
+                }
+            }
+            return newFd;
+        }
+
+        // 上传弹窗控制
+        function showUploadModal() {
+            const m = document.getElementById('uploadModal');
+            m.style.display = 'flex';
+            document.getElementById('uploadProgressBar').style.width = '0%';
+            document.getElementById('uploadPercent').textContent = '0%';
+            document.getElementById('uploadTitle').textContent = _t('正在压缩并上传文件...');
+            document.getElementById('uploadSubtitle').textContent = _t('请勿关闭页面');
+            document.getElementById('uploadSpinner').style.display = 'block';
+        }
+        function updateUploadProgress(percent) {
+            document.getElementById('uploadProgressBar').style.width = percent + '%';
+            document.getElementById('uploadPercent').textContent = Math.round(percent) + '%';
+            if (percent >= 100) {
+                document.getElementById('uploadTitle').textContent = _t('服务器处理中...');
+            }
+        }
+        function hideUploadModal() {
+            document.getElementById('uploadModal').style.display = 'none';
+        }
+
         // 辅助：从 config 对象中剥离 File 对象，返回纯 JSON 和文件清单
         function stripFiles(obj, category, subKey) {
             const files = [];
@@ -1348,19 +1412,36 @@
             // 最终补充文件
             finalDocsFiles.forEach(f => fd.append('files[finalDocs][doc]', f));
 
-            // 4. 执行提交动画
+            // 4. 显示上传弹窗 & 压缩图片
             const nextBtn = document.getElementById('nextBtn');
             const originalBtnHTML = nextBtn.innerHTML;
-            nextBtn.innerHTML = `
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="animation: rotate 1s linear infinite; margin-right:8px;">
-                    <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
-                </svg> ${_t('正在加密传输并分派团队...')}`;
             nextBtn.disabled = true;
+            showUploadModal();
 
-            // 5. 发送请求
             try {
-                const resp = await fetch('/api/submit-inquiry', { method: 'POST', body: fd });
-                const result = await resp.json();
+                // 压缩所有图片文件
+                document.getElementById('uploadTitle').textContent = _t('正在压缩图片...');
+                const compressedFd = await compressFormDataFiles(fd);
+
+                // 5. 使用 XMLHttpRequest 上传（支持进度）
+                document.getElementById('uploadTitle').textContent = _t('正在上传文件...');
+                const result = await new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('POST', '/api/submit-inquiry');
+                    xhr.upload.onprogress = (e) => {
+                        if (e.lengthComputable) updateUploadProgress((e.loaded / e.total) * 100);
+                    };
+                    xhr.onload = () => {
+                        try { resolve(JSON.parse(xhr.responseText)); } 
+                        catch { reject(new Error('响应解析失败')); }
+                    };
+                    xhr.onerror = () => reject(new Error('网络错误'));
+                    xhr.ontimeout = () => reject(new Error('请求超时'));
+                    xhr.timeout = 5 * 60 * 1000; // 5 分钟超时
+                    xhr.send(compressedFd);
+                });
+
+                hideUploadModal();
                 if (result.success) {
                     alert(_t("✅ 提交成功！") + `\n\n${_t('您的需求编号为:')} ${result.inquiry_no}\n${_t('专属业务经理将在 24 小时内为您提供正式报价。')}`);
                     window.location.reload();
@@ -1370,6 +1451,7 @@
                     nextBtn.disabled = false;
                 }
             } catch (err) {
+                hideUploadModal();
                 console.error('提交异常:', err);
                 alert(_t('网络异常，请检查网络后重试。'));
                 nextBtn.innerHTML = originalBtnHTML;

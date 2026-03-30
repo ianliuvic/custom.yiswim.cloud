@@ -388,8 +388,6 @@
 
             // 确保大货表格有初始行
             if (bulkRows.length === 0) addBulkRow();
-            
-            if (currentDeliveryMode === 'sample') renderSampleTable();
             else renderBulkTable();
         }
 
@@ -4834,6 +4832,10 @@
             document.getElementById('pane-delivery-bulk').classList.toggle('hidden', mode !== 'bulk');
             
             if (mode === 'sample') initSampleTab();
+            else {
+                if (bulkRows.length === 0) addBulkRow();
+                else renderBulkTable();
+            }
             updateLogisticsSummary();
         }
 

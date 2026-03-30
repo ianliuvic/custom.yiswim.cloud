@@ -972,7 +972,7 @@
                 if (!isEnabled) continue; // 未启用且无 CMT = skip
                 
                 if (t === 'other') {
-                    const hasRemark = typeof otherConfig !== 'undefined' && otherConfig.remark && otherConfig.remark.trim() !== '';
+                    const hasRemark = (document.getElementById('other-remark')?.value || '').trim() !== '';
                     const hasFiles = typeof otherConfig !== 'undefined' && otherConfig.files && otherConfig.files.length > 0;
                     if (!hasRemark && !hasFiles) { allOk = false; }
                 }

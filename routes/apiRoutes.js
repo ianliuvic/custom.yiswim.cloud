@@ -445,9 +445,30 @@ router.get('/inquiry/:id', authenticateToken, async (req, res) => {
             [req.params.id]
         );
 
+        // 查询 ODM 款式图片
+        const inquiry = inquiryResult.rows[0];
+        let odmStyleImages = {};
+        try {
+            let odmNames = inquiry.odm_styles;
+            if (typeof odmNames === 'string') odmNames = JSON.parse(odmNames);
+            if (Array.isArray(odmNames) && odmNames.length > 0) {
+                const stylesResult = await db.query(`
+                    SELECT s.name,
+                        COALESCE(
+                            json_agg('https://files.yiswim.cloud/' || i.unique_image_id) FILTER (WHERE i.unique_image_id IS NOT NULL),
+                            '[]'
+                        ) as image_urls
+                    FROM custom_odm_styles s
+                    LEFT JOIN images i ON s.id = i.notion_page_id
+                    WHERE s.name = ANY($1)
+                    GROUP BY s.id`, [odmNames]);
+                stylesResult.rows.forEach(r => { odmStyleImages[r.name] = r.image_urls; });
+            }
+        } catch (e) { /* ignore parse errors */ }
+
         res.json({
             success: true,
-            data: { ...inquiryResult.rows[0], files: filesResult.rows }
+            data: { ...inquiry, files: filesResult.rows, odm_style_images: odmStyleImages }
         });
     } catch (error) {
         console.error('获取询盘详情失败:', error);

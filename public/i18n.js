@@ -896,6 +896,18 @@
         "例：\n主体黑色，撞色滚边\n注意防水拉链": "e.g.,\nBlack body, contrast piping\nNote: waterproof zipper",
         "选或填": "Select or type",
 
+        // ── OEM Checklist (DB content) ──
+        "已指出采用哪种边缘工艺": "Specified which edge finishing technique to use",
+        "已包含尺寸信息，包括关键部位测量及公差": "Included size information, including key measurement points and tolerances",
+        "已指出胸垫是否可拆卸": "Specified whether chest pads are removable",
+        "已指出是否需要里料": "Specified whether lining is needed",
+        "我已知晓如果版型特殊且采用不可拆卸胸垫方案时可能涉及到胸垫开模": "I understand that special patterns with non-removable chest pads may require custom pad molding",
+        "我已明确指出上传的设计包含的款式数量及——做出了标识": "I have clearly indicated the number of styles in the uploaded design package and labeled each one",
+        "我已上传了至少一张图片/工艺单用于款式描述": "I have uploaded at least one image/tech pack for style description",
+        "已指出臀部覆盖度": "Specified hip/bottom coverage level",
+        "已指出肩带（如果有）是否可调节": "Specified whether straps (if any) are adjustable",
+        "已指出后背的闭合方案": "Specified the back closure design",
+
         // ── Chinese Numerals ──
         "一、 ": "I. ",
         "二、 ": "II. ",

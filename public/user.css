@@ -482,7 +482,7 @@ body {
 .u-timeline-text strong { color: var(--text-main); display: block; font-size: 13px; }
 
 /* Sub-Label */
-.u-sub-label { font-size: 11px; color: var(--text-light); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 8px; margin-top: 14px; }
+.u-sub-label { font-size: 13px; color: var(--primary-color); font-weight: 700; letter-spacing: 0.3px; margin-bottom: 10px; margin-top: 18px; padding-bottom: 6px; border-bottom: 1px solid #f0f0f0; }
 .u-sub-label:first-child { margin-top: 0; }
 
 /* Section Divider (ODM / OEM) */

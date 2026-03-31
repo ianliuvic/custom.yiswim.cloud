@@ -108,11 +108,20 @@ router.get('/get-data', authenticateToken, async (req, res) => {
             ORDER BY orders ASC NULLS LAST;
         `;
 
-        const [stylesResult, fabricsResult, bagsResult, checklistResult] = await Promise.all([
+        // 查询用户最近一次询盘的联系信息，用于自动填充 Step 5
+        const lastContactQuery = `
+            SELECT contact_name, contact_info, brand_name, website, nda_agreed_at
+            FROM custom_inquiries
+            WHERE user_id = $1 AND deleted_at IS NULL
+            ORDER BY created_at DESC LIMIT 1
+        `;
+
+        const [stylesResult, fabricsResult, bagsResult, checklistResult, lastContactResult] = await Promise.all([
             db.query(stylesQuery),
             db.query(fabricsQuery),
             db.query(bagsQuery),
-            db.query(checklistQuery)
+            db.query(checklistQuery),
+            db.query(lastContactQuery, [req.user.id])
         ]);
 
         const formattedFabrics = fabricsResult.rows.map(fabric => {
@@ -131,7 +140,8 @@ router.get('/get-data', authenticateToken, async (req, res) => {
                 odm_styles: stylesResult.rows,
                 fabrics: formattedFabrics,
                 bags: formattedBags,
-                oem_checklists: checklistResult.rows
+                oem_checklists: checklistResult.rows,
+                last_contact: lastContactResult.rows.length ? lastContactResult.rows[0] : null
             }
         });
 

@@ -366,8 +366,21 @@
             });
         });
 
-        // CMT customer-supplied fabric files
-        if (cmtFabricFiles.length) {
+        // CMT customer-supplied fabric
+        var cmtData = tryParse(d.cmt_enabled);
+        var fabricCmt = cmtData && cmtData.fabric;
+        // 兼容旧格式 (true/false) 和新格式 ({ enabled, desc, trackingNo })
+        var fabricCmtEnabled = fabricCmt === true || (fabricCmt && fabricCmt.enabled);
+        if (fabricCmtEnabled) {
+            h += '<div class="u-cmt-block">';
+            h += '<div class="u-cmt-title">客户自行提供面料 (CMT)</div>';
+            if (fabricCmt && fabricCmt.desc) h += kv('明细描述', esc(fabricCmt.desc));
+            if (fabricCmt && fabricCmt.trackingNo) h += kv('寄件单号', esc(fabricCmt.trackingNo));
+            if (cmtFabricFiles.length) {
+                h += renderInlineFiles(cmtFabricFiles, '参考文件');
+            }
+            h += '</div>';
+        } else if (cmtFabricFiles.length) {
             h += '<div class="u-sub-label" style="margin-top:14px">客供面料文件</div>';
             h += '<div class="u-file-grid">';
             cmtFabricFiles.forEach(function (f) { h += renderFileItem(f); });
@@ -389,13 +402,18 @@
             { key: 'other_config', cat: 'other', name: '其他', icon: '📦' }
         ];
 
+        var cmtData = tryParse(d.cmt_enabled) || {};
         var cards = [];
         trimDefs.forEach(function (td) {
             var val = tryParse(d[td.key]);
-            if (!val || typeof val !== 'object' || !Object.keys(val).length) return;
+            var cmtInfo = cmtData[td.cat];
+            var cmtEnabled = cmtInfo === true || (cmtInfo && cmtInfo.enabled);
+            // 如果没有配置也没有CMT，跳过
+            var hasConfig = val && typeof val === 'object' && Object.keys(val).length;
+            if (!hasConfig && !cmtEnabled) return;
             var trimFiles = (fileMap[td.cat] || []);
             var cmtFiles = (fileMap['cmt'] || []).filter(function (f) { return f.sub_key === td.cat; });
-            cards.push(renderOneTrimCard(td, val, trimFiles, cmtFiles));
+            cards.push(renderOneTrimCard(td, hasConfig ? val : {}, trimFiles, cmtFiles, cmtInfo));
         });
         if (cards.length === 0) return '';
 
@@ -405,7 +423,7 @@
         return h;
     }
 
-    function renderOneTrimCard(td, val, trimFiles, cmtFiles) {
+    function renderOneTrimCard(td, val, trimFiles, cmtFiles, cmtInfo) {
         var h = '<div class="u-trim-card">';
         h += '<div class="u-trim-card-head"><div class="u-trim-dot on"></div>' + td.icon + ' ' + td.name + '</div>';
 
@@ -468,10 +486,23 @@
         }
 
         if (val.remark) h += kv('备注', esc(val.remark));
-        // Inline files for this trim
-        var allTrimFiles = trimFiles.concat(cmtFiles);
-        if (allTrimFiles.length) {
-            h += renderInlineFiles(allTrimFiles, '相关文件');
+
+        // CMT 客供物料信息
+        var cmtEnabled = cmtInfo === true || (cmtInfo && cmtInfo.enabled);
+        if (cmtEnabled) {
+            h += '<div class="u-cmt-block">';
+            h += '<div class="u-cmt-title">客户自行提供 (CMT)</div>';
+            if (cmtInfo && cmtInfo.desc) h += kv('明细描述', esc(cmtInfo.desc));
+            if (cmtInfo && cmtInfo.trackingNo) h += kv('寄件单号', esc(cmtInfo.trackingNo));
+            if (cmtFiles.length) {
+                h += renderInlineFiles(cmtFiles, '参考文件');
+            }
+            h += '</div>';
+        }
+
+        // Inline files for this trim (non-CMT)
+        if (trimFiles.length) {
+            h += renderInlineFiles(trimFiles, '相关文件');
         }
         h += '</div>';
         return h;

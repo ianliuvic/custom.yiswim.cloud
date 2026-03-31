@@ -364,8 +364,8 @@ router.post('/submit-inquiry', authenticateToken, upload.any(), async (req, res)
                 VALUES ($1, $2, $3, $4, $5, $6, $7)`;
             
             for (const file of req.files) {
-                // 解析 fieldname: "files[oem][tech]" → category="oem", sub_key="tech"
-                const match = file.fieldname.match(/^files\[(\w+)\](?:\[(\w+)\])?$/);
+                // 解析 fieldname: "files[oem][tech]" or "files[odmCustom][Style Name]"
+                const match = file.fieldname.match(/^files\[([^\]]+)\](?:\[([^\]]*)\])?$/);
                 const category = match ? match[1] : 'unknown';
                 const subKey = match ? (match[2] || '') : '';
 

@@ -182,7 +182,6 @@
         var odmCustom = tryParse(d.odm_custom_data);
         var odmImages = d.odm_style_images || {};
         var oemDescs = tryParse(d.oem_descriptions);
-        var oemCk = tryParse(d.oem_checklist);
         var hasODM = Array.isArray(odmArr) && odmArr.length;
         var hasOEM = d.oem_project;
         if (!hasODM && !hasOEM) return '';
@@ -191,7 +190,7 @@
 
         // ODM
         if (hasODM) {
-            h += '<div class="u-sub-label">ODM 已选款式</div>';
+            h += '<div class="u-sec-divider"><span class="u-sec-divider-tag odm">ODM</span><span class="u-sec-divider-text">已选款式</span><span class="u-sec-divider-line"></span></div>';
             h += '<div class="u-style-grid">';
             odmArr.forEach(function (name) {
                 var displayName = typeof name === 'object' ? (name.name || name.id || JSON.stringify(name)) : name;
@@ -234,8 +233,8 @@
 
         // OEM
         if (hasOEM) {
-            if (hasODM) h += '<div style="height:16px"></div>';
-            h += '<div class="u-sub-label">OEM 自主设计</div>';
+            if (hasODM) h += '<div class="u-sec-separator"></div>';
+            h += '<div class="u-sec-divider"><span class="u-sec-divider-tag oem">OEM</span><span class="u-sec-divider-text">自主设计</span><span class="u-sec-divider-line"></span></div>';
             h += kv('项目名称', esc(d.oem_project));
             h += kv('款式数量', d.oem_style_count || '-');
             if (Array.isArray(oemDescs) && oemDescs.length) {
@@ -256,15 +255,6 @@
                 h += '<div class="u-sub-label" style="margin-top:12px">设计文件</div>';
                 h += '<div class="u-file-grid">';
                 oemFiles.forEach(function (f) { h += renderFileItem(f); });
-                h += '</div>';
-            }
-            if (Array.isArray(oemCk) && oemCk.length) {
-                h += '<div class="u-sub-label" style="margin-top:12px">已确认条目</div>';
-                h += '<div class="u-check-list">';
-                oemCk.forEach(function (item) {
-                    var label = typeof item === 'object' ? (item.label || item.name || JSON.stringify(item)) : item;
-                    h += '<div class="u-check-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>' + esc(label) + '</div>';
-                });
                 h += '</div>';
             }
             if (d.oem_remark) h += kv('备注', esc(d.oem_remark));

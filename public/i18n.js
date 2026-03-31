@@ -14,6 +14,7 @@
         "红绣服饰自定义系统": "Hongxiu Custom System",
         "当前用户：": "Current User: ",
         "安全退出": "Log Out",
+        "用户中心": "User Center",
         "定制详情": "Selected Details",
 
         // ── Stepper ──

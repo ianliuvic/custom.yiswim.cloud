@@ -462,11 +462,27 @@
         switch (td.key) {
             case 'metal_config':
                 if (val.finish) h += kv('表面处理', esc(val.finish));
-                h += inlineByKey('sourceFiles', '参考文件');
+                h += inlineByKey('sourceFiles', '通用参考文件');
                 if (val.logoCustom) {
-                    h += kv('LOGO', '需要定制');
+                    h += kv('LOGO定制', '需要');
                     if (Array.isArray(val.logoTypes) && val.logoTypes.length) h += kv('LOGO类型', val.logoTypes.map(esc).join(', '));
-                    h += inlineByKey('logoFiles', 'LOGO文件');
+                    h += inlineByKey('logoFiles', '通用LOGO文件');
+                }
+                // 各品类明细
+                if (val.details && val.categories && val.categories.length) {
+                    val.categories.forEach(function (catName) {
+                        var detail = val.details[catName];
+                        if (!detail) return;
+                        h += '<div class="u-metal-cat-block">';
+                        h += '<div class="u-metal-cat-name">' + esc(catName) + '</div>';
+                        if (detail.remark) h += kv('备注', esc(detail.remark));
+                        h += inlineByKey('details__' + catName + '__styleFiles', '样式参考');
+                        if (detail.logoNeeded) {
+                            h += kv('独立LOGO', '需要');
+                            h += inlineByKey('details__' + catName + '__logoFiles', 'LOGO文件');
+                        }
+                        h += '</div>';
+                    });
                 }
                 break;
             case 'pad_config':
@@ -512,8 +528,8 @@
                         h += kv('位置 (' + esc(k) + ')', esc(val.placements[k]));
                     });
                 }
-                h += inlineByKey('top', '打标位置参考 (上)');
-                h += inlineByKey('bottom', '打标位置参考 (下)');
+                h += inlineByKey('placementFiles__top', '打标位置参考 (上)');
+                h += inlineByKey('placementFiles__bottom', '打标位置参考 (下)');
                 h += inlineByKey('designFiles', '设计文件');
                 if (val.isSplit) h += kv('分体标', '是' + (val.splitRemark ? '（' + esc(val.splitRemark) + '）' : ''));
                 break;

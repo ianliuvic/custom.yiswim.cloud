@@ -353,6 +353,17 @@ body {
 .u-sub-label { font-size: 11px; color: var(--text-light); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 8px; margin-top: 14px; }
 .u-sub-label:first-child { margin-top: 0; }
 
+/* Section Divider (ODM / OEM) */
+.u-sec-divider { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+.u-sec-divider-tag { display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; padding: 3px 10px; border-radius: 4px; color: #fff; }
+.u-sec-divider-tag.odm { background: var(--primary-color); }
+.u-sec-divider-tag.oem { background: #2563eb; }
+.u-sec-divider-text { font-size: 14px; font-weight: 600; color: var(--text-main); white-space: nowrap; }
+.u-sec-divider-line { flex: 1; height: 1px; background: var(--border-color); }
+
+/* Visual separator between ODM and OEM blocks */
+.u-sec-separator { height: 1px; background: linear-gradient(90deg, transparent, var(--border-color) 20%, var(--border-color) 80%, transparent); margin: 20px 0; }
+
 /* Empty section hint */
 .u-sec-empty { padding: 24px; text-align: center; color: var(--text-light); font-size: 13px; }
 

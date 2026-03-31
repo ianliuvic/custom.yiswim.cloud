@@ -856,17 +856,17 @@
 
     /* ---------- Delete inquiry ---------- */
     window.deleteInquiry = async function (id, inquiryNo) {
-        if (!confirm('确定要删除询盘 ' + inquiryNo + ' 吗？')) return;
+        if (!confirm(_t('确定要删除询盘') + ' ' + inquiryNo + _t(' 吗？'))) return;
         try {
             var res = await fetch('/api/inquiry/' + id, { method: 'DELETE' });
             var json = await res.json();
             if (json.success) {
                 loadInquiries(currentPage);
             } else {
-                alert('删除失败：' + (json.message || '未知错误'));
+                alert(_t('删除失败：') + (json.message || _t('未知错误')));
             }
         } catch (e) {
-            alert('网络错误，请重试');
+            alert(_t('网络错误，请重试'));
         }
     };
 
@@ -979,7 +979,7 @@
                 sessionStorage.setItem('copyInquiryData', JSON.stringify(_currentInquiryData));
                 window.location.href = '/';
             } catch (e) {
-                alert('复制失败：数据过大或存储不可用');
+                alert(_t('复制失败：数据过大或存储不可用'));
             }
             return;
         }
@@ -992,7 +992,7 @@
                 window.location.href = '/';
             })
             .catch(function (e) {
-                alert('获取询盘数据失败：' + e.message);
+                alert(_t('获取询盘数据失败：') + e.message);
             });
     };
 
@@ -1047,25 +1047,25 @@
                 sessionStorage.setItem('restoreDraftId', String(json.data.id));
                 window.location.href = '/';
             } else {
-                alert('草稿不存在或已过期');
+                alert(_t('草稿不存在或已过期'));
             }
         } catch (e) {
-            alert('获取草稿失败');
+            alert(_t('获取草稿失败'));
         }
     };
 
     window.deleteDraft = async function () {
-        if (!confirm('确定要删除草稿吗？')) return;
+        if (!confirm(_t('确定要删除草稿吗？'))) return;
         try {
             var res = await fetch('/api/draft', { method: 'DELETE' });
             var json = await res.json();
             if (json.success) {
                 document.getElementById('draft-banner').style.display = 'none';
             } else {
-                alert('删除失败');
+                alert(_t('删除失败'));
             }
         } catch (e) {
-            alert('网络错误');
+            alert(_t('网络错误'));
         }
     };
 

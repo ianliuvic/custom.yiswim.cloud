@@ -274,6 +274,12 @@
                 h += '</div>';
             }
             if (d.oem_remark) h += kv('备注', esc(d.oem_remark));
+            // 寄送实体样衣
+            if (d.oem_physical_sample) {
+                h += '<div class="u-kv"><div class="u-kv-label">寄送样衣</div><div class="u-kv-value"><span style="color:#16a34a;font-weight:600">● 已寄送实体样衣</span>'
+                    + (d.oem_tracking_no ? '<span style="margin-left:8px;color:var(--text-light);font-size:12px">单号：' + esc(d.oem_tracking_no) + '</span>' : '<span style="margin-left:8px;color:#f59e0b;font-size:12px">待更新物流单号</span>')
+                    + '</div></div>';
+            }
         }
 
         h += secEnd();

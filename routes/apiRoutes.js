@@ -291,7 +291,7 @@ router.post('/submit-inquiry', authenticateToken, upload.any(), async (req, res)
         const insertSQL = `
             INSERT INTO custom_inquiries (
                 inquiry_no, user_id,
-                odm_styles, odm_custom_data, oem_project, oem_style_count, oem_descriptions, oem_checklist, oem_remark,
+                odm_styles, odm_custom_data, oem_project, oem_style_count, oem_descriptions, oem_checklist, oem_remark, oem_physical_sample, oem_tracking_no,
                 fabric_selection,
                 cmt_enabled, metal_config, pad_config, bag_config, hangtag_config, label_config, hygiene_config, other_config,
                 delivery_mode, sample_rows, sample_config, sample_dest, bulk_rows, bulk_logistics, bulk_dest, bulk_target_price, bulk_packing_remark,
@@ -300,13 +300,13 @@ router.post('/submit-inquiry', authenticateToken, upload.any(), async (req, res)
                 nda_agreed_at
             ) VALUES (
                 $1, $2,
-                $3, $4, $5, $6, $7, $8, $9,
-                $10,
-                $11, $12, $13, $14, $15, $16, $17, $18,
-                $19, $20, $21, $22, $23, $24, $25, $26, $27,
-                $28, $29, $30, $31, $32,
-                $33, $34, $35,
-                $36
+                $3, $4, $5, $6, $7, $8, $9, $10, $11,
+                $12,
+                $13, $14, $15, $16, $17, $18, $19, $20,
+                $21, $22, $23, $24, $25, $26, $27, $28, $29,
+                $30, $31, $32, $33, $34,
+                $35, $36, $37,
+                $38
             ) RETURNING id`;
 
         const values = [
@@ -319,6 +319,8 @@ router.post('/submit-inquiry', authenticateToken, upload.any(), async (req, res)
             safeJSON(d.oem_descriptions, []),
             safeJSON(d.oem_checklist, []),
             d.oem_remark || null,
+            d.oem_physical_sample === '1',
+            d.oem_tracking_no || null,
             // Step 2
             safeJSON(d.fabric_selection, {}),
             // Step 3

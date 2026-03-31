@@ -1409,6 +1409,13 @@
             padConfig.otherColor = document.getElementById('pad-color-other')?.value.trim() || '';
             padConfig.shapeRemark = document.getElementById('pad-shape-remark')?.value.trim() || '';
             padConfig.remark = document.getElementById('pad-remark')?.value.trim() || '';
+            hangtagConfig.remark = document.getElementById('hangtag-remark')?.value.trim() || '';
+            hangtagConfig.materialRemark = document.getElementById('hangtag-material-remark')?.value.trim() || '';
+            hangtagConfig.shapeRemark = document.getElementById('hangtag-shape-remark')?.value.trim() || '';
+            hangtagConfig.craftRemark = document.getElementById('hangtag-craft-remark')?.value.trim() || '';
+            hangtagConfig.stringRemark = document.getElementById('hangtag-string-remark')?.value.trim() || '';
+            hangtagConfig.stringColorOther = document.getElementById('hangtag-string-color-other')?.value.trim() || '';
+            hangtagConfig.setRemark = document.getElementById('hangtag-set-remark')?.value.trim() || '';
             const trimConfigs = { metal: metalConfig, pad: padConfig, bag: bagConfig, hangtag: hangtagConfig, label: labelConfig, hygiene: hygieneConfig, other: otherConfig };
             for (const [cat, conf] of Object.entries(trimConfigs)) {
                 const isEnabled = cat === 'other'

@@ -5962,11 +5962,19 @@
             document.querySelectorAll('.custom-badge').forEach(badge => badge.classList.remove('active'));
             
             oemFilesData = { tech: [], ref: [] };
+            oemStyleDescriptions = [];
             const oemRefPreview = _el('oemRefPreview'); if (oemRefPreview) oemRefPreview.innerHTML = '';
             const oemTechPreview = _el('oemTechPreview'); if (oemTechPreview) oemTechPreview.innerHTML = '';
             const oemRemark = _el('oem-remark'); if (oemRemark) oemRemark.value = '';
+            const oemCollName = _el('oem-collection-name'); if (oemCollName) oemCollName.value = '';
+            const oemCollCount = _el('oem-collection-count'); if (oemCollCount) { oemCollCount.value = '0'; renderOemStyleDescInputs(); }
             const oemPhysical = _el('oem-physical'); if (oemPhysical) { oemPhysical.checked = false; togglePhysicalInfo(false); }
             const oemAddr = _q('#oem-address-info input'); if(oemAddr) oemAddr.value = '';
+            // 重置 OEM checklist
+            document.querySelectorAll('.oem-checklist-item input[type="checkbox"]').forEach(cb => { cb.checked = false; if(cb.parentElement) cb.parentElement.style.background = 'transparent'; });
+            if (typeof syncOemCheckAllBtn === 'function') syncOemCheckAllBtn();
+            // 切换回 ODM 模式
+            toggleStyleMode('existing');
 
             // 2. 重置面料
             for (let key in fabricSelection) {
@@ -6046,23 +6054,30 @@
             const labelRemark = _el('label-remark'); if (labelRemark) labelRemark.value = '';
             const labelPreviewGrid = _el('labelPreviewGrid'); if (labelPreviewGrid) labelPreviewGrid.innerHTML = '';
 
-            // 4. 重置物流
-            const logDest = _el('logistics-destination'); if (logDest) logDest.value = '';
-            const tradeTerm = _q('input[name="trade_term"][value="DDP"]') || _q('input[name="bulk_trade_term"][value="DDP"]');
-            if (tradeTerm) tradeTerm.checked = true;
-            const logSinglePack = _el('logistics-single-pack'); if (logSinglePack) logSinglePack.selectedIndex = 0;
-            const logCartonRule = _el('logistics-carton-rule'); if (logCartonRule) logCartonRule.selectedIndex = 0;
-            const logRemark = _el('logistics-remark'); if (logRemark) logRemark.value = '';
-            
-            document.querySelectorAll('.logistics-method').forEach((item, idx) => {
-                if(idx === 2) item.classList.add('selected');
-                else item.classList.remove('selected');
-            });
-            
-            document.querySelectorAll('.logistics-addon').forEach(item => item.classList.remove('selected'));
-            
-            logisticsConfig = { term: 'DDP 双清包税到门', method: 'Sea Freight (海运快船)', addons: [] };
-            if (typeof updateLogisticsSummary === 'function') updateLogisticsSummary();
+            // 4. 重置物流交付
+            currentDeliveryMode = 'sample';
+            sampleRows = [];
+            bulkRows = [];
+            sampleConfig = { carrier: 'DHL/FedEx (红绣代办)', needBulkQuote: false, intentTerm: 'DDP', intentMethod: 'Sea Freight (海运)' };
+            bulkLogisticsConfig = { term: 'DDP 双清包税', method: 'Sea' };
+            bulkPackingFiles = [];
+            // 清空输入框
+            const sampleDest = _el('sample-destination'); if (sampleDest) sampleDest.value = '';
+            const bulkDest = _el('bulk-destination'); if (bulkDest) bulkDest.value = '';
+            const bulkPrice = _el('bulk-target-price'); if (bulkPrice) bulkPrice.value = '';
+            const bulkShipRemark = _el('bulk-shipping-remark'); if (bulkShipRemark) bulkShipRemark.value = '';
+            const bulkPackPreview = _el('bulkPackingPreview'); if (bulkPackPreview) bulkPackPreview.innerHTML = '';
+            // 重置大货意向
+            const intentChk = _el('sample-need-bulk-quote'); if (intentChk) intentChk.checked = false;
+            const intentFields = _el('sample-bulk-intent-fields'); if (intentFields) intentFields.classList.add('hidden');
+            const intentQty = _el('sample-intent-qty'); if (intentQty) intentQty.value = '';
+            const intentPrice = _el('sample-intent-price'); if (intentPrice) intentPrice.value = '';
+            // 清空选中态
+            document.querySelectorAll('#pane-delivery-sample .option-item').forEach(item => item.classList.remove('selected'));
+            document.querySelectorAll('#pane-delivery-bulk .option-item').forEach(item => item.classList.remove('selected'));
+            document.querySelectorAll('.bulk-method').forEach(item => item.classList.remove('selected'));
+            // 切回样衣模式并重新渲染
+            switchDeliveryMode('sample');
 
             // 5. 重置商业评估 (Step 5)
             const stageRadio = _q('input[name="project_stage"][value="concept"]');

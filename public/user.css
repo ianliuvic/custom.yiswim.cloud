@@ -228,18 +228,49 @@ body {
 .u-style-card-name { font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; }
 .u-style-card-remark { font-size: 12px; color: var(--text-light); line-height: 1.5; margin-bottom: 6px; }
 
-/* 轻定制 custom section inside style card */
-.u-custom-section {
-    margin-top: 8px; padding-top: 8px;
-    border-top: 1px dashed #e2e8f0;
+/* 轻定制 compact pill */
+.u-custom-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    margin-top: 6px; padding: 4px 10px;
+    background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px;
+    cursor: pointer; transition: all .2s; font-size: 11px; color: var(--primary-color);
 }
-.u-custom-label {
-    font-size: 11px; font-weight: 700; color: var(--primary-color);
-    letter-spacing: 0.5px; margin-bottom: 4px;
+.u-custom-pill:hover { background: #fee2e2; border-color: #fca5a5; }
+.u-custom-pill span { font-weight: 600; }
+.u-custom-pill-sum { font-weight: 400 !important; color: #94a3b8; font-size: 10px; }
+
+/* 轻定制 popover */
+.u-custom-popover {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    transform: translateY(100%);
+    z-index: 100; background: #fff;
+    border: 1px solid #e2e8f0; border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    animation: cpopIn .15s ease-out;
 }
-.u-custom-remark {
-    font-size: 12px; color: var(--text-light); line-height: 1.5; margin-bottom: 6px;
+@keyframes cpopIn { from { opacity: 0; transform: translateY(calc(100% - 6px)); } to { opacity: 1; transform: translateY(100%); } }
+.u-cpop-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 12px; border-bottom: 1px solid #f1f5f9;
+    font-size: 12px; font-weight: 600; color: var(--text-main);
 }
+.u-cpop-header button {
+    background: none; border: none; font-size: 18px; color: var(--text-light);
+    cursor: pointer; line-height: 1; padding: 0 2px;
+}
+.u-cpop-header button:hover { color: var(--text-main); }
+.u-cpop-body { padding: 10px 12px; max-height: 220px; overflow-y: auto; }
+.u-cpop-remark {
+    font-size: 12px; color: var(--text-main); line-height: 1.6;
+    margin-bottom: 8px; white-space: pre-wrap;
+}
+.u-cpop-files { display: flex; gap: 6px; flex-wrap: wrap; }
+.u-cpop-thumb {
+    width: 56px; height: 56px; border-radius: 6px; overflow: hidden;
+    border: 1px solid #e2e8f0; display: block; flex-shrink: 0; cursor: pointer;
+}
+.u-cpop-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.u-cpop-thumb:hover { border-color: var(--primary-color); }
 
 /* Lightbox */
 .u-lightbox {

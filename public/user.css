@@ -123,6 +123,9 @@ body {
     cursor: pointer; transition: all .2s; white-space: nowrap;
 }
 .u-copy-detail-btn:hover { background: #eff6ff; border-color: #93c5fd; color: #2563eb; }
+.u-copy-detail-btn:disabled { opacity: .6; cursor: wait; }
+@keyframes u-spin-anim { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.u-spin { animation: u-spin-anim .8s linear infinite; }
 .u-detail-hero-title { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 
 /* Status Tags */

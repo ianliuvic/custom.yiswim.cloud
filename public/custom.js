@@ -1746,6 +1746,12 @@
                     updateStep4Scale(); // 进入 Step 4 时统一刷新
                     updateLogisticsSummary();
                 }
+
+            // 进入 Step 2 时，重新定位面料配置面板 (restore 时 DOM 不可见导致 offsetTop=0 定位失败)
+            if (currentStep === 2 && activeFabricCat && fabricSelection[activeFabricCat] && fabricSelection[activeFabricCat].activeName) {
+                var _tabEl = document.querySelector('#fabric-sub-tabs .mode-option.active');
+                if (_tabEl) switchFabricCat(activeFabricCat, _tabEl);
+            }
         }
 
         // 点击左上角 Logo/标题 返回第一步（不清空数据）

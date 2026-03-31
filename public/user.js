@@ -296,6 +296,11 @@
         var fabricFiles = fileMap['fabric'] || [];
         var cmtFabricFiles = (fileMap['cmt'] || []).filter(function (f) { return f.sub_key === 'fabric'; });
 
+        console.log('=== FABRIC DEBUG ===');
+        console.log('fabricSelection keys:', Object.keys(fab));
+        console.log('fabricSelection full:', JSON.stringify(fab, null, 2));
+        console.log('fabricFiles from DB:', JSON.stringify(fabricFiles.map(function(f){ return {sub_key: f.sub_key, category: f.category, orig_name: f.orig_name}; }), null, 2));
+
         var h = secStart('fabric', '面料信息');
 
         Object.keys(fab).forEach(function (catKey) {
@@ -308,6 +313,11 @@
             Object.keys(configs).forEach(function (fabricName) {
                 var cfg = configs[fabricName];
                 if (!cfg) return;
+                console.log('  [fabric] catKey=' + catKey + ', catName=' + catName + ', fabricName=' + fabricName);
+                console.log('    cfg.remark=', cfg.remark);
+                console.log('    cfg keys:', Object.keys(cfg));
+                var subKey = catKey + '__' + fabricName;
+                console.log('    computed subKey=' + subKey);
                 var mode = cfg.mode || 'solid';
                 var modeLabel = { solid: '纯色', print: '印花', custom: '开发/找样' }[mode] || mode;
 

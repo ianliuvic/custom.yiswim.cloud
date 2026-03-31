@@ -111,6 +111,7 @@
         panel.style.display = 'block';
         content.innerHTML = '<div class="u-loading">加载中...</div>';
         statsEl.innerHTML = '';
+        _lbRegistry = {}; _lbSeq = 0;
 
         try {
             var res = await fetch('/api/inquiry/' + id);
@@ -175,6 +176,15 @@
         }
     };
 
+    /* ── Lightbox image registry ── */
+    var _lbRegistry = {};
+    var _lbSeq = 0;
+    function regLbImages(imgs) {
+        var key = '_lb' + (++_lbSeq);
+        _lbRegistry[key] = imgs;
+        return key;
+    }
+
     /* ── Section Renderers ── */
 
     function renderStyleSection(d, fileMap) {
@@ -201,29 +211,43 @@
                 }
                 // Style images from DB
                 var imgs = odmImages[displayName];
-                var coverImg = Array.isArray(imgs) && imgs.length ? imgs[0] : '';
+                var allImgs = Array.isArray(imgs) ? imgs : [];
+                var coverImg = allImgs.length ? allImgs[0] : '';
 
                 // User-uploaded custom files for this style
                 var customFiles = (fileMap['odmCustom'] || []).filter(function (f) { return f.sub_key === displayName; });
 
                 h += '<div class="u-style-card' + (coverImg ? ' has-img' : '') + '">';
                 if (coverImg) {
-                    h += '<div class="u-style-card-img"><img src="' + esc(coverImg) + '" alt="' + esc(displayName) + '" loading="lazy" onerror="this.parentElement.style.display=\'none\'"></div>';
+                    var lbKey = regLbImages(allImgs);
+                    h += '<div class="u-style-card-img" style="cursor:pointer" onclick="openLightbox(\'' + lbKey + '\', 0)">';
+                    h += '<img src="' + esc(coverImg) + '" alt="' + esc(displayName) + '" loading="lazy" onerror="this.parentElement.style.display=\'none\'">';
+                    if (allImgs.length > 1) {
+                        h += '<span class="u-img-count">' + allImgs.length + ' 张</span>';
+                    }
+                    h += '</div>';
                 }
                 h += '<div class="u-style-card-body">';
                 h += '<div class="u-style-card-name">' + esc(displayName) + '</div>';
-                if (remark) h += '<div class="u-style-card-remark">' + esc(remark) + '</div>';
-                if (customFiles.length) {
-                    h += '<div class="u-style-card-files">';
-                    customFiles.forEach(function (f) {
-                        var url = FILE_BASE + encodeURIComponent(f.stored_name);
-                        var isImg = /\.(jpg|jpeg|png|gif|webp)$/i.test(f.orig_name);
-                        if (isImg) {
-                            h += '<a href="' + url + '" target="_blank" rel="noopener noreferrer" class="u-style-card-thumb"><img src="' + url + '" alt="' + esc(f.orig_name) + '" loading="lazy"></a>';
-                        } else {
-                            h += renderFileItem(f);
-                        }
-                    });
+                // 轻定制 section
+                if (remark || customFiles.length) {
+                    h += '<div class="u-custom-section">';
+                    h += '<div class="u-custom-label">轻定制</div>';
+                    if (remark) h += '<div class="u-custom-remark">' + esc(remark) + '</div>';
+                    if (customFiles.length) {
+                        h += '<div class="u-style-card-files">';
+                        customFiles.forEach(function (f) {
+                            var url = FILE_BASE + encodeURIComponent(f.stored_name);
+                            var isImg = /\.(jpg|jpeg|png|gif|webp)$/i.test(f.orig_name);
+                            if (isImg) {
+                                var fKey = regLbImages([url]);
+                                h += '<a href="' + url + '" class="u-style-card-thumb" onclick="event.preventDefault();openLightbox(\'' + fKey + '\', 0)"><img src="' + url + '" alt="' + esc(f.orig_name) + '" loading="lazy"></a>';
+                            } else {
+                                h += renderFileItem(f);
+                            }
+                        });
+                        h += '</div>';
+                    }
                     h += '</div>';
                 }
                 h += '</div></div>';
@@ -627,6 +651,63 @@
         document.getElementById('inquiry-list').style.display = '';
         document.getElementById('inquiry-pagination').style.display = '';
         document.querySelector('.u-page-title').style.display = '';
+    };
+
+    /* ---------- Lightbox ---------- */
+    var lbImages = [];
+    var lbIndex = 0;
+
+    function createLightbox() {
+        if (document.getElementById('u-lightbox')) return;
+        var el = document.createElement('div');
+        el.id = 'u-lightbox';
+        el.className = 'u-lightbox';
+        el.innerHTML = '<div class="u-lb-overlay" onclick="closeLightbox()"></div>' +
+            '<button class="u-lb-close" onclick="closeLightbox()">&times;</button>' +
+            '<button class="u-lb-prev" onclick="lbNav(-1)">&#8249;</button>' +
+            '<div class="u-lb-content"><img id="u-lb-img" src="" alt=""><div class="u-lb-counter" id="u-lb-counter"></div></div>' +
+            '<button class="u-lb-next" onclick="lbNav(1)">&#8250;</button>';
+        document.body.appendChild(el);
+        document.addEventListener('keydown', function (e) {
+            if (!document.getElementById('u-lightbox').classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') lbNav(-1);
+            if (e.key === 'ArrowRight') lbNav(1);
+        });
+    }
+
+    function showLbImage() {
+        var img = document.getElementById('u-lb-img');
+        var counter = document.getElementById('u-lb-counter');
+        img.src = lbImages[lbIndex];
+        counter.textContent = lbImages.length > 1 ? (lbIndex + 1) + ' / ' + lbImages.length : '';
+        document.querySelector('.u-lb-prev').style.display = lbImages.length > 1 ? '' : 'none';
+        document.querySelector('.u-lb-next').style.display = lbImages.length > 1 ? '' : 'none';
+    }
+
+    window.openLightbox = function (keyOrArr, idx) {
+        createLightbox();
+        if (typeof keyOrArr === 'string' && _lbRegistry[keyOrArr]) {
+            lbImages = _lbRegistry[keyOrArr];
+        } else if (Array.isArray(keyOrArr)) {
+            lbImages = keyOrArr;
+        } else {
+            lbImages = [];
+        }
+        lbIndex = idx || 0;
+        showLbImage();
+        document.getElementById('u-lightbox').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    };
+
+    window.closeLightbox = function () {
+        document.getElementById('u-lightbox').classList.remove('active');
+        document.body.style.overflow = '';
+    };
+
+    window.lbNav = function (dir) {
+        lbIndex = (lbIndex + dir + lbImages.length) % lbImages.length;
+        showLbImage();
     };
 
     /* ---------- Change password ---------- */

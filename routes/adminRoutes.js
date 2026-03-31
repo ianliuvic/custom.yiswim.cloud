@@ -135,4 +135,67 @@ router.delete('/api/inquiry/:id', authenticateAdmin, async (req, res) => {
     }
 });
 
+// 批量恢复软删除的询盘
+router.post('/api/inquiries/batch-restore', authenticateAdmin, async (req, res) => {
+    try {
+        const ids = req.body.ids;
+        if (!Array.isArray(ids) || !ids.length) {
+            return res.status(400).json({ success: false, message: '请选择要恢复的询盘' });
+        }
+        const result = await db.query(
+            'UPDATE custom_inquiries SET deleted_at = NULL WHERE id = ANY($1) AND deleted_at IS NOT NULL RETURNING id',
+            [ids]
+        );
+        res.json({ success: true, message: `成功恢复 ${result.rowCount} 条询盘`, count: result.rowCount });
+    } catch (error) {
+        console.error('批量恢复失败:', error);
+        res.status(500).json({ success: false, message: '服务器错误' });
+    }
+});
+
+// 批量硬删除询盘
+router.post('/api/inquiries/batch-delete', authenticateAdmin, async (req, res) => {
+    const ids = req.body.ids;
+    if (!Array.isArray(ids) || !ids.length) {
+        return res.status(400).json({ success: false, message: '请选择要删除的询盘' });
+    }
+    const client = await db.connect();
+    try {
+        await client.query('BEGIN');
+
+        // 1. 查询所有关联文件
+        const filesResult = await client.query(
+            'SELECT stored_name FROM custom_inquiry_files WHERE inquiry_id = ANY($1)', [ids]
+        );
+
+        // 2. 删除数据库记录
+        await client.query('DELETE FROM custom_inquiry_files WHERE inquiry_id = ANY($1)', [ids]);
+        const delResult = await client.query('DELETE FROM custom_inquiries WHERE id = ANY($1) RETURNING id', [ids]);
+
+        await client.query('COMMIT');
+
+        // 3. 删除磁盘文件
+        const uploadDir = path.join(UPLOAD_BASE, 'inquiries');
+        let deletedFiles = 0;
+        for (const file of filesResult.rows) {
+            const filePath = path.join(uploadDir, file.stored_name);
+            try {
+                if (fs.existsSync(filePath)) { fs.unlinkSync(filePath); deletedFiles++; }
+            } catch (e) { console.error('删除文件失败:', filePath, e.message); }
+        }
+
+        res.json({
+            success: true,
+            message: `彻底删除 ${delResult.rowCount} 条询盘，清理 ${deletedFiles} 个文件`,
+            count: delResult.rowCount
+        });
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error('批量硬删除失败:', error);
+        res.status(500).json({ success: false, message: '服务器错误' });
+    } finally {
+        client.release();
+    }
+});
+
 module.exports = router;

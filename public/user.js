@@ -487,7 +487,11 @@
                 break;
             case 'pad_config':
                 if (val.thickness) h += kv('厚度', esc(val.thickness));
-                if (val.color) h += kv('颜色', esc(val.color === 'others' && val.otherColor ? val.otherColor : val.color));
+                if (val.color) {
+                    var colorDisplay = val.color;
+                    if (val.color === '其他定制色' && val.otherColor) colorDisplay = val.otherColor + '（定制色）';
+                    h += kv('颜色', esc(colorDisplay));
+                }
                 if (val.customShape) {
                     h += kv('异形', '是' + (val.shapeRemark ? '（' + esc(val.shapeRemark) + '）' : ''));
                     h += inlineByKey('shapeFiles', '形状参考');

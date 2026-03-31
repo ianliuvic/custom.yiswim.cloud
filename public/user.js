@@ -58,6 +58,9 @@
                     '<div class="u-inquiry-card-right">' +
                     '<span class="u-status-tag u-status-' + esc(r.status) + '">' + statusLabel(r.status) + '</span>' +
                     '<span style="font-size:12px;color:#94a3b8">' + fmtDate(r.created_at) + '</span>' +
+                    '<button class="u-del-btn" onclick="event.stopPropagation();deleteInquiry(' + r.id + ',\'' + esc(r.inquiry_no) + '\')" title="删除">' +
+                    '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>' +
+                    '</button>' +
                     '</div>' +
                     '</div>'
                 );
@@ -707,6 +710,22 @@
         document.getElementById('inquiry-list').style.display = '';
         document.getElementById('inquiry-pagination').style.display = '';
         document.querySelector('.u-page-title').style.display = '';
+    };
+
+    /* ---------- Delete inquiry ---------- */
+    window.deleteInquiry = async function (id, inquiryNo) {
+        if (!confirm('确定要删除询盘 ' + inquiryNo + ' 吗？\n\n删除后无法恢复，所有关联文件也将被永久删除。')) return;
+        try {
+            var res = await fetch('/api/inquiry/' + id, { method: 'DELETE' });
+            var json = await res.json();
+            if (json.success) {
+                loadInquiries(currentPage);
+            } else {
+                alert('删除失败：' + (json.message || '未知错误'));
+            }
+        } catch (e) {
+            alert('网络错误，请重试');
+        }
     };
 
     /* ---------- Lightbox ---------- */

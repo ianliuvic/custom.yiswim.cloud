@@ -532,21 +532,25 @@
                 }
                 break;
             case 'label_config':
-                if (val.material) h += kv('材质', esc(val.material));
-                h += inlineByKey('otherMatFiles', '材质参考');
-                if (val.size) h += kv('尺寸', esc(val.size));
-                if (val.method) h += kv('缝制方式', esc(val.method));
-                h += inlineByKey('sewingFiles', '缝制方式参考');
-                if (Array.isArray(val.components) && val.components.length) h += kv('部件', val.components.map(esc).join(', '));
-                if (val.placements) {
-                    Object.keys(val.placements).forEach(function (k) {
-                        h += kv('位置 (' + esc(k) + ')', esc(val.placements[k]));
-                    });
-                }
-                h += inlineByKey('placementFiles__top', '打标位置参考 (上)');
-                h += inlineByKey('placementFiles__bottom', '打标位置参考 (下)');
+                if (val.remark) h += kv('设计描述', esc(val.remark));
                 h += inlineByKey('designFiles', '设计文件');
-                if (val.isSplit) h += kv('分体标', '是' + (val.splitRemark ? '（' + esc(val.splitRemark) + '）' : ''));
+                if (mode !== 'auto') {
+                    if (val.material) h += kv('材质', esc(val.material));
+                    h += inlineByKey('otherMatFiles', '材质参考');
+                    if (val.size) h += kv('尺寸', esc(val.size));
+                    if (val.method) h += kv('缝制方式', esc(val.method));
+                    if (val.sewingRemark) h += kv('缝制说明', esc(val.sewingRemark));
+                    h += inlineByKey('sewingFiles', '缝制方式参考');
+                    if (Array.isArray(val.components) && val.components.length) h += kv('部件', val.components.map(esc).join(', '));
+                    if (val.placements) {
+                        Object.keys(val.placements).forEach(function (k) {
+                            h += kv('位置 (' + esc(k) + ')', esc(val.placements[k]));
+                        });
+                    }
+                    h += inlineByKey('placementFiles__top', '打标位置参考 (上)');
+                    h += inlineByKey('placementFiles__bottom', '打标位置参考 (下)');
+                    if (val.isSplit) h += kv('分体标', '是' + (val.splitRemark ? '（' + esc(val.splitRemark) + '）' : ''));
+                }
                 break;
             case 'hygiene_config':
                 if (val.material) h += kv('材质', esc(val.material));
@@ -564,8 +568,8 @@
                 break;
         }
 
-        // 吊牌的 remark 已作为"设计描述"展示，不再重复
-        if (val.remark && td.key !== 'hangtag_config') h += kv('备注', esc(val.remark));
+        // 吊牌/标签的 remark 已作为"设计描述"展示，不再重复
+        if (val.remark && td.key !== 'hangtag_config' && td.key !== 'label_config') h += kv('备注', esc(val.remark));
 
         // CMT 客供物料信息
         var cmtEnabled = cmtInfo === true || (cmtInfo && cmtInfo.enabled);

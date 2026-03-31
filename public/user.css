@@ -380,6 +380,15 @@ body {
 .u-fabric-mode.print { background: #fce7f3; color: #be185d; }
 .u-fabric-mode.custom { background: #fef3c7; color: #92400e; }
 
+/* CMT Block */
+.u-cmt-block {
+    margin-top: 12px; padding: 10px 12px; border-radius: 8px;
+    background: #fffbeb; border: 1px dashed #f59e0b;
+}
+.u-cmt-title {
+    font-size: 12px; font-weight: 700; color: #d97706; margin-bottom: 6px;
+}
+
 /* Trim Mini Cards */
 .u-trim-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
 .u-trim-card {

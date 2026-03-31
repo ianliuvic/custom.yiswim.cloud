@@ -462,26 +462,27 @@
             border-color: #f1f5f9;
         }
         
-        /* 暂存按钮 */
+        /* 暂存按钮（汇总栏顶部） */
         .draft-btn {
-            background: #fff;
+            background: none;
             color: #64748b;
             border: 1px dashed #cbd5e1;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 13px;
-            padding: 0 20px;
-            margin-left: auto;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
         }
         .draft-btn:hover {
             background: #f0fdf4;
             border-color: #86efac;
             color: #065f46;
-            transform: translateY(-1px);
         }
         .draft-btn:active {
-            transform: translateY(0) scale(0.98);
+            transform: scale(0.97);
         }
 
         /* 下一步/提交按钮：强化品牌感 */

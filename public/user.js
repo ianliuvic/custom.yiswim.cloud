@@ -336,9 +336,16 @@
                     if (cfg.colorText) h += kv('色彩描述', esc(cfg.colorText));
                 } else if (mode === 'print') {
                     if (cfg.printType) h += kv('印花类型', cfg.printType === 'seamless' ? '满版印花' : '定位印花');
-                    // 印花图片：sub_key 以 __print 结尾
+                    // 印花图片：新数据 sub_key 以 __print 结尾，旧数据从同 sub_key 中按 mime_type 分离图片
                     var printKey = catKey + '__' + fabricName + '__print';
                     var printFiles = fabricFiles.filter(function (f) { return f.sub_key === printKey; });
+                    if (!printFiles.length) {
+                        // 兼容旧数据：从相同 sub_key 中提取图片文件作为印花图
+                        var baseKey = catKey + '__' + fabricName;
+                        printFiles = fabricFiles.filter(function (f) {
+                            return f.sub_key === baseKey && f.mime_type && f.mime_type.indexOf('image/') === 0;
+                        });
+                    }
                     if (printFiles.length) {
                         h += renderInlineFiles(printFiles, '印花图案');
                     }
@@ -364,6 +371,12 @@
                 // Inline fabric files matching this fabric (use catKey for DB match)
                 var subKey = catKey + '__' + fabricName;
                 var matched = fabricFiles.filter(function (f) { return f.sub_key === subKey; });
+                // 排除已在印花图案中展示的图片
+                if (mode === 'print' && printFiles.length) {
+                    var printIds = {};
+                    printFiles.forEach(function (pf) { printIds[pf.id] = true; });
+                    matched = matched.filter(function (f) { return !printIds[f.id]; });
+                }
                 if (matched.length) {
                     h += renderInlineFiles(matched, '参考文件');
                 }

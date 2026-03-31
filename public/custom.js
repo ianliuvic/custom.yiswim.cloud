@@ -196,8 +196,11 @@
                 if (badge && odmCustom[sn] && odmCustom[sn].remark) badge.classList.add('active');
             }
 
-            // OEM 数据
-            if (d.oem_project || d.oem_mode_active) {
+            // 确保默认显示 ODM 面板
+            toggleStyleMode('existing');
+
+            // OEM 数据 (仅在明确开启 OEM 模式时才切换)
+            if (d.oem_mode_active) {
                 toggleStyleMode('upload');
                 const projEl = document.getElementById('oem-collection-name');
                 if (projEl) projEl.value = d.oem_project;

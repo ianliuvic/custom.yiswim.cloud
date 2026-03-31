@@ -105,6 +105,26 @@ body {
 }
 .u-del-btn:hover { background: #fef2f2; border-color: #fecaca; color: #dc2626; }
 
+/* Copy button (card list) */
+.u-copy-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 8px;
+    border: 1px solid transparent; background: transparent;
+    color: #94a3b8; cursor: pointer; transition: all .2s; flex-shrink: 0;
+}
+.u-copy-btn:hover { background: #eff6ff; border-color: #bfdbfe; color: #2563eb; }
+
+/* Copy button (detail header) */
+.u-copy-detail-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 8px;
+    border: 1px solid #e2e8f0; background: #fff;
+    color: #64748b; font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: all .2s; white-space: nowrap;
+}
+.u-copy-detail-btn:hover { background: #eff6ff; border-color: #93c5fd; color: #2563eb; }
+.u-detail-hero-title { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
 /* Status Tags */
 .u-status-tag {
     display: inline-block; padding: 4px 12px; border-radius: 20px;

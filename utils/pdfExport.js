@@ -10,6 +10,134 @@ const { ensureFonts } = require('./fontLoader');
 
 const FILE_BASE = 'https://files.yiswim.cloud/uploads/inquiries/';
 
+/* ── i18n dictionary ── */
+const I18N = {
+    zh: {
+        docTitle: '红绣服饰 · 询盘单',
+        inquiryNo: '询盘编号',
+        status: '状态',
+        createdAt: '创建时间',
+        deliveryMode: '交付模式',
+        brand: '品牌',
+        contact: '联系人',
+        page: '第 {0} / {1} 页',
+        generatedAt: '生成时间',
+        // Status
+        statusPending: '待处理', statusProcessing: '处理中', statusQuoted: '已报价', statusClosed: '已关闭',
+        // Modes
+        bulkOrder: '大货订单', sampleOrder: '样衣订单',
+        // Section titles
+        sec1: '一、款式信息', sec2: '二、面料信息', sec3: '三、辅料 / 包装', sec4: '四、交付信息', sec5: '五、联系信息', sec6: '六、附件清单',
+        // Style
+        odmSelected: '【ODM 已选款式】', oemDesign: '【OEM 自主设计】',
+        customRemark: '轻定制备注', customFiles: '轻定制文件',
+        projectName: '项目名称', styleCount: '款式数量', styleDesc: '款式描述',
+        designFiles: '设计文件', remark: '备注', sampleShipping: '寄送样衣', shipped: '已寄送',
+        // Fabric
+        solid: '纯色', print: '印花', customSourcing: '开发/找样',
+        color: '颜色', colorDesc: '色彩描述',
+        printType: '印花类型', seamless: '满版印花', placement: '定位印花',
+        printPatternFiles: '印花图案文件', refColor: '参考底色', printScale: '缩放比例',
+        reqDesc: '需求描述', composition: '成分', gsm: '克重', colorReq: '颜色要求',
+        physicalSend: '实物邮寄', fullLining: '全衬里', liningPlacement: '衬里位置',
+        colorBlock: '拼色说明', refFiles: '参考文件',
+        cmtFabric: '客户自行提供面料 (CMT)', detailDesc: '明细描述', trackingNo: '寄件单号',
+        cmtFabricFiles: '客供面料文件',
+        // Trims
+        metalHardware: '五金配件', chestPad: '胸垫', packBag: '包装袋', hangTag: '吊牌',
+        label: '标签', hygieneSticker: '卫生贴', other: '其他',
+        mode: '模式', autoMode: '红绣标配', customMode: '客户自定义',
+        surfaceFinish: '表面处理', logoCustom: 'LOGO定制', needed: '需要', logoType: 'LOGO类型',
+        independentLogo: '独立LOGO',
+        thickness: '厚度', customShape: '异形',
+        material: '材质', size: '尺寸', printing: '印刷', craft: '工艺',
+        designDesc: '设计描述', weight: '克重', shape: '形状', roundedCorner: '圆角',
+        shapeDesc: '形状说明', craftDesc: '工艺说明', string: '吊绳', stringColor: '绳色',
+        subBrand: '副牌', have: '有',
+        sewMethod: '缝制方式', sewDesc: '缝制说明', components: '部件',
+        position: '位置', mainWashSplit: '主标与洗水标', splitCustom: '分开定制', splitDesc: '分开说明',
+        noStick: '免粘贴', shapeReq: '异形要求', stickRule: '粘贴规则',
+        cmtSupply: '客户自行提供 (CMT)',
+        attachments: '附件', cmtAttachments: 'CMT附件', otherFiles: '其他文件',
+        // Shipping
+        sampleDetail: '样衣明细', style: '款式', type: '类型', sizeCol: '尺码', qty: '数量',
+        sampleLogistics: '样衣物流', carrier: '物流方式', needBulkQuote: '需大货报价',
+        estBulkQty: '预估大货数量', pcs: '件', targetEXW: '期望EXW单价',
+        tradeTerm: '贸易术语', shippingMethod: '运输方式', sampleDest: '样衣目的地',
+        bulkDetail: '大货明细', sizeAlloc: '尺码分配',
+        bulkLogistics: '大货物流', bulkDest: '大货目的地', targetPrice: '目标价格',
+        packRemark: '包装备注', packRefFiles: '包装参考文件', techPlanFiles: '综合工艺单 / 企划书',
+        // Contact
+        contactPerson: '联系人', contactInfo: '联系方式', brandName: '品牌名称', website: '网站',
+        overallRemark: '整体备注', ndaSigned: 'NDA 签署', signed: '已签署',
+        // Files table
+        fileName: '文件名', fileSize: '大小', fileCategory: '分类',
+        yes: '是', no: '否',
+    },
+    en: {
+        docTitle: 'Hongxiu Apparel · Inquiry Sheet',
+        inquiryNo: 'Inquiry No.',
+        status: 'Status',
+        createdAt: 'Created',
+        deliveryMode: 'Delivery Mode',
+        brand: 'Brand',
+        contact: 'Contact',
+        page: 'Page {0} / {1}',
+        generatedAt: 'Generated',
+        statusPending: 'Pending', statusProcessing: 'Processing', statusQuoted: 'Quoted', statusClosed: 'Closed',
+        bulkOrder: 'Bulk Order', sampleOrder: 'Sample Order',
+        sec1: '1. Style Information', sec2: '2. Fabric Information', sec3: '3. Trims / Packaging', sec4: '4. Delivery Information', sec5: '5. Contact Information', sec6: '6. Attachments',
+        odmSelected: '[ODM Selected Styles]', oemDesign: '[OEM Custom Design]',
+        customRemark: 'Customization Remark', customFiles: 'Customization Files',
+        projectName: 'Project Name', styleCount: 'Style Count', styleDesc: 'Style Descriptions',
+        designFiles: 'Design Files', remark: 'Remark', sampleShipping: 'Sample Shipping', shipped: 'Shipped',
+        solid: 'Solid', print: 'Print', customSourcing: 'Custom Sourcing',
+        color: 'Color', colorDesc: 'Color Description',
+        printType: 'Print Type', seamless: 'Seamless Pattern', placement: 'Placement Print',
+        printPatternFiles: 'Print Pattern Files', refColor: 'Reference Color', printScale: 'Print Scale',
+        reqDesc: 'Requirement', composition: 'Composition', gsm: 'GSM', colorReq: 'Color Requirement',
+        physicalSend: 'Physical Sample', fullLining: 'Full Lining', liningPlacement: 'Lining Placement',
+        colorBlock: 'Color Blocking Notes', refFiles: 'Reference Files',
+        cmtFabric: 'Customer-Supplied Fabric (CMT)', detailDesc: 'Details', trackingNo: 'Tracking No.',
+        cmtFabricFiles: 'CMT Fabric Files',
+        metalHardware: 'Metal Hardware', chestPad: 'Chest Pad', packBag: 'Packaging Bag', hangTag: 'Hang Tag',
+        label: 'Label', hygieneSticker: 'Hygiene Sticker', other: 'Other',
+        mode: 'Mode', autoMode: 'Hongxiu Standard', customMode: 'Customer Custom',
+        surfaceFinish: 'Surface Finish', logoCustom: 'Logo Custom', needed: 'Needed', logoType: 'Logo Type',
+        independentLogo: 'Independent Logo',
+        thickness: 'Thickness', customShape: 'Custom Shape',
+        material: 'Material', size: 'Size', printing: 'Printing', craft: 'Craft',
+        designDesc: 'Design Description', weight: 'Weight', shape: 'Shape', roundedCorner: 'Rounded Corner',
+        shapeDesc: 'Shape Description', craftDesc: 'Craft Description', string: 'String', stringColor: 'String Color',
+        subBrand: 'Sub-brand', have: 'Yes',
+        sewMethod: 'Sewing Method', sewDesc: 'Sewing Description', components: 'Components',
+        position: 'Position', mainWashSplit: 'Main & Wash Label', splitCustom: 'Separate Custom', splitDesc: 'Split Description',
+        noStick: 'No Adhesive', shapeReq: 'Shape Requirement', stickRule: 'Adhesive Rule',
+        cmtSupply: 'Customer-Supplied (CMT)',
+        attachments: 'Attachments', cmtAttachments: 'CMT Attachments', otherFiles: 'Other Files',
+        sampleDetail: 'Sample Details', style: 'Style', type: 'Type', sizeCol: 'Size', qty: 'Qty',
+        sampleLogistics: 'Sample Logistics', carrier: 'Carrier', needBulkQuote: 'Bulk Quote Needed',
+        estBulkQty: 'Est. Bulk Qty', pcs: 'pcs', targetEXW: 'Target EXW Price',
+        tradeTerm: 'Trade Term', shippingMethod: 'Shipping Method', sampleDest: 'Sample Destination',
+        bulkDetail: 'Bulk Details', sizeAlloc: 'Size Allocation',
+        bulkLogistics: 'Bulk Logistics', bulkDest: 'Bulk Destination', targetPrice: 'Target Price',
+        packRemark: 'Packing Remark', packRefFiles: 'Packing Reference Files', techPlanFiles: 'Tech Pack / Planning Docs',
+        contactPerson: 'Contact', contactInfo: 'Contact Info', brandName: 'Brand Name', website: 'Website',
+        overallRemark: 'Overall Remark', ndaSigned: 'NDA', signed: 'Signed',
+        fileName: 'File Name', fileSize: 'Size', fileCategory: 'Category',
+        yes: 'Yes', no: 'No',
+    }
+};
+
+function getT(lang) {
+    const dict = I18N[lang] || I18N.zh;
+    return (key, ...args) => {
+        let s = dict[key] || I18N.zh[key] || key;
+        args.forEach((v, i) => { s = s.replace('{' + i + '}', v); });
+        return s;
+    };
+}
+
 /* ── Helpers ── */
 function tryParse(v) {
     if (v == null) return null;
@@ -24,9 +152,9 @@ function fmtDate(s) {
     return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
 }
 
-function statusLabel(s) {
-    const m = { pending: '待处理', processing: '处理中', quoted: '已报价', closed: '已关闭' };
-    return m[s] || s || '待处理';
+function statusLabel(s, t) {
+    const m = { pending: t('statusPending'), processing: t('statusProcessing'), quoted: t('statusQuoted'), closed: t('statusClosed') };
+    return m[s] || s || t('statusPending');
 }
 
 function formatSize(bytes) {
@@ -102,13 +230,13 @@ function divider() {
 }
 
 /* ── Build file list table ── */
-function buildFileTable(files, label) {
+function buildFileTable(files, label, t) {
     if (!files || !files.length) return [];
     const rows = [
         [
-            { text: '文件名', style: 'tableHeader' },
-            { text: '大小', style: 'tableHeader' },
-            { text: '分类', style: 'tableHeader' }
+            { text: t('fileName'), style: 'tableHeader' },
+            { text: t('fileSize'), style: 'tableHeader' },
+            { text: t('fileCategory'), style: 'tableHeader' }
         ]
     ];
     files.forEach(f => {
@@ -132,7 +260,7 @@ function buildFileTable(files, label) {
    Section Builders - mirror the 5 sections in user.js
    ═══════════════════════════════════════════════ */
 
-async function buildStyleSection(d, fileMap, odmStyleImages) {
+async function buildStyleSection(d, fileMap, odmStyleImages, t) {
     const odmArr = tryParse(d.odm_styles);
     const odmCustom = tryParse(d.odm_custom_data);
     const oemDescs = tryParse(d.oem_descriptions);
@@ -140,25 +268,23 @@ async function buildStyleSection(d, fileMap, odmStyleImages) {
     const hasOEM = d.oem_project;
     if (!hasODM && !hasOEM) return [];
 
-    const content = [sectionTitle('一、款式信息')];
+    const content = [sectionTitle(t('sec1'))];
 
     // ODM
     if (hasODM) {
-        content.push({ text: '【ODM 已选款式】', bold: true, fontSize: 10, margin: [0, 4, 0, 4] });
+        content.push({ text: t('odmSelected'), bold: true, fontSize: 10, margin: [0, 4, 0, 4] });
 
         for (const name of odmArr) {
             const displayName = typeof name === 'object' ? (name.name || name.id || JSON.stringify(name)) : name;
             const items = [{ text: displayName, bold: true, fontSize: 10 }];
 
-            // Remark
             let remark = '';
             if (odmCustom && typeof odmCustom === 'object') {
                 const cd = odmCustom[displayName];
                 if (cd && cd.remark) remark = cd.remark;
             }
-            if (remark) items.push(kvRow('轻定制备注', remark));
+            if (remark) items.push(kvRow(t('customRemark'), remark));
 
-            // Try to embed first ODM image
             const imgs = odmStyleImages[displayName];
             if (Array.isArray(imgs) && imgs.length) {
                 const imgData = await fetchImageAsBase64(imgs[0], 150);
@@ -167,10 +293,9 @@ async function buildStyleSection(d, fileMap, odmStyleImages) {
                 }
             }
 
-            // Custom files
             const customFiles = (fileMap['odmCustom'] || []).filter(f => f.sub_key === displayName);
             if (customFiles.length) {
-                items.push({ text: '轻定制文件: ' + customFiles.map(f => f.orig_name).join(', '), fontSize: 8, color: '#64748b', margin: [0, 2, 0, 2] });
+                items.push({ text: t('customFiles') + ': ' + customFiles.map(f => f.orig_name).join(', '), fontSize: 8, color: '#64748b', margin: [0, 2, 0, 2] });
             }
 
             content.push({
@@ -184,26 +309,26 @@ async function buildStyleSection(d, fileMap, odmStyleImages) {
     // OEM
     if (hasOEM) {
         if (hasODM) content.push(divider());
-        content.push({ text: '【OEM 自主设计】', bold: true, fontSize: 10, margin: [0, 4, 0, 4] });
-        content.push(kvRow('项目名称', d.oem_project));
-        content.push(kvRow('款式数量', d.oem_style_count || '-'));
+        content.push({ text: t('oemDesign'), bold: true, fontSize: 10, margin: [0, 4, 0, 4] });
+        content.push(kvRow(t('projectName'), d.oem_project));
+        content.push(kvRow(t('styleCount'), d.oem_style_count || '-'));
 
         if (Array.isArray(oemDescs) && oemDescs.length) {
-            content.push(subTitle('款式描述'));
+            content.push(subTitle(t('styleDesc')));
             oemDescs.forEach((desc, i) => {
                 const text = typeof desc === 'object' ? JSON.stringify(desc) : desc;
-                content.push({ text: `款 ${i + 1}: ${text}`, fontSize: 9, margin: [8, 2, 0, 2] });
+                content.push({ text: `${t('style')} ${i + 1}: ${text}`, fontSize: 9, margin: [8, 2, 0, 2] });
             });
         }
 
         const oemFiles = fileMap['oem'] || [];
         if (oemFiles.length) {
-            content.push(...buildFileTable(oemFiles, '设计文件'));
+            content.push(...buildFileTable(oemFiles, t('designFiles'), t));
         }
 
-        if (d.oem_remark) content.push(kvRow('备注', d.oem_remark));
+        if (d.oem_remark) content.push(kvRow(t('remark'), d.oem_remark));
         if (d.oem_physical_sample) {
-            content.push(kvRow('寄送样衣', '已寄送' + (d.oem_tracking_no ? ' (单号: ' + d.oem_tracking_no + ')' : '')));
+            content.push(kvRow(t('sampleShipping'), t('shipped') + (d.oem_tracking_no ? ' (' + t('trackingNo') + ': ' + d.oem_tracking_no + ')' : '')));
         }
     }
 
@@ -211,11 +336,11 @@ async function buildStyleSection(d, fileMap, odmStyleImages) {
     return content.filter(Boolean);
 }
 
-function buildFabricSection(d, fileMap) {
+function buildFabricSection(d, fileMap, t) {
     const fab = tryParse(d.fabric_selection);
     if (!fab || typeof fab !== 'object' || !Object.keys(fab).length) return [];
 
-    const content = [sectionTitle('二、面料信息')];
+    const content = [sectionTitle(t('sec2'))];
     const fabricFiles = fileMap['fabric'] || [];
     const cmtFabricFiles = (fileMap['cmt'] || []).filter(f => f.sub_key === 'fabric');
 
@@ -231,7 +356,7 @@ function buildFabricSection(d, fileMap) {
             if (!cfg) return;
             const isCS = fabricName === 'CUSTOM_SOURCING';
             const mode = isCS ? 'custom' : (cfg.mode || 'solid');
-            const modeLabel = { solid: '纯色', print: '印花', custom: '开发/找样' }[mode] || mode;
+            const modeLabel = { solid: t('solid'), print: t('print'), custom: t('customSourcing') }[mode] || mode;
             const cardTitle = isCS ? originalCat : fabricName;
 
             content.push({
@@ -247,19 +372,18 @@ function buildFabricSection(d, fileMap) {
                 const colors = cfg.colors;
                 if (Array.isArray(colors) && colors.length) {
                     const colorText = colors.map(c => {
-                        let t = c.name || '-';
-                        if (c.hex) t += ` (${c.hex})`;
-                        if (c.pantone) t += ` ${c.pantone}`;
-                        return t;
+                        let s = c.name || '-';
+                        if (c.hex) s += ` (${c.hex})`;
+                        if (c.pantone) s += ` ${c.pantone}`;
+                        return s;
                     }).join(' / ');
-                    content.push(kvRow('颜色', colorText));
+                    content.push(kvRow(t('color'), colorText));
                 }
-                if (cfg.colorText) content.push(kvRow('色彩描述', cfg.colorText));
+                if (cfg.colorText) content.push(kvRow(t('colorDesc'), cfg.colorText));
             } else if (mode === 'print') {
-                if (cfg.printType) content.push(kvRow('印花类型', cfg.printType === 'seamless' ? '满版印花' : '定位印花'));
-                if (cfg.printRefColor) content.push(kvRow('参考底色', cfg.printRefColor));
-                if (cfg.printScale) content.push(kvRow('缩放比例', cfg.printScale));
-                // Print files
+                if (cfg.printType) content.push(kvRow(t('printType'), cfg.printType === 'seamless' ? t('seamless') : t('placement')));
+                if (cfg.printRefColor) content.push(kvRow(t('refColor'), cfg.printRefColor));
+                if (cfg.printScale) content.push(kvRow(t('printScale'), cfg.printScale));
                 const printKey = catKey + '__' + fabricName + '__print';
                 let printFiles = fabricFiles.filter(f => f.sub_key === printKey);
                 if (!printFiles.length) {
@@ -267,27 +391,26 @@ function buildFabricSection(d, fileMap) {
                     printFiles = fabricFiles.filter(f => f.sub_key === baseKey && f.mime_type && f.mime_type.startsWith('image/'));
                 }
                 if (printFiles.length) {
-                    content.push({ text: '印花图案文件: ' + printFiles.map(f => f.orig_name).join(', '), fontSize: 8, color: '#64748b', margin: [0, 2, 0, 2] });
+                    content.push({ text: t('printPatternFiles') + ': ' + printFiles.map(f => f.orig_name).join(', '), fontSize: 8, color: '#64748b', margin: [0, 2, 0, 2] });
                 }
             } else if (mode === 'custom') {
-                if (cfg.customDesc) content.push(kvRow('需求描述', cfg.customDesc));
-                if (cfg.comp) content.push(kvRow('成分', cfg.comp));
-                if (cfg.gsm) content.push(kvRow('克重', cfg.gsm + ' g/m²'));
-                if (cfg.colorReq) content.push(kvRow('颜色要求', cfg.colorReq));
-                if (cfg.physical) content.push(kvRow('实物邮寄', '是' + (cfg.trackingNo ? ' (单号: ' + cfg.trackingNo + ')' : '')));
+                if (cfg.customDesc) content.push(kvRow(t('reqDesc'), cfg.customDesc));
+                if (cfg.comp) content.push(kvRow(t('composition'), cfg.comp));
+                if (cfg.gsm) content.push(kvRow(t('gsm'), cfg.gsm + ' g/m²'));
+                if (cfg.colorReq) content.push(kvRow(t('colorReq'), cfg.colorReq));
+                if (cfg.physical) content.push(kvRow(t('physicalSend'), t('yes') + (cfg.trackingNo ? ' (' + t('trackingNo') + ': ' + cfg.trackingNo + ')' : '')));
             }
 
             if (isLining) {
-                if (cfg.fullLining != null) content.push(kvRow('全衬里', cfg.fullLining ? '是' : '否'));
-                if (cfg.liningPlacement) content.push(kvRow('衬里位置', cfg.liningPlacement));
+                if (cfg.fullLining != null) content.push(kvRow(t('fullLining'), cfg.fullLining ? t('yes') : t('no')));
+                if (cfg.liningPlacement) content.push(kvRow(t('liningPlacement'), cfg.liningPlacement));
             }
-            if (cfg.remark) content.push(kvRow(isLining ? '备注' : '拼色说明', cfg.remark));
+            if (cfg.remark) content.push(kvRow(isLining ? t('remark') : t('colorBlock'), cfg.remark));
 
-            // Matched files
             const subKey = catKey + '__' + fabricName;
             const matched = fabricFiles.filter(f => f.sub_key === subKey);
             if (matched.length) {
-                content.push({ text: '参考文件: ' + matched.map(f => f.orig_name).join(', '), fontSize: 8, color: '#64748b', margin: [0, 2, 0, 2] });
+                content.push({ text: t('refFiles') + ': ' + matched.map(f => f.orig_name).join(', '), fontSize: 8, color: '#64748b', margin: [0, 2, 0, 2] });
             }
         });
     });
@@ -297,11 +420,11 @@ function buildFabricSection(d, fileMap) {
     const fabricCmt = cmtData && cmtData.fabric;
     const fabricCmtEnabled = fabricCmt === true || (fabricCmt && fabricCmt.enabled);
     if (fabricCmtEnabled) {
-        content.push(subTitle('客户自行提供面料 (CMT)'));
-        if (fabricCmt && fabricCmt.desc) content.push(kvRow('明细描述', fabricCmt.desc));
-        if (fabricCmt && fabricCmt.trackingNo) content.push(kvRow('寄件单号', fabricCmt.trackingNo));
+        content.push(subTitle(t('cmtFabric')));
+        if (fabricCmt && fabricCmt.desc) content.push(kvRow(t('detailDesc'), fabricCmt.desc));
+        if (fabricCmt && fabricCmt.trackingNo) content.push(kvRow(t('trackingNo'), fabricCmt.trackingNo));
         if (cmtFabricFiles.length) {
-            content.push({ text: '参考文件: ' + cmtFabricFiles.map(f => f.orig_name).join(', '), fontSize: 8, color: '#64748b', margin: [0, 2, 0, 2] });
+            content.push({ text: t('refFiles') + ': ' + cmtFabricFiles.map(f => f.orig_name).join(', '), fontSize: 8, color: '#64748b', margin: [0, 2, 0, 2] });
         }
     }
 
@@ -309,15 +432,15 @@ function buildFabricSection(d, fileMap) {
     return content.filter(Boolean);
 }
 
-function buildTrimsSection(d, fileMap) {
+function buildTrimsSection(d, fileMap, t) {
     const trimDefs = [
-        { key: 'metal_config', cat: 'metal', name: '五金配件' },
-        { key: 'pad_config', cat: 'pad', name: '胸垫' },
-        { key: 'bag_config', cat: 'bag', name: '包装袋' },
-        { key: 'hangtag_config', cat: 'hangtag', name: '吊牌' },
-        { key: 'label_config', cat: 'label', name: '标签' },
-        { key: 'hygiene_config', cat: 'hygiene', name: '卫生贴' },
-        { key: 'other_config', cat: 'other', name: '其他' }
+        { key: 'metal_config', cat: 'metal', name: t('metalHardware') },
+        { key: 'pad_config', cat: 'pad', name: t('chestPad') },
+        { key: 'bag_config', cat: 'bag', name: t('packBag') },
+        { key: 'hangtag_config', cat: 'hangtag', name: t('hangTag') },
+        { key: 'label_config', cat: 'label', name: t('label') },
+        { key: 'hygiene_config', cat: 'hygiene', name: t('hygieneSticker') },
+        { key: 'other_config', cat: 'other', name: t('other') }
     ];
 
     const cmtData = tryParse(d.cmt_enabled) || {};
@@ -338,110 +461,110 @@ function buildTrimsSection(d, fileMap) {
         sub.push({ text: `▪ ${td.name}`, bold: true, fontSize: 10, margin: [0, 6, 0, 3] });
 
         const mode = cfg.mode;
-        if (mode) sub.push(kvRow('模式', mode === 'auto' ? '红绣标配' : '客户自定义'));
+        if (mode) sub.push(kvRow(t('mode'), mode === 'auto' ? t('autoMode') : t('customMode')));
 
         // Type-specific fields
         switch (td.key) {
             case 'metal_config':
-                if (cfg.finish) sub.push(kvRow('表面处理', cfg.finish));
+                if (cfg.finish) sub.push(kvRow(t('surfaceFinish'), cfg.finish));
                 if (cfg.logoCustom) {
-                    sub.push(kvRow('LOGO定制', '需要'));
-                    if (Array.isArray(cfg.logoTypes) && cfg.logoTypes.length) sub.push(kvRow('LOGO类型', cfg.logoTypes.join(', ')));
+                    sub.push(kvRow(t('logoCustom'), t('needed')));
+                    if (Array.isArray(cfg.logoTypes) && cfg.logoTypes.length) sub.push(kvRow(t('logoType'), cfg.logoTypes.join(', ')));
                 }
                 if (cfg.details && cfg.categories && cfg.categories.length) {
                     cfg.categories.forEach(catName => {
                         const detail = cfg.details[catName];
                         if (!detail) return;
                         sub.push({ text: `  ${catName}`, bold: true, fontSize: 9, margin: [8, 3, 0, 2] });
-                        if (detail.remark) sub.push(kvRow('备注', detail.remark));
-                        if (detail.logoNeeded) sub.push(kvRow('独立LOGO', '需要'));
+                        if (detail.remark) sub.push(kvRow(t('remark'), detail.remark));
+                        if (detail.logoNeeded) sub.push(kvRow(t('independentLogo'), t('needed')));
                     });
                 }
                 break;
             case 'pad_config':
-                if (cfg.thickness) sub.push(kvRow('厚度', cfg.thickness));
+                if (cfg.thickness) sub.push(kvRow(t('thickness'), cfg.thickness));
                 if (cfg.color) {
                     let cd = cfg.color;
-                    if (cfg.color === '其他定制色' && cfg.otherColor) cd = cfg.otherColor + '（定制色）';
-                    sub.push(kvRow('颜色', cd));
+                    if (cfg.color === '其他定制色' && cfg.otherColor) cd = cfg.otherColor + ' (' + t('customMode') + ')';
+                    sub.push(kvRow(t('color'), cd));
                 }
-                if (cfg.customShape) sub.push(kvRow('异形', '是' + (cfg.shapeRemark ? ' (' + cfg.shapeRemark + ')' : '')));
+                if (cfg.customShape) sub.push(kvRow(t('customShape'), t('yes') + (cfg.shapeRemark ? ' (' + cfg.shapeRemark + ')' : '')));
                 break;
             case 'bag_config':
-                if (cfg.material) sub.push(kvRow('材质', cfg.material));
-                if (cfg.size) sub.push(kvRow('尺寸', cfg.size));
-                if (cfg.print) sub.push(kvRow('印刷', cfg.print));
-                if (Array.isArray(cfg.crafts) && cfg.crafts.length) sub.push(kvRow('工艺', cfg.crafts.join(', ')));
+                if (cfg.material) sub.push(kvRow(t('material'), cfg.material));
+                if (cfg.size) sub.push(kvRow(t('size'), cfg.size));
+                if (cfg.print) sub.push(kvRow(t('printing'), cfg.print));
+                if (Array.isArray(cfg.crafts) && cfg.crafts.length) sub.push(kvRow(t('craft'), cfg.crafts.join(', ')));
                 break;
             case 'hangtag_config':
-                if (cfg.remark) sub.push(kvRow('设计描述', cfg.remark));
+                if (cfg.remark) sub.push(kvRow(t('designDesc'), cfg.remark));
                 if (mode !== 'auto') {
                     let matText = cfg.material || '';
-                    if (matText === '其他' && cfg.materialRemark) matText = cfg.materialRemark + '（其他）';
-                    if (matText) sub.push(kvRow('材质', matText));
-                    if (cfg.weight) sub.push(kvRow('克重', cfg.weight));
-                    if (cfg.shape) sub.push(kvRow('形状', cfg.shape));
-                    if (cfg.roundedCorner) sub.push(kvRow('圆角', '是'));
-                    if (cfg.shapeRemark) sub.push(kvRow('形状说明', cfg.shapeRemark));
-                    if (Array.isArray(cfg.crafts) && cfg.crafts.length) sub.push(kvRow('工艺', cfg.crafts.join(', ')));
-                    if (cfg.craftRemark) sub.push(kvRow('工艺说明', cfg.craftRemark));
+                    if (matText === '其他' && cfg.materialRemark) matText = cfg.materialRemark + ' (' + t('other') + ')';
+                    if (matText) sub.push(kvRow(t('material'), matText));
+                    if (cfg.weight) sub.push(kvRow(t('weight'), cfg.weight));
+                    if (cfg.shape) sub.push(kvRow(t('shape'), cfg.shape));
+                    if (cfg.roundedCorner) sub.push(kvRow(t('roundedCorner'), t('yes')));
+                    if (cfg.shapeRemark) sub.push(kvRow(t('shapeDesc'), cfg.shapeRemark));
+                    if (Array.isArray(cfg.crafts) && cfg.crafts.length) sub.push(kvRow(t('craft'), cfg.crafts.join(', ')));
+                    if (cfg.craftRemark) sub.push(kvRow(t('craftDesc'), cfg.craftRemark));
                     let strType = cfg.stringType || '';
-                    if (strType === '定制材质与形状' && cfg.stringRemark) strType = cfg.stringRemark + '（定制）';
-                    if (strType) sub.push(kvRow('吊绳', strType));
+                    if (strType === '定制材质与形状' && cfg.stringRemark) strType = cfg.stringRemark + ' (' + t('customMode') + ')';
+                    if (strType) sub.push(kvRow(t('string'), strType));
                     let strColor = cfg.stringColor || '';
-                    if (strColor === '其他' && cfg.stringColorOther) strColor = cfg.stringColorOther + '（其他）';
-                    if (strColor) sub.push(kvRow('绳色', strColor));
-                    if (cfg.isSet) sub.push(kvRow('副牌', '有' + (cfg.setRemark ? ' (' + cfg.setRemark + ')' : '')));
+                    if (strColor === '其他' && cfg.stringColorOther) strColor = cfg.stringColorOther + ' (' + t('other') + ')';
+                    if (strColor) sub.push(kvRow(t('stringColor'), strColor));
+                    if (cfg.isSet) sub.push(kvRow(t('subBrand'), t('have') + (cfg.setRemark ? ' (' + cfg.setRemark + ')' : '')));
                 }
                 break;
             case 'label_config':
-                if (cfg.remark) sub.push(kvRow('设计描述', cfg.remark));
+                if (cfg.remark) sub.push(kvRow(t('designDesc'), cfg.remark));
                 if (mode !== 'auto') {
-                    if (cfg.material) sub.push(kvRow('材质', cfg.material));
-                    if (cfg.size) sub.push(kvRow('尺寸', cfg.size));
-                    if (cfg.method) sub.push(kvRow('缝制方式', cfg.method));
-                    if (cfg.sewingRemark) sub.push(kvRow('缝制说明', cfg.sewingRemark));
-                    if (Array.isArray(cfg.components) && cfg.components.length) sub.push(kvRow('部件', cfg.components.join(', ')));
+                    if (cfg.material) sub.push(kvRow(t('material'), cfg.material));
+                    if (cfg.size) sub.push(kvRow(t('size'), cfg.size));
+                    if (cfg.method) sub.push(kvRow(t('sewMethod'), cfg.method));
+                    if (cfg.sewingRemark) sub.push(kvRow(t('sewDesc'), cfg.sewingRemark));
+                    if (Array.isArray(cfg.components) && cfg.components.length) sub.push(kvRow(t('components'), cfg.components.join(', ')));
                     if (cfg.placements) {
                         Object.keys(cfg.placements).forEach(k => {
-                            sub.push(kvRow('位置 (' + k + ')', cfg.placements[k]));
+                            sub.push(kvRow(t('position') + ' (' + k + ')', cfg.placements[k]));
                         });
                     }
                     const isSplit = cfg.isSplit || cfg.isSet;
                     if (isSplit) {
-                        sub.push(kvRow('主标与洗水标', '分开定制'));
-                        if (cfg.splitRemark) sub.push(kvRow('分开说明', cfg.splitRemark));
+                        sub.push(kvRow(t('mainWashSplit'), t('splitCustom')));
+                        if (cfg.splitRemark) sub.push(kvRow(t('splitDesc'), cfg.splitRemark));
                     }
                 }
                 break;
             case 'hygiene_config':
-                if (cfg.material) sub.push(kvRow('材质', cfg.material));
-                if (cfg.shape) sub.push(kvRow('形状', cfg.shape));
-                if (cfg.size) sub.push(kvRow('尺寸', cfg.size));
-                if (cfg.noApply) sub.push(kvRow('免粘贴', '是'));
-                if (cfg.shapeRemark) sub.push(kvRow('异形要求', cfg.shapeRemark));
-                if (cfg.applyRemark) sub.push(kvRow('粘贴规则', cfg.applyRemark));
+                if (cfg.material) sub.push(kvRow(t('material'), cfg.material));
+                if (cfg.shape) sub.push(kvRow(t('shape'), cfg.shape));
+                if (cfg.size) sub.push(kvRow(t('size'), cfg.size));
+                if (cfg.noApply) sub.push(kvRow(t('noStick'), t('yes')));
+                if (cfg.shapeRemark) sub.push(kvRow(t('shapeReq'), cfg.shapeRemark));
+                if (cfg.applyRemark) sub.push(kvRow(t('stickRule'), cfg.applyRemark));
                 break;
         }
 
-        // General remark (skip hangtag/label which already show it as 设计描述)
+        // General remark (skip hangtag/label which already show it as designDesc)
         if (cfg.remark && td.key !== 'hangtag_config' && td.key !== 'label_config') {
-            sub.push(kvRow('备注', cfg.remark));
+            sub.push(kvRow(t('remark'), cfg.remark));
         }
 
         // CMT
         if (cmtEnabled) {
-            sub.push({ text: '客户自行提供 (CMT)', fontSize: 9, bold: true, color: '#ea580c', margin: [0, 4, 0, 2] });
-            if (cmtInfo && cmtInfo.desc) sub.push(kvRow('明细描述', cmtInfo.desc));
-            if (cmtInfo && cmtInfo.trackingNo) sub.push(kvRow('寄件单号', cmtInfo.trackingNo));
+            sub.push({ text: t('cmtSupply'), fontSize: 9, bold: true, color: '#ea580c', margin: [0, 4, 0, 2] });
+            if (cmtInfo && cmtInfo.desc) sub.push(kvRow(t('detailDesc'), cmtInfo.desc));
+            if (cmtInfo && cmtInfo.trackingNo) sub.push(kvRow(t('trackingNo'), cmtInfo.trackingNo));
         }
 
         // Trim files
         if (trimFiles.length) {
-            sub.push({ text: '附件: ' + trimFiles.map(f => f.orig_name).join(', '), fontSize: 8, color: '#64748b', margin: [0, 2, 0, 2] });
+            sub.push({ text: t('attachments') + ': ' + trimFiles.map(f => f.orig_name).join(', '), fontSize: 8, color: '#64748b', margin: [0, 2, 0, 2] });
         }
         if (cmtFiles.length) {
-            sub.push({ text: 'CMT附件: ' + cmtFiles.map(f => f.orig_name).join(', '), fontSize: 8, color: '#64748b', margin: [0, 2, 0, 2] });
+            sub.push({ text: t('cmtAttachments') + ': ' + cmtFiles.map(f => f.orig_name).join(', '), fontSize: 8, color: '#64748b', margin: [0, 2, 0, 2] });
         }
 
         items.push(...sub);
@@ -449,28 +572,28 @@ function buildTrimsSection(d, fileMap) {
 
     if (items.length === 0) return [];
 
-    const content = [sectionTitle('三、辅料 / 包装')];
+    const content = [sectionTitle(t('sec3'))];
     content.push(...items);
     content.push(divider());
     return content.filter(Boolean);
 }
 
-function buildShippingSection(d, fileMap) {
-    const content = [sectionTitle('四、交付信息')];
+function buildShippingSection(d, fileMap, t) {
+    const content = [sectionTitle(t('sec4'))];
     const isSample = d.delivery_mode !== 'bulk';
-    content.push(kvRow('交付模式', isSample ? '样衣订单' : '大货订单'));
+    content.push(kvRow(t('deliveryMode'), isSample ? t('sampleOrder') : t('bulkOrder')));
 
     if (isSample) {
         const sampleRows = tryParse(d.sample_rows);
         if (Array.isArray(sampleRows) && sampleRows.length) {
-            content.push(subTitle('样衣明细'));
+            content.push(subTitle(t('sampleDetail')));
             const tableBody = [
                 [
-                    { text: '款式', style: 'tableHeader' },
-                    { text: '类型', style: 'tableHeader' },
-                    { text: '尺码', style: 'tableHeader' },
-                    { text: '数量', style: 'tableHeader' },
-                    { text: '备注', style: 'tableHeader' }
+                    { text: t('style'), style: 'tableHeader' },
+                    { text: t('type'), style: 'tableHeader' },
+                    { text: t('sizeCol'), style: 'tableHeader' },
+                    { text: t('qty'), style: 'tableHeader' },
+                    { text: t('remark'), style: 'tableHeader' }
                 ]
             ];
             sampleRows.forEach(r => {
@@ -491,27 +614,27 @@ function buildShippingSection(d, fileMap) {
 
         const sampleCfg = tryParse(d.sample_config);
         if (sampleCfg && typeof sampleCfg === 'object' && Object.keys(sampleCfg).length) {
-            content.push(subTitle('样衣物流'));
-            if (sampleCfg.carrier) content.push(kvRow('物流方式', sampleCfg.carrier));
+            content.push(subTitle(t('sampleLogistics')));
+            if (sampleCfg.carrier) content.push(kvRow(t('carrier'), sampleCfg.carrier));
             if (sampleCfg.needBulkQuote) {
-                content.push(kvRow('需大货报价', '是'));
-                if (sampleCfg.intentQty) content.push(kvRow('预估大货数量', sampleCfg.intentQty + ' 件'));
-                if (sampleCfg.intentPrice) content.push(kvRow('期望EXW单价', '$' + sampleCfg.intentPrice));
-                if (sampleCfg.intentTerm) content.push(kvRow('贸易术语', sampleCfg.intentTerm));
-                if (sampleCfg.intentMethod) content.push(kvRow('运输方式', sampleCfg.intentMethod));
+                content.push(kvRow(t('needBulkQuote'), t('yes')));
+                if (sampleCfg.intentQty) content.push(kvRow(t('estBulkQty'), sampleCfg.intentQty + ' ' + t('pcs')));
+                if (sampleCfg.intentPrice) content.push(kvRow(t('targetEXW'), '$' + sampleCfg.intentPrice));
+                if (sampleCfg.intentTerm) content.push(kvRow(t('tradeTerm'), sampleCfg.intentTerm));
+                if (sampleCfg.intentMethod) content.push(kvRow(t('shippingMethod'), sampleCfg.intentMethod));
             }
         }
-        if (d.sample_dest) content.push(kvRow('样衣目的地', d.sample_dest));
+        if (d.sample_dest) content.push(kvRow(t('sampleDest'), d.sample_dest));
     } else {
         const bulkRows = tryParse(d.bulk_rows);
         if (Array.isArray(bulkRows) && bulkRows.length) {
-            content.push(subTitle('大货明细'));
+            content.push(subTitle(t('bulkDetail')));
             const tableBody = [
                 [
-                    { text: '款式', style: 'tableHeader' },
-                    { text: '数量', style: 'tableHeader' },
-                    { text: '尺码分配', style: 'tableHeader' },
-                    { text: '备注', style: 'tableHeader' }
+                    { text: t('style'), style: 'tableHeader' },
+                    { text: t('qty'), style: 'tableHeader' },
+                    { text: t('sizeAlloc'), style: 'tableHeader' },
+                    { text: t('remark'), style: 'tableHeader' }
                 ]
             ];
             bulkRows.forEach(r => {
@@ -531,51 +654,52 @@ function buildShippingSection(d, fileMap) {
 
         const bulkLog = tryParse(d.bulk_logistics);
         if (bulkLog && typeof bulkLog === 'object' && Object.keys(bulkLog).length) {
-            content.push(subTitle('大货物流'));
-            if (bulkLog.term) content.push(kvRow('贸易术语', bulkLog.term));
-            if (bulkLog.method) content.push(kvRow('运输方式', bulkLog.method));
+            content.push(subTitle(t('bulkLogistics')));
+            if (bulkLog.term) content.push(kvRow(t('tradeTerm'), bulkLog.term));
+            if (bulkLog.method) content.push(kvRow(t('shippingMethod'), bulkLog.method));
         }
-        if (d.bulk_dest) content.push(kvRow('大货目的地', d.bulk_dest));
-        if (d.bulk_target_price) content.push(kvRow('目标价格', d.bulk_target_price));
-        if (d.bulk_packing_remark) content.push(kvRow('包装备注', d.bulk_packing_remark));
+        if (d.bulk_dest) content.push(kvRow(t('bulkDest'), d.bulk_dest));
+        if (d.bulk_target_price) content.push(kvRow(t('targetPrice'), d.bulk_target_price));
+        if (d.bulk_packing_remark) content.push(kvRow(t('packRemark'), d.bulk_packing_remark));
 
         const bpFiles = fileMap['bulkPacking'] || [];
         if (bpFiles.length) {
-            content.push(...buildFileTable(bpFiles, '包装参考文件'));
+            content.push(...buildFileTable(bpFiles, t('packRefFiles')));
         }
     }
 
     const fdFiles = fileMap['finalDocs'] || [];
     if (fdFiles.length) {
-        content.push(...buildFileTable(fdFiles, '综合工艺单 / 企划书'));
+        content.push(...buildFileTable(fdFiles, t('techPlanFiles')));
     }
 
     content.push(divider());
     return content.filter(Boolean);
 }
 
-function buildContactSection(d) {
+function buildContactSection(d, t) {
     if (!d.contact_name && !d.brand_name) return [];
-    const content = [sectionTitle('五、联系信息')];
-    if (d.contact_name) content.push(kvRow('联系人', d.contact_name));
-    if (d.contact_info) content.push(kvRow('联系方式', d.contact_info));
-    if (d.brand_name) content.push(kvRow('品牌名称', d.brand_name));
-    if (d.website) content.push(kvRow('网站', d.website));
-    if (d.final_remark) content.push(kvRow('整体备注', d.final_remark));
-    if (d.nda_agreed_at) content.push(kvRow('NDA 签署', '已签署 ' + fmtDate(d.nda_agreed_at)));
+    const content = [sectionTitle(t('sec5'))];
+    if (d.contact_name) content.push(kvRow(t('contactPerson'), d.contact_name));
+    if (d.contact_info) content.push(kvRow(t('contactInfo'), d.contact_info));
+    if (d.brand_name) content.push(kvRow(t('brandName'), d.brand_name));
+    if (d.website) content.push(kvRow(t('website'), d.website));
+    if (d.final_remark) content.push(kvRow(t('overallRemark'), d.final_remark));
+    if (d.nda_agreed_at) content.push(kvRow(t('ndaSigned'), t('signed') + ' ' + fmtDate(d.nda_agreed_at)));
     content.push(divider());
     return content.filter(Boolean);
 }
 
-function buildFilesSection(files) {
+function buildFilesSection(files, t) {
     if (!files || !files.length) return [];
-    return [sectionTitle('六、附件清单'), ...buildFileTable(files)];
+    return [sectionTitle(t('sec6')), ...buildFileTable(files)];
 }
 
 /* ═══════════════════════════════════════════════
    Main export function
    ═══════════════════════════════════════════════ */
-async function generateInquiryPDF(inquiry, files, odmStyleImages) {
+async function generateInquiryPDF(inquiry, files, odmStyleImages, lang) {
+    const t = getT(lang || 'zh');
     const fontPaths = await ensureFonts();
 
     const printer = new PdfPrinter({
@@ -596,16 +720,15 @@ async function generateInquiryPDF(inquiry, files, odmStyleImages) {
     });
 
     // Build sections
-    const styleContent = await buildStyleSection(inquiry, fileMap, odmStyleImages);
-    const fabricContent = buildFabricSection(inquiry, fileMap);
-    const trimsContent = buildTrimsSection(inquiry, fileMap);
-    const shippingContent = buildShippingSection(inquiry, fileMap);
-    const contactContent = buildContactSection(inquiry);
+    const styleContent = await buildStyleSection(inquiry, fileMap, odmStyleImages, t);
+    const fabricContent = buildFabricSection(inquiry, fileMap, t);
+    const trimsContent = buildTrimsSection(inquiry, fileMap, t);
+    const shippingContent = buildShippingSection(inquiry, fileMap, t);
+    const contactContent = buildContactSection(inquiry, t);
 
     // All files list
-    const shownCats = ['odmCustom', 'oem', 'fabric', 'cmt', 'metal', 'pad', 'bag', 'hangtag', 'label', 'hygiene', 'other', 'bulkPacking', 'finalDocs'];
     const allFiles = files || [];
-    const filesContent = buildFilesSection(allFiles);
+    const filesContent = buildFilesSection(allFiles, t);
 
     // Header info block
     const headerBlock = [
@@ -614,25 +737,25 @@ async function generateInquiryPDF(inquiry, files, odmStyleImages) {
                 widths: ['*'],
                 body: [[{
                     stack: [
-                        { text: '红绣服饰 · 询盘单', style: 'docTitle' },
+                        { text: t('docTitle'), style: 'docTitle' },
                         {
                             columns: [
-                                { text: [{ text: '询盘编号: ', bold: true }, inquiry.inquiry_no || '-'], fontSize: 10 },
-                                { text: [{ text: '状态: ', bold: true }, statusLabel(inquiry.status)], fontSize: 10, alignment: 'right' }
+                                { text: [{ text: t('inquiryNo') + ': ', bold: true }, inquiry.inquiry_no || '-'], fontSize: 10 },
+                                { text: [{ text: t('status') + ': ', bold: true }, statusLabel(inquiry.status, t)], fontSize: 10, alignment: 'right' }
                             ],
                             margin: [0, 8, 0, 4]
                         },
                         {
                             columns: [
-                                { text: [{ text: '创建时间: ', bold: true }, fmtDate(inquiry.created_at)], fontSize: 9, color: '#64748b' },
-                                { text: [{ text: '交付模式: ', bold: true }, inquiry.delivery_mode === 'bulk' ? '大货订单' : '样衣订单'], fontSize: 9, color: '#64748b', alignment: 'right' }
+                                { text: [{ text: t('createdAt') + ': ', bold: true }, fmtDate(inquiry.created_at)], fontSize: 9, color: '#64748b' },
+                                { text: [{ text: t('deliveryMode') + ': ', bold: true }, inquiry.delivery_mode === 'bulk' ? t('bulkOrder') : t('sampleOrder')], fontSize: 9, color: '#64748b', alignment: 'right' }
                             ],
                             margin: [0, 0, 0, 2]
                         },
                         ...(inquiry.brand_name || inquiry.contact_name ? [{
                             columns: [
-                                inquiry.brand_name ? { text: [{ text: '品牌: ', bold: true }, inquiry.brand_name], fontSize: 9, color: '#64748b' } : {},
-                                inquiry.contact_name ? { text: [{ text: '联系人: ', bold: true }, inquiry.contact_name], fontSize: 9, color: '#64748b', alignment: 'right' } : {}
+                                inquiry.brand_name ? { text: [{ text: t('brand') + ': ', bold: true }, inquiry.brand_name], fontSize: 9, color: '#64748b' } : {},
+                                inquiry.contact_name ? { text: [{ text: t('contact') + ': ', bold: true }, inquiry.contact_name], fontSize: 9, color: '#64748b', alignment: 'right' } : {}
                             ]
                         }] : [])
                     ],
@@ -690,8 +813,8 @@ async function generateInquiryPDF(inquiry, files, odmStyleImages) {
         pageMargins: [40, 40, 40, 50],
         footer: (currentPage, pageCount) => ({
             columns: [
-                { text: `第 ${currentPage} / ${pageCount} 页`, alignment: 'left', fontSize: 8, color: '#94a3b8' },
-                { text: '生成时间: ' + fmtDate(new Date()), alignment: 'right', fontSize: 8, color: '#94a3b8' }
+                { text: t('page', currentPage, pageCount), alignment: 'left', fontSize: 8, color: '#94a3b8' },
+                { text: t('generatedAt') + ': ' + fmtDate(new Date()), alignment: 'right', fontSize: 8, color: '#94a3b8' }
             ],
             margin: [40, 10, 40, 0]
         }),

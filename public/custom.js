@@ -1351,6 +1351,10 @@
             });
             fd.append('oem_checklist', JSON.stringify(checkedIds));
             fd.append('oem_remark', document.getElementById('oem-remark')?.value || '');
+            // OEM 寄送实体样衣
+            fd.append('oem_physical_sample', document.getElementById('oem-physical')?.checked ? '1' : '0');
+            var _trackInput = document.querySelector('#oem-address-info input');
+            fd.append('oem_tracking_no', _trackInput ? _trackInput.value.trim() : '');
             // OEM 文件
             (oemFilesData.tech || []).forEach(f => fd.append('files[oem][tech]', f));
             (oemFilesData.ref || []).forEach(f => fd.append('files[oem][ref]', f));

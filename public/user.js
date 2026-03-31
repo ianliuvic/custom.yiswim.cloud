@@ -672,10 +672,22 @@
         }
         inner += '</div>';
         pop.innerHTML = inner;
-        // position below the pill
-        var card = pillEl.closest('.u-style-card');
-        card.style.position = 'relative';
-        card.appendChild(pop);
+        document.body.appendChild(pop);
+        // position near the pill
+        var rect = pillEl.getBoundingClientRect();
+        var popW = 300;
+        var left = rect.left;
+        if (left + popW > window.innerWidth - 16) left = window.innerWidth - popW - 16;
+        if (left < 16) left = 16;
+        pop.style.left = left + 'px';
+        pop.style.width = popW + 'px';
+        // show below pill, but if not enough space, show above
+        var spaceBelow = window.innerHeight - rect.bottom - 16;
+        if (spaceBelow >= 200) {
+            pop.style.top = (rect.bottom + 6) + 'px';
+        } else {
+            pop.style.bottom = (window.innerHeight - rect.top + 6) + 'px';
+        }
     };
 
     // close popover on outside click

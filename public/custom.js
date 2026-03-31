@@ -689,22 +689,17 @@
                         // 找到匹配卡片并模拟 onBagClick 核心逻辑 (不含 scroll)
                         var matchedBagEl = null;
                         bagContainer.querySelectorAll('.bag-material').forEach(function(el) {
-                            var h4 = el.querySelector('.option-info h4');
-                            if (h4 && h4.textContent.trim() === bagConfig.material) { matchedBagEl = el; }
+                            el.classList.remove('selected');
+                            var onclick = el.getAttribute('onclick') || '';
+                            if (onclick.indexOf(bagConfig.material) !== -1) { matchedBagEl = el; }
                         });
                         if (matchedBagEl) {
-                            // 展开配置面板
+                            matchedBagEl.classList.add('selected');
+                            // 展开配置面板（定位在 changeStep 进入 step-3 时重算）
                             var bagPanel = document.getElementById('bag-config-panel');
                             if (bagPanel) {
-                                var insertBefore = null;
-                                var cur = matchedBagEl.nextElementSibling;
-                                while (cur) {
-                                    if (cur.id === 'bag-config-panel') { cur = cur.nextElementSibling; continue; }
-                                    if (cur.offsetTop > matchedBagEl.offsetTop) { insertBefore = cur; break; }
-                                    cur = cur.nextElementSibling;
-                                }
-                                if (insertBefore) bagContainer.insertBefore(bagPanel, insertBefore);
-                                else bagContainer.appendChild(bagPanel);
+                                // 先追加到容器末尾并显示，进入 step-3 时会重新定位
+                                bagContainer.appendChild(bagPanel);
                                 bagPanel.classList.remove('hidden');
                             }
                             // 提取 bag JSON 渲染尺寸
@@ -1771,6 +1766,24 @@
             if (currentStep === 2 && activeFabricCat && fabricSelection[activeFabricCat] && fabricSelection[activeFabricCat].activeName) {
                 var _tabEl = document.querySelector('#fabric-sub-tabs .mode-option.active');
                 if (_tabEl) switchFabricCat(activeFabricCat, _tabEl);
+            }
+
+            // 进入 Step 3 时，重新定位包装袋配置面板 (restore 时 step-3 hidden 导致 offsetTop=0)
+            if (currentStep === 3 && bagConfig.material && bagConfig.material !== '未选材质') {
+                var _bagPanel = document.getElementById('bag-config-panel');
+                var _bagContainer = document.getElementById('bag-list-container');
+                var _selectedBag = _bagContainer && _bagContainer.querySelector('.bag-material.selected');
+                if (_selectedBag && _bagPanel && !_bagPanel.classList.contains('hidden')) {
+                    var _insertBefore = null;
+                    var _cur = _selectedBag.nextElementSibling;
+                    while (_cur) {
+                        if (_cur.id === 'bag-config-panel') { _cur = _cur.nextElementSibling; continue; }
+                        if (_cur.offsetTop > _selectedBag.offsetTop) { _insertBefore = _cur; break; }
+                        _cur = _cur.nextElementSibling;
+                    }
+                    if (_insertBefore) _bagContainer.insertBefore(_bagPanel, _insertBefore);
+                    else _bagContainer.appendChild(_bagPanel);
+                }
             }
         }
 

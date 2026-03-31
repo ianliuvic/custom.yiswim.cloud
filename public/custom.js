@@ -571,7 +571,7 @@
                         var onclick = chip.getAttribute('onclick') || '';
                         if (onclick.indexOf('toggleLabelComponent') === -1) return;
                         labelConfig.components.forEach(function(comp) {
-                            if (chip.textContent.trim().indexOf(comp) !== -1) chip.classList.add('selected');
+                            if (onclick.indexOf("'" + comp + "'") !== -1) chip.classList.add('selected');
                         });
                     });
                     var topArea = document.getElementById('label-placement-top-area');

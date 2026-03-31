@@ -506,19 +506,30 @@
                 h += inlineByKey('designFiles', '设计文件');
                 break;
             case 'hangtag_config':
-                if (val.material) h += kv('材质', esc(val.material));
-                if (val.weight) h += kv('克重', esc(val.weight));
-                if (val.shape) h += kv('形状', esc(val.shape));
-                if (val.roundedCorner) h += kv('圆角', '是');
-                h += inlineByKey('shapeFiles', '刀模/异形参考');
-                if (Array.isArray(val.crafts) && val.crafts.length) h += kv('工艺', val.crafts.map(esc).join(', '));
-                h += inlineByKey('otherCraftFiles', '工艺参考');
+                if (val.remark) h += kv('设计描述', esc(val.remark));
                 h += inlineByKey('designFiles', '设计文件');
-                h += inlineByKey('otherMatFiles', '材质参考');
-                if (val.stringType) h += kv('吊绳', esc(val.stringType));
-                if (val.stringColor) h += kv('绳色', esc(val.stringColor));
-                h += inlineByKey('stringFiles', '吊绳参考');
-                if (val.isSet) h += kv('副牌', '有' + (val.setRemark ? '（' + esc(val.setRemark) + '）' : ''));
+                if (mode !== 'auto') {
+                    var matText = val.material || '';
+                    if (matText === '其他' && val.materialRemark) matText = val.materialRemark + '（其他）';
+                    if (matText) h += kv('材质', esc(matText));
+                    h += inlineByKey('otherMatFiles', '材质参考');
+                    if (val.weight) h += kv('克重', esc(val.weight));
+                    if (val.shape) h += kv('形状', esc(val.shape));
+                    if (val.roundedCorner) h += kv('圆角', '是');
+                    if (val.shapeRemark) h += kv('形状说明', esc(val.shapeRemark));
+                    h += inlineByKey('shapeFiles', '刀模/异形参考');
+                    if (Array.isArray(val.crafts) && val.crafts.length) h += kv('工艺', val.crafts.map(esc).join(', '));
+                    if (val.craftRemark) h += kv('工艺说明', esc(val.craftRemark));
+                    h += inlineByKey('otherCraftFiles', '工艺参考');
+                    var strType = val.stringType || '';
+                    if (strType === '定制材质与形状' && val.stringRemark) strType = val.stringRemark + '（定制）';
+                    if (strType) h += kv('吊绳', esc(strType));
+                    h += inlineByKey('stringFiles', '吊绳参考');
+                    var strColor = val.stringColor || '';
+                    if (strColor === '其他' && val.stringColorOther) strColor = val.stringColorOther + '（其他）';
+                    if (strColor) h += kv('绳色', esc(strColor));
+                    if (val.isSet) h += kv('副牌', '有' + (val.setRemark ? '（' + esc(val.setRemark) + '）' : ''));
+                }
                 break;
             case 'label_config':
                 if (val.material) h += kv('材质', esc(val.material));

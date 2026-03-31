@@ -445,8 +445,42 @@ router.get('/inquiry/:id', authenticateToken, async (req, res) => {
             [req.params.id]
         );
 
-        // 查询 ODM 款式图片
+        // 修复旧数据：regex 曾无法匹配含 - 等字符的款式名，导致 odmCustom 文件存为 unknown
         const inquiry = inquiryResult.rows[0];
+        const unknownFiles = filesResult.rows.filter(f => f.category === 'unknown' && (!f.sub_key || f.sub_key === ''));
+        if (unknownFiles.length > 0) {
+            try {
+                let customData = inquiry.odm_custom_data;
+                if (typeof customData === 'string') customData = JSON.parse(customData);
+                if (customData && typeof customData === 'object') {
+                    const styleNames = Object.keys(customData);
+                    if (styleNames.length === 1) {
+                        // 单款式：所有 unknown 文件归入该款式
+                        const ids = unknownFiles.map(f => f.id);
+                        await db.query(
+                            'UPDATE custom_inquiry_files SET category = $1, sub_key = $2 WHERE id = ANY($3)',
+                            ['odmCustom', styleNames[0], ids]
+                        );
+                        unknownFiles.forEach(f => { f.category = 'odmCustom'; f.sub_key = styleNames[0]; });
+                    } else if (styleNames.length > 1) {
+                        // 多款式：根据文件创建顺序平均分配（最佳努力）
+                        const ids = unknownFiles.map(f => f.id);
+                        for (const fid of ids) {
+                            // 暂时全部归入第一个有 remark 的款式
+                            const target = styleNames.find(n => customData[n] && customData[n].remark) || styleNames[0];
+                            await db.query(
+                                'UPDATE custom_inquiry_files SET category = $1, sub_key = $2 WHERE id = $3',
+                                ['odmCustom', target, fid]
+                            );
+                            const ff = unknownFiles.find(f => f.id === fid);
+                            if (ff) { ff.category = 'odmCustom'; ff.sub_key = target; }
+                        }
+                    }
+                }
+            } catch (e) { /* ignore migration errors */ }
+        }
+
+        // 查询 ODM 款式图片
         let odmStyleImages = {};
         try {
             let odmNames = inquiry.odm_styles;

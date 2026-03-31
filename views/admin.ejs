@@ -34,10 +34,18 @@
             </div>
         </div>
 
+        <div class="adm-batch-bar" id="batchBar">
+            <span id="batchCount">已选 0 项</span>
+            <button class="adm-btn adm-btn-restore" id="batchRestoreBtn" onclick="batchRestore()">批量恢复</button>
+            <button class="adm-btn adm-btn-danger" id="batchDeleteBtn" onclick="batchHardDelete()">批量彻底删除</button>
+            <button class="adm-btn adm-btn-cancel" onclick="clearSelection()">取消选择</button>
+        </div>
+
         <div class="adm-table-wrap">
             <table class="adm-table">
                 <thead>
                     <tr>
+                        <th style="width:36px"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this.checked)"></th>
                         <th>询盘号</th>
                         <th>用户</th>
                         <th>邮箱</th>

@@ -446,6 +446,15 @@
         var h = '<div class="u-trim-card">';
         h += '<div class="u-trim-card-head"><div class="u-trim-dot on"></div>' + td.icon + ' ' + td.name + '</div>';
 
+        // 已展示的文件 ID 集合，用于最终排除
+        var shownFileIds = {};
+        function inlineByKey(subKey, label) {
+            var matched = trimFiles.filter(function (f) { return f.sub_key === subKey; });
+            if (!matched.length) return '';
+            matched.forEach(function (f) { shownFileIds[f.id] = true; });
+            return renderInlineFiles(matched, label);
+        }
+
         var mode = val.mode;
         if (mode) h += kv('模式', mode === 'auto' ? '红绣标配' : '客户自定义');
 
@@ -453,54 +462,74 @@
         switch (td.key) {
             case 'metal_config':
                 if (val.finish) h += kv('表面处理', esc(val.finish));
+                h += inlineByKey('sourceFiles', '参考文件');
                 if (val.logoCustom) {
                     h += kv('LOGO', '需要定制');
                     if (Array.isArray(val.logoTypes) && val.logoTypes.length) h += kv('LOGO类型', val.logoTypes.map(esc).join(', '));
+                    h += inlineByKey('logoFiles', 'LOGO文件');
                 }
                 break;
             case 'pad_config':
                 if (val.thickness) h += kv('厚度', esc(val.thickness));
                 if (val.color) h += kv('颜色', esc(val.color === 'others' && val.otherColor ? val.otherColor : val.color));
-                if (val.customShape) h += kv('异形', '是' + (val.shapeRemark ? '（' + esc(val.shapeRemark) + '）' : ''));
+                if (val.customShape) {
+                    h += kv('异形', '是' + (val.shapeRemark ? '（' + esc(val.shapeRemark) + '）' : ''));
+                    h += inlineByKey('shapeFiles', '形状参考');
+                }
+                h += inlineByKey('otherFiles', '其他参考');
                 break;
             case 'bag_config':
                 if (val.material) h += kv('材质', esc(val.material));
                 if (val.size) h += kv('尺寸', esc(val.size));
                 if (val.print) h += kv('印刷', esc(val.print));
                 if (Array.isArray(val.crafts) && val.crafts.length) h += kv('工艺', val.crafts.map(esc).join(', '));
+                h += inlineByKey('designFiles', '设计文件');
                 break;
             case 'hangtag_config':
                 if (val.material) h += kv('材质', esc(val.material));
                 if (val.weight) h += kv('克重', esc(val.weight));
                 if (val.shape) h += kv('形状', esc(val.shape));
                 if (val.roundedCorner) h += kv('圆角', '是');
+                h += inlineByKey('shapeFiles', '刀模/异形参考');
                 if (Array.isArray(val.crafts) && val.crafts.length) h += kv('工艺', val.crafts.map(esc).join(', '));
+                h += inlineByKey('otherCraftFiles', '工艺参考');
+                h += inlineByKey('designFiles', '设计文件');
+                h += inlineByKey('otherMatFiles', '材质参考');
                 if (val.stringType) h += kv('吊绳', esc(val.stringType));
                 if (val.stringColor) h += kv('绳色', esc(val.stringColor));
+                h += inlineByKey('stringFiles', '吊绳参考');
                 if (val.isSet) h += kv('副牌', '有' + (val.setRemark ? '（' + esc(val.setRemark) + '）' : ''));
                 break;
             case 'label_config':
                 if (val.material) h += kv('材质', esc(val.material));
+                h += inlineByKey('otherMatFiles', '材质参考');
                 if (val.size) h += kv('尺寸', esc(val.size));
                 if (val.method) h += kv('缝制方式', esc(val.method));
+                h += inlineByKey('sewingFiles', '缝制方式参考');
                 if (Array.isArray(val.components) && val.components.length) h += kv('部件', val.components.map(esc).join(', '));
                 if (val.placements) {
                     Object.keys(val.placements).forEach(function (k) {
                         h += kv('位置 (' + esc(k) + ')', esc(val.placements[k]));
                     });
                 }
+                h += inlineByKey('top', '打标位置参考 (上)');
+                h += inlineByKey('bottom', '打标位置参考 (下)');
+                h += inlineByKey('designFiles', '设计文件');
                 if (val.isSplit) h += kv('分体标', '是' + (val.splitRemark ? '（' + esc(val.splitRemark) + '）' : ''));
                 break;
             case 'hygiene_config':
                 if (val.material) h += kv('材质', esc(val.material));
                 if (val.shape) h += kv('形状', esc(val.shape));
                 if (val.size) h += kv('尺寸', esc(val.size));
+                h += inlineByKey('shapeFiles', '异形刀模参考');
                 if (val.noApply) h += kv('免粘贴', '是');
                 if (val.shapeRemark) h += kv('异形要求', esc(val.shapeRemark));
                 if (val.applyRemark) h += kv('粘贴规则', esc(val.applyRemark));
+                h += inlineByKey('applyFiles', '粘贴位置参考');
+                h += inlineByKey('designFiles', '印刷设计图');
                 break;
             case 'other_config':
-                // Simple remark
+                h += inlineByKey('files', '参考附件');
                 break;
         }
 
@@ -519,9 +548,10 @@
             h += '</div>';
         }
 
-        // Inline files for this trim (non-CMT)
-        if (trimFiles.length) {
-            h += renderInlineFiles(trimFiles, '相关文件');
+        // Inline files for this trim (non-CMT, not yet shown)
+        var remainFiles = trimFiles.filter(function (f) { return !shownFileIds[f.id]; });
+        if (remainFiles.length) {
+            h += renderInlineFiles(remainFiles, '其他文件');
         }
         h += '</div>';
         return h;

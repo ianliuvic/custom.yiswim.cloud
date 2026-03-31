@@ -1254,19 +1254,21 @@
         }
 
         // 辅助：从 config 对象中剥离 File 对象，返回纯 JSON 和文件清单
+        // parentKey 用于组合嵌套路径，如 "拉链头__styleFiles"
         function stripFiles(obj, category, subKey) {
             const files = [];
             const clean = {};
             for (const [k, v] of Object.entries(obj)) {
+                var fileKey = subKey ? subKey + '__' + k : k;
                 if (v instanceof File) {
-                    files.push({ file: v, category, subKey: subKey || k });
+                    files.push({ file: v, category, subKey: fileKey });
                 } else if (Array.isArray(v)) {
                     const fileItems = v.filter(i => i instanceof File);
                     const dataItems = v.filter(i => !(i instanceof File));
-                    if (fileItems.length > 0) files.push(...fileItems.map(f => ({ file: f, category, subKey: subKey || k })));
+                    if (fileItems.length > 0) files.push(...fileItems.map(f => ({ file: f, category, subKey: fileKey })));
                     clean[k] = dataItems;
                 } else if (v && typeof v === 'object' && !(v instanceof Date)) {
-                    const nested = stripFiles(v, category, k);
+                    const nested = stripFiles(v, category, subKey ? subKey + '__' + k : k);
                     clean[k] = nested.clean;
                     files.push(...nested.files);
                 } else {

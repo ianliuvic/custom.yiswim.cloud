@@ -407,6 +407,39 @@ router.post('/submit-inquiry', authenticateToken, upload.any(), async (req, res)
             }
         }
 
+        // 处理远程文件引用 (复制询盘时的已有文件)
+        if (d.remote_files) {
+            try {
+                const remoteArr = JSON.parse(d.remote_files);
+                if (Array.isArray(remoteArr) && remoteArr.length > 0) {
+                    const uuidExtPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.\w+$/i;
+                    const remoteInsertSQL = `
+                        INSERT INTO custom_inquiry_files (inquiry_id, category, sub_key, orig_name, stored_name, mime_type, size_bytes)
+                        VALUES ($1, $2, $3, $4, $5, $6, $7)`;
+                    for (const rf of remoteArr) {
+                        if (!rf.stored_name || !uuidExtPattern.test(rf.stored_name)) continue;
+                        // 验证文件属于当前用户的历史询盘
+                        const check = await client.query(
+                            `SELECT 1 FROM custom_inquiry_files cif JOIN custom_inquiries ci ON ci.id = cif.inquiry_id WHERE cif.stored_name = $1 AND ci.user_id = $2 LIMIT 1`,
+                            [rf.stored_name, req.user.id]
+                        );
+                        if (check.rows.length === 0) continue;
+                        await client.query(remoteInsertSQL, [
+                            inquiryId,
+                            rf.category || 'unknown',
+                            rf.sub_key || '',
+                            rf.orig_name || 'unknown',
+                            rf.stored_name,
+                            rf.mime_type || 'application/octet-stream',
+                            rf.size_bytes || 0
+                        ]);
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to process remote files:', e);
+            }
+        }
+
         await client.query('COMMIT');
         res.json({ success: true, inquiry_no: inquiryNo });
 

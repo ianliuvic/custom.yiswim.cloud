@@ -1405,6 +1405,10 @@
             }
 
             // 辅料配置对象：剥离文件后附加（选择"否"的辅料提交空对象）
+            // 提交前同步 DOM 输入值到配置对象
+            padConfig.otherColor = document.getElementById('pad-color-other')?.value.trim() || '';
+            padConfig.shapeRemark = document.getElementById('pad-shape-remark')?.value.trim() || '';
+            padConfig.remark = document.getElementById('pad-remark')?.value.trim() || '';
             const trimConfigs = { metal: metalConfig, pad: padConfig, bag: bagConfig, hangtag: hangtagConfig, label: labelConfig, hygiene: hygieneConfig, other: otherConfig };
             for (const [cat, conf] of Object.entries(trimConfigs)) {
                 const isEnabled = cat === 'other'
@@ -4229,6 +4233,7 @@
                 // 抓取文本数据
                 padConfig.shapeRemark = document.getElementById('pad-shape-remark')?.value.trim() || '';
                 padConfig.remark = document.getElementById('pad-remark')?.value.trim() || '';
+                padConfig.otherColor = document.getElementById('pad-color-other')?.value.trim() || '';
                 
                 let colorText = padConfig.color.split(' ')[0];
                 if (padConfig.color === '其他定制色') {

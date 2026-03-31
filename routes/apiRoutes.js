@@ -406,7 +406,7 @@ router.get('/my-inquiries', authenticateToken, async (req, res) => {
         const offset = (page - 1) * limit;
 
         const countResult = await db.query(
-            'SELECT COUNT(*) FROM custom_inquiries WHERE user_id = $1',
+            'SELECT COUNT(*) FROM custom_inquiries WHERE user_id = $1 AND deleted_at IS NULL',
             [req.user.id]
         );
         const total = parseInt(countResult.rows[0].count);
@@ -417,7 +417,7 @@ router.get('/my-inquiries', authenticateToken, async (req, res) => {
                    contact_name, brand_name,
                    created_at, modified_at
             FROM custom_inquiries 
-            WHERE user_id = $1 
+            WHERE user_id = $1 AND deleted_at IS NULL
             ORDER BY created_at DESC
             LIMIT $2 OFFSET $3`,
             [req.user.id, limit, offset]
@@ -438,7 +438,7 @@ router.get('/my-inquiries', authenticateToken, async (req, res) => {
 router.get('/inquiry/:id', authenticateToken, async (req, res) => {
     try {
         const inquiryResult = await db.query(
-            'SELECT * FROM custom_inquiries WHERE id = $1 AND user_id = $2',
+            'SELECT * FROM custom_inquiries WHERE id = $1 AND user_id = $2 AND deleted_at IS NULL',
             [req.params.id, req.user.id]
         );
         if (inquiryResult.rows.length === 0) {
@@ -553,46 +553,20 @@ router.post('/change-password', authenticateToken, async (req, res) => {
     }
 });
 
-// 10. 删除询盘
+// 10. 软删除询盘
 router.delete('/inquiry/:id', authenticateToken, async (req, res) => {
-    const client = await db.connect();
     try {
-        await client.query('BEGIN');
-
-        // 确认询盘属于当前用户
-        const check = await client.query(
-            'SELECT id FROM custom_inquiries WHERE id = $1 AND user_id = $2',
+        const result = await db.query(
+            'UPDATE custom_inquiries SET deleted_at = NOW() WHERE id = $1 AND user_id = $2 AND deleted_at IS NULL RETURNING id',
             [req.params.id, req.user.id]
         );
-        if (check.rows.length === 0) {
-            await client.query('ROLLBACK');
+        if (result.rows.length === 0) {
             return res.status(404).json({ success: false, message: '询盘不存在' });
         }
-
-        // 查询关联文件并删除磁盘文件
-        const filesResult = await client.query(
-            'SELECT stored_name FROM custom_inquiry_files WHERE inquiry_id = $1',
-            [req.params.id]
-        );
-        const uploadDir = path.join(UPLOAD_BASE, 'inquiries');
-        for (const f of filesResult.rows) {
-            const filePath = path.join(uploadDir, f.stored_name);
-            try { fs.unlinkSync(filePath); } catch (e) { /* file may not exist */ }
-        }
-
-        // 删除文件记录
-        await client.query('DELETE FROM custom_inquiry_files WHERE inquiry_id = $1', [req.params.id]);
-        // 删除主表记录
-        await client.query('DELETE FROM custom_inquiries WHERE id = $1', [req.params.id]);
-
-        await client.query('COMMIT');
         res.json({ success: true, message: '删除成功' });
     } catch (error) {
-        await client.query('ROLLBACK');
         console.error('删除询盘失败:', error);
         res.status(500).json({ success: false, message: '服务器错误' });
-    } finally {
-        client.release();
     }
 });
 

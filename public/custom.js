@@ -247,13 +247,13 @@
                         designFiles: [], shapeFiles: [], applyFiles: []
                     });
                 }
-                // 视觉选中面料卡片
+                // 视觉选中面料卡片 (使用 onclick 属性匹配，兼容 CUSTOM_SOURCING 和英文名)
                 if (srcCat.activeName) {
                     var grid = document.getElementById(catId);
                     if (grid) {
                         grid.querySelectorAll('.fabric-item').forEach(function(item) {
-                            var nameEl = item.querySelector('.option-info h4');
-                            if (nameEl && nameEl.textContent.trim() === srcCat.activeName) {
+                            var onclick = item.getAttribute('onclick') || '';
+                            if (onclick.indexOf("'" + srcCat.activeName + "'") !== -1) {
                                 item.classList.add('selected');
                             }
                         });

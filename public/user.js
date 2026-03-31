@@ -141,12 +141,6 @@
                 if (!fileMap[cat]) fileMap[cat] = [];
                 fileMap[cat].push(f);
             });
-            console.log('[DEBUG] fileMap categories:', Object.keys(fileMap));
-            console.log('[DEBUG] odmCustom files:', fileMap['odmCustom']);
-            console.log('[DEBUG] unknown files:', fileMap['unknown']);
-            console.log('[DEBUG] odm_custom_data:', d.odm_custom_data);
-            console.log('[DEBUG] odm_styles:', d.odm_styles);
-
             var html = '';
 
             // ─── Section 1: Styles ───
@@ -221,7 +215,6 @@
 
                 // User-uploaded custom files for this style
                 var customFiles = (fileMap['odmCustom'] || []).filter(function (f) { return f.sub_key === displayName; });
-                console.log('[DEBUG] style:', displayName, 'customFiles:', customFiles.length, 'remark:', remark, 'allOdmCustomFiles:', (fileMap['odmCustom'] || []).map(function(f){return f.sub_key}));
 
                 h += '<div class="u-style-card' + (coverImg ? ' has-img' : '') + '">';
                 if (coverImg) {

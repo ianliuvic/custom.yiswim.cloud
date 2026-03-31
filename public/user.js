@@ -624,9 +624,13 @@
             if (sampleCfg && typeof sampleCfg === 'object' && Object.keys(sampleCfg).length) {
                 h += '<div class="u-sub-label" style="margin-top:16px">样衣物流</div>';
                 if (sampleCfg.carrier) h += kv('物流方式', esc(sampleCfg.carrier));
-                if (sampleCfg.needBulkQuote) h += kv('需大货报价', '是');
-                if (sampleCfg.intentTerm) h += kv('贸易术语', esc(sampleCfg.intentTerm));
-                if (sampleCfg.intentMethod) h += kv('运输方式', esc(sampleCfg.intentMethod));
+                if (sampleCfg.needBulkQuote) {
+                    h += kv('需大货报价', '是');
+                    if (sampleCfg.intentQty) h += kv('预估大货数量', esc(sampleCfg.intentQty) + ' 件');
+                    if (sampleCfg.intentPrice) h += kv('期望EXW单价', '$' + esc(sampleCfg.intentPrice));
+                    if (sampleCfg.intentTerm) h += kv('贸易术语', esc(sampleCfg.intentTerm));
+                    if (sampleCfg.intentMethod) h += kv('运输方式', esc(sampleCfg.intentMethod));
+                }
             }
             if (d.sample_dest) h += kv('样衣目的地', esc(d.sample_dest));
         } else {

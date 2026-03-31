@@ -233,3 +233,28 @@ body {
     color: var(--text-secondary);
     font-size: 14px;
 }
+
+/* ── Batch action bar ── */
+.adm-batch-bar {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: var(--text-main);
+}
+.adm-batch-bar.visible { display: flex; }
+.adm-batch-bar #batchCount { font-weight: 700; margin-right: 4px; }
+
+/* ── Checkbox styling ── */
+.adm-table th input[type="checkbox"],
+.adm-row-cb {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary-color);
+    cursor: pointer;
+}

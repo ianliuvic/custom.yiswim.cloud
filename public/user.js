@@ -856,17 +856,17 @@
 
     /* ---------- Delete inquiry ---------- */
     window.deleteInquiry = async function (id, inquiryNo) {
-        if (!confirm(_t('确定要删除询盘') + ' ' + inquiryNo + _t(' 吗？'))) return;
+        if (!(await showConfirm(_t('确定要删除询盘') + ' ' + inquiryNo + _t(' 吗？')))) return;
         try {
             var res = await fetch('/api/inquiry/' + id, { method: 'DELETE' });
             var json = await res.json();
             if (json.success) {
                 loadInquiries(currentPage);
             } else {
-                alert(_t('删除失败：') + (json.message || _t('未知错误')));
+                showMsg(_t('删除失败：') + (json.message || _t('未知错误')), 'error');
             }
         } catch (e) {
-            alert(_t('网络错误，请重试'));
+            showMsg(_t('网络错误，请重试'), 'error');
         }
     };
 
@@ -979,7 +979,7 @@
                 sessionStorage.setItem('copyInquiryData', JSON.stringify(_currentInquiryData));
                 window.location.href = '/';
             } catch (e) {
-                alert(_t('复制失败：数据过大或存储不可用'));
+                showMsg(_t('复制失败：数据过大或存储不可用'), 'error');
             }
             return;
         }
@@ -992,7 +992,7 @@
                 window.location.href = '/';
             })
             .catch(function (e) {
-                alert(_t('获取询盘数据失败：') + e.message);
+                showMsg(_t('获取询盘数据失败：') + e.message, 'error');
             });
     };
 
@@ -1047,25 +1047,25 @@
                 sessionStorage.setItem('restoreDraftId', String(json.data.id));
                 window.location.href = '/';
             } else {
-                alert(_t('草稿不存在或已过期'));
+                showMsg(_t('草稿不存在或已过期'), 'error');
             }
         } catch (e) {
-            alert(_t('获取草稿失败'));
+            showMsg(_t('获取草稿失败'), 'error');
         }
     };
 
     window.deleteDraft = async function () {
-        if (!confirm(_t('确定要删除草稿吗？'))) return;
+        if (!(await showConfirm(_t('确定要删除草稿吗？')))) return;
         try {
             var res = await fetch('/api/draft', { method: 'DELETE' });
             var json = await res.json();
             if (json.success) {
                 document.getElementById('draft-banner').style.display = 'none';
             } else {
-                alert(_t('删除失败'));
+                showMsg(_t('删除失败'), 'error');
             }
         } catch (e) {
-            alert(_t('网络错误'));
+            showMsg(_t('网络错误'), 'error');
         }
     };
 

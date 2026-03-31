@@ -552,4 +552,47 @@ router.post('/change-password', authenticateToken, async (req, res) => {
     }
 });
 
+// 10. 删除询盘
+router.delete('/inquiry/:id', authenticateToken, async (req, res) => {
+    const client = await db.connect();
+    try {
+        await client.query('BEGIN');
+
+        // 确认询盘属于当前用户
+        const check = await client.query(
+            'SELECT id FROM custom_inquiries WHERE id = $1 AND user_id = $2',
+            [req.params.id, req.user.id]
+        );
+        if (check.rows.length === 0) {
+            await client.query('ROLLBACK');
+            return res.status(404).json({ success: false, message: '询盘不存在' });
+        }
+
+        // 查询关联文件并删除磁盘文件
+        const filesResult = await client.query(
+            'SELECT stored_name FROM custom_inquiry_files WHERE inquiry_id = $1',
+            [req.params.id]
+        );
+        const uploadDir = path.join(UPLOAD_BASE, 'inquiries');
+        for (const f of filesResult.rows) {
+            const filePath = path.join(uploadDir, f.stored_name);
+            try { fs.unlinkSync(filePath); } catch (e) { /* file may not exist */ }
+        }
+
+        // 删除文件记录
+        await client.query('DELETE FROM custom_inquiry_files WHERE inquiry_id = $1', [req.params.id]);
+        // 删除主表记录
+        await client.query('DELETE FROM custom_inquiries WHERE id = $1', [req.params.id]);
+
+        await client.query('COMMIT');
+        res.json({ success: true, message: '删除成功' });
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error('删除询盘失败:', error);
+        res.status(500).json({ success: false, message: '服务器错误' });
+    } finally {
+        client.release();
+    }
+});
+
 module.exports = router;

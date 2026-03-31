@@ -13,9 +13,9 @@
 <body>
 
     <header class="u-header">
-        <div class="u-header-left">
-            <img src="/logo.png" alt="Logo" class="u-logo" onerror="this.style.display='none'">
-            <span class="u-header-title">Hongxiu Custom System</span>
+        <div class="u-header-left" onclick="window.location.href='/'" style="cursor:pointer" title="返回主页">
+            <img src="/logo.png" alt="Hongxiu Logo" class="u-logo" onerror="this.style.display='none'">
+            <span class="u-header-title">红绣服饰自定义系统</span>
         </div>
         <div class="u-header-right">
             <button onclick="setLanguage('<%= lng === 'en' ? 'zh' : 'en' %>')" class="u-lang-btn">

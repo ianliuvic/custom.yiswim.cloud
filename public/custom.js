@@ -117,9 +117,30 @@
                     if(result.data.fabrics) renderFabrics(result.data.fabrics);
                     // 新增：触发渲染 Checklist
                     if(result.data.oem_checklists) renderOemChecklists(result.data.oem_checklists);
+                    // 自动填充 Step 5 联系信息 (从用户最近一次询盘)
+                    if(result.data.last_contact) prefillContact(result.data.last_contact);
                 }
             } catch (error) { console.warn('加载数据API未就绪，使用静态展示框架:', error); }
         });
+
+        // 自动填充 Step 5 联系信息（从用户上次询盘带入）
+        function prefillContact(c) {
+            const map = {
+                'final-contact-name': c.contact_name,
+                'final-contact-info': c.contact_info,
+                'final-brand-name': c.brand_name,
+                'final-website': c.website
+            };
+            for (const [id, val] of Object.entries(map)) {
+                if (val) { const el = document.getElementById(id); if (el) el.value = val; }
+            }
+            if (c.nda_agreed_at) {
+                const el = document.getElementById('nda-agree');
+                if (el) el.checked = true;
+            }
+            if (typeof validateContact === 'function') validateContact();
+            if (typeof updateStep5Summary === 'function') updateStep5Summary();
+        }
 
         // 动态渲染 OEM Checklist (采用紧凑型清单样式)
         function renderOemChecklists(items) {

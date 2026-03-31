@@ -1022,6 +1022,53 @@
         return m[s] || s || '待处理';
     }
 
+    /* ---------- Draft (暂存草稿) ---------- */
+    async function loadDraft() {
+        try {
+            var res = await fetch('/api/draft');
+            var json = await res.json();
+            var banner = document.getElementById('draft-banner');
+            if (json.success && json.data) {
+                var timeEl = document.getElementById('draft-time');
+                timeEl.textContent = '保存于 ' + fmtDate(json.updated_at);
+                banner.style.display = 'flex';
+            } else {
+                banner.style.display = 'none';
+            }
+        } catch (e) { /* ignore */ }
+    }
+
+    window.restoreDraft = async function () {
+        try {
+            var res = await fetch('/api/draft');
+            var json = await res.json();
+            if (json.success && json.data) {
+                sessionStorage.setItem('copyInquiryData', JSON.stringify(json.data));
+                window.location.href = '/';
+            } else {
+                alert('草稿不存在或已过期');
+            }
+        } catch (e) {
+            alert('获取草稿失败');
+        }
+    };
+
+    window.deleteDraft = async function () {
+        if (!confirm('确定要删除草稿吗？')) return;
+        try {
+            var res = await fetch('/api/draft', { method: 'DELETE' });
+            var json = await res.json();
+            if (json.success) {
+                document.getElementById('draft-banner').style.display = 'none';
+            } else {
+                alert('删除失败');
+            }
+        } catch (e) {
+            alert('网络错误');
+        }
+    };
+
     /* ---------- Init ---------- */
     loadInquiries(1);
+    loadDraft();
 })();

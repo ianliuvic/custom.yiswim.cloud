@@ -8,6 +8,7 @@
         function fileExt(name) { return (name || '').split('.').pop().toUpperCase(); }
 
         // 全局 CMT 数据管理
+        let currentDraftId = null; // Scheme C: 当前草稿询盘 ID
         let cmtFilesData = {
             fabric: [],
             pad: [],
@@ -131,10 +132,13 @@
 
                     // 检查是否有复制询盘数据需要恢复
                     const copyRaw = sessionStorage.getItem('copyInquiryData');
+                    const draftId = sessionStorage.getItem('restoreDraftId');
                     if (copyRaw) {
                         sessionStorage.removeItem('copyInquiryData');
+                        sessionStorage.removeItem('restoreDraftId');
                         try {
                             const copyData = JSON.parse(copyRaw);
+                            if (draftId) currentDraftId = parseInt(draftId);
                             restoreFromInquiry(copyData);
                         } catch(e) { console.warn('恢复询盘数据失败:', e); }
                     } else {
@@ -1008,10 +1012,13 @@
 
             // ── 提示用户 ──
             var hasRestoredFiles = d.files && d.files.length > 0;
+            var isDraftRestore = !!currentDraftId;
             setTimeout(function() {
                 var toast = document.createElement('div');
                 toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:10px;background:#065f46;color:#fff;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.15);transition:opacity .5s;';
-                toast.textContent = hasRestoredFiles ? '已从历史询盘复制数据（含附件）' : '已从历史询盘复制数据';
+                toast.textContent = isDraftRestore
+                    ? _t('已恢复暂存草稿')
+                    : (hasRestoredFiles ? _t('已从历史询盘复制数据（含附件）') : _t('已从历史询盘复制数据'));
                 document.body.appendChild(toast);
                 setTimeout(function() { toast.style.opacity = '0'; }, 3000);
                 setTimeout(function() { toast.remove(); }, 3500);
@@ -2341,17 +2348,164 @@
             };
         }
 
-        async function saveDraft() {
-            try {
-                const data = collectFormState();
-                const res = await fetch('/api/draft', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data })
+        // 构造 FormData (暂存草稿 & 正式提交共用)
+        function buildFormData() {
+            // 同步 DOM 输入值到配置对象
+            padConfig.otherColor = document.getElementById('pad-color-other')?.value.trim() || '';
+            padConfig.shapeRemark = document.getElementById('pad-shape-remark')?.value.trim() || '';
+            padConfig.remark = document.getElementById('pad-remark')?.value.trim() || '';
+            hangtagConfig.remark = document.getElementById('hangtag-remark')?.value.trim() || '';
+            hangtagConfig.materialRemark = document.getElementById('hangtag-material-remark')?.value.trim() || '';
+            hangtagConfig.shapeRemark = document.getElementById('hangtag-shape-remark')?.value.trim() || '';
+            hangtagConfig.craftRemark = document.getElementById('hangtag-craft-remark')?.value.trim() || '';
+            hangtagConfig.stringRemark = document.getElementById('hangtag-string-remark')?.value.trim() || '';
+            hangtagConfig.stringColorOther = document.getElementById('hangtag-string-color-other')?.value.trim() || '';
+            hangtagConfig.setRemark = document.getElementById('hangtag-set-remark')?.value.trim() || '';
+            labelConfig.remark = document.getElementById('label-remark')?.value.trim() || '';
+            labelConfig.splitRemark = document.getElementById('label-split-remark')?.value.trim() || '';
+            labelConfig.sewingRemark = document.getElementById('label-sewing-remark')?.value.trim() || '';
+            if (sampleConfig.needBulkQuote) {
+                sampleConfig.intentQty = document.getElementById('sample-intent-qty')?.value || '';
+                sampleConfig.intentPrice = document.getElementById('sample-intent-price')?.value || '';
+            }
+
+            const fd = new FormData();
+            const remoteFiles = [];
+
+            // —— Step 1: 款式 ——
+            fd.append('odm_styles', JSON.stringify(selectedOdmStyles));
+            const odmClean = {};
+            for (const [styleName, data] of Object.entries(odmCustomData)) {
+                odmClean[styleName] = { remark: data.remark };
+                (data.files || []).forEach(f => {
+                    if (isRemoteFile(f)) { remoteFiles.push({ category: 'odmCustom', sub_key: styleName, orig_name: f.name, stored_name: f.stored_name, mime_type: f.mime, size_bytes: f.size }); }
+                    else { fd.append(`files[odmCustom][${styleName}]`, f); }
                 });
+            }
+            fd.append('odm_custom_data', JSON.stringify(odmClean));
+            fd.append('oem_project', document.getElementById('oem-collection-name')?.value || '');
+            fd.append('oem_style_count', document.getElementById('oem-collection-count')?.value || '0');
+            fd.append('oem_descriptions', JSON.stringify(oemStyleDescriptions));
+            const checkedIds = [];
+            document.querySelectorAll('.oem-checklist-item input[type="checkbox"]:checked').forEach(cb => {
+                checkedIds.push(cb.value);
+            });
+            fd.append('oem_checklist', JSON.stringify(checkedIds));
+            fd.append('oem_remark', document.getElementById('oem-remark')?.value || '');
+            fd.append('oem_physical_sample', document.getElementById('oem-physical')?.checked ? '1' : '0');
+            var _trackInput = document.querySelector('#oem-address-info input');
+            fd.append('oem_tracking_no', _trackInput ? _trackInput.value.trim() : '');
+            (oemFilesData.tech || []).forEach(f => {
+                if (isRemoteFile(f)) { remoteFiles.push({ category: 'oem', sub_key: 'tech', orig_name: f.name, stored_name: f.stored_name, mime_type: f.mime, size_bytes: f.size }); }
+                else { fd.append('files[oem][tech]', f); }
+            });
+            (oemFilesData.ref || []).forEach(f => {
+                if (isRemoteFile(f)) { remoteFiles.push({ category: 'oem', sub_key: 'ref', orig_name: f.name, stored_name: f.stored_name, mime_type: f.mime, size_bytes: f.size }); }
+                else { fd.append('files[oem][ref]', f); }
+            });
+
+            // —— Step 2: 面料 ——
+            const fabResult = stripFabricFiles(fabricSelection);
+            fd.append('fabric_selection', JSON.stringify(fabResult.clean));
+            fabResult.files.forEach(item => {
+                if (item.remote) { remoteFiles.push({ category: 'fabric', sub_key: item.subKey, orig_name: item.file.name, stored_name: item.file.stored_name, mime_type: item.file.mime, size_bytes: item.file.size }); }
+                else { fd.append(`files[fabric][${item.subKey}]`, item.file); }
+            });
+
+            // —— Step 3: 辅料 ——
+            const cmtEnabled = {};
+            const trimCategories = ['metal', 'pad', 'bag', 'hangtag', 'label', 'hygiene', 'other'];
+            trimCategories.forEach(cat => {
+                const cmtCb = document.getElementById(`cmt-check-${cat}`);
+                const enabled = cmtCb ? cmtCb.checked : false;
+                if (enabled) {
+                    const desc = (document.getElementById(`cmt-desc-${cat}`)?.value || '').trim();
+                    const tracking = (document.getElementById(`cmt-tracking-${cat}`)?.value || '').trim();
+                    cmtEnabled[cat] = { enabled: true, desc: desc, trackingNo: tracking };
+                } else {
+                    cmtEnabled[cat] = false;
+                }
+            });
+            const fabricCmtCb = document.getElementById('fabric-cmt-check');
+            if (fabricCmtCb && fabricCmtCb.checked) {
+                const fabDesc = (document.getElementById('fabric-cmt-desc')?.value || '').trim();
+                const fabTracking = (document.getElementById('fabric-cmt-tracking')?.value || '').trim();
+                cmtEnabled.fabric = { enabled: true, desc: fabDesc, trackingNo: fabTracking };
+            } else {
+                cmtEnabled.fabric = false;
+            }
+            fd.append('cmt_enabled', JSON.stringify(cmtEnabled));
+
+            for (const [cat, files] of Object.entries(cmtFilesData)) {
+                files.forEach(f => {
+                    if (isRemoteFile(f)) { remoteFiles.push({ category: 'cmt', sub_key: cat, orig_name: f.name, stored_name: f.stored_name, mime_type: f.mime, size_bytes: f.size }); }
+                    else { fd.append(`files[cmt][${cat}]`, f); }
+                });
+            }
+
+            const trimConfigs = { metal: metalConfig, pad: padConfig, bag: bagConfig, hangtag: hangtagConfig, label: labelConfig, hygiene: hygieneConfig, other: otherConfig };
+            for (const [cat, conf] of Object.entries(trimConfigs)) {
+                const isEnabled = cat === 'other'
+                    ? document.querySelector('input[name="need_other"][value="yes"]')?.checked
+                    : document.querySelector(`input[name="need_${cat}"][value="yes"]`)?.checked;
+                if (isEnabled) {
+                    const s = stripFiles(conf, cat);
+                    fd.append(`${cat}_config`, JSON.stringify(s.clean));
+                    s.files.forEach(item => {
+                        if (item.remote) { remoteFiles.push({ category: cat, sub_key: item.subKey, orig_name: item.file.name, stored_name: item.file.stored_name, mime_type: item.file.mime, size_bytes: item.file.size }); }
+                        else { fd.append(`files[${cat}][${item.subKey}]`, item.file); }
+                    });
+                } else {
+                    fd.append(`${cat}_config`, JSON.stringify({}));
+                }
+            }
+
+            // —— Step 4: 物流 ——
+            fd.append('delivery_mode', currentDeliveryMode);
+            fd.append('sample_rows', JSON.stringify(sampleRows));
+            fd.append('sample_config', JSON.stringify(sampleConfig));
+            fd.append('sample_dest', document.getElementById('sample-destination')?.value || '');
+            fd.append('bulk_rows', JSON.stringify(bulkRows));
+            fd.append('bulk_logistics', JSON.stringify(bulkLogisticsConfig));
+            fd.append('bulk_dest', document.getElementById('bulk-destination')?.value || '');
+            fd.append('bulk_target_price', document.getElementById('bulk-target-price')?.value || '');
+            fd.append('bulk_packing_remark', document.getElementById('bulk-shipping-remark')?.value || '');
+            bulkPackingFiles.forEach(f => {
+                if (isRemoteFile(f)) { remoteFiles.push({ category: 'bulkPacking', sub_key: 'ref', orig_name: f.name, stored_name: f.stored_name, mime_type: f.mime, size_bytes: f.size }); }
+                else { fd.append('files[bulkPacking][ref]', f); }
+            });
+
+            // —— Step 5: 客户档案 ——
+            fd.append('contact_name', document.getElementById('final-contact-name')?.value.trim() || '');
+            fd.append('contact_info', document.getElementById('final-contact-info')?.value.trim() || '');
+            fd.append('brand_name', document.getElementById('final-brand-name')?.value.trim() || '');
+            fd.append('website', document.getElementById('final-website')?.value || '');
+            fd.append('final_remark', document.getElementById('final-remark')?.value || '');
+            fd.append('assign_sales', document.getElementById('assign-sales')?.value || '');
+            fd.append('assign_pattern', document.getElementById('assign-pattern')?.value || '');
+            fd.append('assign_sewing', document.getElementById('assign-sewing')?.value || '');
+            fd.append('nda_agreed', document.getElementById('nda-agree')?.checked ? '1' : '0');
+            finalDocsFiles.forEach(f => {
+                if (isRemoteFile(f)) { remoteFiles.push({ category: 'finalDocs', sub_key: 'doc', orig_name: f.name, stored_name: f.stored_name, mime_type: f.mime, size_bytes: f.size }); }
+                else { fd.append('files[finalDocs][doc]', f); }
+            });
+
+            if (remoteFiles.length > 0) {
+                fd.append('remote_files', JSON.stringify(remoteFiles));
+            }
+            return fd;
+        }
+
+        async function saveDraft() {
+            const draftBtn = document.getElementById('draftBtn');
+            try {
+                if (draftBtn) { draftBtn.disabled = true; draftBtn.style.opacity = '0.5'; }
+                const fd = buildFormData();
+                if (currentDraftId) fd.append('draft_id', String(currentDraftId));
+                const res = await fetch('/api/save-draft', { method: 'POST', body: fd });
                 const json = await res.json();
                 if (json.success) {
-                    // 成功浮层提示
+                    currentDraftId = json.draft_id;
                     const toast = document.createElement('div');
                     toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:10px;background:#065f46;color:#fff;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.15);transition:opacity .5s;';
                     toast.textContent = _t('暂存成功，可在用户中心恢复');
@@ -2364,6 +2518,8 @@
             } catch (e) {
                 console.error('暂存失败:', e);
                 alert(_t('暂存失败，请检查网络'));
+            } finally {
+                if (draftBtn) { draftBtn.disabled = false; draftBtn.style.opacity = ''; }
             }
         }
         window.saveDraft = saveDraft;
@@ -2403,161 +2559,8 @@
             }
         
             // 3. 构造 FormData
-            const fd = new FormData();
-            const remoteFiles = [];
-
-            // —— Step 1: 款式 ——
-            fd.append('odm_styles', JSON.stringify(selectedOdmStyles));
-            // odmCustomData: 剥离文件
-            const odmClean = {};
-            for (const [styleName, data] of Object.entries(odmCustomData)) {
-                odmClean[styleName] = { remark: data.remark };
-                (data.files || []).forEach(f => {
-                    if (isRemoteFile(f)) { remoteFiles.push({ category: 'odmCustom', sub_key: styleName, orig_name: f.name, stored_name: f.stored_name, mime_type: f.mime, size_bytes: f.size }); }
-                    else { fd.append(`files[odmCustom][${styleName}]`, f); }
-                });
-            }
-            fd.append('odm_custom_data', JSON.stringify(odmClean));
-            fd.append('oem_project', document.getElementById('oem-collection-name')?.value || '');
-            fd.append('oem_style_count', document.getElementById('oem-collection-count')?.value || '0');
-            // OEM 每款简述
-            fd.append('oem_descriptions', JSON.stringify(oemStyleDescriptions));
-            // OEM checklist
-            const checkedIds = [];
-            document.querySelectorAll('.oem-checklist-item input[type="checkbox"]:checked').forEach(cb => {
-                checkedIds.push(cb.value);
-            });
-            fd.append('oem_checklist', JSON.stringify(checkedIds));
-            fd.append('oem_remark', document.getElementById('oem-remark')?.value || '');
-            // OEM 寄送实体样衣
-            fd.append('oem_physical_sample', document.getElementById('oem-physical')?.checked ? '1' : '0');
-            var _trackInput = document.querySelector('#oem-address-info input');
-            fd.append('oem_tracking_no', _trackInput ? _trackInput.value.trim() : '');
-            // OEM 文件
-            (oemFilesData.tech || []).forEach(f => {
-                if (isRemoteFile(f)) { remoteFiles.push({ category: 'oem', sub_key: 'tech', orig_name: f.name, stored_name: f.stored_name, mime_type: f.mime, size_bytes: f.size }); }
-                else { fd.append('files[oem][tech]', f); }
-            });
-            (oemFilesData.ref || []).forEach(f => {
-                if (isRemoteFile(f)) { remoteFiles.push({ category: 'oem', sub_key: 'ref', orig_name: f.name, stored_name: f.stored_name, mime_type: f.mime, size_bytes: f.size }); }
-                else { fd.append('files[oem][ref]', f); }
-            });
-
-            // —— Step 2: 面料 ——
-            const fabResult = stripFabricFiles(fabricSelection);
-            fd.append('fabric_selection', JSON.stringify(fabResult.clean));
-            fabResult.files.forEach(item => {
-                if (item.remote) { remoteFiles.push({ category: 'fabric', sub_key: item.subKey, orig_name: item.file.name, stored_name: item.file.stored_name, mime_type: item.file.mime, size_bytes: item.file.size }); }
-                else { fd.append(`files[fabric][${item.subKey}]`, item.file); }
-            });
-
-            // —— Step 3: 辅料 ——
-            // CMT 状态 + 描述 + 单号
-            const cmtEnabled = {};
-            const trimCategories = ['metal', 'pad', 'bag', 'hangtag', 'label', 'hygiene', 'other'];
-            trimCategories.forEach(cat => {
-                const cmtCb = document.getElementById(`cmt-check-${cat}`);
-                const enabled = cmtCb ? cmtCb.checked : false;
-                if (enabled) {
-                    const desc = (document.getElementById(`cmt-desc-${cat}`)?.value || '').trim();
-                    const tracking = (document.getElementById(`cmt-tracking-${cat}`)?.value || '').trim();
-                    cmtEnabled[cat] = { enabled: true, desc: desc, trackingNo: tracking };
-                } else {
-                    cmtEnabled[cat] = false;
-                }
-            });
-            // fabric CMT
-            const fabricCmtCb = document.getElementById('fabric-cmt-check');
-            if (fabricCmtCb && fabricCmtCb.checked) {
-                const fabDesc = (document.getElementById('fabric-cmt-desc')?.value || '').trim();
-                const fabTracking = (document.getElementById('fabric-cmt-tracking')?.value || '').trim();
-                cmtEnabled.fabric = { enabled: true, desc: fabDesc, trackingNo: fabTracking };
-            } else {
-                cmtEnabled.fabric = false;
-            }
-            fd.append('cmt_enabled', JSON.stringify(cmtEnabled));
-
-            // CMT 文件
-            for (const [cat, files] of Object.entries(cmtFilesData)) {
-                files.forEach(f => {
-                    if (isRemoteFile(f)) { remoteFiles.push({ category: 'cmt', sub_key: cat, orig_name: f.name, stored_name: f.stored_name, mime_type: f.mime, size_bytes: f.size }); }
-                    else { fd.append(`files[cmt][${cat}]`, f); }
-                });
-            }
-
-            // 辅料配置对象：剥离文件后附加（选择"否"的辅料提交空对象）
-            // 提交前同步 DOM 输入值到配置对象
-            padConfig.otherColor = document.getElementById('pad-color-other')?.value.trim() || '';
-            padConfig.shapeRemark = document.getElementById('pad-shape-remark')?.value.trim() || '';
-            padConfig.remark = document.getElementById('pad-remark')?.value.trim() || '';
-            hangtagConfig.remark = document.getElementById('hangtag-remark')?.value.trim() || '';
-            hangtagConfig.materialRemark = document.getElementById('hangtag-material-remark')?.value.trim() || '';
-            hangtagConfig.shapeRemark = document.getElementById('hangtag-shape-remark')?.value.trim() || '';
-            hangtagConfig.craftRemark = document.getElementById('hangtag-craft-remark')?.value.trim() || '';
-            hangtagConfig.stringRemark = document.getElementById('hangtag-string-remark')?.value.trim() || '';
-            hangtagConfig.stringColorOther = document.getElementById('hangtag-string-color-other')?.value.trim() || '';
-            hangtagConfig.setRemark = document.getElementById('hangtag-set-remark')?.value.trim() || '';
-            labelConfig.remark = document.getElementById('label-remark')?.value.trim() || '';
-            labelConfig.splitRemark = document.getElementById('label-split-remark')?.value.trim() || '';
-            labelConfig.sewingRemark = document.getElementById('label-sewing-remark')?.value.trim() || '';
-            const trimConfigs = { metal: metalConfig, pad: padConfig, bag: bagConfig, hangtag: hangtagConfig, label: labelConfig, hygiene: hygieneConfig, other: otherConfig };
-            for (const [cat, conf] of Object.entries(trimConfigs)) {
-                const isEnabled = cat === 'other'
-                    ? document.querySelector('input[name="need_other"][value="yes"]')?.checked
-                    : document.querySelector(`input[name="need_${cat}"][value="yes"]`)?.checked;
-                if (isEnabled) {
-                    const s = stripFiles(conf, cat);
-                    fd.append(`${cat}_config`, JSON.stringify(s.clean));
-                    s.files.forEach(item => {
-                        if (item.remote) { remoteFiles.push({ category: cat, sub_key: item.subKey, orig_name: item.file.name, stored_name: item.file.stored_name, mime_type: item.file.mime, size_bytes: item.file.size }); }
-                        else { fd.append(`files[${cat}][${item.subKey}]`, item.file); }
-                    });
-                } else {
-                    fd.append(`${cat}_config`, JSON.stringify({}));
-                }
-            }
-
-            // —— Step 4: 物流 ——
-            fd.append('delivery_mode', currentDeliveryMode);
-            fd.append('sample_rows', JSON.stringify(sampleRows));
-            // 同步 DOM 输入值到 sampleConfig
-            if (sampleConfig.needBulkQuote) {
-                sampleConfig.intentQty = document.getElementById('sample-intent-qty')?.value || '';
-                sampleConfig.intentPrice = document.getElementById('sample-intent-price')?.value || '';
-            }
-            fd.append('sample_config', JSON.stringify(sampleConfig));
-            fd.append('sample_dest', document.getElementById('sample-destination')?.value || '');
-            fd.append('bulk_rows', JSON.stringify(bulkRows));
-            fd.append('bulk_logistics', JSON.stringify(bulkLogisticsConfig));
-            fd.append('bulk_dest', document.getElementById('bulk-destination')?.value || '');
-            fd.append('bulk_target_price', document.getElementById('bulk-target-price')?.value || '');
-            fd.append('bulk_packing_remark', document.getElementById('bulk-shipping-remark')?.value || '');
-            // 大货包装文件
-            bulkPackingFiles.forEach(f => {
-                if (isRemoteFile(f)) { remoteFiles.push({ category: 'bulkPacking', sub_key: 'ref', orig_name: f.name, stored_name: f.stored_name, mime_type: f.mime, size_bytes: f.size }); }
-                else { fd.append('files[bulkPacking][ref]', f); }
-            });
-
-            // —— Step 5: 客户档案 ——
-            fd.append('contact_name', document.getElementById('final-contact-name').value.trim());
-            fd.append('contact_info', document.getElementById('final-contact-info').value.trim());
-            fd.append('brand_name', document.getElementById('final-brand-name').value.trim());
-            fd.append('website', document.getElementById('final-website')?.value || '');
-            fd.append('final_remark', document.getElementById('final-remark')?.value || '');
-            fd.append('assign_sales', document.getElementById('assign-sales')?.value || '');
-            fd.append('assign_pattern', document.getElementById('assign-pattern')?.value || '');
-            fd.append('assign_sewing', document.getElementById('assign-sewing')?.value || '');
-            fd.append('nda_agreed', '1');
-            // 最终补充文件
-            finalDocsFiles.forEach(f => {
-                if (isRemoteFile(f)) { remoteFiles.push({ category: 'finalDocs', sub_key: 'doc', orig_name: f.name, stored_name: f.stored_name, mime_type: f.mime, size_bytes: f.size }); }
-                else { fd.append('files[finalDocs][doc]', f); }
-            });
-
-            // 远程文件引用 (复制询盘时的已有文件)
-            if (remoteFiles.length > 0) {
-                fd.append('remote_files', JSON.stringify(remoteFiles));
-            }
+            const fd = buildFormData();
+            if (currentDraftId) fd.append('draft_id', String(currentDraftId));
 
             // 4. 显示上传弹窗 & 压缩图片
             const nextBtn = document.getElementById('nextBtn');
@@ -2590,8 +2593,7 @@
 
                 hideUploadModal();
                 if (result.success) {
-                    // 提交成功后自动清除暂存草稿
-                    fetch('/api/draft', { method: 'DELETE' }).catch(() => {});
+                    currentDraftId = null;
                     alert(_t("✅ 提交成功！") + `\n\n${_t('您的需求编号为:')} ${result.inquiry_no}\n${_t('专属业务经理将在 24 小时内为您提供正式报价。')}`);
                     window.location.reload();
                 } else {

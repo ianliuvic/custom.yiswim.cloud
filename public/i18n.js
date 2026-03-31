@@ -597,6 +597,10 @@
         "继续下一步": "Next Step",
         "清空当前所有选项": "Clear All Options",
         "重置": "Reset",
+        "暂存": "Save Draft",
+        "暂存草稿": "Save Draft",
+        "已从历史询盘复制数据（含附件）": "Inquiry data restored (with attachments)",
+        "已从历史询盘复制数据": "Inquiry data restored",
 
         // ── Sidebar ──
         "款式类型": "Style Type",

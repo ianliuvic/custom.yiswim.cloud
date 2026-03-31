@@ -36,6 +36,17 @@ const upload = multer({
     }
 });
 
+// 自动创建草稿表
+db.query(`
+    CREATE TABLE IF NOT EXISTS custom_drafts (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES custom_users(id) ON DELETE CASCADE,
+        data JSONB NOT NULL DEFAULT '{}',
+        updated_at TIMESTAMP DEFAULT NOW(),
+        UNIQUE(user_id)
+    )
+`).catch(err => console.error('创建 custom_drafts 表失败:', err.message));
+
 // 1. 获取业务数据 (直连 PostgreSQL 并发查询：款式、面料、包装袋)
 router.get('/get-data', authenticateToken, async (req, res) => {
     try {
@@ -576,6 +587,53 @@ router.delete('/inquiry/:id', authenticateToken, async (req, res) => {
         res.json({ success: true, message: '删除成功' });
     } catch (error) {
         console.error('删除询盘失败:', error);
+        res.status(500).json({ success: false, message: '服务器错误' });
+    }
+});
+
+// 11. 暂存草稿
+router.get('/draft', authenticateToken, async (req, res) => {
+    try {
+        const result = await db.query(
+            'SELECT data, updated_at FROM custom_drafts WHERE user_id = $1',
+            [req.user.id]
+        );
+        if (result.rows.length === 0) {
+            return res.json({ success: true, data: null });
+        }
+        res.json({ success: true, data: result.rows[0].data, updated_at: result.rows[0].updated_at });
+    } catch (error) {
+        console.error('获取草稿失败:', error);
+        res.status(500).json({ success: false, message: '服务器错误' });
+    }
+});
+
+router.post('/draft', authenticateToken, async (req, res) => {
+    try {
+        const { data } = req.body;
+        if (!data || typeof data !== 'object') {
+            return res.status(400).json({ success: false, message: '无效的草稿数据' });
+        }
+        await db.query(
+            `INSERT INTO custom_drafts (user_id, data, updated_at)
+             VALUES ($1, $2, NOW())
+             ON CONFLICT (user_id)
+             DO UPDATE SET data = $2, updated_at = NOW()`,
+            [req.user.id, JSON.stringify(data)]
+        );
+        res.json({ success: true, message: '暂存成功' });
+    } catch (error) {
+        console.error('保存草稿失败:', error);
+        res.status(500).json({ success: false, message: '服务器错误' });
+    }
+});
+
+router.delete('/draft', authenticateToken, async (req, res) => {
+    try {
+        await db.query('DELETE FROM custom_drafts WHERE user_id = $1', [req.user.id]);
+        res.json({ success: true, message: '草稿已删除' });
+    } catch (error) {
+        console.error('删除草稿失败:', error);
         res.status(500).json({ success: false, message: '服务器错误' });
     }
 });

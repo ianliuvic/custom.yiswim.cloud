@@ -3676,6 +3676,12 @@
                     }
                     if (_insertBefore) _bagContainer.insertBefore(_bagPanel, _insertBefore);
                     else _bagContainer.appendChild(_bagPanel);
+                    // 重算箭头位置指向选中卡片
+                    var _arrow = _bagPanel.querySelector('.config-arrow');
+                    if (_arrow) {
+                        var _arrowPos = _selectedBag.getBoundingClientRect().left - _bagPanel.getBoundingClientRect().left + (_selectedBag.getBoundingClientRect().width / 2) - 8;
+                        _arrow.style.left = _arrowPos + 'px';
+                    }
                 }
             }
             if (paneId === 'label') {

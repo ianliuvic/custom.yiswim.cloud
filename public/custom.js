@@ -1,3 +1,12 @@
+        // ==========================================
+        // 远程文件辅助 (复制询盘时恢复已上传文件)
+        // ==========================================
+        const REMOTE_FILE_BASE = 'https://files.yiswim.cloud/uploads/inquiries/';
+        function isRemoteFile(f) { return f && f._remote === true; }
+        function remoteFileUrl(f) { return f.url || (REMOTE_FILE_BASE + encodeURIComponent(f.stored_name)); }
+        function isImageMime(mime) { return mime && mime.startsWith('image/'); }
+        function fileExt(name) { return (name || '').split('.').pop().toUpperCase(); }
+
         // 全局 CMT 数据管理
         let cmtFilesData = {
             fabric: [],
@@ -65,17 +74,19 @@
             const files = cmtFilesData[category];
         
             files.forEach((file, index) => {
-                const isImage = file.type.startsWith('image/');
-                const ext = file.name.split('.').pop().toUpperCase();
-                
-                // 缩短文件名显示，避免在小方块里撑开
+                const remote = isRemoteFile(file);
+                const isImage = remote ? isImageMime(file.mime) : file.type.startsWith('image/');
+                const ext = fileExt(file.name);
                 const shortName = file.name.length > 6 ? file.name.substring(0, 3) + '...' : file.name;
         
-                let content = isImage 
-                    ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')" style="width:100%; height:100%; object-fit:cover;">` 
-                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;border-radius:4px;">${ext}</div>`;
+                let content;
+                if (isImage) {
+                    const src = remote ? remoteFileUrl(file) : URL.createObjectURL(file);
+                    content = `<img src="${src}" onclick="openOemPreview(this.src, '${file.name}')" style="width:100%; height:100%; object-fit:cover;">`;
+                } else {
+                    content = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;border-radius:4px;">${ext}</div>`;
+                }
         
-                // 注意：这里移除了 div 上的 style="width:50px; height:50px;"，改由 CSS 类 .tight-preview-grid 控制
                 grid.insertAdjacentHTML('beforeend', `
                     <div class="oem-preview-item" id="preview-cmt-${category}-${index}">
                         ${content}
@@ -241,7 +252,7 @@
                     var grid = document.getElementById(catId);
                     if (grid) {
                         grid.querySelectorAll('.fabric-item').forEach(function(item) {
-                            var nameEl = item.querySelector('.item-name');
+                            var nameEl = item.querySelector('.option-info h4');
                             if (nameEl && nameEl.textContent.trim() === srcCat.activeName) {
                                 item.classList.add('selected');
                             }
@@ -293,6 +304,19 @@
                     }
                     info.set(cfg);
                     updateTrimSummaryTrigger(cat);
+
+                    // 视觉选中包装袋材质卡片
+                    if (cat === 'bag' && cfg.material) {
+                        var bagContainer = document.getElementById('bag-list-container');
+                        if (bagContainer) {
+                            bagContainer.querySelectorAll('.bag-material').forEach(function(item) {
+                                var h4 = item.querySelector('.option-info h4');
+                                if (h4 && h4.textContent.trim() === cfg.material) {
+                                    item.classList.add('selected');
+                                }
+                            });
+                        }
+                    }
                 }
             }
 
@@ -406,11 +430,113 @@
             // ── 全局验证 ──
             if (typeof validateAll === 'function') validateAll();
 
+            // ── 恢复附件 (远程文件) ──
+            if (d.files && d.files.length > 0) {
+                var makeRemote = function(f) {
+                    return { _remote: true, name: f.orig_name, mime: f.mime_type, size: f.size_bytes, stored_name: f.stored_name };
+                };
+                var filesByCategory = {};
+                d.files.forEach(function(f) {
+                    if (!filesByCategory[f.category]) filesByCategory[f.category] = [];
+                    filesByCategory[f.category].push(f);
+                });
+
+                // ODM Custom
+                (filesByCategory.odmCustom || []).forEach(function(f) {
+                    if (odmCustomData[f.sub_key]) odmCustomData[f.sub_key].files.push(makeRemote(f));
+                });
+
+                // OEM
+                (filesByCategory.oem || []).forEach(function(f) {
+                    if (oemFilesData[f.sub_key]) oemFilesData[f.sub_key].push(makeRemote(f));
+                });
+                ['tech', 'ref'].forEach(function(type) {
+                    var grid = document.getElementById('oem' + type.charAt(0).toUpperCase() + type.slice(1) + 'Preview');
+                    if (!grid) return;
+                    oemFilesData[type].forEach(function(file, idx) {
+                        if (!isRemoteFile(file)) return;
+                        var isImg = isImageMime(file.mime);
+                        addOemPreviewItem(type, isImg ? remoteFileUrl(file) : null, file.name, idx, isImg, fileExt(file.name));
+                    });
+                });
+
+                // Fabric
+                (filesByCategory.fabric || []).forEach(function(f) {
+                    var parts = f.sub_key.split('__');
+                    if (parts.length < 3) return;
+                    var catId = parts[0], fabName = parts[1], propName = parts[2];
+                    var cfg = fabricSelection[catId] && fabricSelection[catId].configs && fabricSelection[catId].configs[fabName];
+                    if (!cfg) return;
+                    if (propName === 'print') { cfg.prints.push(makeRemote(f)); }
+                    else if (Array.isArray(cfg[propName])) { cfg[propName].push(makeRemote(f)); }
+                });
+
+                // CMT
+                (filesByCategory.cmt || []).forEach(function(f) {
+                    if (cmtFilesData[f.sub_key]) cmtFilesData[f.sub_key].push(makeRemote(f));
+                });
+                Object.keys(cmtFilesData).forEach(function(cat) {
+                    if (cmtFilesData[cat].length > 0) renderCmtPreviews(cat);
+                });
+
+                // Trim files — generic nested‐path handler
+                var trimRefs = { metal: metalConfig, pad: padConfig, bag: bagConfig, hangtag: hangtagConfig, label: labelConfig, hygiene: hygieneConfig, other: otherConfig };
+                for (var tCat in trimRefs) {
+                    (filesByCategory[tCat] || []).forEach(function(f) {
+                        var parts = f.sub_key.split('__');
+                        var target = trimRefs[tCat];
+                        for (var i = 0; i < parts.length - 1; i++) { target = target && target[parts[i]]; }
+                        var lastKey = parts[parts.length - 1];
+                        if (target && Array.isArray(target[lastKey])) target[lastKey].push(makeRemote(f));
+                    });
+                }
+
+                // Render trim previews
+                if (filesByCategory.metal) {
+                    if (metalConfig.logoFiles.length) renderMetalPreviews('logo');
+                    if (metalConfig.sourceFiles.length) renderMetalPreviews('source');
+                    for (var mCat in metalConfig.details) {
+                        if (metalConfig.details[mCat].logoFiles.length) renderMetalItemPreviews(mCat, 'logo');
+                        if (metalConfig.details[mCat].styleFiles.length) renderMetalItemPreviews(mCat, 'style');
+                    }
+                }
+                if (filesByCategory.pad) {
+                    if (padConfig.shapeFiles.length) renderPadPreviews('shape');
+                    if (padConfig.otherFiles.length) renderPadPreviews('other');
+                }
+                if (filesByCategory.bag && bagConfig.designFiles.length) renderBagPreviews();
+                if (filesByCategory.hangtag) {
+                    var htMap = { designFiles: 'design', shapeFiles: 'shape', otherMatFiles: 'material', otherCraftFiles: 'craft', stringFiles: 'string' };
+                    for (var hk in htMap) { if (hangtagConfig[hk] && hangtagConfig[hk].length) renderHangtagPreviews(htMap[hk]); }
+                }
+                if (filesByCategory.label) {
+                    if (labelConfig.designFiles.length) renderLabelPreviews();
+                    if (labelConfig.placementFiles && labelConfig.placementFiles.top && labelConfig.placementFiles.top.length) renderLabelPlacementPreviews('top');
+                    if (labelConfig.placementFiles && labelConfig.placementFiles.bottom && labelConfig.placementFiles.bottom.length) renderLabelPlacementPreviews('bottom');
+                    if (labelConfig.sewingFiles && labelConfig.sewingFiles.length) renderLabelSewingPreviews();
+                }
+                if (filesByCategory.hygiene) {
+                    ['design', 'shape', 'apply'].forEach(function(t) {
+                        if (hygieneConfig[t + 'Files'] && hygieneConfig[t + 'Files'].length) renderHygienePreviews(t);
+                    });
+                }
+                if (filesByCategory.other && otherConfig.files.length) renderOtherPreviews();
+
+                // Bulk packing & Final docs
+                (filesByCategory.bulkPacking || []).forEach(function(f) { bulkPackingFiles.push(makeRemote(f)); });
+                if (bulkPackingFiles.length) renderBulkPackingPreviews();
+                (filesByCategory.finalDocs || []).forEach(function(f) { finalDocsFiles.push(makeRemote(f)); });
+                if (finalDocsFiles.length) renderFinalDocsPreviews();
+
+                if (typeof updateCombinedStyleSummary === 'function') updateCombinedStyleSummary();
+            }
+
             // ── 提示用户 ──
+            var hasRestoredFiles = d.files && d.files.length > 0;
             setTimeout(function() {
                 var toast = document.createElement('div');
                 toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:10px;background:#065f46;color:#fff;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.15);transition:opacity .5s;';
-                toast.textContent = '已从历史询盘复制数据，附件需重新上传';
+                toast.textContent = hasRestoredFiles ? '已从历史询盘复制数据（含附件）' : '已从历史询盘复制数据';
                 document.body.appendChild(toast);
                 setTimeout(function() { toast.style.opacity = '0'; }, 3000);
                 setTimeout(function() { toast.remove(); }, 3500);
@@ -851,8 +977,9 @@
                 let iconClass = '';
                 if (['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext)) iconClass = 'img';
                 else if (ext === 'pdf') iconClass = 'pdf'; else if (['ai', 'eps'].includes(ext)) iconClass = 'ai';
+                const sizeStr = isRemoteFile(file) ? formatBytes(file.size || 0) : formatBytes(file.size);
                 listContainer.insertAdjacentHTML('beforeend', `
-                    <div class="file-item"><div class="file-info"><div class="file-icon ${iconClass}">${ext.substring(0, 3)}</div><div class="file-details"><span class="file-name" title="${file.name}">${file.name}</span><span class="file-size">${formatBytes(file.size)}</span></div></div><button class="file-remove" onclick="removeModalFile(${index})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>
+                    <div class="file-item"><div class="file-info"><div class="file-icon ${iconClass}">${ext.substring(0, 3)}</div><div class="file-details"><span class="file-name" title="${file.name}">${file.name}</span><span class="file-size">${sizeStr}</span></div></div><button class="file-remove" onclick="removeModalFile(${index})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>
                 `);
             });
         }
@@ -1025,7 +1152,11 @@
             const grid = document.getElementById(`oem${type.charAt(0).toUpperCase() + type.slice(1)}Preview`);
             grid.innerHTML = '';
             oemFilesData[type].forEach((file, idx) => {
-                if (file.type.startsWith('image/')) {
+                const remote = isRemoteFile(file);
+                const isImage = remote ? isImageMime(file.mime) : file.type.startsWith('image/');
+                if (remote) {
+                    addOemPreviewItem(type, isImage ? remoteFileUrl(file) : null, file.name, idx, isImage, fileExt(file.name));
+                } else if (isImage) {
                     const reader = new FileReader();
                     reader.onload = (e) => addOemPreviewItem(type, e.target.result, file.name, idx, true);
                     reader.readAsDataURL(file);
@@ -1563,10 +1694,14 @@
                 var fileKey = subKey ? subKey + '__' + k : k;
                 if (v instanceof File) {
                     files.push({ file: v, category, subKey: fileKey });
+                } else if (isRemoteFile(v)) {
+                    files.push({ file: v, category, subKey: fileKey, remote: true });
                 } else if (Array.isArray(v)) {
                     const fileItems = v.filter(i => i instanceof File);
-                    const dataItems = v.filter(i => !(i instanceof File));
+                    const remoteItems = v.filter(i => isRemoteFile(i));
+                    const dataItems = v.filter(i => !(i instanceof File) && !isRemoteFile(i));
                     if (fileItems.length > 0) files.push(...fileItems.map(f => ({ file: f, category, subKey: fileKey })));
+                    if (remoteItems.length > 0) files.push(...remoteItems.map(f => ({ file: f, category, subKey: fileKey, remote: true })));
                     clean[k] = dataItems;
                 } else if (v && typeof v === 'object' && !(v instanceof Date)) {
                     const nested = stripFiles(v, category, subKey ? subKey + '__' + k : k);
@@ -1590,8 +1725,10 @@
                         const baseKey = `${catName}__${fabName}`;
                         // 先单独提取 prints 文件，标记为 print 子类
                         const printFiles = (fabConf.prints || []).filter(f => f instanceof File);
-                        const printData = (fabConf.prints || []).filter(f => !(f instanceof File));
+                        const printRemote = (fabConf.prints || []).filter(f => isRemoteFile(f));
+                        const printData = (fabConf.prints || []).filter(f => !(f instanceof File) && !isRemoteFile(f));
                         printFiles.forEach(f => allFiles.push({ file: f, category: 'fabric', subKey: baseKey + '__print' }));
+                        printRemote.forEach(f => allFiles.push({ file: f, category: 'fabric', subKey: baseKey + '__print', remote: true }));
                         // 用剩余数据调用 stripFiles
                         const confWithoutPrints = { ...fabConf, prints: printData };
                         const s = stripFiles(confWithoutPrints, 'fabric', baseKey);
@@ -1784,6 +1921,7 @@
         
             // 3. 构造 FormData
             const fd = new FormData();
+            const remoteFiles = [];
 
             // —— Step 1: 款式 ——
             fd.append('odm_styles', JSON.stringify(selectedOdmStyles));
@@ -1791,7 +1929,10 @@
             const odmClean = {};
             for (const [styleName, data] of Object.entries(odmCustomData)) {
                 odmClean[styleName] = { remark: data.remark };
-                (data.files || []).forEach(f => fd.append(`files[odmCustom][${styleName}]`, f));
+                (data.files || []).forEach(f => {
+                    if (isRemoteFile(f)) { remoteFiles.push({ category: 'odmCustom', sub_key: styleName, orig_name: f.name, stored_name: f.stored_name, mime_type: f.mime, size_bytes: f.size }); }
+                    else { fd.append(`files[odmCustom][${styleName}]`, f); }
+                });
             }
             fd.append('odm_custom_data', JSON.stringify(odmClean));
             fd.append('oem_project', document.getElementById('oem-collection-name')?.value || '');
@@ -1810,13 +1951,22 @@
             var _trackInput = document.querySelector('#oem-address-info input');
             fd.append('oem_tracking_no', _trackInput ? _trackInput.value.trim() : '');
             // OEM 文件
-            (oemFilesData.tech || []).forEach(f => fd.append('files[oem][tech]', f));
-            (oemFilesData.ref || []).forEach(f => fd.append('files[oem][ref]', f));
+            (oemFilesData.tech || []).forEach(f => {
+                if (isRemoteFile(f)) { remoteFiles.push({ category: 'oem', sub_key: 'tech', orig_name: f.name, stored_name: f.stored_name, mime_type: f.mime, size_bytes: f.size }); }
+                else { fd.append('files[oem][tech]', f); }
+            });
+            (oemFilesData.ref || []).forEach(f => {
+                if (isRemoteFile(f)) { remoteFiles.push({ category: 'oem', sub_key: 'ref', orig_name: f.name, stored_name: f.stored_name, mime_type: f.mime, size_bytes: f.size }); }
+                else { fd.append('files[oem][ref]', f); }
+            });
 
             // —— Step 2: 面料 ——
             const fabResult = stripFabricFiles(fabricSelection);
             fd.append('fabric_selection', JSON.stringify(fabResult.clean));
-            fabResult.files.forEach(item => fd.append(`files[fabric][${item.subKey}]`, item.file));
+            fabResult.files.forEach(item => {
+                if (item.remote) { remoteFiles.push({ category: 'fabric', sub_key: item.subKey, orig_name: item.file.name, stored_name: item.file.stored_name, mime_type: item.file.mime, size_bytes: item.file.size }); }
+                else { fd.append(`files[fabric][${item.subKey}]`, item.file); }
+            });
 
             // —— Step 3: 辅料 ——
             // CMT 状态 + 描述 + 单号
@@ -1846,7 +1996,10 @@
 
             // CMT 文件
             for (const [cat, files] of Object.entries(cmtFilesData)) {
-                files.forEach(f => fd.append(`files[cmt][${cat}]`, f));
+                files.forEach(f => {
+                    if (isRemoteFile(f)) { remoteFiles.push({ category: 'cmt', sub_key: cat, orig_name: f.name, stored_name: f.stored_name, mime_type: f.mime, size_bytes: f.size }); }
+                    else { fd.append(`files[cmt][${cat}]`, f); }
+                });
             }
 
             // 辅料配置对象：剥离文件后附加（选择"否"的辅料提交空对象）
@@ -1872,7 +2025,10 @@
                 if (isEnabled) {
                     const s = stripFiles(conf, cat);
                     fd.append(`${cat}_config`, JSON.stringify(s.clean));
-                    s.files.forEach(item => fd.append(`files[${cat}][${item.subKey}]`, item.file));
+                    s.files.forEach(item => {
+                        if (item.remote) { remoteFiles.push({ category: cat, sub_key: item.subKey, orig_name: item.file.name, stored_name: item.file.stored_name, mime_type: item.file.mime, size_bytes: item.file.size }); }
+                        else { fd.append(`files[${cat}][${item.subKey}]`, item.file); }
+                    });
                 } else {
                     fd.append(`${cat}_config`, JSON.stringify({}));
                 }
@@ -1894,7 +2050,10 @@
             fd.append('bulk_target_price', document.getElementById('bulk-target-price')?.value || '');
             fd.append('bulk_packing_remark', document.getElementById('bulk-shipping-remark')?.value || '');
             // 大货包装文件
-            bulkPackingFiles.forEach(f => fd.append('files[bulkPacking][ref]', f));
+            bulkPackingFiles.forEach(f => {
+                if (isRemoteFile(f)) { remoteFiles.push({ category: 'bulkPacking', sub_key: 'ref', orig_name: f.name, stored_name: f.stored_name, mime_type: f.mime, size_bytes: f.size }); }
+                else { fd.append('files[bulkPacking][ref]', f); }
+            });
 
             // —— Step 5: 客户档案 ——
             fd.append('contact_name', document.getElementById('final-contact-name').value.trim());
@@ -1907,7 +2066,15 @@
             fd.append('assign_sewing', document.getElementById('assign-sewing')?.value || '');
             fd.append('nda_agreed', '1');
             // 最终补充文件
-            finalDocsFiles.forEach(f => fd.append('files[finalDocs][doc]', f));
+            finalDocsFiles.forEach(f => {
+                if (isRemoteFile(f)) { remoteFiles.push({ category: 'finalDocs', sub_key: 'doc', orig_name: f.name, stored_name: f.stored_name, mime_type: f.mime, size_bytes: f.size }); }
+                else { fd.append('files[finalDocs][doc]', f); }
+            });
+
+            // 远程文件引用 (复制询盘时的已有文件)
+            if (remoteFiles.length > 0) {
+                fd.append('remote_files', JSON.stringify(remoteFiles));
+            }
 
             // 4. 显示上传弹窗 & 压缩图片
             const nextBtn = document.getElementById('nextBtn');
@@ -2316,19 +2483,28 @@
             const grid = document.getElementById('printPreviewGrid');
             grid.innerHTML = '';
             files.forEach((file, index) => {
-                const isImage = file.type.startsWith('image/');
-                const ext = file.name.split('.').pop().toUpperCase();
+                const remote = isRemoteFile(file);
+                const isImage = remote ? isImageMime(file.mime) : file.type.startsWith('image/');
+                const ext = fileExt(file.name);
                 
                 if (isImage) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
+                    if (remote) {
                         grid.insertAdjacentHTML('beforeend', `
                             <div class="oem-preview-item">
-                                <img src="${e.target.result}" onclick="openOemPreview(this.src, '${file.name}')" style="cursor:zoom-in;">
+                                <img src="${remoteFileUrl(file)}" onclick="openOemPreview(this.src, '${file.name}')" style="cursor:zoom-in;">
                                 <button type="button" class="oem-preview-remove" onclick="removePrintFile(${index})">&times;</button>
                             </div>`);
-                    };
-                    reader.readAsDataURL(file);
+                    } else {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            grid.insertAdjacentHTML('beforeend', `
+                                <div class="oem-preview-item">
+                                    <img src="${e.target.result}" onclick="openOemPreview(this.src, '${file.name}')" style="cursor:zoom-in;">
+                                    <button type="button" class="oem-preview-remove" onclick="removePrintFile(${index})">&times;</button>
+                                </div>`);
+                        };
+                        reader.readAsDataURL(file);
+                    }
                 } else {
                     grid.insertAdjacentHTML('beforeend', `
                         <div class="oem-preview-item" style="display:flex; align-items:center; justify-content:center; flex-direction:column;">
@@ -2582,12 +2758,17 @@
             if(!grid) return;
             grid.innerHTML = '';
             files.forEach((file, index) => {
-                const isImage = file.type.startsWith('image/');
-                const ext = file.name.split('.').pop().toUpperCase();
+                const remote = isRemoteFile(file);
+                const isImage = remote ? isImageMime(file.mime) : file.type.startsWith('image/');
+                const ext = fileExt(file.name);
                 
-                const content = isImage 
-                    ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')" style="cursor:zoom-in;">`
-                    : `<div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#f1f5f9; color:#64748b; font-size:10px; font-weight:bold;">${ext}</div>`;
+                let content;
+                if (isImage) {
+                    const src = remote ? remoteFileUrl(file) : URL.createObjectURL(file);
+                    content = `<img src="${src}" onclick="openOemPreview(this.src, '${file.name}')" style="cursor:zoom-in;">`;
+                } else {
+                    content = `<div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#f1f5f9; color:#64748b; font-size:10px; font-weight:bold;">${ext}</div>`;
+                }
                     
                 grid.insertAdjacentHTML('beforeend', `
                     <div class="oem-preview-item" style="width:60px; height:60px; border-radius:6px;">
@@ -3285,13 +3466,18 @@
             else if (type === 'apply') targetArray = hygieneConfig.applyFiles;
         
             targetArray.forEach((file, index) => {
-                const isImage = file.type.startsWith('image/');
-                const ext = file.name.split('.').pop().toUpperCase();
+                const remote = isRemoteFile(file);
+                const isImage = remote ? isImageMime(file.mime) : file.type.startsWith('image/');
+                const ext = fileExt(file.name);
                 const shortName = file.name.length > 6 ? file.name.substring(0,3) + '...' : file.name;
                 
-                let content = isImage 
-                    ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')" style="width:100%;height:100%;object-fit:cover;">` 
-                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;">${ext}</div>`;
+                let content;
+                if (isImage) {
+                    const src = remote ? remoteFileUrl(file) : URL.createObjectURL(file);
+                    content = `<img src="${src}" onclick="openOemPreview(this.src, '${file.name}')" style="width:100%;height:100%;object-fit:cover;">`;
+                } else {
+                    content = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;">${ext}</div>`;
+                }
                     
                 grid.insertAdjacentHTML('beforeend', `
                     <div class="oem-preview-item" style="border-radius:4px;">
@@ -3794,11 +3980,16 @@
             grid.innerHTML = '';
             
             labelConfig.sewingFiles.forEach((file, index) => {
-                const isImage = file.type.startsWith('image/');
-                const ext = file.name.split('.').pop().toUpperCase();
-                let content = isImage 
-                    ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')" style="width:100%;height:100%;object-fit:cover;">` 
-                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;">${ext}</div>`;
+                const remote = isRemoteFile(file);
+                const isImage = remote ? isImageMime(file.mime) : file.type.startsWith('image/');
+                const ext = fileExt(file.name);
+                let content;
+                if (isImage) {
+                    const src = remote ? remoteFileUrl(file) : URL.createObjectURL(file);
+                    content = `<img src="${src}" onclick="openOemPreview(this.src, '${file.name}')" style="width:100%;height:100%;object-fit:cover;">`;
+                } else {
+                    content = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;">${ext}</div>`;
+                }
         
                 grid.insertAdjacentHTML('beforeend', `
                     <div class="oem-preview-item" style="border-radius:4px;">
@@ -3843,12 +4034,14 @@
             grid.innerHTML = '';
             
             labelConfig.designFiles.forEach((file, index) => {
-                const isImage = file.type.startsWith('image/');
+                const remote = isRemoteFile(file);
+                const isImage = remote ? isImageMime(file.mime) : file.type.startsWith('image/');
                 const ext = file.name.split('.').pop().toUpperCase();
                 const shortName = file.name.length > 5 ? file.name.substring(0, 4) + '..' : file.name;
+                const src = remote ? remoteFileUrl(file) : URL.createObjectURL(file);
                 
                 let content = isImage 
-                    ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')" style="width:100%;height:100%;object-fit:cover;">` 
+                    ? `<img src="${src}" onclick="openOemPreview(this.src, '${file.name}')" style="width:100%;height:100%;object-fit:cover;">` 
                     : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;border-radius:4px;">${ext}</div>`;
         
                 grid.insertAdjacentHTML('beforeend', `
@@ -3903,10 +4096,12 @@
             const targetArray = labelConfig.placementFiles[posType];
             
             targetArray.forEach((file, index) => {
-                const isImage = file.type.startsWith('image/');
+                const remote = isRemoteFile(file);
+                const isImage = remote ? isImageMime(file.mime) : file.type.startsWith('image/');
                 const ext = file.name.split('.').pop().toUpperCase();
+                const src = remote ? remoteFileUrl(file) : URL.createObjectURL(file);
                 let content = isImage 
-                    ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')" style="width:100%;height:100%;object-fit:cover;">` 
+                    ? `<img src="${src}" onclick="openOemPreview(this.src, '${file.name}')" style="width:100%;height:100%;object-fit:cover;">` 
                     : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;border-radius:4px;">${ext}</div>`;
         
                 grid.insertAdjacentHTML('beforeend', `
@@ -4053,11 +4248,13 @@
             if(!grid) return;
             grid.innerHTML = '';
             otherConfig.files.forEach((file, index) => {
-                const isImage = file.type.startsWith('image/');
+                const remote = isRemoteFile(file);
+                const isImage = remote ? isImageMime(file.mime) : file.type.startsWith('image/');
                 const ext = file.name.split('.').pop().toUpperCase();
+                const src = remote ? remoteFileUrl(file) : URL.createObjectURL(file);
                 
                 let content = isImage 
-                    ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')">` 
+                    ? `<img src="${src}" onclick="openOemPreview(this.src, '${file.name}')">` 
                     : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#e2e8f0;color:#475569;font-size:11px;font-weight:bold;border-radius:6px;">${ext}</div>`;
                 
                 grid.insertAdjacentHTML('beforeend', `
@@ -4432,14 +4629,15 @@
         
             // 3. 遍历并生成预览 HTML
             actualFiles.forEach((file, index) => {
-                const isImage = file.type.startsWith('image/');
+                const remote = isRemoteFile(file);
+                const isImage = remote ? isImageMime(file.mime) : file.type.startsWith('image/');
                 const ext = file.name.split('.').pop().toUpperCase();
                 
                 // 创建预览内容
                 let previewContent = '';
                 if (isImage) {
                     // 生成临时预览 URL
-                    const url = URL.createObjectURL(file);
+                    const url = remote ? remoteFileUrl(file) : URL.createObjectURL(file);
                     previewContent = `<img src="${url}" onclick="openOemPreview(this.src, '${file.name}')" style="cursor:zoom-in;">`;
                 } else {
                     // 非图片文件显示图标
@@ -4651,11 +4849,13 @@
             const targetArray = type === 'shape' ? padConfig.shapeFiles : padConfig.otherFiles;
             
             targetArray.forEach((file, index) => {
-                const isImage = file.type.startsWith('image/');
+                const remote = isRemoteFile(file);
+                const isImage = remote ? isImageMime(file.mime) : file.type.startsWith('image/');
                 const ext = file.name.split('.').pop().toUpperCase();
+                const src = remote ? remoteFileUrl(file) : URL.createObjectURL(file);
                 
                 let content = isImage 
-                    ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')" style="width:100%;height:100%;object-fit:cover;">` 
+                    ? `<img src="${src}" onclick="openOemPreview(this.src, '${file.name}')" style="width:100%;height:100%;object-fit:cover;">` 
                     : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;">${ext}</div>`;
                     
                 grid.insertAdjacentHTML('beforeend', `
@@ -4809,12 +5009,13 @@
             grid.innerHTML = '';
 
             files.forEach((file, index) => {
-                const isImage = file.type.startsWith('image/');
+                const remote = isRemoteFile(file);
+                const isImage = remote ? isImageMime(file.mime) : file.type.startsWith('image/');
                 const ext = file.name.split('.').pop().toUpperCase();
                 
                 let content = '';
                 if (isImage) {
-                    const url = URL.createObjectURL(file);
+                    const url = remote ? remoteFileUrl(file) : URL.createObjectURL(file);
                     content = `<img src="${url}" onclick="openOemPreview('${url}', '${file.name}')">`;
                 } else {
                     content = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;">${ext}</div>`;
@@ -5017,12 +5218,14 @@
             
             const files = (type === 'logo') ? data.logoFiles : data.styleFiles;
             files.forEach((file, index) => {
-                const isImage = file.type.startsWith('image/');
+                const remote = isRemoteFile(file);
+                const isImage = remote ? isImageMime(file.mime) : file.type.startsWith('image/');
                 const ext = file.name.split('.').pop().toUpperCase();
+                const src = remote ? remoteFileUrl(file) : URL.createObjectURL(file);
                 
                 // 核心修复：如果是图片就渲染 img，否则渲染格式方块
                 const content = isImage 
-                    ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')">` 
+                    ? `<img src="${src}" onclick="openOemPreview(this.src, '${file.name}')">` 
                     : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;border-radius:4px;border:1px solid #e2e8f0;">${ext}</div>`;
         
                 grid.insertAdjacentHTML('beforeend', `
@@ -5313,9 +5516,11 @@
             if(!grid) return;
             grid.innerHTML = '';
             bagConfig.designFiles.forEach((file, index) => {
-                const isImage = file.type.startsWith('image/');
+                const remote = isRemoteFile(file);
+                const isImage = remote ? isImageMime(file.mime) : file.type.startsWith('image/');
+                const src = remote ? remoteFileUrl(file) : URL.createObjectURL(file);
                 const content = isImage 
-                    ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')">` 
+                    ? `<img src="${src}" onclick="openOemPreview(this.src, '${file.name}')">` 
                     : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;">DOC</div>`;
         
                 grid.insertAdjacentHTML('beforeend', `
@@ -5389,10 +5594,15 @@
             if(!grid) return;
             grid.innerHTML = '';
             bulkPackingFiles.forEach((file, index) => {
-                const isImage = file.type.startsWith('image/');
-                const content = isImage 
-                    ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')">` 
-                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;">DOC</div>`;
+                const remote = isRemoteFile(file);
+                const isImage = remote ? isImageMime(file.mime) : file.type.startsWith('image/');
+                let content;
+                if (isImage) {
+                    const src = remote ? remoteFileUrl(file) : URL.createObjectURL(file);
+                    content = `<img src="${src}" onclick="openOemPreview(this.src, '${file.name}')">`;
+                } else {
+                    content = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;">DOC</div>`;
+                }
                 
                 grid.insertAdjacentHTML('beforeend', `
                     <div class="oem-preview-item" style="width:60px; height:60px;">
@@ -5448,12 +5658,17 @@
             grid.innerHTML = '';
             
             finalDocsFiles.forEach((file, index) => {
-                const isImage = file.type.startsWith('image/');
-                const ext = file.name.split('.').pop().toUpperCase();
+                const remote = isRemoteFile(file);
+                const isImage = remote ? isImageMime(file.mime) : file.type.startsWith('image/');
+                const ext = fileExt(file.name);
                 
-                let content = isImage 
-                    ? `<img src="${URL.createObjectURL(file)}" onclick="openOemPreview(this.src, '${file.name}')">` 
-                    : `<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:11px;font-weight:800;border-radius:6px;border:1px solid #e2e8f0;"><span>${ext}</span></div>`;
+                let content;
+                if (isImage) {
+                    const src = remote ? remoteFileUrl(file) : URL.createObjectURL(file);
+                    content = `<img src="${src}" onclick="openOemPreview(this.src, '${file.name}')">`;
+                } else {
+                    content = `<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:11px;font-weight:800;border-radius:6px;border:1px solid #e2e8f0;"><span>${ext}</span></div>`;
+                }
                 
                 grid.insertAdjacentHTML('beforeend', `
                     <div class="oem-preview-item" style="width:60px; height:60px; border-radius:6px;">

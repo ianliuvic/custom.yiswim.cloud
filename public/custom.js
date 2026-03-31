@@ -1284,7 +1284,14 @@
                 const catClean = { ...catObj, configs: {} };
                 if (catObj.configs) {
                     for (const [fabName, fabConf] of Object.entries(catObj.configs)) {
-                        const s = stripFiles(fabConf, 'fabric', `${catName}__${fabName}`);
+                        const baseKey = `${catName}__${fabName}`;
+                        // 先单独提取 prints 文件，标记为 print 子类
+                        const printFiles = (fabConf.prints || []).filter(f => f instanceof File);
+                        const printData = (fabConf.prints || []).filter(f => !(f instanceof File));
+                        printFiles.forEach(f => allFiles.push({ file: f, category: 'fabric', subKey: baseKey + '__print' }));
+                        // 用剩余数据调用 stripFiles
+                        const confWithoutPrints = { ...fabConf, prints: printData };
+                        const s = stripFiles(confWithoutPrints, 'fabric', baseKey);
                         catClean.configs[fabName] = s.clean;
                         allFiles.push(...s.files);
                     }
@@ -1395,12 +1402,19 @@
                 files.forEach(f => fd.append(`files[cmt][${cat}]`, f));
             }
 
-            // 辅料配置对象：剥离文件后附加
+            // 辅料配置对象：剥离文件后附加（选择"否"的辅料提交空对象）
             const trimConfigs = { metal: metalConfig, pad: padConfig, bag: bagConfig, hangtag: hangtagConfig, label: labelConfig, hygiene: hygieneConfig, other: otherConfig };
             for (const [cat, conf] of Object.entries(trimConfigs)) {
-                const s = stripFiles(conf, cat);
-                fd.append(`${cat}_config`, JSON.stringify(s.clean));
-                s.files.forEach(item => fd.append(`files[${cat}][${item.subKey}]`, item.file));
+                const isEnabled = cat === 'other'
+                    ? document.querySelector('input[name="need_other"][value="yes"]')?.checked
+                    : document.querySelector(`input[name="need_${cat}"][value="yes"]`)?.checked;
+                if (isEnabled) {
+                    const s = stripFiles(conf, cat);
+                    fd.append(`${cat}_config`, JSON.stringify(s.clean));
+                    s.files.forEach(item => fd.append(`files[${cat}][${item.subKey}]`, item.file));
+                } else {
+                    fd.append(`${cat}_config`, JSON.stringify({}));
+                }
             }
 
             // —— Step 4: 物流 ——

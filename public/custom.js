@@ -43,7 +43,7 @@
             const targetArray = cmtFilesData[category];
             
             files.forEach(file => {
-                if (file.size > 20 * 1024 * 1024) { showMsg(_t('文件 ' + file.name + ' 超过 20MB'), 'error'); return; }
+                if (file.size > 20 * 1024 * 1024) { showMsg(`文件 ${file.name} 超过 20MB`, 'error'); return; }
                 if (!targetArray.some(f => f.name === file.name && f.size === file.size)) {
                     targetArray.push(file);
                 }
@@ -130,7 +130,7 @@
                     // 新增：触发渲染 Checklist
                     if(result.data.oem_checklists) renderOemChecklists(result.data.oem_checklists);
 
-                    // 初始渲染时也同步一下按钮状态
+                    // 检查是否有复制询盘数据需要恢复
                     const copyRaw = sessionStorage.getItem('copyInquiryData');
                     const draftId = sessionStorage.getItem('restoreDraftId');
                     if (copyRaw) {
@@ -149,7 +149,7 @@
             } catch (error) { console.warn('加载数据API未就绪，使用静态展示框架:', error); }
         });
 
-        // 清空所有 Step 5 的输入框
+        // 自动填充 Step 5 联系信息（从用户上次询盘带入）
         function prefillContact(c) {
             const map = {
                 'final-contact-name': c.contact_name,
@@ -169,7 +169,7 @@
         }
 
         // ==========================================
-        // (逻辑同上一步)
+        // 从历史询盘恢复表单数据 (复制为新询盘)
         // ==========================================
         function restoreFromInquiry(d) {
             const _parse = (v) => {
@@ -192,10 +192,10 @@
                     if (selectedOdmStyles.indexOf(name) === -1) selectedOdmStyles.push(name);
                 }
             });
-            // 恢复 odmCustomData (无文件
+            // 恢复 odmCustomData (无文件)
             for (const sn in odmCustom) {
                 odmCustomData[sn] = { remark: (odmCustom[sn] && odmCustom[sn].remark) || '', files: [] };
-                // 绑定底部按钮事件
+                // 更新轻定制徽章
                 const badge = document.getElementById('badge-' + sn.replace(/\s+/g, '-'));
                 if (badge && odmCustom[sn] && odmCustom[sn].remark) badge.classList.add('active');
             }
@@ -203,7 +203,7 @@
             // 确保默认显示 ODM 面板
             toggleStyleMode('existing');
 
-            // OEM 数据恢复 (始终填充，仅在OEM 模式激活时切换 Tab)
+            // OEM 数据恢复 (始终填充，仅在 OEM 模式激活时切换 Tab)
             if (d.oem_mode_active) {
                 toggleStyleMode('upload');
             }
@@ -213,7 +213,7 @@
                 const countEl = document.getElementById('oem-collection-count');
                 if (countEl) {
                     countEl.value = d.oem_style_count || 0;
-                    // 先设置descriptions 数组，再渲染输入框
+                    // 先设置 descriptions 数组，再渲染输入框
                     const descs = _parse(d.oem_descriptions) || [];
                     oemStyleDescriptions = descs.map(function(v) { return typeof v === 'object' ? JSON.stringify(v) : String(v || ''); });
                     renderOemStyleDescInputs();
@@ -270,7 +270,7 @@
                 }
             }
 
-            // 面料配置面板展开：对当前活跃的面料Tab 展开配置面板
+            // 面料配置面板展开：对当前活跃的面料 Tab 展开配置面板
             // 利用 switchFabricCat 的内置恢复逻辑来展开面板 (无需重复实现)
             if (activeFabricCat && fabricSelection[activeFabricCat] && fabricSelection[activeFabricCat].activeName) {
                 var activeTabEl = document.querySelector('#fabric-sub-tabs .mode-option.active');
@@ -302,7 +302,7 @@
                 var cfg = _parse(d[info.dbKey]) || {};
                 var shouldEnable = draftTrimEnabled[cat] || (cfg && Object.keys(cfg).length > 0);
                 if (shouldEnable) {
-                    // 同步数值
+                    // 启用该辅料
                     var yesRadio = document.querySelector('input[name="need_' + cat + '"][value="yes"]');
                     if (yesRadio) { yesRadio.checked = true; toggleTrim(cat, true); }
                     // 确保文件数组为空
@@ -321,10 +321,10 @@
                         for (var pk in cfg.placementFiles) { cfg.placementFiles[pk] = []; }
                     }
                     info.set(cfg);
-                    // updateTrimSummaryTrigger 延后到restoreTrimVisuals 之后调用
-                    // (否则 summary 函数会从旧DOM 读取并覆盖config 中的文本值
+                    // updateTrimSummaryTrigger 延后到 restoreTrimVisuals 之后调用
+                    // (否则 summary 函数会从空 DOM 读取并覆盖 config 中的文本值)
 
-                    // 同步数值
+                    // 视觉选中包装袋材质卡片
                     if (cat === 'bag' && cfg.material) {
                         var bagContainer = document.getElementById('bag-list-container');
                         if (bagContainer) {
@@ -339,7 +339,7 @@
                 }
             }
 
-            // ── 辅料视觉状态恢复(卡片选中、面板展开、输入框填充) ──
+            // ── 辅料视觉状态恢复 (卡片选中、面板展开、输入框填充) ──
             (function restoreTrimVisuals() {
                 // 通用：根据文本内容在容器中选中卡片
                 function selectCardByText(containerId, cardSelector, text) {
@@ -382,11 +382,11 @@
                     }
                 }
                 if (metalConfig.logoCustom) {
-                    // logoCustom 是全局级别，对应的 DOM 在per-item 面板中，不在此恢复
+                    // logoCustom 是全局级别，对应的 DOM 在 per-item 面板中，不在此恢复
                 }
 
                 // ── Pad ──
-                // 先填充文本输入，再切模式（switchPadMode→updatePadSummary 会从 DOM 读值写入config）
+                // 先填充文本输入，再切模式（switchPadMode→updatePadSummary 会从 DOM 读值写回 config）
                 if (padConfig.shapeRemark) { var el = document.getElementById('pad-shape-remark'); if (el) el.value = padConfig.shapeRemark; }
                 if (padConfig.remark) { var el = document.getElementById('pad-remark'); if (el) el.value = padConfig.remark; }
                 if (padConfig.otherColor) { var el = document.getElementById('pad-color-other'); if (el) el.value = padConfig.otherColor; }
@@ -412,7 +412,7 @@
                     }
                     var padDisplay = document.getElementById('pad-color-display');
                     if (padDisplay) padDisplay.innerText = padConfig.color;
-                    if (padConfig.color === '其他定制色') {) {
+                    if (padConfig.color === '其他定制色') {
                         var otherArea = document.getElementById('pad-color-other-area');
                         if (otherArea) otherArea.classList.remove('hidden');
                     }
@@ -423,7 +423,7 @@
                     var shapeArea = document.getElementById('pad-shape-custom-area');
                     if (shapeArea) shapeArea.classList.remove('hidden');
                 }
-                // （文本已在switchPadMode 前填充）
+                // （文本已在 switchPadMode 前填充）
 
                 // ── Hangtag ──
                 if (hangtagConfig.mode) switchHangtagMode(hangtagConfig.mode);
@@ -436,7 +436,7 @@
                             if (onclick.indexOf("'" + hangtagConfig.material + "'") !== -1) el.classList.add('selected');
                         });
                         // 标准材质显示克重区域
-                        var isStdMat = ['白卡纸 (White Cardboard)', '铜版纸 (Coated Paper)', '铜版纸 (Coated Paper)', '牛皮纸 (Kraft Paper)'].includes(value);].indexOf(hangtagConfig.material) !== -1;
+                        var isStdMat = ['白卡纸', '铜版纸', '牛皮纸'].indexOf(hangtagConfig.material) !== -1;
                         var weightArea = document.getElementById('hangtag-weight-area');
                         if (weightArea) weightArea.classList.toggle('hidden', !isStdMat);
                     }
@@ -515,7 +515,7 @@
                 if (hangtagConfig.setRemark) { var el = document.getElementById('hangtag-set-remark'); if (el) el.value = hangtagConfig.setRemark; }
 
                 // ── Label ──
-                // 先填充文本输入，再切模式（switchLabelMode→updateLabelSummary 会从 DOM 读值写入config）
+                // 先填充文本输入，再切模式（switchLabelMode→updateLabelSummary 会从 DOM 读值写回 config）
                 if (labelConfig.remark) { var el = document.getElementById('label-remark'); if (el) el.value = labelConfig.remark; }
                 if (labelConfig.size) { var el = document.getElementById('label-custom-size'); if (el) el.value = labelConfig.size; }
                 if (labelConfig.splitRemark) { var el = document.getElementById('label-split-remark'); if (el) el.value = labelConfig.splitRemark; }
@@ -531,7 +531,7 @@
                             var onclick = el.getAttribute('onclick') || '';
                             if (onclick.indexOf("'" + labelConfig.material + "'") !== -1) { el.classList.add('selected'); matchedEl = el; }
                         });
-                        // 显示配置面板（定位在 switchSubTab 切换到label 时重算，因为 pane-label 此时 display:none）
+                        // 显示配置面板（定位在 switchSubTab 切换到 label 时重算，因为 pane-label 此时 display:none）
                         if (matchedEl) {
                             var lPanel = document.getElementById('label-config-panel');
                             if (lPanel) {
@@ -594,8 +594,8 @@
                                 var onclick = el.getAttribute('onclick') || '';
                                 if (onclick.indexOf("'" + labelConfig.placements[gt] + "'") !== -1) el.classList.add('selected');
                             });
-                            // 标签逻辑：自定义位置图片上传处理
-                            if (labelConfig.placements[gt] === '自定义其他位置');) {
+                            // 自定义位置
+                            if (labelConfig.placements[gt] === '自定义其他位置') {
                                 var customArea = document.getElementById('label-placement-custom-' + gt);
                                 if (customArea) customArea.classList.remove('hidden');
                             }
@@ -623,10 +623,10 @@
                     var splitArea = document.getElementById('label-split-detail-area');
                     if (splitArea) splitArea.classList.remove('hidden');
                 }
-                // （文本已在switchLabelMode 前填充）
+                // （文本已在 switchLabelMode 前填充）
 
                 // ── Hygiene ──
-                // 先填充文本输入，再切模式（switchHygieneMode→updateHygieneSummary 会从 DOM 读值写入config）
+                // 先填充文本输入，再切模式（switchHygieneMode→updateHygieneSummary 会从 DOM 读值写回 config）
                 if (hygieneConfig.remark) { var el = document.getElementById('hygiene-text'); if (el) el.value = hygieneConfig.remark; }
                 if (hygieneConfig.shapeRemark) { var el = document.getElementById('hygiene-shape-remark'); if (el) el.value = hygieneConfig.shapeRemark; }
                 if (hygieneConfig.applyRemark) { var el = document.getElementById('hygiene-apply-remark'); if (el) el.value = hygieneConfig.applyRemark; }
@@ -675,13 +675,13 @@
                     var ruleArea = document.getElementById('hygiene-apply-rule-area');
                     if (ruleArea) ruleArea.classList.add('hidden');
                 }
-                // （文本已在switchHygieneMode 前填充）
+                // （文本已在 switchHygieneMode 前填充）
 
                 // ── Bag (配置面板 + 尺寸/印刷/工艺) ──
-                if (bagConfig.material === '未选材质') {
+                if (bagConfig.material && bagConfig.material !== '未选材质') {
                     var bagContainer = document.getElementById('bag-list-container');
                     if (bagContainer) {
-                        // 找到匹配卡片并模拟onBagClick 核心逻辑 (不含 scroll)
+                        // 找到匹配卡片并模拟 onBagClick 核心逻辑 (不含 scroll)
                         var matchedBagEl = null;
                         bagContainer.querySelectorAll('.bag-material').forEach(function(el) {
                             el.classList.remove('selected');
@@ -711,7 +711,7 @@
                         }
                     }
                     // 选中尺寸
-                    if (bagConfig.size && bagConfig.size !== '未选尺寸' ? bagConfig.size.split(' ')[0] : '尺寸待定';) {
+                    if (bagConfig.size && bagConfig.size !== '未选尺寸') {
                         setTimeout(function() {
                             var sizeContainer = document.getElementById('bag-size-container');
                             if (sizeContainer) {
@@ -719,7 +719,7 @@
                                     var onclick = el.getAttribute('onclick') || '';
                                     if (onclick.indexOf("'" + bagConfig.size + "'") !== -1) el.classList.add('selected');
                                 });
-                                bagConfig.size = '自定义尺寸 (未输入)';
+                                if (bagConfig.size === '自定义尺寸') {
                                     var customBox = document.getElementById('bag-custom-size-box');
                                     if (customBox) customBox.classList.remove('hidden');
                                     if (bagConfig.customWidth) { var w = document.getElementById('bag-custom-width'); if (w) w.value = bagConfig.customWidth; }
@@ -762,13 +762,13 @@
                 if (otherConfig.remark) { var el = document.getElementById('other-remark'); if (el) el.value = otherConfig.remark; }
             })();
 
-            // 辅料汇总更新(必须在视觉状态恢复之后，确保 DOM 输入框已填充)
+            // 辅料汇总更新 (必须在视觉状态恢复之后，确保 DOM 输入框已填充)
             for (var _cat in trimMap) {
                 var _isEnabled = document.querySelector('input[name="need_' + _cat + '"][value="yes"]');
                 if (_isEnabled && _isEnabled.checked) updateTrimSummaryTrigger(_cat);
             }
 
-            // CMT 客供物料逻辑保持不变
+            // CMT 状态
             const cmtData = _parse(d.cmt_enabled) || {};
             for (const cat in cmtData) {
                 var cmtVal = cmtData[cat];
@@ -807,10 +807,10 @@
             bulkLogisticsConfig = Object.assign({ term: 'DDP 双清包税', method: 'Sea' }, savedBulkCfg);
             bulkRows = savedBulkRows.length > 0 ? savedBulkRows : [];
 
-            // 切换交付模式 (会触发渲染
+            // 切换交付模式 (会触发渲染)
             switchDeliveryMode(mode);
 
-            // 延迟计算以确保 DOM 更新完毕
+            // 设置 DOM 输入值
             if (d.sample_dest) { var el = document.getElementById('sample-destination'); if (el) el.value = d.sample_dest; }
             if (d.bulk_dest) { var el2 = document.getElementById('bulk-destination'); if (el2) el2.value = d.bulk_dest; }
             if (d.bulk_target_price) { var el3 = document.getElementById('bulk-target-price'); if (el3) el3.value = d.bulk_target_price; }
@@ -870,7 +870,7 @@
                     }
                 });
             }
-            // 选中 bulk 运输方式按钮 (先清除默认selected)
+            // 选中 bulk 运输方式按钮 (先清除默认 selected)
             if (bulkLogisticsConfig.method) {
                 document.querySelectorAll('.bulk-method').forEach(function(el) {
                     el.classList.remove('selected');
@@ -955,7 +955,7 @@
                     if (cmtFilesData[cat].length > 0) renderCmtPreviews(cat);
                 });
 
-                // 修改原有的 handleBagFiles 预览逻辑，去除固定 60px 限制
+                // Trim files — generic nested‐path handler
                 var trimRefs = { metal: metalConfig, pad: padConfig, bag: bagConfig, hangtag: hangtagConfig, label: labelConfig, hygiene: hygieneConfig, other: otherConfig };
                 for (var tCat in trimRefs) {
                     (filesByCategory[tCat] || []).forEach(function(f) {
@@ -1070,7 +1070,7 @@
         // OEM Checklist 智能全选/联动逻辑
         // ==========================================
         
-        // 1. 如果点击了“无附加”，进入排他逻辑
+        // 1. 点击“一键全选/取消”按钮时触发
         function toggleAllOemChecklists() {
             const checkboxes = document.querySelectorAll('.oem-checklist-item input[type="checkbox"]');
             if (checkboxes.length === 0) return;
@@ -1129,7 +1129,7 @@
                     checklists.forEach(cb => { if (!cb.checked) allChecked = false; });
                     
                     if (!allChecked) {
-                        showMsg(_t("⚠️ 提交前置校验失败：\n\n您提交了自主设计 (OEM) 需求，为避免后期版型开发与大货生产出现工艺偏差，请务必逐一勾选确认「核心工艺与细节确认单」中的所有必填核对项。");), 'warn');
+                        showMsg(_t("⚠️ 提交前置校验失败：\n\n您提交了自主设计 (OEM) 需求，为避免后期版型开发与大货生产出现工艺偏差，请务必逐一勾选确认「核心工艺与细节确认单」中的所有必填核对项。"), 'warn');
                         
                         // 自动滚动到该区域，并做一次警示闪烁动画
                         const checklistArea = document.getElementById('oem-checklist-section');
@@ -1207,7 +1207,7 @@
                             <div class="details-btn" onclick="event.stopPropagation(); openDetailModal(${styleJson})" title="查看图片">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                             </div>
-                            <div class="customize-btn" onclick="event.stopPropagation(); openCustomModal(${styleJson}, this.closest('.option-item'))" title="版型轻定制">>
+                            <div class="customize-btn" onclick="event.stopPropagation(); openCustomModal(${styleJson}, this.closest('.option-item'))" title="版型轻定制">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
                             </div>
                             <img src="${coverImg}" class="option-img" loading="lazy">
@@ -1320,35 +1320,35 @@
             const oemPhysical = document.getElementById('oem-physical').checked; // 新增：获取寄样勾选状态
             if (hasOemFiles || oemRemark !== '' || oemPhysical || collectionName !== '') {
                 html += `<div style="border-top: 1px dashed #e2e8f0; padding-top: 8px;">`;
-                html += `<strong style="color:var(--primary-color);">OEM 自主设计包:</strong><br>`;
+                html += `<strong style="color:var(--primary-color);">${_t('OEM 自主设计包:')}</strong><br>`;
                 
                 // 【新增】显示项目名称和数量
                 if (collectionName) {
-                    html += `<span style="font-size: 11px; color: #1e293b; display:block; font-weight:600;">[ ${collectionName} ] - 共 ${collectionCount} 款</span>`;
+                    html += `<span style="font-size: 11px; color: #1e293b; display:block; font-weight:600;">[ ${collectionName} ] - ${_t('共')} ${collectionCount} ${_t('款')}</span>`;
                 } else if (collectionCount > 0) {
-                    html += `<span style="font-size: 11px; color: #1e293b; display:block; font-weight:600;">共 ${collectionCount} 款设计</span>`;
+                    html += `<span style="font-size: 11px; color: #1e293b; display:block; font-weight:600;">${_t('共')} ${collectionCount} ${_t('款设计')}</span>`;
                 }
                 
                 // 显示上传状态
                 if (hasOemFiles) {
-                    html += `<span style="font-size: 11px; color: #64748b; display:block;">- 已传: ${oemFilesData.ref.length}图 / ${oemFilesData.tech.length}文件</span>`;
+                    html += `<span style="font-size: 11px; color: #64748b; display:block;">- ${_t('已传:')} ${oemFilesData.ref.length}${_t('图 /')} ${oemFilesData.tech.length}${_t('文件')}</span>`;
                 }
                 
                 // 新增：显示寄样状态
                 if (oemPhysical) {
-                    html += `<span style="font-size: 11px; color: #64748b; display:block;">- <span style="color:#27ae60;">●</span> 寄送实体样衣</span>`;
+                    html += `<span style="font-size: 11px; color: #64748b; display:block;">- <span style="color:#27ae60;">●</span> ${_t('寄送实体样衣')}</span>`;
                     const trackingInput = document.querySelector('#oem-address-info input');
                     const trackingNo = trackingInput ? trackingInput.value.trim() : '';
                     if (trackingNo) {
                         html += `<span style="font-size: 10px; color: #94a3b8; display:block; padding-left:15px;">${_t('单号:')} ${trackingNo}</span>`;
                     } else if (oemPhysical) {
-                        html += `<span style="font-size: 10px; color: #f59e0b; display:block; padding-left:15px;">待更新物流单号</span>`;
+                        html += `<span style="font-size: 10px; color: #f59e0b; display:block; padding-left:15px;">${_t('待更新物流单号')}</span>`;
                     }                
                 }
         
                 // 如果只有备注没有文件和寄样，显示提示
                 if (!hasOemFiles && !oemPhysical && oemRemark !== '') {
-                    html += `<span style="font-size: 11px; color: #64748b; display:block;">- 仅文字需求说明</span>`;
+                    html += `<span style="font-size: 11px; color: #64748b; display:block;">- ${_t('仅文字需求说明')}</span>`;
                 }
                 html += `</div>`;
             }
@@ -1362,7 +1362,7 @@
         }
 
         // ==========================================
-        // 渲染轻定制弹窗的轮播图
+        // 2. ODM 轻定制 (Modal)
         // ==========================================
         let odmCustomData = {}; let currentEditingStyle = ''; let currentModalFiles = [];
         let selectedOdmStyles = []; 
@@ -1515,7 +1515,7 @@
 
         function renderOemStyleDescInputs() {
             const countInput = document.getElementById('oem-collection-count');
-            // 都不在预设里，按默认的中文拼音排序兜底
+            let count = parseInt(countInput.value) || 0; // 默认为 0
             if (count > 50) { count = 50; countInput.value = 50; }
             
             const container = document.getElementById('oem-style-desc-container');
@@ -1533,7 +1533,7 @@
                     <div style="display: flex; align-items: center; gap: 10px; animation: fadeIn 0.3s ease;">
                         <span style="font-size: 11px; font-weight: 600; color: var(--primary-color); min-width: 45px;">款 ${i + 1} :</span>
                         <input type="text" class="oem-input-mini" style="flex: 1; height: 32px; font-size: 12px; background: #fff;" 
-                               placeholder="简要标识 (如: 红色连体款 / Page 1 比基尼上衣)"
+                               placeholder="简要标识 (如: 红色连体款 / Page 1 比基尼上衣)" 
                                value="${safeValue}" 
                                oninput="oemStyleDescriptions[${i}] = this.value; updateCombinedStyleSummary();">
                     </div>
@@ -1567,7 +1567,7 @@
 
         function handleOemFiles(input, type) {
             Array.from(input.files).forEach(file => {
-                if (file.size > MAX_FILE_SIZE) { showMsg(_t('文件 ' + file.name + ' 超过 20MB'), 'error'); return; }
+                if (file.size > MAX_FILE_SIZE) { showMsg(`文件 ${file.name} 超过 20MB`, 'error'); return; }
                 if (oemFilesData[type].some(f => f.name === file.name && f.size === file.size)) return;
                 
                 oemFilesData[type].push(file);
@@ -1660,7 +1660,7 @@
             });
         });
 
-        // 如果修改的是款式，立刻根据款式类型校验一次当前数量是否达标
+        // --- 修改后 ---
         function toggleStyleMode(mode) {
             const list = document.getElementById('existing-styles'), upload = document.getElementById('custom-upload');
             const odmBtn = document.getElementById('mode-odm'), oemBtn = document.getElementById('mode-oem');
@@ -1742,12 +1742,12 @@
 
             if (currentStep === totalSteps) { 
                 // 优化：不再使用绿色的丑按钮
-                nextBtn.innerText = '确认并提交定制需求';
+                nextBtn.innerText = _t('确认并提交定制需求'); 
                 // 我们可以加一个标识类名，或者干脆保持品牌红
                 nextBtn.classList.add('is-final');
                 // nextBtn.style.backgroundColor = ''; // 删掉原来的 green 赋值
             } else { 
-                nextBtn.innerText = '继续下一步';
+                nextBtn.innerText = _t('继续下一步'); 
                 nextBtn.classList.remove('is-final');
             }
             
@@ -1760,7 +1760,7 @@
                     updateLogisticsSummary();
                 }
 
-            // 进入 Step 2 时，重新定位面料配置面板 (restore 时 DOM 不可见导致offsetTop=0 定位失败)
+            // 进入 Step 2 时，重新定位面料配置面板 (restore 时 DOM 不可见导致 offsetTop=0 定位失败)
             if (currentStep === 2 && activeFabricCat && fabricSelection[activeFabricCat] && fabricSelection[activeFabricCat].activeName) {
                 var _tabEl = document.querySelector('#fabric-sub-tabs .mode-option.active');
                 if (_tabEl) switchFabricCat(activeFabricCat, _tabEl);
@@ -1769,7 +1769,7 @@
 
         }
 
-        // 点击左上角Logo/标题 返回第一步（不清空数据）
+        // 点击左上角 Logo/标题 返回第一步（不清空数据）
         window.goToStep1 = function () {
             if (currentStep !== 1) changeStep(1 - currentStep);
         };
@@ -1783,14 +1783,14 @@
             dot.classList.remove('ok', 'warn');
             if (state === true) dot.classList.add('ok');
             else if (state === false) dot.classList.add('warn');
-            if (currentStep === totalSteps) {
+            // state === null → neutral (grey, no class)
         }
 
         function validateStyle() {
             const hasOdm = selectedOdmStyles.length > 0;
             const hasOem = typeof checkOemHasContent === 'function' && checkOemHasContent();
 
-            // 处理 OEM 及各种用户上传小图的点击放大
+            // 如果 OEM 有任何内容，则必须保证完整性
             let oemComplete = true;
             if (hasOem) {
                 // 1) 项目名称 + 款式数量 必填
@@ -1798,7 +1798,7 @@
                 const collectionCount = parseInt(document.getElementById('oem-collection-count')?.value) || 0;
                 if (!collectionName || collectionCount <= 0) oemComplete = false;
 
-                // 2) 备注、参考图、技术文件至少有一致
+                // 2) 备注、参考图、技术文件 至少有一项
                 const hasRemark = (document.getElementById('oem-remark')?.value || '').trim() !== '';
                 const hasRef = typeof oemFilesData !== 'undefined' && oemFilesData.ref.length > 0;
                 const hasTech = typeof oemFilesData !== 'undefined' && oemFilesData.tech.length > 0;
@@ -1812,7 +1812,7 @@
                 }
             }
 
-            // 至少有一种模式，若OEM 若有内容则必须完整
+            // 至少有一种模式，且 OEM 若有内容则必须完整
             const ok = (hasOdm || hasOem) && oemComplete;
             setDot('dot-style', ok);
             return ok;
@@ -1822,7 +1822,7 @@
             const isCmt = document.getElementById('fabric-cmt-check')?.checked;
 
             if (isCmt) {
-                // CMT 客供物料逻辑保持不变
+                // CMT 模式：有描述或文件即可
                 const desc = (document.getElementById('fabric-cmt-desc')?.value || '').trim();
                 const hasFiles = typeof cmtFilesData !== 'undefined' && cmtFilesData.fabric.length > 0;
                 const ok = desc !== '' || hasFiles;
@@ -1830,7 +1830,7 @@
                 return ok;
             }
 
-            // 非CMT：面料tab 必须选中且配置完整，里料和网纱可选但若选了也需完整
+            // 非 CMT：面料 tab 必须选中且配置完整，里料和网纱可选但若选了也需完整
             let mainFabricOk = false;
             let allComplete = true;
 
@@ -1848,7 +1848,7 @@
 
                     if (isMain) mainFabricOk = true;
 
-                    // 切换按钮状态
+                    // 定制找样模式需有描述
                     if (sel.activeName === 'CUSTOM_SOURCING') {
                         if (!config.customDesc || config.customDesc.trim() === '') allComplete = false;
                         continue;
@@ -1861,7 +1861,7 @@
                         if (!config.colorText || config.colorText.trim() === '') allComplete = false;
                     }
 
-                    // 切换按钮状态
+                    // 里料局部模式需有描述
                     if (isLining && config.fullLining === false) {
                         if (!config.liningPlacement || config.liningPlacement.trim() === '') allComplete = false;
                     }
@@ -1874,7 +1874,7 @@
         }
 
         function validateTrims() {
-            deliveryMode: currentDeliveryMode, // sample or bulk
+            // Step 3 overall: at least one trim decision made (enabled or disabled) — always passes
             // We just mark green if all enabled trims are configured
             const trimChecks = ['metal', 'pad', 'bag', 'hangtag', 'label', 'hygiene', 'other'];
             let allOk = true;
@@ -1882,7 +1882,7 @@
                 const enabledRadio = document.querySelector(`input[name="need_${t}"][value="yes"]`);
                 const isEnabled = enabledRadio && enabledRadio.checked;
 
-                // CMT 模式：need 为"no" 且 cmt 勾选，描述或文件至少有一致
+                // CMT 模式：need 为 "no" 但 cmt 勾选，描述或文件至少有一项
                 const cmtCheck = document.getElementById(`cmt-check-${t}`);
                 if (!isEnabled && cmtCheck && cmtCheck.checked) {
                     const desc = (document.getElementById(`cmt-desc-${t}`)?.value || '').trim();
@@ -1891,7 +1891,7 @@
                     continue;
                 }
 
-                if (!isEnabled) continue; // 未启用且非CMT = skip
+                if (!isEnabled) continue; // 未启用且无 CMT = skip
                 
                 if (t === 'other') {
                     const hasRemark = (document.getElementById('other-remark')?.value || '').trim() !== '';
@@ -1901,9 +1901,9 @@
                 if (t === 'bag') {
                     if (typeof bagConfig !== 'undefined') {
                         // 必须选择材质卡片
-                        if (bagConfig.material === '未选材质') { ) { allOk = false; }
-                        // 展开时，平滑滚动至该信息框的中心位置
-                        bagConfig.size = '自定义尺寸 (未输入)';
+                        if (bagConfig.material === '未选材质') { allOk = false; }
+                        // 自定义尺寸需有长宽
+                        if (bagConfig.size === '自定义尺寸' || bagConfig.size === '自定义尺寸 (未输入)') { allOk = false; }
                         // 单色/彩色印刷需有文件或文本
                         if (bagConfig.print && bagConfig.print !== '空白无印') {
                             const hasRemark = (document.getElementById('bag-remark')?.value || '').trim() !== '';
@@ -1920,7 +1920,7 @@
                             const hasFiles = padConfig.shapeFiles && padConfig.shapeFiles.length > 0;
                             if (!hasRemark && !hasFiles) { allOk = false; }
                         }
-                        if (padConfig.color === '其他定制色') {) {
+                        if (padConfig.color === '其他定制色') {
                             const v = (document.getElementById('pad-color-other')?.value || '').trim();
                             if (!v) { allOk = false; }
                         }
@@ -1949,34 +1949,34 @@
                         if (!hasRemark && !hasFiles) { allOk = false; }
 
                         if (labelConfig.mode === 'custom') {
-                            // A. 材质量其他"需有描述或文件
+                            // A. 材质选"其他"需有描述或文件
                             if (labelConfig.material === '其他') {
                                 const r = (document.getElementById('label-material-remark')?.value || '').trim() !== '';
                                 const f = labelConfig.otherMatFiles && labelConfig.otherMatFiles.length > 0;
                                 if (!r && !f) { allOk = false; }
                             }
-                            // A2. 前三个材质印标/TPU标织唛标需有尺寸
-                            if (['印标', 'TPU标, '织唛标].includes(labelConfig.material)) {
+                            // A2. 前三个材质(印标/TPU标/织唛标)需有尺寸
+                            if (['印标', 'TPU标', '织唛标'].includes(labelConfig.material)) {
                                 const size = (document.getElementById('label-custom-size')?.value || '').trim();
                                 if (!size) { allOk = false; }
                             }
-                            // A3. TPU标织唛标需选择缝制方式
-                            { name: '织唛标', desc: '经典品牌感, 质感厚实', image: 'https://files.yiswim.cloud/uploads/img_b54b91f9-e177-46cf-a636-df595ea1baa8_zhimaibiao.webp', icon: '' },
+                            // A3. TPU标/织唛标需选择缝制方式
+                            if (['TPU标', '织唛标'].includes(labelConfig.material)) {
                                 if (!labelConfig.method || labelConfig.method.trim() === '') { allOk = false; }
                             }
-                            // B. 缝制方式为"其他"需有描述或文件
+                            // B. 缝制方式选"其他"需有描述或文件
                             if (labelConfig.method === '其他') {
                                 const r = (document.getElementById('label-sewing-remark')?.value || '').trim() !== '';
                                 const f = labelConfig.sewingFiles && labelConfig.sewingFiles.length > 0;
                                 if (!r && !f) { allOk = false; }
                             }
-                            // C. 上装位置为"自定义其他位置需有描述
-                            if (labelConfig.components.includes('上装/连体') && labelConfig.placements.top === '自定义其他位置) {
+                            // C. 上装位置选"自定义其他位置"需有描述
+                            if (labelConfig.components.includes('上装/连体') && labelConfig.placements.top === '自定义其他位置') {
                                 const v = (document.getElementById('label-custom-top-text')?.value || '').trim();
                                 if (!v) { allOk = false; }
                             }
-                            // D. 下装位置为"自定义其他位置需有描述
-                            if (labelConfig.components.includes('下装/裤装') && labelConfig.placements.bottom === '自定义其他位置) {
+                            // D. 下装位置选"自定义其他位置"需有描述
+                            if (labelConfig.components.includes('下装/裤装') && labelConfig.placements.bottom === '自定义其他位置') {
                                 const v = (document.getElementById('label-custom-bottom-text')?.value || '').trim();
                                 if (!v) { allOk = false; }
                             }
@@ -1995,36 +1995,36 @@
                         const hasFiles = hangtagConfig.designFiles && hangtagConfig.designFiles.length > 0;
                         if (!hasRemark && !hasFiles) { allOk = false; }
 
-                        // A. 材质量其他"需有描述或文件
+                        // A. 材质选"其他"需有描述或文件
                         if (hangtagConfig.material === '其他') {
                             const r = (document.getElementById('hangtag-material-remark')?.value || '').trim() !== '';
                             const f = hangtagConfig.otherMatFiles && hangtagConfig.otherMatFiles.length > 0;
                             if (!r && !f) { allOk = false; }
                         }
-                        // B. 形状态异形定制"需有描述或文件
-                        if (hangtagConfig.shape === '尺寸或特殊异形定制');) {
+                        // B. 形状选"异形定制"需有描述或文件
+                        if (hangtagConfig.shape === '尺寸或特殊异形定制') {
                             const r = (document.getElementById('hangtag-shape-remark')?.value || '').trim() !== '';
                             const f = hangtagConfig.shapeFiles && hangtagConfig.shapeFiles.length > 0;
                             if (!r && !f) { allOk = false; }
                         }
-                        // C. 工艺为"其他"需有描述或文件
+                        // C. 工艺选"其他"需有描述或文件
                         if (hangtagConfig.crafts && hangtagConfig.crafts.includes('其他')) {
                             const r = (document.getElementById('hangtag-craft-remark')?.value || '').trim() !== '';
                             const f = hangtagConfig.otherCraftFiles && hangtagConfig.otherCraftFiles.length > 0;
                             if (!r && !f) { allOk = false; }
                         }
-                        // D. 吊粒为"定制材质与形状需有描述或文件
-                        if (hangtagConfig.stringType === '定制材质与形状');) {
+                        // D. 吊粒选"定制材质与形状"需有描述或文件
+                        if (hangtagConfig.stringType === '定制材质与形状') {
                             const r = (document.getElementById('hangtag-string-remark')?.value || '').trim() !== '';
                             const f = hangtagConfig.stringFiles && hangtagConfig.stringFiles.length > 0;
                             if (!r && !f) { allOk = false; }
                         }
-                        // D. 吊粒颜色为"其他"需有输入
+                        // D. 吊粒颜色选"其他"需有输入
                         if (hangtagConfig.stringColor === '其他') {
                             const v = (document.getElementById('hangtag-string-color-other')?.value || '').trim();
                             if (!v) { allOk = false; }
                         }
-                        // 控制自定义尺寸输入框的显隐
+                        // 子母牌勾选后需有描述
                         if (hangtagConfig.isSet) {
                             const v = (document.getElementById('hangtag-set-remark')?.value || '').trim();
                             if (!v) { allOk = false; }
@@ -2034,7 +2034,7 @@
                 // hygiene: custom mode checks
                 if (t === 'hygiene') {
                     if (typeof hygieneConfig !== 'undefined' && hygieneConfig.mode === 'custom') {
-                        // A. 形状态其他定制形状"需有描述或文件
+                        // A. 形状选"其他定制形状"需有描述或文件
                         if (hygieneConfig.shape === '其他定制形状') {
                             const r = (document.getElementById('hygiene-shape-remark')?.value || '').trim() !== '';
                             const f = hygieneConfig.shapeFiles && hygieneConfig.shapeFiles.length > 0;
@@ -2064,7 +2064,7 @@
                     if (typeof sampleRows !== 'undefined') {
                         ok = sampleRows.some(r => r.style && r.style !== '');
                     }
-                    // 收起时清空已填写的尺寸，恢复默认状态
+                    // 必须选择样品接收目的地
                     const dest = document.getElementById('sample-destination')?.value || '';
                     if (!dest) { ok = false; }
                     // 勾选核算大货价时，预估大货数量不能为空
@@ -2080,7 +2080,7 @@
                     // 必须填写期望 EXW 大货单价范围
                     const price = (document.getElementById('bulk-target-price')?.value || '').trim();
                     if (!price) { ok = false; }
-                    // 动态搬运面板到所点击卡片这一行的末尾
+                    // 必须选择目的地国家
                     const dest = document.getElementById('bulk-destination')?.value || '';
                     if (!dest) { ok = false; }
                 }
@@ -2111,7 +2111,7 @@
         }
 
         // --- 最终表单提交出口 (新增) ---
-        // 图片压缩：Canvas 缩放到最大1920px，质量0.85
+        // 图片压缩：Canvas 缩放到最大 1920px，质量 0.85
         function compressImage(file, maxSize = 1920, quality = 0.85) {
             return new Promise((resolve) => {
                 if (!file.type.match(/^image\/(jpeg|png|webp)$/)) { resolve(file); return; }
@@ -2131,7 +2131,7 @@
                         if (blob && blob.size < file.size) {
                             resolve(new File([blob], file.name, { type: blob.type, lastModified: file.lastModified }));
                         } else {
-                            resolve(file); // 压缩后更大就用原件
+                            resolve(file); // 压缩后更大就用原图
                         }
                     }, file.type === 'image/png' ? 'image/png' : 'image/jpeg', quality);
                 };
@@ -2160,7 +2160,7 @@
             m.style.display = 'flex';
             document.getElementById('uploadProgressBar').style.width = '0%';
             document.getElementById('uploadPercent').textContent = '0%';
-            document.getElementById('uploadTitle').textContent = _t('正在压缩并上传文件..');
+            document.getElementById('uploadTitle').textContent = _t('正在压缩并上传文件...');
             document.getElementById('uploadSubtitle').textContent = _t('请勿关闭页面');
             document.getElementById('uploadSpinner').style.display = 'block';
         }
@@ -2175,7 +2175,7 @@
             document.getElementById('uploadModal').style.display = 'none';
         }
 
-        // 辅助：从 config 对象中剥离File 对象，返回纯 JSON 和文件清单
+        // 辅助：从 config 对象中剥离 File 对象，返回纯 JSON 和文件清单
         // parentKey 用于组合嵌套路径，如 "拉链头__styleFiles"
         function stripFiles(obj, category, subKey) {
             const files = [];
@@ -2213,13 +2213,13 @@
                 if (catObj.configs) {
                     for (const [fabName, fabConf] of Object.entries(catObj.configs)) {
                         const baseKey = `${catName}__${fabName}`;
-                        // 先单独提取prints 文件，标记为 print 子类
+                        // 先单独提取 prints 文件，标记为 print 子类
                         const printFiles = (fabConf.prints || []).filter(f => f instanceof File);
                         const printRemote = (fabConf.prints || []).filter(f => isRemoteFile(f));
                         const printData = (fabConf.prints || []).filter(f => !(f instanceof File) && !isRemoteFile(f));
                         printFiles.forEach(f => allFiles.push({ file: f, category: 'fabric', subKey: baseKey + '__print' }));
                         printRemote.forEach(f => allFiles.push({ file: f, category: 'fabric', subKey: baseKey + '__print', remote: true }));
-                        // 用剩余数据调用stripFiles
+                        // 用剩余数据调用 stripFiles
                         const confWithoutPrints = { ...fabConf, prints: printData };
                         const s = stripFiles(confWithoutPrints, 'fabric', baseKey);
                         catClean.configs[fabName] = s.clean;
@@ -2235,7 +2235,7 @@
         // 暂存草稿功能
         // ==========================================
         function collectFormState() {
-            // 同步 DOM 输入值到配置对象 (与submitForm 保持一致
+            // 同步 DOM 输入值到配置对象 (和 submitForm 保持一致)
             padConfig.otherColor = document.getElementById('pad-color-other')?.value.trim() || '';
             padConfig.shapeRemark = document.getElementById('pad-shape-remark')?.value.trim() || '';
             padConfig.remark = document.getElementById('pad-remark')?.value.trim() || '';
@@ -2254,7 +2254,7 @@
                 sampleConfig.intentPrice = document.getElementById('sample-intent-price')?.value || '';
             }
 
-            // 收集辅料需求不需要状态
+            // 收集辅料需要/不需要状态
             const trimCategories = ['metal', 'pad', 'bag', 'hangtag', 'label', 'hygiene', 'other'];
             const trimEnabled = {};
             trimCategories.forEach(cat => {
@@ -2272,7 +2272,7 @@
                 }
             }
 
-            // CMT 客供物料逻辑保持不变
+            // CMT 状态
             const cmtEnabled = {};
             trimCategories.forEach(cat => {
                 const cmtCb = document.getElementById(`cmt-check-${cat}`);
@@ -2293,7 +2293,7 @@
             const checkedIds = [];
             document.querySelectorAll('.oem-checklist-item input[type="checkbox"]:checked').forEach(cb => checkedIds.push(cb.value));
 
-            // odmCustomData 只保留remark
+            // odmCustomData 只保留 remark
             const odmClean = {};
             for (const [sn, data] of Object.entries(odmCustomData)) {
                 odmClean[sn] = { remark: data.remark || '' };
@@ -2343,12 +2343,12 @@
                 assign_pattern: document.getElementById('assign-pattern')?.value || '',
                 assign_sewing: document.getElementById('assign-sewing')?.value || '',
                 nda_agreed_at: document.getElementById('nda-agree')?.checked ? new Date().toISOString() : null,
-                // 取消当前网格内所有卡片的选中状态
+                // 元信息
                 current_step: currentStep
             };
         }
 
-        // 构造FormData (暂存草稿 & 正式提交共用)
+        // 构造 FormData (暂存草稿 & 正式提交共用)
         function buildFormData() {
             // 同步 DOM 输入值到配置对象
             padConfig.otherColor = document.getElementById('pad-color-other')?.value.trim() || '';
@@ -2372,7 +2372,7 @@
             const fd = new FormData();
             const remoteFiles = [];
 
-            // 处理款式、面料、包装袋卡片的右上角点击
+            // —— Step 1: 款式 ——
             fd.append('odm_styles', JSON.stringify(selectedOdmStyles));
             const odmClean = {};
             for (const [styleName, data] of Object.entries(odmCustomData)) {
@@ -2404,7 +2404,7 @@
                 else { fd.append('files[oem][ref]', f); }
             });
 
-            // 处理款式、面料、包装袋卡片的右上角点击
+            // —— Step 2: 面料 ——
             const fabResult = stripFabricFiles(fabricSelection);
             fd.append('fabric_selection', JSON.stringify(fabResult.clean));
             fabResult.files.forEach(item => {
@@ -2412,7 +2412,7 @@
                 else { fd.append(`files[fabric][${item.subKey}]`, item.file); }
             });
 
-            // ——Step 3: 辅料 ——
+            // —— Step 3: 辅料 ——
             const cmtEnabled = {};
             const trimCategories = ['metal', 'pad', 'bag', 'hangtag', 'label', 'hygiene', 'other'];
             trimCategories.forEach(cat => {
@@ -2460,7 +2460,7 @@
                 }
             }
 
-            // 步骤 4: 交付逻辑 (物流与报价规划)
+            // —— Step 4: 物流 ——
             fd.append('delivery_mode', currentDeliveryMode);
             fd.append('sample_rows', JSON.stringify(sampleRows));
             fd.append('sample_config', JSON.stringify(sampleConfig));
@@ -2475,7 +2475,7 @@
                 else { fd.append('files[bulkPacking][ref]', f); }
             });
 
-            // ——Step 5: 客户档案 ——
+            // —— Step 5: 客户档案 ——
             fd.append('contact_name', document.getElementById('final-contact-name')?.value.trim() || '');
             fd.append('contact_info', document.getElementById('final-contact-info')?.value.trim() || '');
             fd.append('brand_name', document.getElementById('final-brand-name')?.value.trim() || '');
@@ -2531,7 +2531,7 @@
             if (!v.allValid) {
                 // 构造缺失项提示
                 const missing = [];
-                if (!v.style) missing.push(_t('① 款式定义：请至少选择一个 ODM 款式或上传OEM 设计；OEM 需填写项目名称、款式数量，提供描述/图片/文件之一，并勾选全部确认项'));
+                if (!v.style) missing.push(_t('① 款式定义：请至少选择一个 ODM 款式或上传 OEM 设计；OEM 需填写项目名称、款式数量，提供描述/图片/文件之一，并勾选全部确认项'));
                 if (!v.fabric) missing.push(_t('② 面料材质：请至少选择一种面料'));
                 if (!v.trims) missing.push(_t('③ 品牌辅料：已启用的辅料需完善配置'));
                 if (!v.shipping) missing.push(_t('④ 物流交付：请在表格中至少选择一个款式'));
@@ -2539,7 +2539,7 @@
                 
                 showMsg(_t('提交前请完善以下必填内容：') + '\n\n' + missing.join('\n'), 'warn');
                 
-                // 区域显隐切换
+                // 跳转到第一个有问题的步骤
                 const stepMap = { style: 1, fabric: 2, trims: 3, shipping: 4, contact: 5 };
                 for (const key of ['style', 'fabric', 'trims', 'shipping', 'contact']) {
                     if (!v[key]) {
@@ -2551,14 +2551,14 @@
                 return;
             }
             
-            // 2. NDA 校验 (仅提交时检查
+            // 2. NDA 校验 (仅提交时检查)
             const ndaChecked = document.getElementById('nda-agree').checked;
             if (!ndaChecked) {
-                alert("提交前请阅读并勾选同意商业保密协议 (NDA)。");
+                showMsg(_t("提交前请阅读并勾选同意商业保密协议 (NDA)。"), 'warn');
                 return;
             }
         
-            // 3. 构造FormData
+            // 3. 构造 FormData
             const fd = buildFormData();
             if (currentDraftId) fd.append('draft_id', String(currentDraftId));
 
@@ -2569,7 +2569,7 @@
             showUploadModal();
 
             try {
-                // 搬运面板到当前行下方
+                // 压缩所有图片文件
                 document.getElementById('uploadTitle').textContent = _t('正在压缩图片...');
                 const compressedFd = await compressFormDataFiles(fd);
 
@@ -2697,7 +2697,7 @@
                 // 如果两个都在预设里，按预设的数组索引排序 (0, 1, 2...)
                 if (indexA !== -1 && indexB !== -1) return indexA - indexB; 
                 
-                // 如果 b 在预设里，a 不在，那么 b 肯定排在前面
+                // 如果 a 在预设里，b 不在，那么 a 肯定排在前面
                 if (indexA !== -1) return -1; 
                 
                 // 如果 b 在预设里，a 不在，那么 b 肯定排在前面
@@ -2776,7 +2776,7 @@
                     }
 
                     // 3. 拼接并设置优雅的兜底文案
-                    const subText = [compStr, gsmStr].filter(Boolean).join(' | ') || '精选定制面料';;
+                    const subText = [compStr, gsmStr].filter(Boolean).join(' | ') || '精选定制面料';
                     // ----------------------------------------
                     
                     const cardHtml = `
@@ -2883,7 +2883,7 @@
 
                     if (isCustomSourcing) {
                         // 定制找样逻辑
-                        document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：定制开发/全球找样`;`;
+                        document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：定制开发/全球找样`;
                         [modeSwitcher, solidArea, printArea].forEach(area => area?.classList.add('hidden'));
                         if(customForm) customForm.classList.remove('hidden');
                         
@@ -2955,7 +2955,7 @@
             const config = fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName];
             
             Array.from(files).forEach(file => {
-                if (file.size > 20 * 1024 * 1024) { showMsg(_t('印花文件 ' + file.name + ' 超过 20MB'), 'error'); return; }
+                if (file.size > 20 * 1024 * 1024) { showMsg(`印花文件 ${file.name} 超过 20MB`, 'error'); return; }
                 if (!config.prints.some(f => f.name === file.name && f.size === file.size)) {
                     config.prints.push(file);
                 }
@@ -3013,7 +3013,7 @@
             const config = fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName];
             
             Array.from(files).forEach(file => {
-                if (file.size > 20 * 1024 * 1024) { showMsg(_t('文件 ' + file.name + ' 超过 20MB'), 'error'); return; }
+                if (file.size > 20 * 1024 * 1024) { showMsg(`文件 ${file.name} 超过 20MB`, 'error'); return; }
                 if (!config.files.some(f => f.name === file.name && f.size === file.size)) {
                     config.files.push(file);
                 }
@@ -3146,7 +3146,7 @@
                 // A. 定制找样模式 UI
                 [modeSwitcher, solidArea, printArea].forEach(area => area?.classList.add('hidden'));
                 customForm.classList.remove('hidden');
-                document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：定制开发/全球找样`;`;
+                document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：定制开发/全球找样`;
                 
                 // 恢复定制表单数据
                 document.getElementById('custom-fabric-desc').value = config.customDesc || '';
@@ -3226,7 +3226,7 @@
             const config = fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName];
             
             Array.from(files).forEach(file => {
-                if (file.size > 20 * 1024 * 1024) { showMsg(_t('文件 ' + file.name + ' 超过 20MB'), 'error'); return; }
+                if (file.size > 20 * 1024 * 1024) { showMsg(`文件 ${file.name} 超过 20MB`, 'error'); return; }
                 if (!config.customFiles.some(f => f.name === file.name && f.size === file.size)) {
                     config.customFiles.push(file);
                 }
@@ -3279,7 +3279,7 @@
             
             config.printType = type;
             
-            // 检查新切换的分类是否已有选中的面料，如有则恢复面板
+            // 切换 UI 选中态
             el.parentNode.querySelectorAll('.print-type-item').forEach(item => item.classList.remove('selected'));
             el.classList.add('selected');
             
@@ -3573,7 +3573,7 @@
                 const selection = fabricSelection[key];
                 const catName = selection.originalCatName;
                 const catDisplayName = _t(catName);
-                let statusText = '<span style="color:#cbd5e1;">未选</span>';
+                let statusText = '<span style="color:#cbd5e1;">' + _t('未选') + '</span>';
                 
                 if (selection.activeName) {
                     hasSelection = true;
@@ -3598,8 +3598,8 @@
                     // --- 新增：里料的覆盖范围追加显示 ---
                     if (catName.includes('里料') || catName.includes('Lining')) {
                         if (config.fullLining === false) {
-                            const placementText = config.liningPlacement ? config.liningPlacement.substring(0, 10) + '...' : '待补充说明';
-                            statusText += `<br><span style="font-size:10px; color:#d97706; font-weight:600;">局部衬里: ${placementText}</span>`;
+                            const placementText = config.liningPlacement ? config.liningPlacement.substring(0, 10) + '...' : _t('待补充说明');
+                            statusText += `<br><span style="font-size:10px; color:#d97706; font-weight:600;">${_t('局部衬里:')} ${placementText}</span>`;
                         }
                     }
                 }
@@ -3615,7 +3615,7 @@
             if (isCmt) {
                 hasSelection = true;
                 const trackingNo = document.getElementById('fabric-cmt-tracking').value.trim();
-                const trackingText = trackingNo ? `单号: ${trackingNo}` : '待更新单号';
+                const trackingText = trackingNo ? `${_t('单号:')} ${trackingNo}` : _t('待更新单号');
                 
                 html += `<div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #e2e8f0; font-size:12px; color:var(--text-main); text-align:right;">
                             <span style="color:var(--primary-color); font-weight:600;">${_t('客户自行提供物料 (CMT)')}</span><br>
@@ -3625,7 +3625,7 @@
         
             const sumFabricEl = document.getElementById('sum-fabric');
             if (sumFabricEl) {
-                sumFabricEl.innerHTML = hasSelection ? html : '<div style="text-align:right; font-size:12px; color:#94a3b8;">未选</div>';
+                sumFabricEl.innerHTML = hasSelection ? html : '<div style="text-align:right; font-size:12px; color:#94a3b8;">' + _t('未选') + '</div>';
             }
             validateFabric();
         }
@@ -3663,7 +3663,7 @@
             document.querySelectorAll('.sub-pane').forEach(p => p.classList.remove('active')); document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
             document.getElementById(`pane-${paneId}`).classList.add('active'); el.classList.add('active');
 
-            // 切换到bag/label 时重新定位配置面板(restore 时 pane 在 display:none 导致 offsetTop=0)
+            // 切换到 bag/label 时重新定位配置面板 (restore 时 pane 为 display:none 导致 offsetTop=0)
             if (paneId === 'bag') {
                 var _bagPanel = document.getElementById('bag-config-panel');
                 var _bagContainer = document.getElementById('bag-list-container');
@@ -3718,7 +3718,7 @@
                     }, 50);
                 } else {
                     infoBox.classList.add('hidden');
-                    // CMT 客供物料逻辑保持不变
+                    // 收起时，清空该分类下用户填写的 CMT 数据
                     const trackingInput = document.getElementById(`cmt-tracking-${category}`);
                     const descInput = document.getElementById(`cmt-desc-${category}`);
                     if (trackingInput) trackingInput.value = '';
@@ -3765,7 +3765,7 @@
                 const fileCount = cmtFilesData[category].length;
                 
                 let detailHtml = descVal ? `<br><span style="font-size:10px; color:#b45309;">${_t('描述:')} ${descVal.substring(0, 12)}...</span>` : '<br><span style="font-size:10px; color:#ef4444;">' + _t('待写描述') + '</span>';
-                let fileHtml = fileCount > 0 ? ` <span style="color:#10b981;">(附${fileCount}图)</span>` : '';
+                let fileHtml = fileCount > 0 ? ` <span style="color:#10b981;">(${fileCount} ${_t('图')})</span>` : '';
         
                 stEl.innerHTML = `
                     <div style="text-align:right;">
@@ -3776,7 +3776,7 @@
                 validateTrims();
                 return true; 
             }
-            stEl.innerText = '不需要';;
+            stEl.innerText = '不需要';
             stEl.style.color = '#64748b'; 
             stEl.style.fontWeight = 'normal';
             validateTrims();
@@ -3827,7 +3827,7 @@
         let hygieneConfig = {
             mode: 'auto',              // 主模式：auto 或 custom
             material: '透明 PET (标准)',
-            shape: '通用葫芦形',,
+            shape: '通用葫芦形',
             size: '',
             designFiles: [],           // 印刷设计图
             shapeFiles: [],            // 异形定制刀模图
@@ -3960,7 +3960,7 @@
             else if (type === 'apply') { targetArray = hygieneConfig.applyFiles; nameId = 'hygieneApplyFileName'; }
             
             files.forEach(file => {
-                if (file.size > 20 * 1024 * 1024) { showMsg(_t('文件 ' + file.name + ' 超过 20MB'), 'error'); return; }
+                if (file.size > 20 * 1024 * 1024) { showMsg(`文件 ${file.name} 超过 20MB`, 'error'); return; }
                 if (!targetArray.some(f => f.name === file.name && f.size === file.size)) {
                     targetArray.push(file);
                 }
@@ -4017,7 +4017,7 @@
         // 6. 移除文件
         function removeHygieneFile(index, type) {
             let targetArray, nameId, defaultText;
-            if (type === 'design') { targetArray = hygieneConfig.designFiles; nameId = 'hygieneFileName'; defaultText = '点击上传 AI / PDF / 高清图'; }; }
+            if (type === 'design') { targetArray = hygieneConfig.designFiles; nameId = 'hygieneFileName'; defaultText = '点击上传 AI / PDF / 高清图'; }
             else if (type === 'shape') { targetArray = hygieneConfig.shapeFiles; nameId = 'hygieneShapeFileName'; defaultText = '点击上传'; }
             else if (type === 'apply') { targetArray = hygieneConfig.applyFiles; nameId = 'hygieneApplyFileName'; defaultText = '点击上传'; }
         
@@ -4089,7 +4089,7 @@
             method: '对折环缝', // 默认选中项
             components: ['上装/连体'],
             placements: {
-                'top': '领后中,
+                'top': '领后中',
                 'bottom': '后腰内中'
             },
             placementFiles: {
@@ -4158,7 +4158,7 @@
             // 控制对应网格内面板的显隐并计算箭头位置
             const customArea = document.getElementById(`label-placement-custom-${gridType}`);
             if (customArea) {
-                const isCustom = (posName === '自定义其他位置'););
+                const isCustom = (posName === '自定义其他位置');
                 customArea.classList.toggle('hidden', !isCustom);
                 
                 if (isCustom) {
@@ -4207,7 +4207,7 @@
             { name: '印标', desc: '100%无触感, 泳装首选', image: 'https://files.yiswim.cloud/uploads/img_12b71c3b-96ed-4d19-962c-af5d4d66bb8d_heattransfer.webp', icon: '' },
             { name: 'TPU标', desc: '高弹防水, 亲肤磨砂', image: 'https://files.yiswim.cloud/uploads/img_345e3377-f8d5-479d-9437-c0caaa1fe532_tpu.webp', icon: '' },
             { name: '织唛标', desc: '经典品牌感, 质感厚实', image: 'https://files.yiswim.cloud/uploads/img_b54b91f9-e177-46cf-a636-df595ea1baa8_zhimaibiao.webp', icon: '' },
-            { name: '其他', desc: '缎面标/特种标定制'制', icon: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14"/></svg>' }
+            { name: '其他', desc: '缎面标/特种标定制', icon: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14"/></svg>' }
         ];
         
         // 更新为仅保留3个选项，并加入图片属性
@@ -4343,12 +4343,12 @@
                 hasWarning = true;
                 warningText.innerHTML = (window.__lang === 'en')
                     ? "<strong>Cost reminder:</strong> Heat transfer labels are recommended in <strong>single color (Black or White)</strong>. Multi-color gradient or overprint designs incur higher plate fees and unit costs."
-                    : "<strong>成本提醒：</strong>成本提醒：</strong>无感印标建议设计为 <strong>单色 (黑色或白色)</strong>。如需彩色渐变或多色套印，开版费及单价较高。";;
-            } else if (name === 'TPU标') {) {
+                    : "<strong>成本提醒：</strong>无感印标建议设计为 <strong>单色 (黑色或白色)</strong>。如需彩色渐变或多色套印，开版费及单价较高。";
+            } else if (name === 'TPU标') {
                 hasWarning = true;
                 warningText.innerHTML = (window.__lang === 'en')
                     ? "<strong>Cost reminder:</strong> TPU labels are recommended in <strong>standard Black</strong>. Special base colors or colored text require higher MOQ and cost more."
-                    : "<strong>成本提醒：</strong>TPU 柔感标建议选择 <strong>常规黑色</strong>。如需指定特殊底色或彩色字，需满足较高的起订量 (MOQ) 且成本较高。";;
+                    : "<strong>成本提醒：</strong>TPU 柔感标建议选择 <strong>常规黑色</strong>。如需指定特殊底色或彩色字，需满足较高的起订量 (MOQ) 且成本较高。";
             }
             
             if (warningBox) {
@@ -4388,7 +4388,7 @@
         function handleLabelMatFiles(input) {
             const files = Array.from(input.files);
             files.forEach(file => {
-                if (file.size > 20 * 1024 * 1024) { showMsg(_t('文件 ' + file.name + ' 超过 20MB'), 'error'); return; }
+                if (file.size > 20 * 1024 * 1024) { showMsg(`文件 ${file.name} 超过 20MB`, 'error'); return; }
                 if (!labelConfig.otherMatFiles.some(f => f.name === file.name && f.size === file.size)) {
                     labelConfig.otherMatFiles.push(file);
                 }
@@ -4485,7 +4485,7 @@
         function handleLabelSewingFiles(input) {
             const files = Array.from(input.files);
             files.forEach(file => {
-                if (file.size > 20 * 1024 * 1024) { showMsg(_t('文件 ' + file.name + ' 超过 20MB'), 'error'); return; }
+                if (file.size > 20 * 1024 * 1024) { showMsg(`文件 ${file.name} 超过 20MB`, 'error'); return; }
                 if (!labelConfig.sewingFiles.some(f => f.name === file.name && f.size === file.size)) {
                     labelConfig.sewingFiles.push(file);
                 }
@@ -4538,7 +4538,7 @@
         function handleLabelFiles(input) {
             const files = Array.from(input.files);
             files.forEach(file => {
-                if (file.size > 20 * 1024 * 1024) { showMsg(_t('文件 ' + file.name + ' 超过 20MB'), 'error'); return; }
+                if (file.size > 20 * 1024 * 1024) { showMsg(`文件 ${file.name} 超过 20MB`, 'error'); return; }
                 if (!labelConfig.designFiles.some(f => f.name === file.name && f.size === file.size)) {
                     labelConfig.designFiles.push(file);
                 }
@@ -4597,7 +4597,7 @@
             let targetArray = labelConfig.placementFiles[posType];
             
             files.forEach(file => {
-                if (file.size > 20 * 1024 * 1024) { showMsg(_t('文件 ' + file.name + ' 超过 20MB'), 'error'); return; }
+                if (file.size > 20 * 1024 * 1024) { showMsg(`文件 ${file.name} 超过 20MB`, 'error'); return; }
                 if (!targetArray.some(f => f.name === file.name && f.size === file.size)) {
                     targetArray.push(file);
                 }
@@ -4662,7 +4662,7 @@
         
             // 抓取全局备注文本
             labelConfig.remark = document.getElementById('label-remark')?.value.trim() || '';
-            const hasContent = (labelConfig.remark !== '' || labelConfig.designFiles.length > 0) ? '✓ 已传稿/内容' : '× 待补内容';
+            const hasContent = (labelConfig.remark !== '' || labelConfig.designFiles.length > 0) ? _t('✓ 已传稿/内容') : _t('× 待补内容');
         
             if (labelConfig.mode === 'auto') {
                 st.innerHTML = `<div style="text-align:right;"><span style="color:#10b981; font-weight:600;">${_t('红绣智能代配')}</span><br><span style="font-size:10px; opacity:0.8;">${_t('内容:')} ${hasContent}</span></div>`;
@@ -4679,7 +4679,7 @@
                 let sewingText = '';
         
                 if (labelConfig.material === '其他') {
-                    sizeText = '尺寸与缝制详见描述';
+                    sizeText = _t('尺寸与缝制详见描述');
                 } else if (labelConfig.material === '印标') {
                     sizeText = sizeVal ? `${_t('尺寸:')} ${sizeVal}` : _t('尺寸待定');
                 } else {
@@ -4688,7 +4688,7 @@
                     // 抓取并展示自定义缝制的描述
                     labelConfig.sewingRemark = document.getElementById('label-sewing-remark')?.value.trim() || '';
                     if (labelConfig.method === '其他') {
-                        sewingText = labelConfig.sewingRemark ? ' | 自定义缝制' : ' | 缝制待说明';
+                        sewingText = labelConfig.sewingRemark ? ` | ${_t('自定义缝制')}` : ` | ${_t('缝制待说明')}`;
                     } else {
                         sewingText = ` | ${_t(labelConfig.method)}`;
                     }
@@ -4700,7 +4700,7 @@
                 
                 if (comps.includes('上装/连体')) {
                     let pos = labelConfig.placements.top;
-                    if (pos === '自定义其他位置') {) {
+                    if (pos === '自定义其他位置') {
                         const customVal = document.getElementById('label-custom-top-text')?.value.trim();
                         pos = customVal ? customVal : _t('其他位置');
                     } else {
@@ -4711,7 +4711,7 @@
                 
                 if (comps.includes('下装/裤装')) {
                     let pos = labelConfig.placements.bottom;
-                    if (pos === '自定义其他位置') {) {
+                    if (pos === '自定义其他位置') {
                         const customVal = document.getElementById('label-custom-bottom-text')?.value.trim();
                         pos = customVal ? customVal : _t('其他位置');
                     } else {
@@ -4748,7 +4748,7 @@
         function handleOtherFiles(input) {
             const files = Array.from(input.files);
             files.forEach(file => {
-                if (file.size > 20 * 1024 * 1024) { showMsg(_t('文件 ' + file.name + ' 超过 20MB'), 'error'); return; }
+                if (file.size > 20 * 1024 * 1024) { showMsg(`文件 ${file.name} 超过 20MB`, 'error'); return; }
                 if (!otherConfig.files.some(f => f.name === file.name && f.size === file.size)) {
                     otherConfig.files.push(file);
                 }
@@ -4759,7 +4759,7 @@
                 nameEl.innerText = `已选 ${otherConfig.files.length} 个文件`;
                 nameEl.style.color = 'var(--primary-color)';
             } else {
-                nameEl.innerText = '点击此处上传参考附件';;
+                nameEl.innerText = '点击此处上传参考附件';
                 nameEl.style.color = '#334155';
             }
         
@@ -4799,7 +4799,7 @@
                 nameEl.innerText = `已选 ${otherConfig.files.length} 个文件`;
                 nameEl.style.color = 'var(--primary-color)';
             } else {
-                nameEl.innerText = '点击此处上传参考附件';;
+                nameEl.innerText = '点击此处上传参考附件';
                 nameEl.style.color = '#334155';
             }
             
@@ -4825,7 +4825,7 @@
                 return;
             }
         
-            const textStatus = hasText ? '有需求描述' : '无文字描述';
+            const textStatus = hasText ? _t('有需求描述') : _t('无文字描述');
             const fileStatus = fileCount > 0 ? ` + ${fileCount} ${_t('附件')}` : '';
         
             st.innerHTML = `<div style="text-align:right;">${_t('定制特殊辅料')}<br><span style="font-size:10px; opacity:0.8;">${textStatus}${fileStatus}</span></div>`;
@@ -4839,11 +4839,11 @@
         // ==========================================
         let hangtagConfig = {
             mode: 'auto',
-            material: '白卡纸 (White Cardboard)',,
+            material: '白卡纸',
             weight: '400g',
             shape: '标准修长型 (约 4x9cm)',
             roundedCorner: false,
-            crafts: ['无附加工艺'],],
+            crafts: ['无附加工艺'],
             stringType: '常规方块吊粒',
             stringColor: '白色',
             isSet: false,             // 新增：是否为子母牌
@@ -4872,7 +4872,7 @@
                 const weightArea = document.getElementById('hangtag-weight-area');
                 
                 // 点击前三项显示克重
-                const isStandardMat = ['白卡纸 (White Cardboard)', '铜版纸 (Coated Paper)', '铜版纸 (Coated Paper)', '牛皮纸 (Kraft Paper)'].includes(value);
+                const isStandardMat = ['白卡纸', '铜版纸', '牛皮纸'].includes(value);
                 if(weightArea) weightArea.classList.toggle('hidden', !isStandardMat);
                 
                 // 判断是否展开面板
@@ -4881,7 +4881,7 @@
         
             // 2. 处理 B 形状 (含面板移动)
             if (attrType === 'shape') {
-                const isCustom = (value === '尺寸或特殊异形定制'););
+                const isCustom = (value === '尺寸或特殊异形定制');
                 
                 repositionHangtagPanel(el, 'hangtag-shape-grid', 'hangtag-custom-shape-area', isCustom);
                 
@@ -4895,7 +4895,7 @@
         
             // 3. 处理 D 吊粒类型 (含面板移动)
             if (attrType === 'stringType') {
-                const isCustomString = (value === '定制材质与形状'););
+                const isCustomString = (value === '定制材质与形状');
                 repositionHangtagPanel(el, 'hangtag-string-grid', 'hangtag-string-custom-area', isCustomString);
             }
         
@@ -5033,12 +5033,12 @@
             const allCards = Array.from(grid.querySelectorAll('.option-item'));
             
             // 智能查找代表“无附加工艺”的卡片DOM (通过文本匹配)
-            const noneCard = allCards.find(card => (card.getAttribute('onclick') || '').includes('无附加工艺'));));
+            const noneCard = allCards.find(card => (card.getAttribute('onclick') || '').includes('无附加工艺'));
         
-            if (!hangtagConfig.crafts) hangtagConfig.crafts = ['无附加工艺'];];
+            if (!hangtagConfig.crafts) hangtagConfig.crafts = ['无附加工艺'];
             let arr = hangtagConfig.crafts;
         
-            if (val === '无附加工艺') {) {
+            if (val === '无附加工艺') {
                 // 1. 如果点击了“无附加”，进入排他逻辑
                 arr = ['无附加工艺']; // 数据重置
                 allCards.forEach(card => card.classList.remove('selected')); // UI 全部熄灭
@@ -5047,7 +5047,7 @@
                 // 2. 如果点击了其他工艺，进入多选逻辑
                 
                 // 首先，检查数据中是否还有“无附加”，有则剔除
-                const noneIdx = arr.indexOf('无附加工艺'););
+                const noneIdx = arr.indexOf('无附加工艺');
                 if (noneIdx > -1) {
                     arr.splice(noneIdx, 1);
                 }
@@ -5066,7 +5066,7 @@
         
                 // 3. 兜底逻辑：如果用户取消了所有工艺，默认退回“无附加工艺”状态
                 if (arr.length === 0) {
-                    arr = ['无附加工艺'];];
+                    arr = ['无附加工艺'];
                     if (noneCard) noneCard.classList.add('selected');
                 }
             }
@@ -5214,7 +5214,7 @@
                 } else {
                     // 恢复默认提示
                     const defaultTextMap = {
-                        'design': '点击上传 AI / PDF / 高清图',,
+                        'design': '点击上传 AI / PDF / 高清图',
                         'string': '点击上传',
                         'default': '点击上传参考文件'
                     };
@@ -5238,8 +5238,8 @@
             }
         
             if (hangtagConfig.mode === 'auto') {
-                const hasFile = hangtagConfig.designFiles.length > 0 ? '✓ 已传稿' : '× 待传稿';
-                st.innerHTML = `<div style="text-align:right;"><span style="color:#10b981; font-weight:600;">红绣智能代配</span><br><span style="font-size:10px; opacity:0.8;">设计稿: ${hasFile}</span></div>`;
+                const hasFile = hangtagConfig.designFiles.length > 0 ? _t('✓ 已传稿') : _t('× 待传稿');
+                st.innerHTML = `<div style="text-align:right;"><span style="color:#10b981; font-weight:600;">${_t('红绣智能代配')}</span><br><span style="font-size:10px; opacity:0.8;">${_t('设计稿:')} ${hasFile}</span></div>`;
             } else {
                 // 1. 材质与克重
                 let matDisplay = _t(hangtagConfig.material.split(' ')[0]);
@@ -5248,7 +5248,7 @@
                 }
         
                 // 2. 子母牌标记
-                const setText = hangtagConfig.isSet ? '<span style="color:var(--primary-color);"> [子母牌]</span>' : '';
+                const setText = hangtagConfig.isSet ? '<span style="color:var(--primary-color);"> [' + _t('子母牌') + ']</span>' : '';
         
                 // 3. 工艺多选处理
                 const craftDisplay = hangtagConfig.crafts.map(c => _t(c)).join(', ');
@@ -5257,13 +5257,13 @@
                 let colorDisplay = _t(hangtagConfig.stringColor);
                 if (colorDisplay === '其他' || hangtagConfig.stringColor === '其他') {
                     const val = document.getElementById('hangtag-string-color-other')?.value.trim();
-                    colorDisplay = val ? val : '其他色';
+                    colorDisplay = val ? val : _t('其他色');
                 }
 
                 // 5. 吊粒类型精简提取 (修复点：将类型真正显示出来)
                 let stringTypeDisplay = hangtagConfig.stringType;
                 if (stringTypeDisplay.includes('方块')) stringTypeDisplay = _t('方块');
-                else if (stringTypeDisplay.includes('子弹头')) stringTypeDisplay = '子弹头';
+                else if (stringTypeDisplay.includes('子弹头')) stringTypeDisplay = _t('子弹头');
                 else if (stringTypeDisplay.includes('定制')) stringTypeDisplay = _t('定制');
         
                 const shapeDisplay = _t(hangtagConfig.shape.split(' ')[0]);
@@ -5334,8 +5334,8 @@
                 
                 const otherArea = document.getElementById('pad-color-other-area');
                 if (otherArea) {
-                    otherArea.classList.toggle('hidden', value !== '其他定制色'););
-                    if (value === '其他定制色') {) {
+                    otherArea.classList.toggle('hidden', value !== '其他定制色');
+                    if (value === '其他定制色') {
                         setTimeout(() => scrollElementToCenter('pad-color-other-area'), 50);
                     }
                 }
@@ -5351,7 +5351,7 @@
             let nameId = type === 'shape' ? 'padShapeFileName' : 'padOtherFileName';
             
             files.forEach(file => {
-                if (file.size > 20 * 1024 * 1024) { showMsg(_t('文件 ' + file.name + ' 超过 20MB'), 'error'); return; }
+                if (file.size > 20 * 1024 * 1024) { showMsg(`文件 ${file.name} 超过 20MB`, 'error'); return; }
                 if (!targetArray.some(f => f.name === file.name && f.size === file.size)) {
                     targetArray.push(file);
                 }
@@ -5423,9 +5423,9 @@
                 padConfig.otherColor = document.getElementById('pad-color-other')?.value.trim() || '';
                 
                 let colorText = padConfig.color.split(' ')[0];
-                if (padConfig.color === '其他定制色') {) {
+                if (padConfig.color === '其他定制色') {
                     const val = document.getElementById('pad-color-other')?.value.trim();
-                    colorText = val ? val : '其他定制色';;
+                    colorText = val ? val : '其他定制色';
                 }
                 
                 const thickText = padConfig.thickness.split(' ')[0];
@@ -5449,7 +5449,7 @@
         // ==========================================
         let metalConfig = {
             mode: 'auto', // 新增：默认智能代配
-            finish: '亮金色,
+            finish: '亮金色',
             activeCategory: '', // 当前正在编辑的分类名
             details: {},
             categories: [],
@@ -5527,7 +5527,7 @@
             input.value = ''; // 清空 input 允许重复上传
         }
 
-        // 5. 渲染预览图
+        // 渲染预览图
         function renderMetalPreviews(type) {
             const grid = document.getElementById(type === 'logo' ? 'metalLogoPreview' : 'metalSourcePreview');
             const files = type === 'logo' ? metalConfig.logoFiles : metalConfig.sourceFiles;
@@ -5646,7 +5646,7 @@
         
         // 新增：一键清空所有金属明细的函数
         async function clearMetalCustomDetails() {
-            if (!confirm('确定要清空下方已选择的所有金属明细吗？')) return;
+            if (!(await showConfirm(_t('确定要清空下方已选择的所有金属明细吗？')))) return;
             
             // 1. 清空数据
             metalConfig.categories = [];
@@ -5702,7 +5702,7 @@
         
             files.forEach(file => {
                 // 加个文件大小限制防呆
-                if (file.size > 20 * 1024 * 1024) { showMsg(_t('文件 ' + file.name + ' 超过 20MB'), 'error'); return; }
+                if (file.size > 20 * 1024 * 1024) { showMsg(`文件 ${file.name} 超过 20MB`, 'error'); return; }
                 if (!targetArr.some(f => f.name === file.name)) targetArr.push(file);
             });
             
@@ -5799,8 +5799,8 @@
 
         // 扩展 bagConfig 数据结构
         let bagConfig = { 
-            material: '未选材质', , 
-            size: '未选尺寸', , 
+            material: '未选材质', 
+            size: '未选尺寸', 
             print: '空白无印', 
             crafts: [], 
             designFiles: [] 
@@ -5924,8 +5924,8 @@
                     const match = size.match(/(\d+)/);
                     if (match) {
                         const width = parseInt(match[1]);
-                        if (width < 25) sceneDesc = _t("适合内衣/泳装/小配件";);
-                        else if (width >= 25 && width <= 32) sceneDesc = _t("适合常规T恤/背心";");
+                        if (width < 25) sceneDesc = _t("适合内衣/泳装/小配件");
+                        else if (width >= 25 && width <= 32) sceneDesc = _t("适合常规T恤/背心");
                         else if (width > 32) sceneDesc = _t("适合卫衣/长裤/外套");
                     }
                     container.insertAdjacentHTML('beforeend', `
@@ -5940,7 +5940,7 @@
             // 3. 增加“自定义尺寸”卡片
             container.insertAdjacentHTML('beforeend', `
                 <div class="bag-size-card bag-size" onclick="selectBagAttr('size', '自定义尺寸', this)">
-                    <div class="size-val" style="color:#64748b;">自定义规格</div>
+                    <div class="size-val" style="color:#64748b;">${_t('自定义规格')}</div>
                     <div class="size-scene">${_t('MOQ 5000起订')}</div>
                 </div>
             `);
@@ -5956,7 +5956,7 @@
             // 处理自定义尺寸输入框显隐
             if (attrType === 'size') {
                 const customBox = document.getElementById('bag-custom-size-box');
-                if (displayName === '自定义尺寸') {) {
+                if (displayName === '自定义尺寸') {
                     customBox.classList.remove('hidden');
                 } else {
                     customBox.classList.add('hidden');
@@ -6071,20 +6071,20 @@
                 return;
             }
 
-            if (bagConfig.material === '未选材质') { ) { 
-                st.innerText = '已开启 (待选择材质)';
+            if (bagConfig.material === '未选材质') { 
+                st.innerText = _t('已开启 (待选择材质)'); 
                 st.style.color = 'var(--primary-color)'; st.style.fontWeight = 'bold';
                 return; 
             } 
             
             const matPart = (window.__lang === 'en' && bagConfig.materialEn) ? bagConfig.materialEn : bagConfig.material;
-            const sizePart = bagConfig.size !== '未选尺寸' ? bagConfig.size.split(' ')[0] : '尺寸待定'; ? bagConfig.size.split(' ')[0] : _t('尺寸待定');
+            const sizePart = bagConfig.size !== '未选尺寸' ? bagConfig.size.split(' ')[0] : _t('尺寸待定');
             
             // 组装工艺文字
             let printText = bagConfig.print === '空白无印' ? _t('无印') : _t(bagConfig.print);
             if (bagConfig.crafts.length > 0) printText += `+${bagConfig.crafts.length}${_t('工艺')}`;
 
-            const hasFile = bagConfig.designFiles.length > 0 ? `<br><span style="font-size:10px; color:#10b981;">+已传设计图(${bagConfig.designFiles.length})</span>` : '';
+            const hasFile = bagConfig.designFiles.length > 0 ? `<br><span style="font-size:10px; color:#10b981;">+${_t('已传设计图')}(${bagConfig.designFiles.length})</span>` : '';
 
             st.innerHTML = `<div style="text-align:right;">${matPart} | ${sizePart}<br><span style="font-size:10px; opacity:0.8;">${printText}</span>${hasFile}</div>`;
             st.style.color = 'var(--primary-color)'; 
@@ -6100,7 +6100,7 @@
         function handleBulkPackingFiles(input) {
             const files = Array.from(input.files);
             files.forEach(file => {
-                if (file.size > 20 * 1024 * 1024) { showMsg(_t('文件 ' + file.name + ' 超过 20MB'), 'error'); return; }
+                if (file.size > 20 * 1024 * 1024) { showMsg(`文件 ${file.name} 超过 20MB`, 'error'); return; }
                 if (!bulkPackingFiles.some(f => f.name === file.name && f.size === file.size)) {
                     bulkPackingFiles.push(file);
                 }
@@ -6155,7 +6155,7 @@
             files.forEach(file => {
                 // 综合附件可能包含几十页的 PDF 或图包，限制放宽到 50MB
                 if (file.size > 50 * 1024 * 1024) { 
-                    showMsg(_t('文件 ' + file.name + ' 超过 50MB 限制'), 'error'); 
+                    showMsg(`文件 ${file.name} 超过 50MB 限制`, 'error'); 
                     return; 
                 }
                 if (!finalDocsFiles.some(f => f.name === file.name && f.size === file.size)) {
@@ -6287,7 +6287,7 @@
             if (currentDeliveryMode === 'sample') {
                 // 目的地安全读取
                 const destEl = document.getElementById('sample-destination');
-                const dest = destEl ? (destEl.value || '待定国') : '待定国';
+                const dest = destEl ? (destEl.value || _t('待定国')) : _t('待定国');
                 
                 let totalItems = 0;
                 let validRowsCount = 0;
@@ -6306,7 +6306,7 @@
                 if (sampleConfig && sampleConfig.needBulkQuote) {
                     // 获取数量
                     const qtyEl = document.getElementById('sample-intent-qty');
-                    const qtyText = (qtyEl && qtyEl.value) ? `${qtyEl.value}件` : '数量待定';
+                    const qtyText = (qtyEl && qtyEl.value) ? `${qtyEl.value} ${_t('件')}` : _t('数量待定');
                     
                     // 【新增】获取目标单价
                     const priceEl = document.getElementById('sample-intent-price');
@@ -6322,7 +6322,7 @@
                 sumEl.innerHTML = `
                     <div style="text-align:right;">
                         <span style="color:var(--text-main); font-weight:700;">${_t('打样阶段')} (${dest})</span><br>
-                        <span style="font-size:11px; color:#64748b;">清单: ${validRowsCount}项 / 共${totalItems}件 | 快递: ${carrier}</span>
+                        <span style="font-size:11px; color:#64748b;">${_t('清单:')} ${validRowsCount}${_t('项')} / ${_t('共')}${totalItems}${_t('件')} | ${_t('快递:')} ${carrier}</span>
                         ${intentText}
                     </div>
                 `;
@@ -6330,7 +6330,7 @@
             } else {
                 // 大货模式安全读取
                 const destEl = document.getElementById('bulk-destination');
-                const dest = destEl ? (destEl.value || '待定国') : '待定国';
+                const dest = destEl ? (destEl.value || _t('待定国')) : _t('待定国');
                 
                 const stylesEl = document.getElementById('bulk-style-count');
                 const styles = stylesEl ? (stylesEl.value || '0') : '0';
@@ -6360,12 +6360,12 @@
                 // 获取填写的期望价格
                 const targetPriceEl = document.getElementById('bulk-target-price');
                 const targetPrice = (targetPriceEl && targetPriceEl.value) ? `(${_t('目标')} $${targetPriceEl.value})` : '';
-                const hasPackingFiles = bulkPackingFiles.length > 0 ? `<br><span style="font-size:10px; color:#10b981;">+已传包装要求图(${bulkPackingFiles.length})</span>` : '';
+                const hasPackingFiles = bulkPackingFiles.length > 0 ? `<br><span style="font-size:10px; color:#10b981;">+${_t('已传包装要求图')}(${bulkPackingFiles.length})</span>` : '';
         
                 sumEl.innerHTML = `
                     <div style="text-align:right;">
                         <span style="color:var(--primary-color); font-weight:700;">${_t('大货订单')} (${dest})</span><br>
-                        <span style="font-size:11px; color:#64748b;">清单: ${bulkStylesCount}款 / 共${totalBulkQty}件 ${targetPrice}</span><br>
+                        <span style="font-size:11px; color:#64748b;">${_t('清单:')} ${bulkStylesCount}${_t('款')} / ${_t('共')}${totalBulkQty}${_t('件')} ${targetPrice}</span><br>
                         <span style="font-size:10px; color:#94a3b8;">${_t(bulkLogisticsConfig.term)} | ${bulkLogisticsConfig.method}</span>
                     </div>
                 `;
@@ -6452,7 +6452,7 @@
             const qty = parseInt(value) || 0;
             const style = bulkRows[index].style;
             
-            // 都不在预设里，按默认的中文拼音排序兜底
+            let minAllowed = 50; // 默认按 ODM 算
             let typeName = "现有款式(ODM)";
         
             if (style.startsWith('OEM')) {
@@ -6717,7 +6717,7 @@
         
             // 更新 UI
             if (uniqueStyles.size === 0) {
-                detailsEl.innerHTML = "尚未添加任何款式到打样清单...";..";
+                detailsEl.innerHTML = "尚未添加任何款式到打样清单...";
                 totalEl.innerText = "$0.00";
             } else {
                 // 优化费用明细输出格式
@@ -6738,7 +6738,7 @@
                 totalEl.innerText = `$${grandTotal.toFixed(2)}`;
             }
         
-            // 处理收费预警框显隐
+            // 预警框显隐
             const warn = document.getElementById('sample-qty-warning');
             if (warn) hasHighQty ? warn.classList.remove('hidden') : warn.classList.add('hidden');
         }
@@ -6756,7 +6756,7 @@
             const remark = document.getElementById('final-remark')?.value.trim() || '';
             const filesCount = finalDocsFiles.length;
         
-            let contactText = '待填写...';..';
+            let contactText = '待填写...';
             if (name || brand) {
                 contactText = `<span style="color: var(--text-main); font-weight: 700;">${brand || '未命名品牌'}</span><br>${name || '未填姓名'}`;
             }
@@ -6810,7 +6810,7 @@
                 
                 const collectionCountInput = document.getElementById('oem-collection-count');
                 if (collectionCountInput) {
-                    // 收起时清空已填写的尺寸，恢复默认状态
+                    collectionCountInput.value = '0'; // 恢复默认值 0
                     renderOemStyleDescInputs(); // 触发联动，销毁下方的动态输入框，并同步 Step 4 的徽章
                 }
                 
@@ -6837,9 +6837,9 @@
         }
 
         async function clearAllSelections() {
-            if (!confirm('确定要清空所有已选配置并重头开始吗？')) return;
+            if (!(await showConfirm(_t('确定要清空所有已选配置并重头开始吗？')))) return;
 
-            // 更新右侧侧边栏的汇总状态
+            // 安全获取元素的辅助函数
             const _el = (id) => document.getElementById(id);
             const _q = (sel) => document.querySelector(sel);
 
@@ -6863,7 +6863,7 @@
             // 重置 OEM checklist
             document.querySelectorAll('.oem-checklist-item input[type="checkbox"]').forEach(cb => { cb.checked = false; if(cb.parentElement) cb.parentElement.style.background = 'transparent'; });
             if (typeof syncOemCheckAllBtn === 'function') syncOemCheckAllBtn();
-            // 切换到ODM 模式
+            // 切换回 ODM 模式
             toggleStyleMode('existing');
 
             // 2. 重置面料
@@ -6884,7 +6884,7 @@
             for (let key in fabricSelection) {
                 resetHtml += `<div style="font-size:12px; margin-bottom:4px; color:var(--text-main); text-align:right;">${fabricSelection[key].originalCatName}: 未选</div>`;
             }
-            const sumFabric = _el('sum-fabric'); if (sumFabric) sumFabric.innerHTML = resetHtml || '未选';;
+            const sumFabric = _el('sum-fabric'); if (sumFabric) sumFabric.innerHTML = resetHtml || '未选';
 
             // 3. 重置辅料
             ['metal', 'pad', 'bag', 'hangtag', 'label', 'hygiene', 'other'].forEach(category => {
@@ -6900,7 +6900,7 @@
             const bagDesignPreview = _el('bagDesignPreview'); if (bagDesignPreview) bagDesignPreview.innerHTML = '';
             const bagRemark = _el('bag-remark'); if (bagRemark) bagRemark.value = '';
             // 重置金属饰品
-            metalConfig = { finish: '亮金色 (Shiny Gold)', categories: [], logoCustom: false, logoTypes: [], logoFiles: [], sourceFiles: [] };
+            metalConfig = { finish: '亮金色', categories: [], logoCustom: false, logoTypes: [], logoFiles: [], sourceFiles: [] };
             document.querySelectorAll('.finish-item').forEach(item => item.classList.remove('selected'));
             document.querySelectorAll('.finish-item')[0]?.classList.add('selected'); 
             document.querySelectorAll('.metal-item').forEach(item => item.classList.remove('selected'));
@@ -6916,7 +6916,7 @@
             const metalSourcePreview = _el('metalSourcePreview');
             if (metalSourcePreview) metalSourcePreview.innerHTML = '';
             const sumTrimMetal = _el('sum-trim-metal');
-            if (sumTrimMetal) { sumTrimMetal.innerText = '不需要';; sumTrimMetal.style.color = '#666'; sumTrimMetal.style.fontWeight = 'normal'; }
+            if (sumTrimMetal) { sumTrimMetal.innerText = '不需要'; sumTrimMetal.style.color = '#666'; sumTrimMetal.style.fontWeight = 'normal'; }
             const bagDesignFile = _el('bag-design-file'); if (bagDesignFile) bagDesignFile.value = '';
 
             // 重置吊牌
@@ -6931,7 +6931,7 @@
             const hangtagFileName = _el('hangtagFileName');
             if (hangtagFileName) { hangtagFileName.innerText = '选择矢量文件 (AI/PDF)'; hangtagFileName.style.color = '#94a3b8'; }
             const hangtagShapeFileName = _el('hangtagShapeFileName');
-            if (hangtagShapeFileName) { hangtagShapeFileName.innerText = '上传参考文件';; hangtagShapeFileName.style.color = '#94a3b8'; }
+            if (hangtagShapeFileName) { hangtagShapeFileName.innerText = '上传参考文件'; hangtagShapeFileName.style.color = '#94a3b8'; }
             const hangtagPreview = _el('hangtagPreview'); if (hangtagPreview) hangtagPreview.innerHTML = '';
             const hangtagShapePreview = _el('hangtagShapePreview'); if (hangtagShapePreview) hangtagShapePreview.innerHTML = '';
             const hangtagRemark = _el('hangtag-remark'); if (hangtagRemark) hangtagRemark.value = '';
@@ -6939,7 +6939,7 @@
 
             // 重置标签
             labelConfig = { mode: 'combined', brand: { type: '无感烫印标', size: '', method: '', colors: [] }, care: { type: '无感烫印标', size: '', method: '', colors: [] }, placement: '领后中', designFiles: [] };
-            const sumTrimLabel = _el('sum-trim-label'); if (sumTrimLabel) sumTrimLabel.innerText = '不需要';;
+            const sumTrimLabel = _el('sum-trim-label'); if (sumTrimLabel) sumTrimLabel.innerText = '不需要';
             const labelTextContent = _el('label-text-content'); if (labelTextContent) labelTextContent.value = '';
             const labelRemark = _el('label-remark'); if (labelRemark) labelRemark.value = '';
             const labelPreviewGrid = _el('labelPreviewGrid'); if (labelPreviewGrid) labelPreviewGrid.innerHTML = '';
@@ -6951,7 +6951,7 @@
             sampleConfig = { carrier: 'DHL/FedEx (红绣代办)', needBulkQuote: false, intentTerm: 'DDP', intentMethod: 'Sea Freight (海运)' };
             bulkLogisticsConfig = { term: 'DDP 双清包税', method: 'Sea' };
             bulkPackingFiles = [];
-            // 清空输入
+            // 清空输入框
             const sampleDest = _el('sample-destination'); if (sampleDest) sampleDest.value = '';
             const bulkDest = _el('bulk-destination'); if (bulkDest) bulkDest.value = '';
             const bulkPrice = _el('bulk-target-price'); if (bulkPrice) bulkPrice.value = '';
@@ -6962,20 +6962,20 @@
             const intentFields = _el('sample-bulk-intent-fields'); if (intentFields) intentFields.classList.add('hidden');
             const intentQty = _el('sample-intent-qty'); if (intentQty) intentQty.value = '';
             const intentPrice = _el('sample-intent-price'); if (intentPrice) intentPrice.value = '';
-            // 更新右侧侧边栏的汇总状态
+            // 清空选中态
             document.querySelectorAll('#pane-delivery-sample .option-item').forEach(item => item.classList.remove('selected'));
             document.querySelectorAll('#pane-delivery-bulk .option-item').forEach(item => item.classList.remove('selected'));
             document.querySelectorAll('.bulk-method').forEach(item => item.classList.remove('selected'));
-            // 更新右侧侧边栏的汇总状态
+            // 切回样衣模式并重新渲染
             switchDeliveryMode('sample');
 
             // 5. 重置商业评估 (Step 5)
             const stageRadio = _q('input[name="project_stage"][value="concept"]');
             if (stageRadio) stageRadio.checked = true;
             const volumeRadio = _q('input[name="est_volume"][value="sample_only"]');
-            if (volumeRadio) { volumeRadio.checked = true; updateSummaryVolume('仅开发样衣'); }); }
+            if (volumeRadio) { volumeRadio.checked = true; updateSummaryVolume('仅开发样衣'); }
             
-            // Step 5 最终综合附件处理
+            // 清空所有 Step 5 的输入框
             [
                 'plan_colors', 'plan_sizes', 'target_market', 'target_price', 'final_remark',
                 'final-contact-name', 'final-contact-info', 'final-brand-name', 'final-website',
@@ -7000,7 +7000,7 @@
             if (fabricSelection[activeFabricCat].activeName === '') return; // 修正：判断 activeName
             
             const catName = fabricSelection[activeFabricCat].originalCatName;
-            if (!confirm(`确定要清空 [${catName}] 的选择吗？`)) return; // 建议加上防误触提示
+            if (!(await showConfirm(_t(`确定要清空 [${catName}] 的选择吗？`)))) return; // 建议加上防误触提示
 
             // 1. 重置当前分类的数据 (colors和remark已经在清空configs时连带清空了)
             fabricSelection[activeFabricCat].activeName = '';

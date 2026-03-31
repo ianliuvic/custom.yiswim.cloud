@@ -301,19 +301,23 @@
         Object.keys(fab).forEach(function (catKey) {
             var cat = fab[catKey];
             if (!cat || !cat.configs) return;
-            var catName = cat.activeName || cat.originalCatName || catKey;
-            var isLining = catName.indexOf('里料') !== -1 || catName.indexOf('Lining') !== -1 || catName.indexOf('lining') !== -1;
+            var originalCat = cat.originalCatName || catKey;
+            var isCustomSourcing = cat.activeName === 'CUSTOM_SOURCING';
+            var displayName = isCustomSourcing ? originalCat : (cat.activeName || originalCat);
+            var isLining = originalCat.indexOf('里料') !== -1 || originalCat.indexOf('Lining') !== -1 || originalCat.indexOf('lining') !== -1;
             var configs = cat.configs;
 
             Object.keys(configs).forEach(function (fabricName) {
                 var cfg = configs[fabricName];
                 if (!cfg) return;
-                var mode = cfg.mode || 'solid';
+                var isCS = fabricName === 'CUSTOM_SOURCING';
+                var mode = isCS ? 'custom' : (cfg.mode || 'solid');
                 var modeLabel = { solid: '纯色', print: '印花', custom: '开发/找样' }[mode] || mode;
+                var cardTitle = isCS ? originalCat : fabricName;
 
                 h += '<div class="u-fabric-card">';
-                h += '<div class="u-fabric-card-head"><strong>' + esc(fabricName) + '</strong>';
-                if (catName) h += '<span class="u-fabric-cat-tag">' + esc(catName) + '</span>';
+                h += '<div class="u-fabric-card-head"><strong>' + esc(cardTitle) + '</strong>';
+                if (!isCS && displayName) h += '<span class="u-fabric-cat-tag">' + esc(originalCat) + '</span>';
                 h += '<span class="u-fabric-mode ' + mode + '">' + modeLabel + '</span></div>';
 
                 if (mode === 'solid') {

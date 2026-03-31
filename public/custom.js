@@ -260,6 +260,15 @@
                     }
                 }
             }
+
+            // 面料配置面板展开：对当前活跃的面料 Tab 展开配置面板
+            // 利用 switchFabricCat 的内置恢复逻辑来展开面板 (无需重复实现)
+            if (activeFabricCat && fabricSelection[activeFabricCat] && fabricSelection[activeFabricCat].activeName) {
+                var activeTabEl = document.querySelector('#fabric-sub-tabs .mode-option.active');
+                // switchFabricCat 中包含面板定位、模式切换、数据填充等全套恢复逻辑
+                if (activeTabEl) switchFabricCat(activeFabricCat, activeTabEl);
+            }
+
             if (typeof updateFabricSummary === 'function') updateFabricSummary();
 
             // ── Step 3: 辅料 ──
@@ -801,26 +810,55 @@
                 if (sampleConfig.intentPrice) { var p = document.getElementById('sample-intent-price'); if (p) p.value = sampleConfig.intentPrice; }
             }
 
-            // 选中 sample carrier 按钮
+            // 选中 sample carrier 按钮 (.chip 元素，非 .option-item)
             if (sampleConfig.carrier) {
-                document.querySelectorAll('#pane-delivery-sample .option-item').forEach(function(el) {
-                    if (el.textContent.trim().indexOf(sampleConfig.carrier.split(' ')[0]) !== -1) {
-                        el.classList.add('selected');
+                var carrierChips = document.querySelectorAll('#pane-delivery-sample .chip');
+                carrierChips.forEach(function(el) {
+                    var onclick = el.getAttribute('onclick') || '';
+                    if (onclick.indexOf('selectSampleAttr') !== -1 && onclick.indexOf('carrier') !== -1) {
+                        el.classList.remove('selected');
+                        if (onclick.indexOf("'" + sampleConfig.carrier + "'") !== -1) el.classList.add('selected');
                     }
                 });
             }
 
-            // 选中 bulk 贸易术语按钮
+            // 选中 sample 大货意向运输方式 & 贸易术语 (.sewing-card 元素)
+            if (sampleConfig.needBulkQuote) {
+                if (sampleConfig.intentMethod) {
+                    document.querySelectorAll('#pane-delivery-sample .sewing-card').forEach(function(el) {
+                        var onclick = el.getAttribute('onclick') || '';
+                        if (onclick.indexOf('intentMethod') !== -1) {
+                            el.classList.remove('selected');
+                            if (onclick.indexOf("'" + sampleConfig.intentMethod + "'") !== -1) el.classList.add('selected');
+                        }
+                    });
+                }
+                if (sampleConfig.intentTerm) {
+                    document.querySelectorAll('#pane-delivery-sample .sewing-card').forEach(function(el) {
+                        var onclick = el.getAttribute('onclick') || '';
+                        if (onclick.indexOf('intentTerm') !== -1) {
+                            el.classList.remove('selected');
+                            if (onclick.indexOf("'" + sampleConfig.intentTerm + "'") !== -1) el.classList.add('selected');
+                        }
+                    });
+                }
+            }
+
+            // 选中 bulk 贸易术语按钮 (radio-card 使用 radio input)
             if (bulkLogisticsConfig.term) {
-                document.querySelectorAll('#pane-delivery-bulk .option-item').forEach(function(el) {
-                    if (el.textContent.trim() === bulkLogisticsConfig.term) {
-                        el.classList.add('selected');
+                document.querySelectorAll('#pane-delivery-bulk input[name="bulk_trade_term"]').forEach(function(radio) {
+                    var onclick = radio.getAttribute('onclick') || '';
+                    if (onclick.indexOf("'" + bulkLogisticsConfig.term + "'") !== -1) {
+                        radio.checked = true;
+                    } else {
+                        radio.checked = false;
                     }
                 });
             }
-            // 选中 bulk 运输方式按钮
+            // 选中 bulk 运输方式按钮 (先清除默认 selected)
             if (bulkLogisticsConfig.method) {
                 document.querySelectorAll('.bulk-method').forEach(function(el) {
+                    el.classList.remove('selected');
                     if (el.getAttribute('onclick') && el.getAttribute('onclick').indexOf("'" + bulkLogisticsConfig.method + "'") !== -1) {
                         el.classList.add('selected');
                     }
@@ -851,8 +889,7 @@
             if (typeof updateStep5Summary === 'function') updateStep5Summary();
             if (typeof validateContact === 'function') validateContact();
 
-            // ── 全局验证 ──
-            if (typeof validateAll === 'function') validateAll();
+            // ── 全局验证 (移至附件恢复之后) ──
 
             // ── 恢复附件 (远程文件) ──
             if (d.files && d.files.length > 0) {
@@ -954,6 +991,9 @@
 
                 if (typeof updateCombinedStyleSummary === 'function') updateCombinedStyleSummary();
             }
+
+            // ── 全局验证 (附件恢复完成后执行，确保验证结果正确) ──
+            if (typeof validateAll === 'function') validateAll();
 
             // ── 提示用户 ──
             var hasRestoredFiles = d.files && d.files.length > 0;

@@ -610,7 +610,7 @@ router.get('/inquiry/:id/pdf', authenticateToken, async (req, res) => {
         res.send(pdfBuffer);
     } catch (error) {
         console.error('PDF generation failed:', error);
-        res.status(500).json({ success: false, message: 'PDF generation failed' });
+        res.status(500).json({ success: false, message: 'PDF generation failed: ' + error.message });
     }
 });
 

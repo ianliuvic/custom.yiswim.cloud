@@ -562,6 +562,58 @@ router.get('/inquiry/:id', authenticateToken, async (req, res) => {
     }
 });
 
+// 8b. 导出询盘PDF
+router.get('/inquiry/:id/pdf', authenticateToken, async (req, res) => {
+    try {
+        const { generateInquiryPDF } = require('../utils/pdfExport');
+        const inquiryResult = await db.query(
+            'SELECT * FROM custom_inquiries WHERE id = $1 AND user_id = $2 AND deleted_at IS NULL',
+            [req.params.id, req.user.id]
+        );
+        if (inquiryResult.rows.length === 0) {
+            return res.status(404).json({ success: false, message: '询盘不存在' });
+        }
+        const inquiry = inquiryResult.rows[0];
+
+        const filesResult = await db.query(
+            'SELECT id, category, sub_key, orig_name, stored_name, mime_type, size_bytes, created_at FROM custom_inquiry_files WHERE inquiry_id = $1 ORDER BY category, sub_key',
+            [req.params.id]
+        );
+
+        // ODM style images
+        let odmStyleImages = {};
+        try {
+            let odmNames = inquiry.odm_styles;
+            if (typeof odmNames === 'string') odmNames = JSON.parse(odmNames);
+            if (Array.isArray(odmNames) && odmNames.length > 0) {
+                const stylesResult = await db.query(`
+                    SELECT s.name,
+                        COALESCE(
+                            json_agg('https://files.yiswim.cloud/' || i.unique_image_id) FILTER (WHERE i.unique_image_id IS NOT NULL),
+                            '[]'
+                        ) as image_urls
+                    FROM custom_odm_styles s
+                    LEFT JOIN images i ON s.id = i.notion_page_id
+                    WHERE s.name = ANY($1)
+                    GROUP BY s.id`, [odmNames]);
+                stylesResult.rows.forEach(r => { odmStyleImages[r.name] = r.image_urls; });
+            }
+        } catch (e) { /* ignore */ }
+
+        const lang = req.cookies && req.cookies.lng || 'zh';
+        const pdfBuffer = await generateInquiryPDF(inquiry, filesResult.rows, odmStyleImages, lang);
+        const filename = 'inquiry_' + (inquiry.inquiry_no || inquiry.id) + '.pdf';
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename="' + filename + '"');
+        res.setHeader('Content-Length', pdfBuffer.length);
+        res.send(pdfBuffer);
+    } catch (error) {
+        console.error('PDF generation failed:', error);
+        res.status(500).json({ success: false, message: 'PDF generation failed' });
+    }
+});
+
 // 9. 修改密码
 router.post('/change-password', authenticateToken, async (req, res) => {
     try {

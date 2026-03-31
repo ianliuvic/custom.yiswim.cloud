@@ -2,7 +2,8 @@
   "pageTitle": {
     "home": "定制系统主页",
     "auth": "用户验证",
-    "reset": "重置密码"
+    "reset": "重置密码",
+    "user": "用户中心"
   },
   "api": {
     "dbError": "数据库查询异常",

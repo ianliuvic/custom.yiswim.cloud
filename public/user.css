@@ -212,16 +212,70 @@ body {
 .u-style-card:hover { border-color: #cbd5e1; }
 .u-style-card.has-img { padding: 0; }
 .u-style-card-img {
-    width: 100%; aspect-ratio: 4/5; overflow: hidden; background: #f1f5f9;
+    position: relative; width: 100%; aspect-ratio: 4/5; overflow: hidden; background: #f1f5f9;
 }
 .u-style-card-img img {
     width: 100%; height: 100%; object-fit: cover; display: block;
     transition: transform 0.3s;
 }
 .u-style-card:hover .u-style-card-img img { transform: scale(1.03); }
+.u-img-count {
+    position: absolute; bottom: 8px; right: 8px;
+    background: rgba(0,0,0,.6); color: #fff; font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 4px; pointer-events: none;
+}
 .u-style-card-body { padding: 12px 16px; }
 .u-style-card-name { font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; }
 .u-style-card-remark { font-size: 12px; color: var(--text-light); line-height: 1.5; margin-bottom: 6px; }
+
+/* 轻定制 custom section inside style card */
+.u-custom-section {
+    margin-top: 8px; padding-top: 8px;
+    border-top: 1px dashed #e2e8f0;
+}
+.u-custom-label {
+    font-size: 11px; font-weight: 700; color: var(--primary-color);
+    letter-spacing: 0.5px; margin-bottom: 4px;
+}
+.u-custom-remark {
+    font-size: 12px; color: var(--text-light); line-height: 1.5; margin-bottom: 6px;
+}
+
+/* Lightbox */
+.u-lightbox {
+    position: fixed; inset: 0; z-index: 9999;
+    display: none; align-items: center; justify-content: center;
+}
+.u-lightbox.active { display: flex; }
+.u-lb-overlay {
+    position: absolute; inset: 0; background: rgba(0,0,0,.85);
+}
+.u-lb-content {
+    position: relative; z-index: 1; max-width: 90vw; max-height: 90vh;
+    display: flex; flex-direction: column; align-items: center;
+}
+.u-lb-content img {
+    max-width: 90vw; max-height: 85vh; object-fit: contain;
+    border-radius: 4px; user-select: none;
+}
+.u-lb-counter {
+    margin-top: 10px; color: rgba(255,255,255,.7); font-size: 13px; font-weight: 500;
+}
+.u-lb-close {
+    position: absolute; top: 16px; right: 20px; z-index: 2;
+    background: none; border: none; color: #fff; font-size: 36px;
+    cursor: pointer; line-height: 1; opacity: .7; transition: opacity .2s;
+}
+.u-lb-close:hover { opacity: 1; }
+.u-lb-prev, .u-lb-next {
+    position: absolute; top: 50%; z-index: 2; transform: translateY(-50%);
+    background: rgba(255,255,255,.15); border: none; color: #fff;
+    font-size: 40px; width: 48px; height: 64px; border-radius: 8px;
+    cursor: pointer; opacity: .7; transition: opacity .2s, background .2s;
+}
+.u-lb-prev:hover, .u-lb-next:hover { opacity: 1; background: rgba(255,255,255,.25); }
+.u-lb-prev { left: 16px; }
+.u-lb-next { right: 16px; }
 .u-style-card-files { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
 .u-style-card-thumb {
     width: 48px; height: 48px; border-radius: 6px; overflow: hidden;

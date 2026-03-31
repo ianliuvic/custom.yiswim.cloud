@@ -36,16 +36,106 @@ const upload = multer({
     }
 });
 
-// 自动创建草稿表
-db.query(`
-    CREATE TABLE IF NOT EXISTS custom_drafts (
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER NOT NULL REFERENCES custom_users(id) ON DELETE CASCADE,
-        data JSONB NOT NULL DEFAULT '{}',
-        updated_at TIMESTAMP DEFAULT NOW(),
-        UNIQUE(user_id)
-    )
-`).catch(err => console.error('创建 custom_drafts 表失败:', err.message));
+// === 共享辅助函数 (询盘 & 草稿) ===
+const safeJSON = (str, fallback) => {
+    if (typeof str === 'string' && str.trim()) {
+        try { JSON.parse(str); return str; } catch { return JSON.stringify(fallback); }
+    }
+    return JSON.stringify(fallback);
+};
+
+function parseInquiryFields(d) {
+    return [
+        safeJSON(d.odm_styles, []),
+        safeJSON(d.odm_custom_data, {}),
+        d.oem_project || null,
+        parseInt(d.oem_style_count) || 0,
+        safeJSON(d.oem_descriptions, []),
+        safeJSON(d.oem_checklist, []),
+        d.oem_remark || null,
+        d.oem_physical_sample === '1',
+        d.oem_tracking_no || null,
+        safeJSON(d.fabric_selection, {}),
+        safeJSON(d.cmt_enabled, {}),
+        safeJSON(d.metal_config, {}),
+        safeJSON(d.pad_config, {}),
+        safeJSON(d.bag_config, {}),
+        safeJSON(d.hangtag_config, {}),
+        safeJSON(d.label_config, {}),
+        safeJSON(d.hygiene_config, {}),
+        safeJSON(d.other_config, {}),
+        d.delivery_mode || 'sample',
+        safeJSON(d.sample_rows, []),
+        safeJSON(d.sample_config, {}),
+        d.sample_dest || null,
+        safeJSON(d.bulk_rows, []),
+        safeJSON(d.bulk_logistics, {}),
+        d.bulk_dest || null,
+        d.bulk_target_price || null,
+        d.bulk_packing_remark || null,
+        d.contact_name || null,
+        d.contact_info || null,
+        d.brand_name || null,
+        d.website || null,
+        d.final_remark || null,
+        d.assign_sales || null,
+        d.assign_pattern || null,
+        d.assign_sewing || null,
+        d.nda_agreed ? new Date() : null
+    ];
+}
+
+const INQUIRY_COLUMNS = `odm_styles, odm_custom_data, oem_project, oem_style_count, oem_descriptions, oem_checklist, oem_remark, oem_physical_sample, oem_tracking_no,
+    fabric_selection,
+    cmt_enabled, metal_config, pad_config, bag_config, hangtag_config, label_config, hygiene_config, other_config,
+    delivery_mode, sample_rows, sample_config, sample_dest, bulk_rows, bulk_logistics, bulk_dest, bulk_target_price, bulk_packing_remark,
+    contact_name, contact_info, brand_name, website, final_remark,
+    assign_sales, assign_pattern, assign_sewing,
+    nda_agreed_at`;
+
+const INQUIRY_UPDATE_SET = `odm_styles=$1, odm_custom_data=$2, oem_project=$3, oem_style_count=$4,
+    oem_descriptions=$5, oem_checklist=$6, oem_remark=$7, oem_physical_sample=$8, oem_tracking_no=$9,
+    fabric_selection=$10,
+    cmt_enabled=$11, metal_config=$12, pad_config=$13, bag_config=$14, hangtag_config=$15, label_config=$16, hygiene_config=$17, other_config=$18,
+    delivery_mode=$19, sample_rows=$20, sample_config=$21, sample_dest=$22,
+    bulk_rows=$23, bulk_logistics=$24, bulk_dest=$25, bulk_target_price=$26, bulk_packing_remark=$27,
+    contact_name=$28, contact_info=$29, brand_name=$30, website=$31, final_remark=$32,
+    assign_sales=$33, assign_pattern=$34, assign_sewing=$35,
+    nda_agreed_at=$36`;
+
+async function handleUploadedFiles(client, inquiryId, files) {
+    if (!files || files.length === 0) return;
+    const sql = `INSERT INTO custom_inquiry_files (inquiry_id, category, sub_key, orig_name, stored_name, mime_type, size_bytes) VALUES ($1, $2, $3, $4, $5, $6, $7)`;
+    for (const file of files) {
+        const origName = Buffer.from(file.originalname, 'latin1').toString('utf8');
+        const fieldname = Buffer.from(file.fieldname, 'latin1').toString('utf8');
+        const match = fieldname.match(/^files\[([^\]]+)\](?:\[([^\]]*)\])?$/);
+        const category = match ? match[1] : 'unknown';
+        const subKey = match ? (match[2] || '') : '';
+        await client.query(sql, [inquiryId, category, subKey, origName, file.filename, file.mimetype, file.size]);
+    }
+}
+
+async function handleRemoteFiles(client, inquiryId, userId, remoteJson, allowedNames) {
+    if (!remoteJson) return;
+    try {
+        const remoteArr = JSON.parse(remoteJson);
+        if (!Array.isArray(remoteArr) || remoteArr.length === 0) return;
+        const uuidPat = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.\w+$/i;
+        const sql = `INSERT INTO custom_inquiry_files (inquiry_id, category, sub_key, orig_name, stored_name, mime_type, size_bytes) VALUES ($1, $2, $3, $4, $5, $6, $7)`;
+        for (const rf of remoteArr) {
+            if (!rf.stored_name || !uuidPat.test(rf.stored_name)) continue;
+            if (!allowedNames || !allowedNames.includes(rf.stored_name)) {
+                const check = await client.query(
+                    `SELECT 1 FROM custom_inquiry_files cif JOIN custom_inquiries ci ON ci.id = cif.inquiry_id WHERE cif.stored_name = $1 AND ci.user_id = $2 LIMIT 1`,
+                    [rf.stored_name, userId]
+                );
+                if (check.rows.length === 0) continue;
+            }
+            await client.query(sql, [inquiryId, rf.category || 'unknown', rf.sub_key || '', rf.orig_name || 'unknown', rf.stored_name, rf.mime_type || 'application/octet-stream', rf.size_bytes || 0]);
+        }
+    } catch (e) { console.error('Failed to process remote files:', e); }
+}
 
 // 1. 获取业务数据 (直连 PostgreSQL 并发查询：款式、面料、包装袋)
 router.get('/get-data', authenticateToken, async (req, res) => {
@@ -294,151 +384,54 @@ router.post('/submit-inquiry', authenticateToken, upload.any(), async (req, res)
     try {
         await client.query('BEGIN');
 
-        // 解析 JSON 字段
         const d = req.body;
-        // 确保 JSONB 字段传入的是 JSON 字符串（pg 会把 JS 数组转成 PG 数组语法，导致 JSONB 解析失败）
-        const safeJSON = (str, fallback) => {
-            if (typeof str === 'string' && str.trim()) {
-                try { JSON.parse(str); return str; } catch { return JSON.stringify(fallback); }
-            }
-            return JSON.stringify(fallback);
-        };
+        const fieldValues = parseInquiryFields(d);
 
-        // 生成询盘编号
-        const seqResult = await client.query('SELECT generate_inquiry_no() AS no');
-        const inquiryNo = seqResult.rows[0].no;
+        let inquiryId, inquiryNo;
+        let oldStoredNames = [];
 
-        // 插入主表
-        const insertSQL = `
-            INSERT INTO custom_inquiries (
-                inquiry_no, user_id,
-                odm_styles, odm_custom_data, oem_project, oem_style_count, oem_descriptions, oem_checklist, oem_remark, oem_physical_sample, oem_tracking_no,
-                fabric_selection,
-                cmt_enabled, metal_config, pad_config, bag_config, hangtag_config, label_config, hygiene_config, other_config,
-                delivery_mode, sample_rows, sample_config, sample_dest, bulk_rows, bulk_logistics, bulk_dest, bulk_target_price, bulk_packing_remark,
-                contact_name, contact_info, brand_name, website, final_remark,
-                assign_sales, assign_pattern, assign_sewing,
-                nda_agreed_at
-            ) VALUES (
-                $1, $2,
-                $3, $4, $5, $6, $7, $8, $9, $10, $11,
-                $12,
-                $13, $14, $15, $16, $17, $18, $19, $20,
-                $21, $22, $23, $24, $25, $26, $27, $28, $29,
-                $30, $31, $32, $33, $34,
-                $35, $36, $37,
-                $38
-            ) RETURNING id`;
-
-        const values = [
-            inquiryNo, req.user.id,
-            // Step 1
-            safeJSON(d.odm_styles, []),
-            safeJSON(d.odm_custom_data, {}),
-            d.oem_project || null,
-            parseInt(d.oem_style_count) || 0,
-            safeJSON(d.oem_descriptions, []),
-            safeJSON(d.oem_checklist, []),
-            d.oem_remark || null,
-            d.oem_physical_sample === '1',
-            d.oem_tracking_no || null,
-            // Step 2
-            safeJSON(d.fabric_selection, {}),
-            // Step 3
-            safeJSON(d.cmt_enabled, {}),
-            safeJSON(d.metal_config, {}),
-            safeJSON(d.pad_config, {}),
-            safeJSON(d.bag_config, {}),
-            safeJSON(d.hangtag_config, {}),
-            safeJSON(d.label_config, {}),
-            safeJSON(d.hygiene_config, {}),
-            safeJSON(d.other_config, {}),
-            // Step 4
-            d.delivery_mode || 'sample',
-            safeJSON(d.sample_rows, []),
-            safeJSON(d.sample_config, {}),
-            d.sample_dest || null,
-            safeJSON(d.bulk_rows, []),
-            safeJSON(d.bulk_logistics, {}),
-            d.bulk_dest || null,
-            d.bulk_target_price || null,
-            d.bulk_packing_remark || null,
-            // Step 5
-            d.contact_name,
-            d.contact_info,
-            d.brand_name,
-            d.website || null,
-            d.final_remark || null,
-            // 分派
-            d.assign_sales || null,
-            d.assign_pattern || null,
-            d.assign_sewing || null,
-            // NDA
-            d.nda_agreed ? new Date() : null
-        ];
-
-        const insertResult = await client.query(insertSQL, values);
-        const inquiryId = insertResult.rows[0].id;
-
-        // 处理上传的文件 — fieldname 格式: "files[category][sub_key]"
-        if (req.files && req.files.length > 0) {
-            const fileInsertSQL = `
-                INSERT INTO custom_inquiry_files (inquiry_id, category, sub_key, orig_name, stored_name, mime_type, size_bytes)
-                VALUES ($1, $2, $3, $4, $5, $6, $7)`;
-            
-            for (const file of req.files) {
-                // multer 默认以 latin1 解码 originalname 和 fieldname，需转回 utf8
-                const origName = Buffer.from(file.originalname, 'latin1').toString('utf8');
-                const fieldname = Buffer.from(file.fieldname, 'latin1').toString('utf8');
-                // 解析 fieldname: "files[oem][tech]" or "files[odmCustom][Style Name]"
-                const match = fieldname.match(/^files\[([^\]]+)\](?:\[([^\]]*)\])?$/);
-                const category = match ? match[1] : 'unknown';
-                const subKey = match ? (match[2] || '') : '';
-
-                await client.query(fileInsertSQL, [
-                    inquiryId,
-                    category,
-                    subKey,
-                    origName,
-                    file.filename,
-                    file.mimetype,
-                    file.size
-                ]);
+        // 检查是否从草稿提交
+        if (d.draft_id) {
+            const dc = await client.query(
+                'SELECT id, inquiry_no FROM custom_inquiries WHERE id = $1 AND user_id = $2 AND status = $3 AND deleted_at IS NULL',
+                [parseInt(d.draft_id), req.user.id, 'draft']
+            );
+            if (dc.rows.length > 0) {
+                inquiryId = dc.rows[0].id;
+                inquiryNo = dc.rows[0].inquiry_no;
+                const oldFiles = await client.query('SELECT stored_name FROM custom_inquiry_files WHERE inquiry_id = $1', [inquiryId]);
+                oldStoredNames = oldFiles.rows.map(r => r.stored_name);
+                await client.query('DELETE FROM custom_inquiry_files WHERE inquiry_id = $1', [inquiryId]);
+                await client.query(
+                    `UPDATE custom_inquiries SET status = 'pending', ${INQUIRY_UPDATE_SET}, modified_at = NOW() WHERE id = $37`,
+                    [...fieldValues, inquiryId]
+                );
             }
         }
 
-        // 处理远程文件引用 (复制询盘时的已有文件)
-        if (d.remote_files) {
-            try {
-                const remoteArr = JSON.parse(d.remote_files);
-                if (Array.isArray(remoteArr) && remoteArr.length > 0) {
-                    const uuidExtPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.\w+$/i;
-                    const remoteInsertSQL = `
-                        INSERT INTO custom_inquiry_files (inquiry_id, category, sub_key, orig_name, stored_name, mime_type, size_bytes)
-                        VALUES ($1, $2, $3, $4, $5, $6, $7)`;
-                    for (const rf of remoteArr) {
-                        if (!rf.stored_name || !uuidExtPattern.test(rf.stored_name)) continue;
-                        // 验证文件属于当前用户的历史询盘
-                        const check = await client.query(
-                            `SELECT 1 FROM custom_inquiry_files cif JOIN custom_inquiries ci ON ci.id = cif.inquiry_id WHERE cif.stored_name = $1 AND ci.user_id = $2 LIMIT 1`,
-                            [rf.stored_name, req.user.id]
-                        );
-                        if (check.rows.length === 0) continue;
-                        await client.query(remoteInsertSQL, [
-                            inquiryId,
-                            rf.category || 'unknown',
-                            rf.sub_key || '',
-                            rf.orig_name || 'unknown',
-                            rf.stored_name,
-                            rf.mime_type || 'application/octet-stream',
-                            rf.size_bytes || 0
-                        ]);
-                    }
-                }
-            } catch (e) {
-                console.error('Failed to process remote files:', e);
-            }
+        if (!inquiryId) {
+            // 生成询盘编号 & 插入新询盘
+            const seqResult = await client.query('SELECT generate_inquiry_no() AS no');
+            inquiryNo = seqResult.rows[0].no;
+            const insertResult = await client.query(`
+                INSERT INTO custom_inquiries (
+                    inquiry_no, user_id, ${INQUIRY_COLUMNS}
+                ) VALUES (
+                    $1, $2,
+                    $3, $4, $5, $6, $7, $8, $9, $10, $11,
+                    $12,
+                    $13, $14, $15, $16, $17, $18, $19, $20,
+                    $21, $22, $23, $24, $25, $26, $27, $28, $29,
+                    $30, $31, $32, $33, $34,
+                    $35, $36, $37,
+                    $38
+                ) RETURNING id`, [inquiryNo, req.user.id, ...fieldValues]);
+            inquiryId = insertResult.rows[0].id;
         }
+
+        // 处理文件
+        await handleUploadedFiles(client, inquiryId, req.files);
+        await handleRemoteFiles(client, inquiryId, req.user.id, d.remote_files, oldStoredNames);
 
         await client.query('COMMIT');
         res.json({ success: true, inquiry_no: inquiryNo });
@@ -460,7 +453,7 @@ router.get('/my-inquiries', authenticateToken, async (req, res) => {
         const offset = (page - 1) * limit;
 
         const countResult = await db.query(
-            'SELECT COUNT(*) FROM custom_inquiries WHERE user_id = $1 AND deleted_at IS NULL',
+            "SELECT COUNT(*) FROM custom_inquiries WHERE user_id = $1 AND deleted_at IS NULL AND status != 'draft'",
             [req.user.id]
         );
         const total = parseInt(countResult.rows[0].count);
@@ -471,7 +464,7 @@ router.get('/my-inquiries', authenticateToken, async (req, res) => {
                    contact_name, brand_name,
                    created_at, modified_at
             FROM custom_inquiries 
-            WHERE user_id = $1 AND deleted_at IS NULL
+            WHERE user_id = $1 AND deleted_at IS NULL AND status != 'draft'
             ORDER BY created_at DESC
             LIMIT $2 OFFSET $3`,
             [req.user.id, limit, offset]
@@ -624,46 +617,99 @@ router.delete('/inquiry/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// 11. 暂存草稿
+// 11. 暂存草稿 (Scheme C: 草稿作为 status='draft' 的询盘)
 router.get('/draft', authenticateToken, async (req, res) => {
     try {
-        const result = await db.query(
-            'SELECT data, updated_at FROM custom_drafts WHERE user_id = $1',
+        const inquiryResult = await db.query(
+            "SELECT * FROM custom_inquiries WHERE user_id = $1 AND status = 'draft' AND deleted_at IS NULL ORDER BY modified_at DESC NULLS LAST LIMIT 1",
             [req.user.id]
         );
-        if (result.rows.length === 0) {
+        if (inquiryResult.rows.length === 0) {
             return res.json({ success: true, data: null });
         }
-        res.json({ success: true, data: result.rows[0].data, updated_at: result.rows[0].updated_at });
+        const inquiry = inquiryResult.rows[0];
+        const filesResult = await db.query(
+            'SELECT id, category, sub_key, orig_name, stored_name, mime_type, size_bytes, created_at FROM custom_inquiry_files WHERE inquiry_id = $1 ORDER BY category, sub_key',
+            [inquiry.id]
+        );
+        res.json({
+            success: true,
+            data: { ...inquiry, files: filesResult.rows },
+            updated_at: inquiry.modified_at || inquiry.created_at
+        });
     } catch (error) {
         console.error('获取草稿失败:', error);
         res.status(500).json({ success: false, message: '服务器错误' });
     }
 });
 
-router.post('/draft', authenticateToken, async (req, res) => {
+router.post('/save-draft', authenticateToken, upload.any(), async (req, res) => {
+    const client = await db.connect();
     try {
-        const { data } = req.body;
-        if (!data || typeof data !== 'object') {
-            return res.status(400).json({ success: false, message: '无效的草稿数据' });
-        }
-        await db.query(
-            `INSERT INTO custom_drafts (user_id, data, updated_at)
-             VALUES ($1, $2, NOW())
-             ON CONFLICT (user_id)
-             DO UPDATE SET data = $2, updated_at = NOW()`,
-            [req.user.id, JSON.stringify(data)]
+        await client.query('BEGIN');
+        const d = req.body;
+        const fieldValues = parseInquiryFields(d);
+
+        // 查找现有草稿
+        const existing = await client.query(
+            "SELECT id FROM custom_inquiries WHERE user_id = $1 AND status = 'draft' AND deleted_at IS NULL",
+            [req.user.id]
         );
-        res.json({ success: true, message: '暂存成功' });
+
+        let inquiryId;
+        let oldStoredNames = [];
+
+        if (existing.rows.length > 0) {
+            // 更新现有草稿
+            inquiryId = existing.rows[0].id;
+            const oldFiles = await client.query('SELECT stored_name FROM custom_inquiry_files WHERE inquiry_id = $1', [inquiryId]);
+            oldStoredNames = oldFiles.rows.map(r => r.stored_name);
+            await client.query('DELETE FROM custom_inquiry_files WHERE inquiry_id = $1', [inquiryId]);
+            await client.query(
+                `UPDATE custom_inquiries SET ${INQUIRY_UPDATE_SET}, modified_at = NOW() WHERE id = $37`,
+                [...fieldValues, inquiryId]
+            );
+        } else {
+            // 新建草稿询盘
+            const seqResult = await client.query('SELECT generate_inquiry_no() AS no');
+            const inquiryNo = seqResult.rows[0].no;
+            const insertResult = await client.query(`
+                INSERT INTO custom_inquiries (
+                    inquiry_no, user_id, status, ${INQUIRY_COLUMNS}
+                ) VALUES (
+                    $1, $2, 'draft',
+                    $3, $4, $5, $6, $7, $8, $9, $10, $11,
+                    $12,
+                    $13, $14, $15, $16, $17, $18, $19, $20,
+                    $21, $22, $23, $24, $25, $26, $27, $28, $29,
+                    $30, $31, $32, $33, $34,
+                    $35, $36, $37,
+                    $38
+                ) RETURNING id`, [inquiryNo, req.user.id, ...fieldValues]);
+            inquiryId = insertResult.rows[0].id;
+        }
+
+        // 处理文件
+        await handleUploadedFiles(client, inquiryId, req.files);
+        await handleRemoteFiles(client, inquiryId, req.user.id, d.remote_files, oldStoredNames);
+
+        await client.query('COMMIT');
+        res.json({ success: true, draft_id: inquiryId });
     } catch (error) {
+        await client.query('ROLLBACK');
         console.error('保存草稿失败:', error);
-        res.status(500).json({ success: false, message: '服务器错误' });
+        res.status(500).json({ success: false, message: req.t ? req.t('api.backendError') : '服务器错误' });
+    } finally {
+        client.release();
     }
 });
 
 router.delete('/draft', authenticateToken, async (req, res) => {
     try {
-        await db.query('DELETE FROM custom_drafts WHERE user_id = $1', [req.user.id]);
+        const result = await db.query(
+            "UPDATE custom_inquiries SET deleted_at = NOW() WHERE user_id = $1 AND status = 'draft' AND deleted_at IS NULL RETURNING id",
+            [req.user.id]
+        );
         res.json({ success: true, message: '草稿已删除' });
     } catch (error) {
         console.error('删除草稿失败:', error);

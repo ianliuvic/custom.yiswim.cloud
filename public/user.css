@@ -398,6 +398,23 @@ body {
     font-size: 12px; font-weight: 700; color: #4f46e5; margin-bottom: 6px;
 }
 
+/* Label sub-block (主标/洗水标) */
+.u-label-sub-block {
+    margin-top: 10px; padding: 10px 12px; border-radius: 8px;
+}
+.u-label-sub-block.main-label {
+    background: #fef2f2; border: 1px solid #fecaca;
+}
+.u-label-sub-block.wash-label {
+    background: #f0fdf4; border: 1px solid #bbf7d0;
+}
+.u-label-sub-title {
+    font-size: 12px; font-weight: 700; margin-bottom: 6px;
+    display: flex; align-items: center; gap: 5px;
+}
+.u-label-sub-block.main-label .u-label-sub-title { color: #dc2626; }
+.u-label-sub-block.wash-label .u-label-sub-title { color: #16a34a; }
+
 /* Trim Mini Cards */
 .u-trim-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
 .u-trim-card {

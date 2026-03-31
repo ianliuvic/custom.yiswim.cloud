@@ -12,7 +12,10 @@
         document.querySelectorAll('.u-menu-item').forEach(el => el.classList.remove('active'));
         document.getElementById('tab-' + tab).classList.add('active');
         document.querySelector('.u-menu-item[data-tab="' + tab + '"]').classList.add('active');
-        if (tab === 'inquiries') closeDetail();
+        if (tab === 'inquiries') {
+            closeDetail();
+            loadInquiries(1);
+        }
     };
 
     /* ---------- Language ---------- */

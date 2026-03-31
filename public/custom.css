@@ -897,3 +897,84 @@
                                     line-height: 1.4;
                                 }
                                 .bulk-size-textarea:focus { border-color: var(--primary-color); outline: none; background: #fff; }
+
+        /* =========================================================
+           Mobile Responsive
+           ========================================================= */
+
+        /* ---- Tablet / Small Desktop ---- */
+        @media (max-width: 1024px) {
+            .summary-sidebar { display: none; }
+            .config-main { border-right: none; }
+            .config-scroll-area { padding: 24px 28px 32px; }
+            .button-group { padding: 12px 28px; }
+            .stepper { padding: 16px 28px 0; }
+        }
+
+        /* ---- Tablet Portrait / Large Phone ---- */
+        @media (max-width: 768px) {
+            .site-header { padding: 0 16px; }
+            .header-right { font-size: 12px; gap: 8px; }
+            .header-right .header-user-text { display: none; }
+            .site-title { font-size: 13px; }
+
+            .stepper { padding: 12px 16px 0; gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+            .stepper::-webkit-scrollbar { display: none; }
+            .step { flex: none; font-size: 10px; letter-spacing: 0.5px; padding: 8px 14px 10px; white-space: nowrap; }
+
+            .config-scroll-area { padding: 16px 16px 28px; }
+            .button-group { padding: 12px 16px; flex-wrap: wrap; }
+            .button-group button { flex: 1; min-width: 0; font-size: 13px; }
+
+            .step-desc { font-size: 12px; padding: 12px 14px; margin-bottom: 20px; }
+
+            .option-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
+            .option-info { padding: 12px 14px; }
+            .option-info h4 { font-size: 13px; }
+
+            .fabric-config-row { flex-direction: column; gap: 12px; }
+            .oem-upload-section { grid-template-columns: 1fr; }
+            .premium-upload-box { padding: 24px 14px; }
+
+            .modal-content.modal-lg { flex-direction: column; height: auto; max-height: 90vh; overflow-y: auto; }
+            .modal-gallery-side { height: 280px; flex: none; }
+            .modal-info-side { padding: 20px; flex: none; }
+            .modal-close-abs { top: 12px; right: 12px; background: rgba(255,255,255,0.9); }
+            .carousel-btn { width: 36px; height: 36px; min-width: 36px; min-height: 36px; font-size: 14px; }
+            .carousel-btn.left { left: 12px; }
+            .carousel-btn.right { right: 12px; }
+
+            .color-palette { grid-template-columns: repeat(auto-fill, minmax(55px, 1fr)); gap: 10px 8px; }
+            .sewing-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+
+            .sample-table th, .sample-table td { padding: 8px 10px; font-size: 12px; }
+            .sample-table select, .sample-table input { padding: 6px; font-size: 11px; }
+
+            .input-group input, .input-group select, #final_remark { padding: 10px 12px; font-size: 13px; }
+
+            .site-footer { font-size: 10px; padding: 0 16px; }
+        }
+
+        /* ---- Phone ---- */
+        @media (max-width: 480px) {
+            .config-scroll-area { padding: 12px 12px 24px; }
+            .stepper { padding: 10px 12px 0; gap: 4px; }
+            .step { font-size: 9px; padding: 6px 10px 8px; }
+            .button-group { padding: 10px 12px; }
+
+            .option-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+            .option-item:hover { transform: none; box-shadow: none; }
+
+            .premium-upload-box { padding: 20px 10px; }
+            .premium-upload-box .upload-icon-container { display: none; }
+
+            .modal-overlay { padding: 10px; }
+            .modal-content { border-radius: 14px; }
+            .modal-gallery-side { height: 220px; }
+            .modal-info-side { padding: 16px; }
+            .modal-header-simple h2 { font-size: 18px; }
+
+            .site-header { padding: 0 12px; }
+            .site-logo { height: 22px; }
+            .site-title { font-size: 12px; }
+        }

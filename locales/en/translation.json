@@ -2,7 +2,8 @@
   "pageTitle": {
     "home": "Custom System Home",
     "auth": "User Authentication",
-    "reset": "Reset Password"
+    "reset": "Reset Password",
+    "user": "User Center"
   },
   "api": {
     "dbError": "Database query error",

@@ -10,8 +10,12 @@
     window.switchTab = function (tab) {
         document.querySelectorAll('.u-tab').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.u-menu-item').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.u-mobile-tab').forEach(el => el.classList.remove('active'));
         document.getElementById('tab-' + tab).classList.add('active');
-        document.querySelector('.u-menu-item[data-tab="' + tab + '"]').classList.add('active');
+        var sideItem = document.querySelector('.u-menu-item[data-tab="' + tab + '"]');
+        if (sideItem) sideItem.classList.add('active');
+        var mobItem = document.querySelector('.u-mobile-tab[data-tab="' + tab + '"]');
+        if (mobItem) mobItem.classList.add('active');
         if (tab === 'inquiries') {
             closeDetail();
             loadInquiries(1);
@@ -829,7 +833,7 @@
         document.body.appendChild(pop);
         // position near the pill
         var rect = pillEl.getBoundingClientRect();
-        var popW = 300;
+        var popW = Math.min(300, window.innerWidth - 32);
         var left = rect.left;
         if (left + popW > window.innerWidth - 16) left = window.innerWidth - popW - 16;
         if (left < 16) left = 16;

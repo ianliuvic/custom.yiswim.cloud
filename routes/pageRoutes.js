@@ -56,7 +56,7 @@ router.get('/reset-password', (req, res) => {
 
 // 6. 用户中心
 router.get('/user', authenticateToken, (req, res) => {
-    res.render('user', { title: '用户中心', user: req.user });
+    res.render('user', { title: req.t('pageTitle.user'), user: req.user });
 });
 
 module.exports = router;

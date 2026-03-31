@@ -11,9 +11,9 @@
 <body>
 
     <header class="site-header">
-        <div class="header-left">
+        <div class="header-left" onclick="goToStep1()" style="cursor:pointer" title="返回第一步">
             <img src="/logo.png" alt="Hongxiu Logo" class="site-logo" onerror="this.style.display='none'">
-            <span class="site-title">Hongxiu Custom System</span>
+            <span class="site-title">红绣服饰自定义系统</span>
         </div>
         <div style="font-size: 14px; color: var(--text-light); display: flex; align-items: center; gap: 12px;">
             <button onclick="setLanguage('<%= lng === 'en' ? 'zh' : 'en' %>')" style="background: none; border: 1px solid var(--border-color); border-radius: 20px; padding: 5px 14px; font-size: 12px; cursor: pointer; color: var(--text-light); transition: all 0.25s; display: inline-flex; align-items: center; gap: 5px; font-weight: 500; letter-spacing: 0.3px;" onmouseover="this.style.borderColor='var(--primary-color)';this.style.color='var(--primary-color)';this.querySelector('svg').style.stroke='var(--primary-color)'" onmouseout="this.style.borderColor='var(--border-color)';this.style.color='var(--text-light)';this.querySelector('svg').style.stroke='currentColor'">
@@ -2743,7 +2743,7 @@
         <!-- 右侧汇总 -->
         <aside class="summary-sidebar">
             <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 30px;">
-                <span class="summary-title" style="margin-bottom: 0;">SELECTED DETAILS</span>
+                <span class="summary-title" style="margin-bottom: 0;">定制详情</span>
                 <button type="button" class="clear-all-btn" onclick="clearAllSelections()" title="清空当前所有选项">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: text-bottom;">
                         <polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>

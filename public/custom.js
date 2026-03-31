@@ -320,6 +320,430 @@
                 }
             }
 
+            // ── 辅料视觉状态恢复 (卡片选中、面板展开、输入框填充) ──
+            (function restoreTrimVisuals() {
+                // 通用：根据文本内容在容器中选中卡片
+                function selectCardByText(containerId, cardSelector, text) {
+                    var c = document.getElementById(containerId);
+                    if (!c || !text) return null;
+                    var found = null;
+                    c.querySelectorAll(cardSelector).forEach(function(el) {
+                        if (el.textContent.trim() === text || el.textContent.trim().indexOf(text) === 0) {
+                            el.classList.add('selected');
+                            found = el;
+                        }
+                    });
+                    return found;
+                }
+
+                // ── Metal ──
+                if (metalConfig.mode) switchMetalMode(metalConfig.mode);
+                if (metalConfig.finish) {
+                    var finishContainer = document.getElementById('metal-finish-container');
+                    if (finishContainer) {
+                        finishContainer.querySelectorAll('.finish-item').forEach(function(el) {
+                            el.classList.remove('selected');
+                            var onclick = el.getAttribute('onclick') || '';
+                            if (onclick.indexOf("'" + metalConfig.finish + "'") !== -1) el.classList.add('selected');
+                        });
+                    }
+                }
+                if (metalConfig.categories && metalConfig.categories.length > 0) {
+                    var metalGrid = document.getElementById('metal-category-grid');
+                    if (metalGrid) {
+                        metalConfig.categories.forEach(function(catName) {
+                            metalGrid.querySelectorAll('.metal-item').forEach(function(el) {
+                                if (el.getAttribute('data-cat') === catName || el.textContent.trim().indexOf(catName) !== -1) {
+                                    el.classList.add('selected');
+                                    var xBtn = el.querySelector('.file-remove');
+                                    if (xBtn) xBtn.style.display = 'flex';
+                                }
+                            });
+                        });
+                    }
+                }
+                if (metalConfig.logoCustom) {
+                    // logoCustom 是全局级别，对应的 DOM 在 per-item 面板中，不在此恢复
+                }
+
+                // ── Pad ──
+                if (padConfig.mode) switchPadMode(padConfig.mode);
+                if (padConfig.thickness) {
+                    var padThickContainer = document.querySelector('#content-pad .pad-thick')?.parentNode;
+                    if (padThickContainer) {
+                        padThickContainer.querySelectorAll('.pad-thick').forEach(function(el) {
+                            el.classList.remove('selected');
+                            var onclick = el.getAttribute('onclick') || '';
+                            if (onclick.indexOf("'" + padConfig.thickness + "'") !== -1) el.classList.add('selected');
+                        });
+                    }
+                }
+                if (padConfig.color) {
+                    var padColorContainer = document.querySelector('#content-pad .pad-color')?.parentNode;
+                    if (padColorContainer) {
+                        padColorContainer.querySelectorAll('.pad-color').forEach(function(el) {
+                            el.classList.remove('selected');
+                            var onclick = el.getAttribute('onclick') || '';
+                            if (onclick.indexOf("'" + padConfig.color + "'") !== -1) el.classList.add('selected');
+                        });
+                    }
+                    var padDisplay = document.getElementById('pad-color-display');
+                    if (padDisplay) padDisplay.innerText = padConfig.color;
+                    if (padConfig.color === '其他定制色') {
+                        var otherArea = document.getElementById('pad-color-other-area');
+                        if (otherArea) otherArea.classList.remove('hidden');
+                    }
+                }
+                if (padConfig.customShape) {
+                    var shapeCheck = document.getElementById('pad-custom-shape-check');
+                    if (shapeCheck) shapeCheck.checked = true;
+                    var shapeArea = document.getElementById('pad-shape-custom-area');
+                    if (shapeArea) shapeArea.classList.remove('hidden');
+                }
+                if (padConfig.shapeRemark) { var el = document.getElementById('pad-shape-remark'); if (el) el.value = padConfig.shapeRemark; }
+                if (padConfig.remark) { var el = document.getElementById('pad-remark'); if (el) el.value = padConfig.remark; }
+                if (padConfig.otherColor) { var el = document.getElementById('pad-color-other'); if (el) el.value = padConfig.otherColor; }
+
+                // ── Hangtag ──
+                if (hangtagConfig.mode) switchHangtagMode(hangtagConfig.mode);
+                if (hangtagConfig.material) {
+                    var htMatGrid = document.getElementById('hangtag-material-grid');
+                    if (htMatGrid) {
+                        htMatGrid.querySelectorAll('.option-item').forEach(function(el) {
+                            el.classList.remove('selected');
+                            var onclick = el.getAttribute('onclick') || '';
+                            if (onclick.indexOf("'" + hangtagConfig.material + "'") !== -1) el.classList.add('selected');
+                        });
+                        // 标准材质显示克重区域
+                        var isStdMat = ['白卡纸', '铜版纸', '牛皮纸'].indexOf(hangtagConfig.material) !== -1;
+                        var weightArea = document.getElementById('hangtag-weight-area');
+                        if (weightArea) weightArea.classList.toggle('hidden', !isStdMat);
+                    }
+                }
+                if (hangtagConfig.weight) {
+                    var weightContainer = document.getElementById('hangtag-weight-area');
+                    if (weightContainer) {
+                        weightContainer.querySelectorAll('.chip').forEach(function(el) {
+                            el.classList.remove('selected');
+                            if (el.textContent.trim() === hangtagConfig.weight) el.classList.add('selected');
+                        });
+                    }
+                }
+                if (hangtagConfig.shape) {
+                    var shapeGrid = document.getElementById('hangtag-shape-grid');
+                    if (shapeGrid) {
+                        shapeGrid.querySelectorAll('.option-item').forEach(function(el) {
+                            el.classList.remove('selected');
+                            var onclick = el.getAttribute('onclick') || '';
+                            if (onclick.indexOf("'" + hangtagConfig.shape + "'") !== -1) el.classList.add('selected');
+                        });
+                    }
+                }
+                if (hangtagConfig.roundedCorner) {
+                    var rc = document.getElementById('hangtag-rounded-corner');
+                    if (rc) rc.checked = true;
+                }
+                if (hangtagConfig.crafts && hangtagConfig.crafts.length > 0) {
+                    var craftGrid = document.getElementById('hangtag-craft-grid');
+                    if (craftGrid) {
+                        craftGrid.querySelectorAll('.option-item').forEach(function(el) {
+                            var onclick = el.getAttribute('onclick') || '';
+                            hangtagConfig.crafts.forEach(function(c) {
+                                if (onclick.indexOf("'" + c + "'") !== -1) el.classList.add('selected');
+                            });
+                        });
+                    }
+                }
+                if (hangtagConfig.stringType) {
+                    var strGrid = document.getElementById('hangtag-string-grid');
+                    if (strGrid) {
+                        strGrid.querySelectorAll('.option-item').forEach(function(el) {
+                            el.classList.remove('selected');
+                            var onclick = el.getAttribute('onclick') || '';
+                            if (onclick.indexOf("'" + hangtagConfig.stringType + "'") !== -1) el.classList.add('selected');
+                        });
+                    }
+                }
+                if (hangtagConfig.stringColor) {
+                    var scContainer = document.getElementById('hangtag-string-color-container');
+                    if (scContainer) {
+                        scContainer.querySelectorAll('.string-color-swatch').forEach(function(el) {
+                            el.classList.remove('selected');
+                            if (el.getAttribute('title') === hangtagConfig.stringColor || el.getAttribute('title') === hangtagConfig.stringColor.replace('其他', '其他颜色')) el.classList.add('selected');
+                        });
+                    }
+                    var scDisplay = document.getElementById('string-color-name-display');
+                    if (scDisplay) scDisplay.innerText = hangtagConfig.stringColor;
+                    if (hangtagConfig.stringColor === '其他') {
+                        var scOther = document.getElementById('hangtag-string-color-other-area');
+                        if (scOther) scOther.classList.remove('hidden');
+                    }
+                }
+                if (hangtagConfig.isSet) {
+                    var setCheck = document.getElementById('hangtag-is-set');
+                    if (setCheck) setCheck.checked = true;
+                    var setArea = document.getElementById('hangtag-set-detail-area');
+                    if (setArea) setArea.classList.remove('hidden');
+                }
+                if (hangtagConfig.remark) { var el = document.getElementById('hangtag-remark'); if (el) el.value = hangtagConfig.remark; }
+                if (hangtagConfig.materialRemark) { var el = document.getElementById('hangtag-material-remark'); if (el) el.value = hangtagConfig.materialRemark; }
+                if (hangtagConfig.shapeRemark) { var el = document.getElementById('hangtag-shape-remark'); if (el) el.value = hangtagConfig.shapeRemark; }
+                if (hangtagConfig.craftRemark) { var el = document.getElementById('hangtag-craft-remark'); if (el) el.value = hangtagConfig.craftRemark; }
+                if (hangtagConfig.stringRemark) { var el = document.getElementById('hangtag-string-remark'); if (el) el.value = hangtagConfig.stringRemark; }
+                if (hangtagConfig.stringColorOther) { var el = document.getElementById('hangtag-string-color-other'); if (el) el.value = hangtagConfig.stringColorOther; }
+                if (hangtagConfig.setRemark) { var el = document.getElementById('hangtag-set-remark'); if (el) el.value = hangtagConfig.setRemark; }
+
+                // ── Label ──
+                if (labelConfig.mode) switchLabelMode(labelConfig.mode);
+                // 材质选中：找到匹配卡片并模拟 selectLabelMaterial 的核心逻辑
+                if (labelConfig.material) {
+                    var lMatGrid = document.getElementById('label-material-grid');
+                    if (lMatGrid) {
+                        var matchedEl = null;
+                        lMatGrid.querySelectorAll('.option-item').forEach(function(el) {
+                            el.classList.remove('selected');
+                            var onclick = el.getAttribute('onclick') || '';
+                            if (onclick.indexOf("'" + labelConfig.material + "'") !== -1) { el.classList.add('selected'); matchedEl = el; }
+                        });
+                        // 显示配置面板
+                        if (matchedEl) {
+                            var lPanel = document.getElementById('label-config-panel');
+                            if (lPanel) {
+                                // 定位面板到选中卡片后
+                                var insertBefore = null;
+                                var cur = matchedEl.nextElementSibling;
+                                while (cur) {
+                                    if (cur.id === 'label-config-panel') { cur = cur.nextElementSibling; continue; }
+                                    if (cur.offsetTop > matchedEl.offsetTop) { insertBefore = cur; break; }
+                                    cur = cur.nextElementSibling;
+                                }
+                                if (insertBefore) lMatGrid.insertBefore(lPanel, insertBefore);
+                                else lMatGrid.appendChild(lPanel);
+                                lPanel.classList.remove('hidden');
+                                // 子区域显示逻辑
+                                var otherArea = document.getElementById('label-material-other-area');
+                                var sizeSewing = document.getElementById('label-dynamic-size-sewing');
+                                var sizeArea = document.getElementById('label-size-area');
+                                var sewingArea = document.getElementById('label-sewing-area');
+                                if (labelConfig.material === '其他') {
+                                    if (otherArea) otherArea.classList.remove('hidden');
+                                    if (sizeSewing) sizeSewing.classList.add('hidden');
+                                } else if (labelConfig.material === '印标') {
+                                    if (otherArea) otherArea.classList.add('hidden');
+                                    if (sizeSewing) sizeSewing.classList.remove('hidden');
+                                    if (sizeArea) sizeArea.classList.remove('hidden');
+                                    if (sewingArea) sewingArea.classList.add('hidden');
+                                } else {
+                                    if (otherArea) otherArea.classList.add('hidden');
+                                    if (sizeSewing) sizeSewing.classList.remove('hidden');
+                                    if (sizeArea) sizeArea.classList.remove('hidden');
+                                    if (sewingArea) sewingArea.classList.remove('hidden');
+                                }
+                            }
+                        }
+                    }
+                }
+                // 尺寸输入
+                if (labelConfig.size) { var el = document.getElementById('label-custom-size'); if (el) el.value = labelConfig.size; }
+                // 部件选中
+                if (labelConfig.components && labelConfig.components.length > 0) {
+                    var compChips = document.querySelectorAll('#pane-label .chip');
+                    compChips.forEach(function(chip) {
+                        // 只处理带 toggleLabelComponent 的 chip
+                        var onclick = chip.getAttribute('onclick') || '';
+                        if (onclick.indexOf('toggleLabelComponent') === -1) return;
+                        chip.classList.remove('selected');
+                    });
+                    compChips.forEach(function(chip) {
+                        var onclick = chip.getAttribute('onclick') || '';
+                        if (onclick.indexOf('toggleLabelComponent') === -1) return;
+                        labelConfig.components.forEach(function(comp) {
+                            if (chip.textContent.trim().indexOf(comp) !== -1) chip.classList.add('selected');
+                        });
+                    });
+                    var topArea = document.getElementById('label-placement-top-area');
+                    var bottomArea = document.getElementById('label-placement-bottom-area');
+                    if (topArea) topArea.classList.toggle('hidden', labelConfig.components.indexOf('上装/连体') === -1);
+                    if (bottomArea) bottomArea.classList.toggle('hidden', labelConfig.components.indexOf('下装/裤装') === -1);
+                }
+                // 位置选中
+                if (labelConfig.placements) {
+                    ['top', 'bottom'].forEach(function(gt) {
+                        if (!labelConfig.placements[gt]) return;
+                        var pGrid = document.getElementById('label-placement-' + gt + '-grid');
+                        if (pGrid) {
+                            pGrid.querySelectorAll('.option-item').forEach(function(el) {
+                                el.classList.remove('selected');
+                                var onclick = el.getAttribute('onclick') || '';
+                                if (onclick.indexOf("'" + labelConfig.placements[gt] + "'") !== -1) el.classList.add('selected');
+                            });
+                            // 自定义位置
+                            if (labelConfig.placements[gt] === '自定义其他位置') {
+                                var customArea = document.getElementById('label-placement-custom-' + gt);
+                                if (customArea) customArea.classList.remove('hidden');
+                            }
+                        }
+                    });
+                }
+                // 缝制方式选中
+                if (labelConfig.method) {
+                    var sewGrid = document.getElementById('label-sewing-grid');
+                    if (sewGrid) {
+                        sewGrid.querySelectorAll('.option-item').forEach(function(el) {
+                            el.classList.remove('selected');
+                            var onclick = el.getAttribute('onclick') || '';
+                            if (onclick.indexOf("'" + labelConfig.method + "'") !== -1) el.classList.add('selected');
+                        });
+                        if (labelConfig.method === '其他') {
+                            var sewOther = document.getElementById('label-sewing-other-area');
+                            if (sewOther) sewOther.classList.remove('hidden');
+                        }
+                    }
+                }
+                if (labelConfig.isSplit) {
+                    var splitCheck = document.getElementById('label-is-split');
+                    if (splitCheck) splitCheck.checked = true;
+                    var splitArea = document.getElementById('label-split-detail-area');
+                    if (splitArea) splitArea.classList.remove('hidden');
+                }
+                if (labelConfig.remark) { var el = document.getElementById('label-remark'); if (el) el.value = labelConfig.remark; }
+                if (labelConfig.splitRemark) { var el = document.getElementById('label-split-remark'); if (el) el.value = labelConfig.splitRemark; }
+                if (labelConfig.sewingRemark) { var el = document.getElementById('label-sewing-remark'); if (el) el.value = labelConfig.sewingRemark; }
+
+                // ── Hygiene ──
+                if (hygieneConfig.mode) switchHygieneMode(hygieneConfig.mode);
+                if (hygieneConfig.material) {
+                    var hygMatContainer = document.querySelector('#content-hygiene .hygiene-mat')?.parentNode;
+                    if (hygMatContainer) {
+                        hygMatContainer.querySelectorAll('.hygiene-mat').forEach(function(el) {
+                            el.classList.remove('selected');
+                            var onclick = el.getAttribute('onclick') || '';
+                            if (onclick.indexOf("'" + hygieneConfig.material + "'") !== -1) el.classList.add('selected');
+                        });
+                    }
+                }
+                if (hygieneConfig.shape) {
+                    var shapeGrid = document.getElementById('hygiene-shape-grid');
+                    if (shapeGrid) {
+                        shapeGrid.querySelectorAll('.hygiene-shape').forEach(function(el) {
+                            el.classList.remove('selected');
+                            var onclick = el.getAttribute('onclick') || '';
+                            if (onclick.indexOf("'" + hygieneConfig.shape + "'") !== -1) el.classList.add('selected');
+                        });
+                        if (hygieneConfig.shape === '其他定制形状') {
+                            var customShape = document.getElementById('hygiene-custom-shape-area');
+                            if (customShape) customShape.classList.remove('hidden');
+                        }
+                    }
+                }
+                if (hygieneConfig.size) {
+                    var sizeCheck = document.getElementById('hygiene-custom-size-check');
+                    if (sizeCheck) sizeCheck.checked = true;
+                    var sizeArea = document.getElementById('hygiene-size-input-area');
+                    if (sizeArea) sizeArea.classList.remove('hidden');
+                    var sizeInput = document.getElementById('hygiene-custom-size');
+                    if (sizeInput) sizeInput.value = hygieneConfig.size;
+                }
+                if (hygieneConfig.noApply) {
+                    var noApplyCheck = document.getElementById('hygiene-no-apply');
+                    if (noApplyCheck) noApplyCheck.checked = true;
+                    var ruleArea = document.getElementById('hygiene-apply-rule-area');
+                    if (ruleArea) ruleArea.classList.add('hidden');
+                }
+                if (hygieneConfig.remark) { var el = document.getElementById('hygiene-text'); if (el) el.value = hygieneConfig.remark; }
+                if (hygieneConfig.shapeRemark) { var el = document.getElementById('hygiene-shape-remark'); if (el) el.value = hygieneConfig.shapeRemark; }
+                if (hygieneConfig.applyRemark) { var el = document.getElementById('hygiene-apply-remark'); if (el) el.value = hygieneConfig.applyRemark; }
+
+                // ── Bag (配置面板 + 尺寸/印刷/工艺) ──
+                if (bagConfig.material && bagConfig.material !== '未选材质') {
+                    var bagContainer = document.getElementById('bag-list-container');
+                    if (bagContainer) {
+                        // 找到匹配卡片并模拟 onBagClick 核心逻辑 (不含 scroll)
+                        var matchedBagEl = null;
+                        bagContainer.querySelectorAll('.bag-material').forEach(function(el) {
+                            var h4 = el.querySelector('.option-info h4');
+                            if (h4 && h4.textContent.trim() === bagConfig.material) { matchedBagEl = el; }
+                        });
+                        if (matchedBagEl) {
+                            // 展开配置面板
+                            var bagPanel = document.getElementById('bag-config-panel');
+                            if (bagPanel) {
+                                var insertBefore = null;
+                                var cur = matchedBagEl.nextElementSibling;
+                                while (cur) {
+                                    if (cur.id === 'bag-config-panel') { cur = cur.nextElementSibling; continue; }
+                                    if (cur.offsetTop > matchedBagEl.offsetTop) { insertBefore = cur; break; }
+                                    cur = cur.nextElementSibling;
+                                }
+                                if (insertBefore) bagContainer.insertBefore(bagPanel, insertBefore);
+                                else bagContainer.appendChild(bagPanel);
+                                bagPanel.classList.remove('hidden');
+                            }
+                            // 提取 bag JSON 渲染尺寸
+                            var onclickAttr = matchedBagEl.getAttribute('onclick') || '';
+                            var bagJsonMatch = onclickAttr.match(/onBagClick\((\{.*?\}),/);
+                            if (bagJsonMatch) {
+                                try {
+                                    var bagObj = JSON.parse(bagJsonMatch[1].replace(/&quot;/g, '"'));
+                                    var rawSizes = bagObj.size || bagObj.sizes || bagObj['尺寸'] || [];
+                                    if (typeof rawSizes === 'string') rawSizes = rawSizes.split(',').map(function(s) { return s.trim(); });
+                                    renderBagSizes(rawSizes);
+                                } catch(e) {}
+                            }
+                        }
+                    }
+                    // 选中尺寸
+                    if (bagConfig.size && bagConfig.size !== '未选尺寸') {
+                        setTimeout(function() {
+                            var sizeContainer = document.getElementById('bag-size-container');
+                            if (sizeContainer) {
+                                sizeContainer.querySelectorAll('.bag-size').forEach(function(el) {
+                                    var onclick = el.getAttribute('onclick') || '';
+                                    if (onclick.indexOf("'" + bagConfig.size + "'") !== -1) el.classList.add('selected');
+                                });
+                                if (bagConfig.size === '自定义尺寸') {
+                                    var customBox = document.getElementById('bag-custom-size-box');
+                                    if (customBox) customBox.classList.remove('hidden');
+                                    if (bagConfig.customWidth) { var w = document.getElementById('bag-custom-width'); if (w) w.value = bagConfig.customWidth; }
+                                    if (bagConfig.customHeight) { var h = document.getElementById('bag-custom-height'); if (h) h.value = bagConfig.customHeight; }
+                                }
+                            }
+                        }, 150);
+                    }
+                    // 印刷模式
+                    if (bagConfig.print && bagConfig.print !== '空白无印') {
+                        var printGrid = document.getElementById('bag-print-grid');
+                        if (printGrid) {
+                            printGrid.querySelectorAll('.bag-print').forEach(function(el) {
+                                el.classList.remove('selected');
+                                var onclick = el.getAttribute('onclick') || '';
+                                if (onclick.indexOf("'" + bagConfig.print + "'") !== -1) el.classList.add('selected');
+                            });
+                            var printPanel = document.getElementById('bag-print-panel');
+                            if (printPanel) {
+                                printGrid.parentNode.insertBefore(printPanel, printGrid.nextSibling);
+                                printPanel.classList.remove('hidden');
+                            }
+                        }
+                    }
+                    // 工艺选中
+                    if (bagConfig.crafts && bagConfig.crafts.length > 0) {
+                        var craftContainer = document.getElementById('content-bag');
+                        if (craftContainer) {
+                            craftContainer.querySelectorAll('.bag-craft').forEach(function(el) {
+                                var onclick = el.getAttribute('onclick') || '';
+                                bagConfig.crafts.forEach(function(c) {
+                                    if (onclick.indexOf("'" + c + "'") !== -1) el.classList.add('selected');
+                                });
+                            });
+                        }
+                    }
+                }
+
+                // ── Other ──
+                if (otherConfig.remark) { var el = document.getElementById('other-remark'); if (el) el.value = otherConfig.remark; }
+            })();
+
             // CMT 状态
             const cmtData = _parse(d.cmt_enabled) || {};
             for (const cat in cmtData) {

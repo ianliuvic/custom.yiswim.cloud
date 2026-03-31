@@ -847,7 +847,7 @@
 
     /* ---------- Delete inquiry ---------- */
     window.deleteInquiry = async function (id, inquiryNo) {
-        if (!confirm('确定要删除询盘 ' + inquiryNo + ' 吗？\n\n删除后无法恢复，所有关联文件也将被永久删除。')) return;
+        if (!confirm('确定要删除询盘 ' + inquiryNo + ' 吗？')) return;
         try {
             var res = await fetch('/api/inquiry/' + id, { method: 'DELETE' });
             var json = await res.json();

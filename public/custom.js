@@ -317,7 +317,8 @@
                         for (var pk in cfg.placementFiles) { cfg.placementFiles[pk] = []; }
                     }
                     info.set(cfg);
-                    updateTrimSummaryTrigger(cat);
+                    // updateTrimSummaryTrigger 延后到 restoreTrimVisuals 之后调用
+                    // (否则 summary 函数会从空 DOM 读取并覆盖 config 中的文本值)
 
                     // 视觉选中包装袋材质卡片
                     if (cat === 'bag' && cfg.material) {
@@ -757,6 +758,12 @@
                 // ── Other ──
                 if (otherConfig.remark) { var el = document.getElementById('other-remark'); if (el) el.value = otherConfig.remark; }
             })();
+
+            // 辅料汇总更新 (必须在视觉状态恢复之后，确保 DOM 输入框已填充)
+            for (var _cat in trimMap) {
+                var _isEnabled = document.querySelector('input[name="need_' + _cat + '"][value="yes"]');
+                if (_isEnabled && _isEnabled.checked) updateTrimSummaryTrigger(_cat);
+            }
 
             // CMT 状态
             const cmtData = _parse(d.cmt_enabled) || {};

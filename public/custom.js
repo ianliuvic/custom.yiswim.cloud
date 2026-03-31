@@ -1436,6 +1436,11 @@
             // —— Step 4: 物流 ——
             fd.append('delivery_mode', currentDeliveryMode);
             fd.append('sample_rows', JSON.stringify(sampleRows));
+            // 同步 DOM 输入值到 sampleConfig
+            if (sampleConfig.needBulkQuote) {
+                sampleConfig.intentQty = document.getElementById('sample-intent-qty')?.value || '';
+                sampleConfig.intentPrice = document.getElementById('sample-intent-price')?.value || '';
+            }
             fd.append('sample_config', JSON.stringify(sampleConfig));
             fd.append('sample_dest', document.getElementById('sample-destination')?.value || '');
             fd.append('bulk_rows', JSON.stringify(bulkRows));

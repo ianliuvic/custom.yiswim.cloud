@@ -564,7 +564,8 @@
                 break;
         }
 
-        if (val.remark) h += kv('备注', esc(val.remark));
+        // 吊牌的 remark 已作为"设计描述"展示，不再重复
+        if (val.remark && td.key !== 'hangtag_config') h += kv('备注', esc(val.remark));
 
         // CMT 客供物料信息
         var cmtEnabled = cmtInfo === true || (cmtInfo && cmtInfo.enabled);

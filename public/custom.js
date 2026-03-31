@@ -186,7 +186,7 @@
             }
 
             // OEM 数据
-            if (d.oem_project) {
+            if (d.oem_project || d.oem_mode_active) {
                 toggleStyleMode('upload');
                 const projEl = document.getElementById('oem-collection-name');
                 if (projEl) projEl.value = d.oem_project;
@@ -265,10 +265,14 @@
                 'shapeFiles','applyFiles','otherMatFiles','otherCraftFiles','stringFiles',
                 'sewingFiles','customFiles'];
 
+            // 草稿中额外保存了 trim_enabled 状态
+            const draftTrimEnabled = d.trim_enabled || {};
+
             for (const cat in trimMap) {
                 var info = trimMap[cat];
                 var cfg = _parse(d[info.dbKey]) || {};
-                if (cfg && Object.keys(cfg).length > 0) {
+                var shouldEnable = draftTrimEnabled[cat] || (cfg && Object.keys(cfg).length > 0);
+                if (shouldEnable) {
                     // 启用该辅料
                     var yesRadio = document.querySelector('input[name="need_' + cat + '"][value="yes"]');
                     if (yesRadio) { yesRadio.checked = true; toggleTrim(cat, true); }
@@ -1600,6 +1604,150 @@
             return { clean, files: allFiles };
         }
 
+        // ==========================================
+        // 暂存草稿功能
+        // ==========================================
+        function collectFormState() {
+            // 同步 DOM 输入值到配置对象 (和 submitForm 保持一致)
+            padConfig.otherColor = document.getElementById('pad-color-other')?.value.trim() || '';
+            padConfig.shapeRemark = document.getElementById('pad-shape-remark')?.value.trim() || '';
+            padConfig.remark = document.getElementById('pad-remark')?.value.trim() || '';
+            hangtagConfig.remark = document.getElementById('hangtag-remark')?.value.trim() || '';
+            hangtagConfig.materialRemark = document.getElementById('hangtag-material-remark')?.value.trim() || '';
+            hangtagConfig.shapeRemark = document.getElementById('hangtag-shape-remark')?.value.trim() || '';
+            hangtagConfig.craftRemark = document.getElementById('hangtag-craft-remark')?.value.trim() || '';
+            hangtagConfig.stringRemark = document.getElementById('hangtag-string-remark')?.value.trim() || '';
+            hangtagConfig.stringColorOther = document.getElementById('hangtag-string-color-other')?.value.trim() || '';
+            hangtagConfig.setRemark = document.getElementById('hangtag-set-remark')?.value.trim() || '';
+            labelConfig.remark = document.getElementById('label-remark')?.value.trim() || '';
+            labelConfig.splitRemark = document.getElementById('label-split-remark')?.value.trim() || '';
+            labelConfig.sewingRemark = document.getElementById('label-sewing-remark')?.value.trim() || '';
+            if (sampleConfig.needBulkQuote) {
+                sampleConfig.intentQty = document.getElementById('sample-intent-qty')?.value || '';
+                sampleConfig.intentPrice = document.getElementById('sample-intent-price')?.value || '';
+            }
+
+            // 收集辅料需要/不需要状态
+            const trimCategories = ['metal', 'pad', 'bag', 'hangtag', 'label', 'hygiene', 'other'];
+            const trimEnabled = {};
+            trimCategories.forEach(cat => {
+                trimEnabled[cat] = !!document.querySelector(`input[name="need_${cat}"][value="yes"]`)?.checked;
+            });
+
+            // 辅料配置（剥离文件对象）
+            const trimConfigs = { metal: metalConfig, pad: padConfig, bag: bagConfig, hangtag: hangtagConfig, label: labelConfig, hygiene: hygieneConfig, other: otherConfig };
+            const cleanTrims = {};
+            for (const [cat, conf] of Object.entries(trimConfigs)) {
+                if (trimEnabled[cat]) {
+                    cleanTrims[cat] = stripFiles(conf, cat).clean;
+                } else {
+                    cleanTrims[cat] = {};
+                }
+            }
+
+            // CMT 状态
+            const cmtEnabled = {};
+            trimCategories.forEach(cat => {
+                const cmtCb = document.getElementById(`cmt-check-${cat}`);
+                if (cmtCb && cmtCb.checked) {
+                    cmtEnabled[cat] = { enabled: true, desc: (document.getElementById(`cmt-desc-${cat}`)?.value || '').trim(), trackingNo: (document.getElementById(`cmt-tracking-${cat}`)?.value || '').trim() };
+                } else {
+                    cmtEnabled[cat] = false;
+                }
+            });
+            const fabricCmtCb = document.getElementById('fabric-cmt-check');
+            if (fabricCmtCb && fabricCmtCb.checked) {
+                cmtEnabled.fabric = { enabled: true, desc: (document.getElementById('fabric-cmt-desc')?.value || '').trim(), trackingNo: (document.getElementById('fabric-cmt-tracking')?.value || '').trim() };
+            } else {
+                cmtEnabled.fabric = false;
+            }
+
+            // OEM checklist
+            const checkedIds = [];
+            document.querySelectorAll('.oem-checklist-item input[type="checkbox"]:checked').forEach(cb => checkedIds.push(cb.value));
+
+            // odmCustomData 只保留 remark
+            const odmClean = {};
+            for (const [sn, data] of Object.entries(odmCustomData)) {
+                odmClean[sn] = { remark: data.remark || '' };
+            }
+
+            return {
+                // Step 1
+                odm_styles: selectedOdmStyles,
+                odm_custom_data: odmClean,
+                oem_project: document.getElementById('oem-collection-name')?.value || '',
+                oem_style_count: parseInt(document.getElementById('oem-collection-count')?.value) || 0,
+                oem_descriptions: oemStyleDescriptions,
+                oem_checklist: checkedIds,
+                oem_remark: document.getElementById('oem-remark')?.value || '',
+                oem_physical_sample: document.getElementById('oem-physical')?.checked || false,
+                oem_tracking_no: document.querySelector('#oem-address-info input')?.value.trim() || '',
+                oem_mode_active: document.getElementById('mode-oem')?.classList.contains('active') || false,
+                // Step 2
+                fabric_selection: stripFabricFiles(fabricSelection).clean,
+                // Step 3
+                trim_enabled: trimEnabled,
+                cmt_enabled: cmtEnabled,
+                metal_config: cleanTrims.metal,
+                pad_config: cleanTrims.pad,
+                bag_config: cleanTrims.bag,
+                hangtag_config: cleanTrims.hangtag,
+                label_config: cleanTrims.label,
+                hygiene_config: cleanTrims.hygiene,
+                other_config: cleanTrims.other,
+                // Step 4
+                delivery_mode: currentDeliveryMode,
+                sample_rows: sampleRows,
+                sample_config: sampleConfig,
+                sample_dest: document.getElementById('sample-destination')?.value || '',
+                bulk_rows: bulkRows,
+                bulk_logistics: bulkLogisticsConfig,
+                bulk_dest: document.getElementById('bulk-destination')?.value || '',
+                bulk_target_price: document.getElementById('bulk-target-price')?.value || '',
+                bulk_packing_remark: document.getElementById('bulk-shipping-remark')?.value || '',
+                // Step 5
+                contact_name: document.getElementById('final-contact-name')?.value.trim() || '',
+                contact_info: document.getElementById('final-contact-info')?.value.trim() || '',
+                brand_name: document.getElementById('final-brand-name')?.value.trim() || '',
+                website: document.getElementById('final-website')?.value || '',
+                final_remark: document.getElementById('final-remark')?.value || '',
+                assign_sales: document.getElementById('assign-sales')?.value || '',
+                assign_pattern: document.getElementById('assign-pattern')?.value || '',
+                assign_sewing: document.getElementById('assign-sewing')?.value || '',
+                nda_agreed_at: document.getElementById('nda-agree')?.checked ? new Date().toISOString() : null,
+                // 元信息
+                current_step: currentStep
+            };
+        }
+
+        async function saveDraft() {
+            try {
+                const data = collectFormState();
+                const res = await fetch('/api/draft', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ data })
+                });
+                const json = await res.json();
+                if (json.success) {
+                    // 成功浮层提示
+                    const toast = document.createElement('div');
+                    toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:10px;background:#065f46;color:#fff;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.15);transition:opacity .5s;';
+                    toast.textContent = _t('暂存成功，可在用户中心恢复');
+                    document.body.appendChild(toast);
+                    setTimeout(() => { toast.style.opacity = '0'; }, 2500);
+                    setTimeout(() => { toast.remove(); }, 3000);
+                } else {
+                    alert(_t('暂存失败：') + (json.message || ''));
+                }
+            } catch (e) {
+                console.error('暂存失败:', e);
+                alert(_t('暂存失败，请检查网络'));
+            }
+        }
+        window.saveDraft = saveDraft;
+
         async function submitForm() {
             // 1. 全量验证
             const v = validateAll();
@@ -1792,6 +1940,8 @@
 
                 hideUploadModal();
                 if (result.success) {
+                    // 提交成功后自动清除暂存草稿
+                    fetch('/api/draft', { method: 'DELETE' }).catch(() => {});
                     alert(_t("✅ 提交成功！") + `\n\n${_t('您的需求编号为:')} ${result.inquiry_no}\n${_t('专属业务经理将在 24 小时内为您提供正式报价。')}`);
                     window.location.reload();
                 } else {

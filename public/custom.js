@@ -873,6 +873,11 @@
                 }
         }
 
+        // 点击左上角 Logo/标题 返回第一步（不清空数据）
+        window.goToStep1 = function () {
+            if (currentStep !== 1) changeStep(1 - currentStep);
+        };
+
         // ==========================================
         // 实时表单验证系统 (Real-time Validation)
         // ==========================================

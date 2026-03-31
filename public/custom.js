@@ -382,6 +382,10 @@
                 }
 
                 // ── Pad ──
+                // 先填充文本输入，再切模式（switchPadMode→updatePadSummary 会从 DOM 读值写回 config）
+                if (padConfig.shapeRemark) { var el = document.getElementById('pad-shape-remark'); if (el) el.value = padConfig.shapeRemark; }
+                if (padConfig.remark) { var el = document.getElementById('pad-remark'); if (el) el.value = padConfig.remark; }
+                if (padConfig.otherColor) { var el = document.getElementById('pad-color-other'); if (el) el.value = padConfig.otherColor; }
                 if (padConfig.mode) switchPadMode(padConfig.mode);
                 if (padConfig.thickness) {
                     var padThickContainer = document.querySelector('#content-pad .pad-thick')?.parentNode;
@@ -415,9 +419,7 @@
                     var shapeArea = document.getElementById('pad-shape-custom-area');
                     if (shapeArea) shapeArea.classList.remove('hidden');
                 }
-                if (padConfig.shapeRemark) { var el = document.getElementById('pad-shape-remark'); if (el) el.value = padConfig.shapeRemark; }
-                if (padConfig.remark) { var el = document.getElementById('pad-remark'); if (el) el.value = padConfig.remark; }
-                if (padConfig.otherColor) { var el = document.getElementById('pad-color-other'); if (el) el.value = padConfig.otherColor; }
+                // （文本已在 switchPadMode 前填充）
 
                 // ── Hangtag ──
                 if (hangtagConfig.mode) switchHangtagMode(hangtagConfig.mode);
@@ -509,6 +511,11 @@
                 if (hangtagConfig.setRemark) { var el = document.getElementById('hangtag-set-remark'); if (el) el.value = hangtagConfig.setRemark; }
 
                 // ── Label ──
+                // 先填充文本输入，再切模式（switchLabelMode→updateLabelSummary 会从 DOM 读值写回 config）
+                if (labelConfig.remark) { var el = document.getElementById('label-remark'); if (el) el.value = labelConfig.remark; }
+                if (labelConfig.size) { var el = document.getElementById('label-custom-size'); if (el) el.value = labelConfig.size; }
+                if (labelConfig.splitRemark) { var el = document.getElementById('label-split-remark'); if (el) el.value = labelConfig.splitRemark; }
+                if (labelConfig.sewingRemark) { var el = document.getElementById('label-sewing-remark'); if (el) el.value = labelConfig.sewingRemark; }
                 if (labelConfig.mode) switchLabelMode(labelConfig.mode);
                 // 材质选中：找到匹配卡片并模拟 selectLabelMaterial 的核心逻辑
                 if (labelConfig.material) {
@@ -621,11 +628,19 @@
                     var splitArea = document.getElementById('label-split-detail-area');
                     if (splitArea) splitArea.classList.remove('hidden');
                 }
-                if (labelConfig.remark) { var el = document.getElementById('label-remark'); if (el) el.value = labelConfig.remark; }
-                if (labelConfig.splitRemark) { var el = document.getElementById('label-split-remark'); if (el) el.value = labelConfig.splitRemark; }
-                if (labelConfig.sewingRemark) { var el = document.getElementById('label-sewing-remark'); if (el) el.value = labelConfig.sewingRemark; }
+                // （文本已在 switchLabelMode 前填充）
 
                 // ── Hygiene ──
+                // 先填充文本输入，再切模式（switchHygieneMode→updateHygieneSummary 会从 DOM 读值写回 config）
+                if (hygieneConfig.remark) { var el = document.getElementById('hygiene-text'); if (el) el.value = hygieneConfig.remark; }
+                if (hygieneConfig.shapeRemark) { var el = document.getElementById('hygiene-shape-remark'); if (el) el.value = hygieneConfig.shapeRemark; }
+                if (hygieneConfig.applyRemark) { var el = document.getElementById('hygiene-apply-remark'); if (el) el.value = hygieneConfig.applyRemark; }
+                if (hygieneConfig.size) {
+                    var sizeCheck = document.getElementById('hygiene-custom-size-check');
+                    if (sizeCheck) sizeCheck.checked = true;
+                    var sizeInput = document.getElementById('hygiene-custom-size');
+                    if (sizeInput) sizeInput.value = hygieneConfig.size;
+                }
                 if (hygieneConfig.mode) switchHygieneMode(hygieneConfig.mode);
                 if (hygieneConfig.material) {
                     var hygMatContainer = document.querySelector('#content-hygiene .hygiene-mat')?.parentNode;
@@ -665,9 +680,7 @@
                     var ruleArea = document.getElementById('hygiene-apply-rule-area');
                     if (ruleArea) ruleArea.classList.add('hidden');
                 }
-                if (hygieneConfig.remark) { var el = document.getElementById('hygiene-text'); if (el) el.value = hygieneConfig.remark; }
-                if (hygieneConfig.shapeRemark) { var el = document.getElementById('hygiene-shape-remark'); if (el) el.value = hygieneConfig.shapeRemark; }
-                if (hygieneConfig.applyRemark) { var el = document.getElementById('hygiene-apply-remark'); if (el) el.value = hygieneConfig.applyRemark; }
+                // （文本已在 switchHygieneMode 前填充）
 
                 // ── Bag (配置面板 + 尺寸/印刷/工艺) ──
                 if (bagConfig.material && bagConfig.material !== '未选材质') {

@@ -664,13 +664,13 @@ function buildShippingSection(d, fileMap, t) {
 
         const bpFiles = fileMap['bulkPacking'] || [];
         if (bpFiles.length) {
-            content.push(...buildFileTable(bpFiles, t('packRefFiles')));
+            content.push(...buildFileTable(bpFiles, t('packRefFiles'), t));
         }
     }
 
     const fdFiles = fileMap['finalDocs'] || [];
     if (fdFiles.length) {
-        content.push(...buildFileTable(fdFiles, t('techPlanFiles')));
+        content.push(...buildFileTable(fdFiles, t('techPlanFiles'), t));
     }
 
     content.push(divider());
@@ -692,7 +692,7 @@ function buildContactSection(d, t) {
 
 function buildFilesSection(files, t) {
     if (!files || !files.length) return [];
-    return [sectionTitle(t('sec6')), ...buildFileTable(files)];
+    return [sectionTitle(t('sec6')), ...buildFileTable(files, null, t)];
 }
 
 /* ═══════════════════════════════════════════════

@@ -1044,6 +1044,7 @@
             var json = await res.json();
             if (json.success && json.data) {
                 sessionStorage.setItem('copyInquiryData', JSON.stringify(json.data));
+                sessionStorage.setItem('restoreDraftId', String(json.data.id));
                 window.location.href = '/';
             } else {
                 alert('草稿不存在或已过期');

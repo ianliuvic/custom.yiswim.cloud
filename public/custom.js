@@ -1059,7 +1059,7 @@
                                 if (!v) { allOk = false; }
                             }
                             // E. 主洗标分开需有说明
-                            if (labelConfig.isSet) {
+                            if (labelConfig.isSplit) {
                                 const v = (document.getElementById('label-split-remark')?.value || '').trim();
                                 if (!v) { allOk = false; }
                             }
@@ -3021,7 +3021,7 @@
         }
 
         function toggleLabelSplit(checked) {
-            labelConfig.isSet = checked; // 与吊牌统一使用类似的概念
+            labelConfig.isSplit = checked;
             
             const area = document.getElementById('label-split-detail-area');
             if (area) {
@@ -3549,7 +3549,7 @@
                 }
         
                 // --- 新增：主洗标分开标记 ---
-                const splitText = labelConfig.isSet ? '<span style="color:var(--primary-color);"> [' + _t('主洗标分开') + ']</span>' : '';
+                const splitText = labelConfig.isSplit ? '<span style="color:var(--primary-color);"> [' + _t('主洗标分开') + ']</span>' : '';
         
                 st.innerHTML = `
                     <div style="text-align:right;">

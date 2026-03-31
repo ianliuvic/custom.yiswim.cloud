@@ -117,8 +117,19 @@
                     if(result.data.fabrics) renderFabrics(result.data.fabrics);
                     // 新增：触发渲染 Checklist
                     if(result.data.oem_checklists) renderOemChecklists(result.data.oem_checklists);
-                    // 自动填充 Step 5 联系信息 (从用户最近一次询盘)
-                    if(result.data.last_contact) prefillContact(result.data.last_contact);
+
+                    // 检查是否有复制询盘数据需要恢复
+                    const copyRaw = sessionStorage.getItem('copyInquiryData');
+                    if (copyRaw) {
+                        sessionStorage.removeItem('copyInquiryData');
+                        try {
+                            const copyData = JSON.parse(copyRaw);
+                            restoreFromInquiry(copyData);
+                        } catch(e) { console.warn('恢复询盘数据失败:', e); }
+                    } else {
+                        // 仅在非复制模式下自动填充联系信息
+                        if(result.data.last_contact) prefillContact(result.data.last_contact);
+                    }
                 }
             } catch (error) { console.warn('加载数据API未就绪，使用静态展示框架:', error); }
         });
@@ -140,6 +151,266 @@
             }
             if (typeof validateContact === 'function') validateContact();
             if (typeof updateStep5Summary === 'function') updateStep5Summary();
+        }
+
+        // ==========================================
+        // 从历史询盘恢复表单数据 (复制为新询盘)
+        // ==========================================
+        function restoreFromInquiry(d) {
+            const _parse = (v) => {
+                if (v == null) return null;
+                if (typeof v === 'object') return v;
+                try { return JSON.parse(v); } catch(e) { return null; }
+            };
+
+            // ── Step 1: 款式 ──
+            const odmArr = _parse(d.odm_styles) || [];
+            const odmCustom = _parse(d.odm_custom_data) || {};
+
+            // 选择 ODM 款式
+            odmArr.forEach(function(name) {
+                const cardId = 'card-' + String(name).replace(/\s+/g, '-');
+                const cardEl = document.getElementById(cardId);
+                if (cardEl) {
+                    selectOdmStyle(name, cardEl, true);
+                } else {
+                    if (selectedOdmStyles.indexOf(name) === -1) selectedOdmStyles.push(name);
+                }
+            });
+            // 恢复 odmCustomData (无文件)
+            for (const sn in odmCustom) {
+                odmCustomData[sn] = { remark: (odmCustom[sn] && odmCustom[sn].remark) || '', files: [] };
+                // 更新轻定制徽章
+                const badge = document.getElementById('badge-' + sn.replace(/\s+/g, '-'));
+                if (badge && odmCustom[sn] && odmCustom[sn].remark) badge.classList.add('active');
+            }
+
+            // OEM 数据
+            if (d.oem_project) {
+                toggleStyleMode('upload');
+                const projEl = document.getElementById('oem-collection-name');
+                if (projEl) projEl.value = d.oem_project;
+                const countEl = document.getElementById('oem-collection-count');
+                if (countEl) {
+                    countEl.value = d.oem_style_count || 0;
+                    // 先设置 descriptions 数组，再渲染输入框
+                    const descs = _parse(d.oem_descriptions) || [];
+                    oemStyleDescriptions = descs.map(function(v) { return typeof v === 'object' ? JSON.stringify(v) : String(v || ''); });
+                    renderOemStyleDescInputs();
+                }
+                const remarkEl = document.getElementById('oem-remark');
+                if (remarkEl) remarkEl.value = d.oem_remark || '';
+                // 实体样衣
+                if (d.oem_physical_sample) {
+                    const physEl = document.getElementById('oem-physical');
+                    if (physEl) { physEl.checked = true; togglePhysicalInfo(true); }
+                    if (d.oem_tracking_no) {
+                        const trackEl = document.querySelector('#oem-address-info input');
+                        if (trackEl) trackEl.value = d.oem_tracking_no;
+                    }
+                }
+                // Checklist
+                const checkedIds = _parse(d.oem_checklist) || [];
+                document.querySelectorAll('.oem-checklist-item input[type="checkbox"]').forEach(function(cb) {
+                    if (checkedIds.indexOf(cb.value) !== -1) {
+                        cb.checked = true;
+                        cb.parentElement.style.background = '#fff';
+                    }
+                });
+                if (typeof syncOemCheckAllBtn === 'function') syncOemCheckAllBtn();
+            }
+            updateCombinedStyleSummary();
+
+            // ── Step 2: 面料 ──
+            const fabData = _parse(d.fabric_selection) || {};
+            for (const catId in fabData) {
+                if (!fabricSelection[catId]) continue;
+                const srcCat = fabData[catId];
+                fabricSelection[catId].activeName = srcCat.activeName || '';
+                fabricSelection[catId].configs = {};
+                var srcConfigs = srcCat.configs || {};
+                for (const fabricName in srcConfigs) {
+                    var srcCfg = srcConfigs[fabricName];
+                    fabricSelection[catId].configs[fabricName] = Object.assign({}, srcCfg, {
+                        files: [], prints: [], customFiles: [],
+                        designFiles: [], shapeFiles: [], applyFiles: []
+                    });
+                }
+                // 视觉选中面料卡片
+                if (srcCat.activeName) {
+                    var grid = document.getElementById(catId);
+                    if (grid) {
+                        grid.querySelectorAll('.fabric-item').forEach(function(item) {
+                            var nameEl = item.querySelector('.item-name');
+                            if (nameEl && nameEl.textContent.trim() === srcCat.activeName) {
+                                item.classList.add('selected');
+                            }
+                        });
+                    }
+                }
+            }
+            if (typeof updateFabricSummary === 'function') updateFabricSummary();
+
+            // ── Step 3: 辅料 ──
+            const trimMap = {
+                metal: { dbKey: 'metal_config', ref: function() { return metalConfig; }, set: function(v) { metalConfig = v; } },
+                pad:   { dbKey: 'pad_config',   ref: function() { return padConfig; },   set: function(v) { padConfig = v; } },
+                bag:   { dbKey: 'bag_config',   ref: function() { return bagConfig; },   set: function(v) { bagConfig = v; } },
+                hangtag:{ dbKey: 'hangtag_config', ref: function() { return hangtagConfig; }, set: function(v) { hangtagConfig = v; } },
+                label: { dbKey: 'label_config', ref: function() { return labelConfig; }, set: function(v) { labelConfig = v; } },
+                hygiene:{ dbKey: 'hygiene_config', ref: function() { return hygieneConfig; }, set: function(v) { hygieneConfig = v; } },
+                other: { dbKey: 'other_config', ref: function() { return otherConfig; }, set: function(v) { otherConfig = v; } }
+            };
+            const fileArrayKeys = ['designFiles','shapeFiles','sourceFiles','logoFiles','otherFiles',
+                'shapeFiles','applyFiles','otherMatFiles','otherCraftFiles','stringFiles',
+                'sewingFiles','customFiles'];
+
+            for (const cat in trimMap) {
+                var info = trimMap[cat];
+                var cfg = _parse(d[info.dbKey]) || {};
+                if (cfg && Object.keys(cfg).length > 0) {
+                    // 启用该辅料
+                    var yesRadio = document.querySelector('input[name="need_' + cat + '"][value="yes"]');
+                    if (yesRadio) { yesRadio.checked = true; toggleTrim(cat, true); }
+                    // 确保文件数组为空
+                    fileArrayKeys.forEach(function(k) { if (!(k in cfg)) cfg[k] = []; });
+                    // 处理嵌套对象中的文件数组
+                    if (cfg.details) {
+                        for (var dk in cfg.details) {
+                            var det = cfg.details[dk];
+                            if (det) {
+                                if (!det.styleFiles) det.styleFiles = [];
+                                if (!det.logoFiles) det.logoFiles = [];
+                            }
+                        }
+                    }
+                    if (cfg.placementFiles) {
+                        for (var pk in cfg.placementFiles) { cfg.placementFiles[pk] = []; }
+                    }
+                    info.set(cfg);
+                    updateTrimSummaryTrigger(cat);
+                }
+            }
+
+            // CMT 状态
+            const cmtData = _parse(d.cmt_enabled) || {};
+            for (const cat in cmtData) {
+                var cmtVal = cmtData[cat];
+                if (cmtVal && (cmtVal === true || cmtVal.enabled)) {
+                    var cmtCb = document.getElementById('cmt-check-' + cat);
+                    if (cat === 'fabric') cmtCb = document.getElementById('fabric-cmt-check');
+                    if (cmtCb) {
+                        cmtCb.checked = true;
+                        if (cat === 'fabric') {
+                            toggleFabricCmtInfo(true);
+                            if (cmtVal.desc) { var el = document.getElementById('fabric-cmt-desc'); if (el) el.value = cmtVal.desc; }
+                            if (cmtVal.trackingNo) { var el2 = document.getElementById('fabric-cmt-tracking'); if (el2) el2.value = cmtVal.trackingNo; }
+                        } else {
+                            if (typeof toggleTrimCmt === 'function') toggleTrimCmt(cat, true);
+                            if (cmtVal.desc) { var el3 = document.getElementById('cmt-desc-' + cat); if (el3) el3.value = cmtVal.desc; }
+                            if (cmtVal.trackingNo) { var el4 = document.getElementById('cmt-tracking-' + cat); if (el4) el4.value = cmtVal.trackingNo; }
+                        }
+                    }
+                }
+            }
+            if (typeof validateTrims === 'function') validateTrims();
+
+            // ── Step 4: 物流交付 ──
+            var mode = d.delivery_mode || 'sample';
+            currentDeliveryMode = mode;
+
+            // 恢复 sample 数据
+            var savedSampleRows = _parse(d.sample_rows) || [];
+            var savedSampleCfg = _parse(d.sample_config) || {};
+            sampleConfig = Object.assign({ carrier: 'DHL/FedEx (红绣代办)', needBulkQuote: false, intentTerm: 'DDP', intentMethod: 'Sea Freight (海运)' }, savedSampleCfg);
+            sampleRows = savedSampleRows.length > 0 ? savedSampleRows : [];
+
+            // 恢复 bulk 数据
+            var savedBulkRows = _parse(d.bulk_rows) || [];
+            var savedBulkCfg = _parse(d.bulk_logistics) || {};
+            bulkLogisticsConfig = Object.assign({ term: 'DDP 双清包税', method: 'Sea' }, savedBulkCfg);
+            bulkRows = savedBulkRows.length > 0 ? savedBulkRows : [];
+
+            // 切换交付模式 (会触发渲染)
+            switchDeliveryMode(mode);
+
+            // 设置 DOM 输入值
+            if (d.sample_dest) { var el = document.getElementById('sample-destination'); if (el) el.value = d.sample_dest; }
+            if (d.bulk_dest) { var el2 = document.getElementById('bulk-destination'); if (el2) el2.value = d.bulk_dest; }
+            if (d.bulk_target_price) { var el3 = document.getElementById('bulk-target-price'); if (el3) el3.value = d.bulk_target_price; }
+            if (d.bulk_packing_remark) { var el4 = document.getElementById('bulk-shipping-remark'); if (el4) el4.value = d.bulk_packing_remark; }
+
+            // 大货意向评估
+            if (sampleConfig.needBulkQuote) {
+                var chk = document.getElementById('sample-need-bulk-quote');
+                if (chk) chk.checked = true;
+                toggleSampleBulkIntent(true);
+                if (sampleConfig.intentQty) { var q = document.getElementById('sample-intent-qty'); if (q) q.value = sampleConfig.intentQty; }
+                if (sampleConfig.intentPrice) { var p = document.getElementById('sample-intent-price'); if (p) p.value = sampleConfig.intentPrice; }
+            }
+
+            // 选中 sample carrier 按钮
+            if (sampleConfig.carrier) {
+                document.querySelectorAll('#pane-delivery-sample .option-item').forEach(function(el) {
+                    if (el.textContent.trim().indexOf(sampleConfig.carrier.split(' ')[0]) !== -1) {
+                        el.classList.add('selected');
+                    }
+                });
+            }
+
+            // 选中 bulk 贸易术语按钮
+            if (bulkLogisticsConfig.term) {
+                document.querySelectorAll('#pane-delivery-bulk .option-item').forEach(function(el) {
+                    if (el.textContent.trim() === bulkLogisticsConfig.term) {
+                        el.classList.add('selected');
+                    }
+                });
+            }
+            // 选中 bulk 运输方式按钮
+            if (bulkLogisticsConfig.method) {
+                document.querySelectorAll('.bulk-method').forEach(function(el) {
+                    if (el.getAttribute('onclick') && el.getAttribute('onclick').indexOf("'" + bulkLogisticsConfig.method + "'") !== -1) {
+                        el.classList.add('selected');
+                    }
+                });
+            }
+
+            updateLogisticsSummary();
+            if (typeof validateShipping === 'function') validateShipping();
+
+            // ── Step 5: 客户档案 ──
+            var fieldMap = {
+                'final-contact-name': d.contact_name,
+                'final-contact-info': d.contact_info,
+                'final-brand-name': d.brand_name,
+                'final-website': d.website,
+                'final-remark': d.final_remark,
+                'assign-sales': d.assign_sales,
+                'assign-pattern': d.assign_pattern,
+                'assign-sewing': d.assign_sewing
+            };
+            for (var id in fieldMap) {
+                if (fieldMap[id]) { var el5 = document.getElementById(id); if (el5) el5.value = fieldMap[id]; }
+            }
+            if (d.nda_agreed_at) {
+                var ndaEl = document.getElementById('nda-agree');
+                if (ndaEl) ndaEl.checked = true;
+            }
+            if (typeof updateStep5Summary === 'function') updateStep5Summary();
+            if (typeof validateContact === 'function') validateContact();
+
+            // ── 全局验证 ──
+            if (typeof validateAll === 'function') validateAll();
+
+            // ── 提示用户 ──
+            setTimeout(function() {
+                var toast = document.createElement('div');
+                toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:10px;background:#065f46;color:#fff;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.15);transition:opacity .5s;';
+                toast.textContent = '已从历史询盘复制数据，附件需重新上传';
+                document.body.appendChild(toast);
+                setTimeout(function() { toast.style.opacity = '0'; }, 3000);
+                setTimeout(function() { toast.remove(); }, 3500);
+            }, 300);
         }
 
         // 动态渲染 OEM Checklist (采用紧凑型清单样式)

@@ -111,7 +111,7 @@
         panel.style.display = 'block';
         content.innerHTML = '<div class="u-loading">加载中...</div>';
         statsEl.innerHTML = '';
-        _lbRegistry = {}; _lbSeq = 0;
+        _lbRegistry = {}; _lbSeq = 0; _customPopData = {};
 
         try {
             var res = await fetch('/api/inquiry/' + id);
@@ -178,6 +178,7 @@
     /* ── Lightbox image registry ── */
     var _lbRegistry = {};
     var _lbSeq = 0;
+    var _customPopData = {};
     function regLbImages(imgs) {
         var key = '_lb' + (++_lbSeq);
         _lbRegistry[key] = imgs;
@@ -228,25 +229,17 @@
                 }
                 h += '<div class="u-style-card-body">';
                 h += '<div class="u-style-card-name">' + esc(displayName) + '</div>';
-                // 轻定制 section
+                // 轻定制 compact pill
                 if (remark || customFiles.length) {
-                    h += '<div class="u-custom-section">';
-                    h += '<div class="u-custom-label">轻定制</div>';
-                    if (remark) h += '<div class="u-custom-remark">' + esc(remark) + '</div>';
-                    if (customFiles.length) {
-                        h += '<div class="u-style-card-files">';
-                        customFiles.forEach(function (f) {
-                            var url = FILE_BASE + encodeURIComponent(f.stored_name);
-                            var isImg = /\.(jpg|jpeg|png|gif|webp)$/i.test(f.orig_name);
-                            if (isImg) {
-                                var fKey = regLbImages([url]);
-                                h += '<a href="' + url + '" class="u-style-card-thumb" onclick="event.preventDefault();openLightbox(\'' + fKey + '\', 0)"><img src="' + url + '" alt="' + esc(f.orig_name) + '" loading="lazy"></a>';
-                            } else {
-                                h += renderFileItem(f);
-                            }
-                        });
-                        h += '</div>';
-                    }
+                    var summary = [];
+                    if (remark) summary.push('备注');
+                    if (customFiles.length) summary.push(customFiles.length + '个文件');
+                    var popId = 'cpop' + (++_lbSeq);
+                    // store data for popover
+                    _customPopData[popId] = { remark: remark, files: customFiles };
+                    h += '<div class="u-custom-pill" onclick="event.stopPropagation();toggleCustomPop(\'' + popId + '\', this)">';
+                    h += '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>';
+                    h += '<span>轻定制</span><span class="u-custom-pill-sum">' + esc(summary.join(' · ')) + '</span>';
                     h += '</div>';
                 }
                 h += '</div></div>';
@@ -644,6 +637,52 @@
         if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
         return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
     }
+
+    /* ---------- Custom popover ---------- */
+    window.toggleCustomPop = function (popId, pillEl) {
+        // close any existing
+        var existing = document.getElementById('u-custom-popover');
+        if (existing) {
+            var wasFor = existing.getAttribute('data-pop-id');
+            existing.remove();
+            if (wasFor === popId) return; // toggle off
+        }
+        var data = _customPopData[popId];
+        if (!data) return;
+        var pop = document.createElement('div');
+        pop.id = 'u-custom-popover';
+        pop.className = 'u-custom-popover';
+        pop.setAttribute('data-pop-id', popId);
+        var inner = '<div class="u-cpop-header"><span>轻定制详情</span><button onclick="document.getElementById(\'u-custom-popover\').remove()">&times;</button></div>';
+        inner += '<div class="u-cpop-body">';
+        if (data.remark) inner += '<div class="u-cpop-remark">' + esc(data.remark) + '</div>';
+        if (data.files && data.files.length) {
+            inner += '<div class="u-cpop-files">';
+            data.files.forEach(function (f) {
+                var url = FILE_BASE + encodeURIComponent(f.stored_name);
+                var isImg = /\.(jpg|jpeg|png|gif|webp)$/i.test(f.orig_name);
+                if (isImg) {
+                    var fKey = regLbImages([url]);
+                    inner += '<a class="u-cpop-thumb" onclick="event.preventDefault();openLightbox(\'' + fKey + '\', 0)" href="' + url + '"><img src="' + url + '" alt="' + esc(f.orig_name) + '" loading="lazy"></a>';
+                } else {
+                    inner += renderFileItem(f);
+                }
+            });
+            inner += '</div>';
+        }
+        inner += '</div>';
+        pop.innerHTML = inner;
+        // position below the pill
+        var card = pillEl.closest('.u-style-card');
+        card.style.position = 'relative';
+        card.appendChild(pop);
+    };
+
+    // close popover on outside click
+    document.addEventListener('click', function (e) {
+        var pop = document.getElementById('u-custom-popover');
+        if (pop && !pop.contains(e.target) && !e.target.closest('.u-custom-pill')) pop.remove();
+    });
 
     window.closeDetail = function () {
         document.getElementById('inquiry-detail').style.display = 'none';

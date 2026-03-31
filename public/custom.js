@@ -199,11 +199,13 @@
             // 确保默认显示 ODM 面板
             toggleStyleMode('existing');
 
-            // OEM 数据 (仅在明确开启 OEM 模式时才切换)
+            // OEM 数据恢复 (始终填充，仅在 OEM 模式激活时切换 Tab)
             if (d.oem_mode_active) {
                 toggleStyleMode('upload');
+            }
+            if (d.oem_project || d.oem_mode_active || d.oem_style_count) {
                 const projEl = document.getElementById('oem-collection-name');
-                if (projEl) projEl.value = d.oem_project;
+                if (projEl) projEl.value = d.oem_project || '';
                 const countEl = document.getElementById('oem-collection-count');
                 if (countEl) {
                     countEl.value = d.oem_style_count || 0;

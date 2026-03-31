@@ -7,6 +7,7 @@ const i18nextBackend = require('i18next-fs-backend');
 const { globalLimiter } = require('./middleware/rateLimiters');
 const pageRoutes = require('./routes/pageRoutes');
 const apiRoutes = require('./routes/apiRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 // 初始化 i18next
 i18next
@@ -69,6 +70,7 @@ app.post('/api/set-language', (req, res) => {
 // 挂载路由
 app.use('/', pageRoutes);
 app.use('/api', apiRoutes);
+app.use('/admin', adminRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

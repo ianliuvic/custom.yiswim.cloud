@@ -336,6 +336,12 @@
                     if (cfg.colorText) h += kv('色彩描述', esc(cfg.colorText));
                 } else if (mode === 'print') {
                     if (cfg.printType) h += kv('印花类型', cfg.printType === 'seamless' ? '满版印花' : '定位印花');
+                    // 印花图片：sub_key 以 __print 结尾
+                    var printKey = catKey + '__' + fabricName + '__print';
+                    var printFiles = fabricFiles.filter(function (f) { return f.sub_key === printKey; });
+                    if (printFiles.length) {
+                        h += renderInlineFiles(printFiles, '印花图案');
+                    }
                     if (cfg.printRefColor) h += kv('参考底色', esc(cfg.printRefColor));
                     if (cfg.printScale) h += kv('缩放比例', esc(cfg.printScale));
                 } else if (mode === 'custom') {

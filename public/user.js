@@ -302,6 +302,7 @@
             var cat = fab[catKey];
             if (!cat || !cat.configs) return;
             var catName = cat.activeName || cat.originalCatName || catKey;
+            var isLining = catName.indexOf('里料') !== -1 || catName.indexOf('Lining') !== -1 || catName.indexOf('lining') !== -1;
             var configs = cat.configs;
 
             Object.keys(configs).forEach(function (fabricName) {
@@ -311,7 +312,9 @@
                 var modeLabel = { solid: '纯色', print: '印花', custom: '开发/找样' }[mode] || mode;
 
                 h += '<div class="u-fabric-card">';
-                h += '<div class="u-fabric-card-head"><strong>' + esc(fabricName) + '</strong><span class="u-fabric-mode ' + mode + '">' + modeLabel + '</span></div>';
+                h += '<div class="u-fabric-card-head"><strong>' + esc(fabricName) + '</strong>';
+                if (catName) h += '<span class="u-fabric-cat-tag">' + esc(catName) + '</span>';
+                h += '<span class="u-fabric-mode ' + mode + '">' + modeLabel + '</span></div>';
 
                 if (mode === 'solid') {
                     var colors = cfg.colors;
@@ -339,12 +342,17 @@
                     if (cfg.physical) h += kv('实物邮寄', '是' + (cfg.trackingNo ? '（单号：' + esc(cfg.trackingNo) + '）' : ''));
                 }
 
-                if (cfg.fullLining != null) h += kv('全衬里', cfg.fullLining ? '是' : '否');
-                if (cfg.liningPlacement) h += kv('衬里位置', esc(cfg.liningPlacement));
-                if (cfg.remark) h += kv('备注', esc(cfg.remark));
+                // 里料专属：全衬里/局部衬里
+                if (isLining) {
+                    if (cfg.fullLining != null) h += kv('全衬里', cfg.fullLining ? '是' : '否');
+                    if (cfg.liningPlacement) h += kv('衬里位置', esc(cfg.liningPlacement));
+                }
 
-                // Inline fabric files matching this fabric
-                var subKey = catName + '__' + fabricName;
+                // 拼色说明（非里料）或 备注（里料）
+                if (cfg.remark) h += kv(isLining ? '备注' : '拼色说明', esc(cfg.remark));
+
+                // Inline fabric files matching this fabric (use catKey for DB match)
+                var subKey = catKey + '__' + fabricName;
                 var matched = fabricFiles.filter(function (f) { return f.sub_key === subKey; });
                 if (matched.length) {
                     h += renderInlineFiles(matched, '参考文件');

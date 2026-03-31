@@ -2737,23 +2737,25 @@
                 <!-- 优化：移除内联 onclick，改用下方 JS 绑定 -->
                 <button type="button" id="prevBtn" disabled>返回上一步</button>
                 <button type="button" id="nextBtn">继续下一步</button>
-                <button type="button" id="draftBtn" class="draft-btn" onclick="saveDraft()">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:text-bottom;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                    暂存
-                </button>
             </div>
         </main>
 
         <!-- 右侧汇总 -->
         <aside class="summary-sidebar">
-            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 30px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
                 <span class="summary-title" style="margin-bottom: 0;">定制详情</span>
-                <button type="button" class="clear-all-btn" onclick="clearAllSelections()" title="清空当前所有选项">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: text-bottom;">
-                        <polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                    </svg>
-                    重置
-                </button>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button type="button" id="draftBtn" class="draft-btn" onclick="saveDraft()" title="暂存草稿">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:3px;vertical-align:text-bottom;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                        暂存
+                    </button>
+                    <button type="button" class="clear-all-btn" onclick="clearAllSelections()" title="清空当前所有选项">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: text-bottom;">
+                            <polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        重置
+                    </button>
+                </div>
             </div>
             
             <div class="summary-row"><span class="label"><span class="status-dot" id="dot-style"></span>款式类型</span><span class="value" id="sum-style">未选择</span></div>

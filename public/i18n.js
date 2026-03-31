@@ -998,6 +998,9 @@
         // ── User Center: Detail Panel ──
         "返回列表": "Back to List",
         "复制为新询盘": "Copy as New Inquiry",
+        "导出 PDF": "Export PDF",
+        "生成中...": "Generating...",
+        "导出PDF": "Export PDF",
 
         // ── User Center: Detail Sections ──
         "款式信息": "Style Information",

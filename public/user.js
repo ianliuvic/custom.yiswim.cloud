@@ -4,6 +4,7 @@
 
     const FILE_BASE = 'https://files.yiswim.cloud/uploads/inquiries/';
     let currentPage = 1;
+    var _currentInquiryData = null; // 存储当前打开的询盘详情数据
 
     /* ---------- Tab switching ---------- */
     window.switchTab = function (tab) {
@@ -58,6 +59,9 @@
                     '<div class="u-inquiry-card-right">' +
                     '<span class="u-status-tag u-status-' + esc(r.status) + '">' + statusLabel(r.status) + '</span>' +
                     '<span style="font-size:12px;color:#94a3b8">' + fmtDate(r.created_at) + '</span>' +
+                    '<button class="u-copy-btn" onclick="event.stopPropagation();copyToNewInquiry(' + r.id + ')" title="复制为新询盘">' +
+                    '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>' +
+                    '</button>' +
                     '<button class="u-del-btn" onclick="event.stopPropagation();deleteInquiry(' + r.id + ',\'' + esc(r.inquiry_no) + '\')" title="删除">' +
                     '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>' +
                     '</button>' +
@@ -122,6 +126,7 @@
             if (!json.success) throw new Error(json.message);
 
             var d = json.data;
+            _currentInquiryData = d; // 保存当前询盘数据用于复制功能
             titleH.textContent = d.inquiry_no;
             statusEl.className = 'u-status-tag u-status-' + d.status;
             statusEl.textContent = statusLabel(d.status);
@@ -964,6 +969,31 @@
             msg.textContent = '网络错误，请重试';
         }
         return false;
+    };
+
+    /* ---------- Copy to new inquiry ---------- */
+    window.copyToNewInquiry = function (id) {
+        if (!id && _currentInquiryData) {
+            // 从详情页复制：直接使用已加载的数据
+            try {
+                sessionStorage.setItem('copyInquiryData', JSON.stringify(_currentInquiryData));
+                window.location.href = '/';
+            } catch (e) {
+                alert('复制失败：数据过大或存储不可用');
+            }
+            return;
+        }
+        // 从列表卡片复制：先获取数据
+        fetch('/api/inquiry/' + id)
+            .then(function (res) { return res.json(); })
+            .then(function (json) {
+                if (!json.success) throw new Error(json.message);
+                sessionStorage.setItem('copyInquiryData', JSON.stringify(json.data));
+                window.location.href = '/';
+            })
+            .catch(function (e) {
+                alert('获取询盘数据失败：' + e.message);
+            });
     };
 
     /* ---------- Helpers ---------- */

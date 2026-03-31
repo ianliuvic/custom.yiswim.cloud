@@ -538,6 +538,110 @@ body {
 .u-info-row label { width: 100px; color: var(--text-light); font-weight: 500; font-size: 13px; }
 .u-info-row span { color: var(--text-main); }
 
+/* ==================== Mobile Tab Bar ==================== */
+.u-mobile-tabs {
+    display: none;
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: #fff; border-top: 1px solid var(--border-color);
+    z-index: 200; padding: 6px 0;
+    padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+}
+.u-mobile-tabs-inner { display: flex; }
+.u-mobile-tab {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+    padding: 6px 0; font-size: 11px; color: #64748b;
+    background: none; border: none; cursor: pointer; transition: color 0.2s;
+}
+.u-mobile-tab.active { color: var(--primary-color); font-weight: 600; }
+.u-mobile-tab svg { width: 20px; height: 20px; }
+
+/* ==================== Mobile Responsive ==================== */
+
+/* ---- Tablet / Small Desktop ---- */
+@media (max-width: 1024px) {
+    .u-sidebar { display: none; }
+    .u-mobile-tabs { display: block; }
+    .u-main { padding: 24px 24px 80px; }
+}
+
+/* ---- Tablet Portrait / Large Phone ---- */
+@media (max-width: 768px) {
+    .u-header { padding: 0 16px; }
+    .u-header-title { font-size: 13px; }
+    .u-header-right { gap: 10px; font-size: 12px; }
+    .u-user-info { gap: 8px; }
+    .u-user-info strong { font-size: 12px; }
+    .u-nav-link { font-size: 11px; }
+
+    .u-main { padding: 16px 16px 76px; }
+    .u-page-title { flex-wrap: wrap; gap: 12px; margin-bottom: 18px; }
+    .u-page-title h2 { font-size: 18px; }
+
+    .u-inquiry-card { padding: 16px; flex-direction: column; align-items: flex-start; gap: 12px; }
+    .u-inquiry-card-right { width: 100%; justify-content: flex-end; }
+    .u-inquiry-meta { gap: 10px; }
+
+    .u-detail-hero { padding: 20px; margin-bottom: 20px; }
+    .u-detail-hero-title h2 { font-size: 18px; }
+    .u-detail-hero-title { gap: 8px; }
+
+    .u-kv-label { width: 90px; font-size: 12px; }
+    .u-style-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+    .u-trim-grid { grid-template-columns: 1fr; }
+    .u-file-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+
+    .u-timeline { flex-wrap: wrap; gap: 16px; }
+
+    .u-card { padding: 18px; }
+    .u-card h3 { font-size: 14px; }
+    .u-info-row { flex-direction: column; align-items: flex-start; gap: 4px; padding: 10px 0; }
+    .u-info-row label { width: auto; }
+
+    .u-form { max-width: none; }
+
+    .u-draft-banner { flex-direction: column; gap: 12px; align-items: flex-start; }
+    .u-draft-banner-actions { width: 100%; justify-content: flex-end; }
+
+    .u-custom-popover { max-width: calc(100vw - 32px); }
+}
+
+/* ---- Phone ---- */
+@media (max-width: 480px) {
+    .u-header { padding: 0 12px; }
+    .u-logo { height: 22px; }
+    .u-header-title { font-size: 12px; }
+    .u-lang-btn { padding: 4px 10px; font-size: 11px; }
+    .u-user-info .u-logout { display: none; }
+
+    .u-main { padding: 12px 12px 72px; }
+    .u-page-title h2 { font-size: 16px; }
+    .u-btn-primary { padding: 8px 14px; font-size: 12px; }
+
+    .u-detail-hero { padding: 16px; border-radius: 12px; }
+    .u-detail-hero-title h2 { font-size: 16px; }
+    .u-back-btn { padding: 6px 12px; font-size: 11px; }
+    .u-copy-detail-btn { padding: 5px 10px; font-size: 12px; }
+
+    .u-kv-row { flex-direction: column; gap: 2px; }
+    .u-kv-label { width: 100%; min-width: 0; }
+
+    .u-style-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .u-file-grid { grid-template-columns: 1fr; }
+
+    .u-section { padding: 18px 14px; }
+    .u-section-title { font-size: 14px; }
+    .u-sub-label { font-size: 12px; }
+
+    .u-fabric-card { padding: 12px 14px; }
+    .u-trim-card { padding: 12px 14px; }
+
+    .u-table th, .u-table td { padding: 8px 10px; font-size: 11px; }
+
+    .u-lb-prev, .u-lb-next { width: 40px; height: 52px; font-size: 28px; }
+    .u-lb-prev { left: 8px; }
+    .u-lb-next { right: 8px; }
+}
+
 /* Form */
 .u-form { max-width: 400px; }
 .u-form-group { margin-bottom: 16px; }

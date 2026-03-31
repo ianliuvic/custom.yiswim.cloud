@@ -656,6 +656,7 @@
         "参考附件": "Reference Attachments",
         "上传参考图或工艺单": "Upload reference images or tech packs",
         "取消": "Cancel",
+        "确定": "OK",
         "保存定制需求": "Save Customization",
 
         // ── NDA Modal ──

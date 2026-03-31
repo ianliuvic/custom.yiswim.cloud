@@ -3,9 +3,10 @@ const path = require('path');
 const https = require('https');
 
 const FONT_DIR = path.join(__dirname, '..', 'fonts');
+const FONT_URL = 'https://fonts.gstatic.com/s/notosanssc/v37/k3kCo84MPvpLmixcA63oeAL7Iqp5IZJF9bmaG9_EnYxNbPzS5HE.ttf';
 const FONTS = {
-    'NotoSansSC-Regular.ttf': 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/notosanssc/NotoSansSC%5Bwght%5D.ttf',
-    'NotoSansSC-Bold.ttf': 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/notosanssc/NotoSansSC%5Bwght%5D.ttf',
+    'NotoSansSC-Regular.ttf': FONT_URL,
+    'NotoSansSC-Bold.ttf': FONT_URL,
 };
 
 function downloadFile(url, dest) {

@@ -1365,16 +1365,29 @@
             fabResult.files.forEach(item => fd.append(`files[fabric][${item.subKey}]`, item.file));
 
             // —— Step 3: 辅料 ——
-            // CMT 状态
+            // CMT 状态 + 描述 + 单号
             const cmtEnabled = {};
             const trimCategories = ['metal', 'pad', 'bag', 'hangtag', 'label', 'hygiene', 'other'];
             trimCategories.forEach(cat => {
                 const cmtCb = document.getElementById(`cmt-check-${cat}`);
-                cmtEnabled[cat] = cmtCb ? cmtCb.checked : false;
+                const enabled = cmtCb ? cmtCb.checked : false;
+                if (enabled) {
+                    const desc = (document.getElementById(`cmt-desc-${cat}`)?.value || '').trim();
+                    const tracking = (document.getElementById(`cmt-tracking-${cat}`)?.value || '').trim();
+                    cmtEnabled[cat] = { enabled: true, desc: desc, trackingNo: tracking };
+                } else {
+                    cmtEnabled[cat] = false;
+                }
             });
             // fabric CMT
             const fabricCmtCb = document.getElementById('fabric-cmt-check');
-            cmtEnabled.fabric = fabricCmtCb ? fabricCmtCb.checked : false;
+            if (fabricCmtCb && fabricCmtCb.checked) {
+                const fabDesc = (document.getElementById('fabric-cmt-desc')?.value || '').trim();
+                const fabTracking = (document.getElementById('fabric-cmt-tracking')?.value || '').trim();
+                cmtEnabled.fabric = { enabled: true, desc: fabDesc, trackingNo: fabTracking };
+            } else {
+                cmtEnabled.fabric = false;
+            }
             fd.append('cmt_enabled', JSON.stringify(cmtEnabled));
 
             // CMT 文件

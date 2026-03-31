@@ -527,20 +527,11 @@
                             var onclick = el.getAttribute('onclick') || '';
                             if (onclick.indexOf("'" + labelConfig.material + "'") !== -1) { el.classList.add('selected'); matchedEl = el; }
                         });
-                        // 显示配置面板
+                        // 显示配置面板（定位在 switchSubTab 切换到 label 时重算，因为 pane-label 此时 display:none）
                         if (matchedEl) {
                             var lPanel = document.getElementById('label-config-panel');
                             if (lPanel) {
-                                // 定位面板到选中卡片后
-                                var insertBefore = null;
-                                var cur = matchedEl.nextElementSibling;
-                                while (cur) {
-                                    if (cur.id === 'label-config-panel') { cur = cur.nextElementSibling; continue; }
-                                    if (cur.offsetTop > matchedEl.offsetTop) { insertBefore = cur; break; }
-                                    cur = cur.nextElementSibling;
-                                }
-                                if (insertBefore) lMatGrid.insertBefore(lPanel, insertBefore);
-                                else lMatGrid.appendChild(lPanel);
+                                lMatGrid.appendChild(lPanel);
                                 lPanel.classList.remove('hidden');
                                 // 子区域显示逻辑
                                 var otherArea = document.getElementById('label-material-other-area');
@@ -1768,23 +1759,7 @@
                 if (_tabEl) switchFabricCat(activeFabricCat, _tabEl);
             }
 
-            // 进入 Step 3 时，重新定位包装袋配置面板 (restore 时 step-3 hidden 导致 offsetTop=0)
-            if (currentStep === 3 && bagConfig.material && bagConfig.material !== '未选材质') {
-                var _bagPanel = document.getElementById('bag-config-panel');
-                var _bagContainer = document.getElementById('bag-list-container');
-                var _selectedBag = _bagContainer && _bagContainer.querySelector('.bag-material.selected');
-                if (_selectedBag && _bagPanel && !_bagPanel.classList.contains('hidden')) {
-                    var _insertBefore = null;
-                    var _cur = _selectedBag.nextElementSibling;
-                    while (_cur) {
-                        if (_cur.id === 'bag-config-panel') { _cur = _cur.nextElementSibling; continue; }
-                        if (_cur.offsetTop > _selectedBag.offsetTop) { _insertBefore = _cur; break; }
-                        _cur = _cur.nextElementSibling;
-                    }
-                    if (_insertBefore) _bagContainer.insertBefore(_bagPanel, _insertBefore);
-                    else _bagContainer.appendChild(_bagPanel);
-                }
-            }
+
         }
 
         // 点击左上角 Logo/标题 返回第一步（不清空数据）
@@ -3685,6 +3660,40 @@
         function switchSubTab(paneId, el) {
             document.querySelectorAll('.sub-pane').forEach(p => p.classList.remove('active')); document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
             document.getElementById(`pane-${paneId}`).classList.add('active'); el.classList.add('active');
+
+            // 切换到 bag/label 时重新定位配置面板 (restore 时 pane 为 display:none 导致 offsetTop=0)
+            if (paneId === 'bag') {
+                var _bagPanel = document.getElementById('bag-config-panel');
+                var _bagContainer = document.getElementById('bag-list-container');
+                var _selectedBag = _bagContainer && _bagContainer.querySelector('.bag-material.selected');
+                if (_selectedBag && _bagPanel && !_bagPanel.classList.contains('hidden')) {
+                    var _insertBefore = null;
+                    var _cur = _selectedBag.nextElementSibling;
+                    while (_cur) {
+                        if (_cur.id === 'bag-config-panel') { _cur = _cur.nextElementSibling; continue; }
+                        if (_cur.offsetTop > _selectedBag.offsetTop) { _insertBefore = _cur; break; }
+                        _cur = _cur.nextElementSibling;
+                    }
+                    if (_insertBefore) _bagContainer.insertBefore(_bagPanel, _insertBefore);
+                    else _bagContainer.appendChild(_bagPanel);
+                }
+            }
+            if (paneId === 'label') {
+                var _lPanel = document.getElementById('label-config-panel');
+                var _lGrid = document.getElementById('label-material-grid');
+                var _selectedLabel = _lGrid && _lGrid.querySelector('.option-item.selected');
+                if (_selectedLabel && _lPanel && !_lPanel.classList.contains('hidden')) {
+                    var _insertBefore = null;
+                    var _cur = _selectedLabel.nextElementSibling;
+                    while (_cur) {
+                        if (_cur.id === 'label-config-panel') { _cur = _cur.nextElementSibling; continue; }
+                        if (_cur.offsetTop > _selectedLabel.offsetTop) { _insertBefore = _cur; break; }
+                        _cur = _cur.nextElementSibling;
+                    }
+                    if (_insertBefore) _lGrid.insertBefore(_lPanel, _insertBefore);
+                    else _lGrid.appendChild(_lPanel);
+                }
+            }
         }
 
         // 1. 辅料 CMT 复选框交互逻辑 (带平滑滚动与数据清理)

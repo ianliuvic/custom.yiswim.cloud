@@ -3036,67 +3036,52 @@
     <script src="/custom.js"></script>
 </body>
 
-<!-- 1. Chatwoot 核心脚本 -->
+<!-- 2. 寄生注入脚本 (终极超进化版) -->
 <script>
-  window.chatwootSettings = {"position":"right","type":"standard","launcherTitle":""};
-  (function(d,t) {
-    var BASE_URL="https://chat.yiswim.cloud";
-    var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-    g.src=BASE_URL+"/packs/js/sdk.js";
-    g.async = true;
-    s.parentNode.insertBefore(g,s);
-    g.onload=function(){
-      window.chatwootSDK.run({
-        websiteToken: '7SvUcM7Q35czsNHZYcZiXtNu',
-        baseUrl: BASE_URL
-      })
-    }
-  })(document,"script");
-</script>
-
-<!-- 2. 寄生注入脚本 (核心魔法) -->
-<script>
-  // 监听 Chatwoot 初始化完成的事件
   window.addEventListener("chatwoot:ready", function () {
     
-    // 开启一个雷达，每 100 毫秒扫描一次网页，寻找 Chatwoot 的容器
     let radar = setInterval(function() {
        let wootContainer = document.querySelector('.woot-widget-holder');
        
-       // 一旦发现了 Chatwoot 的容器
        if (wootContainer) {
-          clearInterval(radar); // 关闭雷达
+          clearInterval(radar); 
 
-          // 创建我们的品牌贴纸
-          let shield = document.createElement('div');
-          shield.innerHTML = '⚡️ 由 Hongxiu Custom System 支持';
+          // 【改动1】：把 div 换成了 a 标签（链接）
+          let shield = document.createElement('a');
+          shield.innerHTML = '⚡️ 由 Hongxiu Clothing 支持';
           
-          // 给贴纸穿上 CSS 隐身衣 (根据你截图的颜色，使用了官方的淡灰色背景 #f9fafb)
+          // 【改动2】：设置点击跳转的网址（请把这里换成你们的真实官网！）
+          shield.href = 'https://wearhongxiu.com'; 
+          shield.target = '_blank'; // 在新标签页打开
+          
+          // 【改动3】：去掉了鼠标穿透，增加了鼠标变成小手（cursor: pointer）
           shield.style.cssText = `
+              display: block; /* 保证链接占满空间 */
               position: absolute;
               bottom: 0px;
               left: 0px;
               width: 100%;
               height: 48px; 
-              background-color: #f9fafb; /* 完美融合底部的淡灰色 */
-              z-index: 2147483647; /* 在容器内部保持最高层级 */
+              background-color: #f9fafb; 
+              z-index: 2147483647; 
               text-align: center;
               line-height: 48px;
               font-size: 13px;
               color: #9ca3af;
-              border-radius: 0 0 10px 10px; /* 匹配官方的底部圆角 */
-              pointer-events: none; /* 防止遮挡鼠标点击 */
+              text-decoration: none; /* 去掉链接的下划线 */
+              cursor: pointer; /* 鼠标放上去变成点击小手 */
+              border-radius: 0 0 10px 10px;
+              /* 重点：删除了 pointer-events: none; 彻底拦截鼠标点击！*/
           `;
 
-          // 【最关键一步】把贴纸直接塞进 Chatwoot 的容器内部！
           wootContainer.appendChild(shield);
        }
     }, 100);
     
-    // 为了防止雷达一直扫，5秒后自动关闭
     setTimeout(() => clearInterval(radar), 5000);
   });
 </script>
+
 
 
 </html>

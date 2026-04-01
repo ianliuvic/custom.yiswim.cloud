@@ -278,6 +278,16 @@ router.post('/register', registerLimiter, async (req, res) => {
         });
 
         const data = await n8nResponse.json();
+
+        // Translate known N8N Chinese messages based on user's language
+        if (data.message) {
+            if (data.message.includes('已被注册')) {
+                data.message = req.t('api.registerDuplicate');
+            } else if (data.success && data.message.includes('注册成功')) {
+                data.message = req.t('api.registerSuccess');
+            }
+        }
+
         res.json(data);
     } catch (error) {
         console.error('注册错误:', error);

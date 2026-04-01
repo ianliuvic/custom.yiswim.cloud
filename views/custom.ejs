@@ -3035,6 +3035,8 @@
          ========================================================================= -->
     <script src="/custom.js"></script>
 </body>
+
+<!-- 1. Chatwoot 核心脚本 -->
 <script>
   window.chatwootSettings = {"position":"right","type":"standard","launcherTitle":""};
   (function(d,t) {
@@ -3052,39 +3054,49 @@
   })(document,"script");
 </script>
 
-<!-- === 下面是我们自己加的黑客遮盖层 === -->
-<!-- 这个 div 就是那个白色的贴纸，默认隐藏 -->
-<div id="my-custom-branding" style="
-    display: none; 
-    position: fixed; 
-    bottom: 25px; /* 根据你聊天框的高度微调 */
-    right: 25px;  /* 根据你聊天框的位置微调 */
-    width: 380px; /* 完美覆盖底部的宽度 */
-    height: 40px; /* 完美覆盖底部的高度 */
-    background-color: #ffffff; /* 纯白背景盖住底色 */
-    z-index: 2147483647; /* 强制永远在最顶层 */
-    text-align: center; 
-    line-height: 40px; 
-    font-size: 13px; 
-    color: #999999; 
-    border-radius: 0 0 10px 10px; /* 底部圆角 */
-    pointer-events: none; /* 让鼠标穿透，不影响点击 */
-">
-    ⚡️ 由 Hongxiu Custom System 支持
-</div>
-
+<!-- 2. 寄生注入脚本 (核心魔法) -->
 <script>
-  // 监听 Chatwoot 聊天框打开的事件
-  window.addEventListener("chatwoot:on-open", function () {
-    // 聊天框打开时，显示我们的品牌遮盖层
-    document.getElementById("my-custom-branding").style.display = "block";
-  });
+  // 监听 Chatwoot 初始化完成的事件
+  window.addEventListener("chatwoot:ready", function () {
+    
+    // 开启一个雷达，每 100 毫秒扫描一次网页，寻找 Chatwoot 的容器
+    let radar = setInterval(function() {
+       let wootContainer = document.querySelector('.woot-widget-holder');
+       
+       // 一旦发现了 Chatwoot 的容器
+       if (wootContainer) {
+          clearInterval(radar); // 关闭雷达
 
-  // 监听 Chatwoot 聊天框关闭的事件
-  window.addEventListener("chatwoot:on-close", function () {
-    // 聊天框关闭时，隐藏我们的遮盖层
-    document.getElementById("my-custom-branding").style.display = "none";
+          // 创建我们的品牌贴纸
+          let shield = document.createElement('div');
+          shield.innerHTML = '⚡️ 由 Hongxiu Custom System 支持';
+          
+          // 给贴纸穿上 CSS 隐身衣 (根据你截图的颜色，使用了官方的淡灰色背景 #f9fafb)
+          shield.style.cssText = `
+              position: absolute;
+              bottom: 0px;
+              left: 0px;
+              width: 100%;
+              height: 48px; 
+              background-color: #f9fafb; /* 完美融合底部的淡灰色 */
+              z-index: 2147483647; /* 在容器内部保持最高层级 */
+              text-align: center;
+              line-height: 48px;
+              font-size: 13px;
+              color: #9ca3af;
+              border-radius: 0 0 10px 10px; /* 匹配官方的底部圆角 */
+              pointer-events: none; /* 防止遮挡鼠标点击 */
+          `;
+
+          // 【最关键一步】把贴纸直接塞进 Chatwoot 的容器内部！
+          wootContainer.appendChild(shield);
+       }
+    }, 100);
+    
+    // 为了防止雷达一直扫，5秒后自动关闭
+    setTimeout(() => clearInterval(radar), 5000);
   });
 </script>
+
 
 </html>

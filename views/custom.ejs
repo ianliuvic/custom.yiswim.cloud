@@ -3036,9 +3036,23 @@
     <script src="/custom.js"></script>
 </body>
 
-<!-- 1. Chatwoot 核心脚本 -->
+<!-- === 1. Chatwoot 动态配置 (含多语言同步) === -->
 <script>
-  window.chatwootSettings = {"position":"right","type":"standard","launcherTitle":""};
+  // 判断当前系统语言 (这里演示使用的是前端 localStorage 方案，如果你用 EJS 变量请替换为方案一的 var systemLang = "<%= ... %>")
+  var systemLang = localStorage.getItem('i18nextLng') || 'zh';
+  var chatwootLocale = systemLang.toLowerCase().includes('en') ? 'en' : 'zh_CN';
+
+  window.chatwootSettings = {
+    "position": "right",
+    "type": "standard",
+    "launcherTitle": "",
+    "locale": chatwootLocale, // 强制跟随系统语言
+    "useBrowserLanguage": false // 绝不自动瞎猜
+  };
+</script>
+
+<!-- === 2. Chatwoot 官方加载核心 === -->
+<script>
   (function(d,t) {
     var BASE_URL="https://chat.yiswim.cloud";
     var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
@@ -3047,46 +3061,43 @@
     s.parentNode.insertBefore(g,s);
     g.onload=function(){
       window.chatwootSDK.run({
-        websiteToken: '7SvUcM7Q35czsNHZYcZiXtNu',
+        websiteToken: '7SvUcM7Q35czsNHZYcZiXtNu', /* 确保是你的 Token */
         baseUrl: BASE_URL
       })
     }
   })(document,"script");
 </script>
 
-<!-- 2. 寄生注入脚本 (终极超进化版) -->
+<!-- === 3. 寄生注入遮盖层 (去水印终极 Hack) === -->
 <script>
   window.addEventListener("chatwoot:ready", function () {
-    
     let radar = setInterval(function() {
        let wootContainer = document.querySelector('.woot-widget-holder');
-       
        if (wootContainer) {
           clearInterval(radar); 
 
-          // 【改动1】：把 div 换成了 a 标签（链接）
           let shield = document.createElement('a');
-          shield.innerHTML = '⚡️ 由 Hongxiu Clothing 支持';
           
-          // 【改动2】：设置点击跳转的网址（请把这里换成你们的真实官网！）
-          shield.href = 'https://wearhongxiu.com'; 
-          shield.target = '_blank'; // 在新标签页打开
+          // 根据当前的语言，遮盖层的文字也做相应的翻译！极其专业！
+          if (chatwootLocale === 'en') {
+              shield.innerHTML = '⚡️ Powered by Hongxiu Custom System';
+          } else {
+              shield.innerHTML = '⚡️ 由 Hongxiu Custom System 支持';
+          }
           
-          // 【改动3】：去掉了鼠标穿透，增加了鼠标变成小手（cursor: pointer）
+          shield.href = 'https://wearhongxiu.com'; // 修改为真实链接
+          shield.target = '_blank';
+          
           shield.style.cssText = `
               display: block;
               position: absolute;
-              bottom: 10px;
+              bottom: 0px;
               left: 0px;
               width: 100%;
-              
-              /* === 👇 关键修改区 👇 === */
-              height: 24px;       /* 把原本的 48px 改成 24px，释放输入框空间 */
-              line-height: 24px;  /* 文字居中高度也同步改成 24px */
-              font-size: 12px;    /* 字体缩小到 12px，显得更精致 */
-              /* === 👆 关键修改区 👆 === */
-              
-              background-color: #f9fafb; /* 保持这淡淡的灰色背景 */
+              height: 24px;       /* 完美贴合输入框下方 */
+              line-height: 24px;
+              font-size: 12px;
+              background-color: #f9fafb; 
               z-index: 2147483647; 
               text-align: center;
               color: #9ca3af;
@@ -3094,15 +3105,11 @@
               cursor: pointer; 
               border-radius: 0 0 10px 10px;
           `;
-
           wootContainer.appendChild(shield);
        }
     }, 100);
-    
     setTimeout(() => clearInterval(radar), 5000);
   });
 </script>
-
-
 
 </html>

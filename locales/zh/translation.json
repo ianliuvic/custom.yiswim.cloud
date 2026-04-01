@@ -16,6 +16,8 @@
     "serverAuthError": "服务器验证异常，请稍后再试",
     "paramMissing": "参数缺失",
     "activateInvalid": "激活链接无效或已过期，请联系客服。",
-    "serverError": "服务器错误，请稍后再试"
+    "serverError": "服务器错误，请稍后再试",
+    "registerDuplicate": "该Username or Email已被注册，请更换！",
+    "registerSuccess": "注册成功！请前往邮箱激活您的账号。"
   }
 }

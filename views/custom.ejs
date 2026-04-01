@@ -3052,4 +3052,48 @@
   })(document,"script");
 </script>
 
+<!-- 2. 终极遮盖层样式 (防止被任何主题干扰) -->
+<style>
+  #hx-shield {
+    display: none; 
+    position: fixed; 
+    bottom: 25px; /* 紧贴聊天气泡底部 */
+    right: 25px;  /* 紧贴屏幕右侧 */
+    width: 380px; /* 聊天框的精准宽度 */
+    height: 48px; /* 足够盖住底部文字和线条的高度 */
+    background-color: #ffffff; /* 纯白背景色 */
+    z-index: 2147483647 !important; /* 全宇宙最高的图层级别 */
+    text-align: center; 
+    line-height: 48px; 
+    font-size: 13px; 
+    color: #a0aab2; /* 模仿官方的高级灰 */
+    border-radius: 0 0 10px 10px; /* 底部完美圆角过渡 */
+    pointer-events: none; /* 鼠标点不中它，防止干扰操作 */
+    box-shadow: 0px 5px 15px rgba(0,0,0,0.05); /* 底部轻微阴影 */
+  }
+  
+  /* 移动端自动隐藏遮盖层（因为手机上是全屏聊天，没有底部水印） */
+  @media (max-width: 768px) {
+    #hx-shield { display: none !important; }
+  }
+</style>
+
+<!-- 3. 遮盖层 HTML 元素 -->
+<div id="hx-shield">
+    ⚡️ 由 Hongxiu Custom System 提供技术支持
+</div>
+
+<!-- 4. 智能监听脚本 (聊天框打开它才出现) -->
+<script>
+  window.addEventListener("chatwoot:on-open", function () {
+    if(window.innerWidth > 768) { 
+        document.getElementById("hx-shield").style.display = "block";
+    }
+  });
+
+  window.addEventListener("chatwoot:on-close", function () {
+    document.getElementById("hx-shield").style.display = "none";
+  });
+</script>
+
 </html>

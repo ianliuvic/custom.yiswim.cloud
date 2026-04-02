@@ -3130,6 +3130,16 @@
                     gsm: '', colorReq: '', physical: false, trackingNo: '', customFiles: [],
                     fullLining: true, liningPlacement: '' // <--- 新增字段
                 };
+                // 标准面料：从面料目录自动填充成分和克重
+                if (!isCustomSourcing && window.globalFabricsMap && window.globalFabricsMap[name]) {
+                    const catFabric = window.globalFabricsMap[name];
+                    let rawComp = catFabric.composition || catFabric['成分'];
+                    let rawGsm = catFabric.gsm || catFabric.weight || catFabric['克重'];
+                    if (Array.isArray(rawComp) && rawComp.length > 0) selection.configs[name].comp = String(rawComp[0]).trim();
+                    else if (rawComp) selection.configs[name].comp = String(rawComp).trim();
+                    if (Array.isArray(rawGsm) && rawGsm.length > 0) selection.configs[name].gsm = String(rawGsm[0]).trim();
+                    else if (rawGsm) selection.configs[name].gsm = String(rawGsm).trim();
+                }
             }
             const config = selection.configs[name];
         

@@ -996,7 +996,7 @@
         return false;
     };
 
-    /* ---------- Export PDF ---------- */
+    /* ---------- Export ZIP ---------- */
     window.exportPDF = async function () {
         if (!_currentInquiryData || !_currentInquiryData.id) {
             showMsg(window.__lang === 'en' ? 'Please open an inquiry first' : '请先打开询盘详情', 'error');
@@ -1005,25 +1005,25 @@
         var btn = document.getElementById('export-pdf-btn');
         var origText = btn.innerHTML;
         btn.disabled = true;
-        var genLabel = window.__lang === 'en' ? 'Generating...' : '生成中...';
+        var genLabel = window.__lang === 'en' ? 'Packaging...' : '打包中...';
         btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="u-spin"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> ' + genLabel;
         try {
-            var res = await fetch('/api/inquiry/' + _currentInquiryData.id + '/pdf');
+            var res = await fetch('/api/inquiry/' + _currentInquiryData.id + '/export');
             if (!res.ok) {
-                var err = await res.json().catch(function () { return { message: window.__lang === 'en' ? 'Generation failed' : '生成失败' }; });
+                var err = await res.json().catch(function () { return { message: window.__lang === 'en' ? 'Export failed' : '导出失败' }; });
                 throw new Error(err.message || 'HTTP ' + res.status);
             }
             var blob = await res.blob();
             var url = URL.createObjectURL(blob);
             var a = document.createElement('a');
             a.href = url;
-            a.download = (_currentInquiryData.inquiry_no || 'inquiry') + '.pdf';
+            a.download = (_currentInquiryData.inquiry_no || 'inquiry') + '.zip';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         } catch (e) {
-            showMsg((window.__lang === 'en' ? 'PDF export failed: ' : 'PDF 导出失败：') + e.message, 'error');
+            showMsg((window.__lang === 'en' ? 'Export failed: ' : '导出失败：') + e.message, 'error');
         } finally {
             btn.disabled = false;
             btn.innerHTML = origText;

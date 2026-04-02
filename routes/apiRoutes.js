@@ -626,6 +626,119 @@ router.get('/inquiry/:id/pdf', authenticateToken, async (req, res) => {
     }
 });
 
+// 8c. 导出询盘 ZIP (PDF + 附件)
+router.get('/inquiry/:id/export', authenticateToken, async (req, res) => {
+    try {
+        const { generateInquiryPDF } = require('../utils/pdfExport');
+        const archiver = require('archiver');
+        const https = require('https');
+        const http = require('http');
+
+        const inquiryResult = await db.query(
+            'SELECT * FROM custom_inquiries WHERE id = $1 AND user_id = $2 AND deleted_at IS NULL',
+            [req.params.id, req.user.id]
+        );
+        if (inquiryResult.rows.length === 0) {
+            return res.status(404).json({ success: false, message: '询盘不存在' });
+        }
+        const inquiry = inquiryResult.rows[0];
+
+        const filesResult = await db.query(
+            'SELECT id, category, sub_key, orig_name, stored_name, mime_type, size_bytes, created_at FROM custom_inquiry_files WHERE inquiry_id = $1 ORDER BY category, sub_key',
+            [req.params.id]
+        );
+
+        // ODM style images
+        let odmStyleImages = {};
+        try {
+            let odmNames = inquiry.odm_styles;
+            if (typeof odmNames === 'string') odmNames = JSON.parse(odmNames);
+            if (Array.isArray(odmNames) && odmNames.length > 0) {
+                const stylesResult = await db.query(`
+                    SELECT s.name,
+                        COALESCE(
+                            json_agg('https://files.yiswim.cloud/' || i.unique_image_id) FILTER (WHERE i.unique_image_id IS NOT NULL),
+                            '[]'
+                        ) as image_urls
+                    FROM custom_odm_styles s
+                    LEFT JOIN images i ON s.id = i.notion_page_id
+                    WHERE s.name = ANY($1)
+                    GROUP BY s.id`, [odmNames]);
+                stylesResult.rows.forEach(r => { odmStyleImages[r.name] = r.image_urls; });
+            }
+        } catch (e) { /* ignore */ }
+
+        const lang = req.cookies && req.cookies.lng || 'zh';
+        const pdfBuffer = await generateInquiryPDF(inquiry, filesResult.rows, odmStyleImages, lang);
+
+        const inquiryNo = inquiry.inquiry_no || String(inquiry.id);
+        const zipFilename = inquiryNo + '.zip';
+
+        res.setHeader('Content-Type', 'application/zip');
+        res.setHeader('Content-Disposition', 'attachment; filename="' + zipFilename + '"');
+
+        const archive = archiver('zip', { zlib: { level: 5 } });
+        archive.on('error', (err) => { if (!res.headersSent) res.status(500).end(); });
+        archive.pipe(res);
+
+        // 1. PDF 询盘单
+        archive.append(pdfBuffer, { name: inquiryNo + '.pdf' });
+
+        // 2. 附件文件（按 category/sub_key 分文件夹）
+        const FILE_BASE = 'https://files.yiswim.cloud/uploads/inquiries/';
+        const usedNames = new Set();
+
+        function fetchFileStream(url) {
+            return new Promise((resolve, reject) => {
+                const timer = setTimeout(() => reject(new Error('timeout')), 15000);
+                const proto = url.startsWith('https') ? https : http;
+                const doRequest = (reqUrl) => {
+                    proto.get(reqUrl, (resp) => {
+                        if (resp.statusCode >= 300 && resp.statusCode < 400 && resp.headers.location) {
+                            doRequest(resp.headers.location);
+                            return;
+                        }
+                        if (resp.statusCode !== 200) { clearTimeout(timer); reject(new Error('HTTP ' + resp.statusCode)); return; }
+                        clearTimeout(timer);
+                        resolve(resp);
+                    }).on('error', (e) => { clearTimeout(timer); reject(e); });
+                };
+                doRequest(url);
+            });
+        }
+
+        for (const f of filesResult.rows) {
+            const url = FILE_BASE + encodeURIComponent(f.stored_name);
+            let folder = f.category || 'other';
+            if (f.sub_key) folder += '/' + f.sub_key;
+
+            let name = f.orig_name || f.stored_name;
+            const fullPath = folder + '/' + name;
+            if (usedNames.has(fullPath)) {
+                const dotIdx = name.lastIndexOf('.');
+                const ext = dotIdx > 0 ? name.substring(dotIdx) : '';
+                const base = ext ? name.substring(0, dotIdx) : name;
+                name = base + '_' + f.id + ext;
+            }
+            usedNames.add(folder + '/' + name);
+
+            try {
+                const stream = await fetchFileStream(url);
+                archive.append(stream, { name: folder + '/' + name });
+            } catch (e) {
+                console.warn('ZIP: failed to fetch', f.stored_name, e.message);
+            }
+        }
+
+        await archive.finalize();
+    } catch (error) {
+        console.error('Export ZIP failed:', error);
+        if (!res.headersSent) {
+            res.status(500).json({ success: false, message: 'Export failed: ' + error.message });
+        }
+    }
+});
+
 // 9. 修改密码
 router.post('/change-password', authenticateToken, async (req, res) => {
     try {

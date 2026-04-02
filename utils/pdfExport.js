@@ -956,7 +956,51 @@ function buildContactSection(d, t) {
 
 async function buildFilesSection(files, t) {
     if (!files || !files.length) return [];
-    return [sectionTitle(t('sec6')), ...await buildFileDisplay(files, null, t)];
+    const content = [sectionTitle(t('sec6'))];
+
+    const imageFiles = files.filter(f => /\.(jpg|jpeg|png|gif|webp)$/i.test(f.orig_name || ''));
+    const otherFiles = files.filter(f => !/\.(jpg|jpeg|png|gif|webp)$/i.test(f.orig_name || ''));
+
+    // Images: one per row, large preview (fit page width)
+    for (const f of imageFiles) {
+        const url = FILE_BASE + encodeURIComponent(f.stored_name);
+        const imgData = await fetchImageAsBase64(url, 500);
+        const label = (f.orig_name || '-') + (f.size_bytes ? '  (' + formatSize(f.size_bytes) + ')' : '');
+        if (imgData) {
+            content.push({
+                stack: [
+                    { text: label, fontSize: 8, color: '#475569', margin: [0, 8, 0, 4] },
+                    { image: imgData, width: 460, margin: [0, 0, 0, 6] }
+                ]
+            });
+        } else {
+            content.push({ text: '📎 ' + label, fontSize: 8, color: '#475569', margin: [0, 4, 0, 2] });
+        }
+    }
+
+    // Non-image files in compact table
+    if (otherFiles.length) {
+        if (imageFiles.length) content.push({ text: '', margin: [0, 4, 0, 0] });
+        const rows = [[
+            { text: t('fileName'), style: 'tableHeader' },
+            { text: t('fileSize'), style: 'tableHeader' },
+            { text: t('fileCategory'), style: 'tableHeader' }
+        ]];
+        otherFiles.forEach(f => {
+            rows.push([
+                { text: f.orig_name || '-', fontSize: 8 },
+                { text: formatSize(f.size_bytes), fontSize: 8 },
+                { text: f.category + (f.sub_key ? '/' + f.sub_key : ''), fontSize: 8 }
+            ]);
+        });
+        content.push({
+            table: { headerRows: 1, widths: ['*', 60, 100], body: rows },
+            layout: 'lightHorizontalLines',
+            margin: [0, 2, 0, 6]
+        });
+    }
+
+    return content;
 }
 
 /* ═══════════════════════════════════════════════

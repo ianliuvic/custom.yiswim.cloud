@@ -8,6 +8,18 @@
     // Current language - injected by EJS template
     var LANG = window.__lang || 'zh';
 
+    // Hide page instantly when non-zh to avoid Chinese flash
+    if (LANG !== 'zh') {
+        var _i18nStyle = document.createElement('style');
+        _i18nStyle.textContent = 'body{opacity:0!important;transition:opacity .15s}';
+        (document.head || document.documentElement).appendChild(_i18nStyle);
+    }
+    function _revealPage() {
+        if (_i18nStyle && _i18nStyle.parentNode) {
+            _i18nStyle.parentNode.removeChild(_i18nStyle);
+        }
+    }
+
     // ==================== Chinese → English dictionary ====================
     var dict = {
         // ── Header ──
@@ -1637,10 +1649,12 @@
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function () {
             translateDOM();
+            _revealPage();
             observeDOM();
         });
     } else {
         translateDOM();
+        _revealPage();
         observeDOM();
     }
 

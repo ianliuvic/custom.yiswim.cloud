@@ -430,13 +430,22 @@ async function buildStyleSection(d, fileMap, odmStyleImages, t) {
         content.push({ text: t('oemDesign'), bold: true, fontSize: 10, margin: [0, 4, 0, 4] });
 
         // ── 1. Project overview header bar ──
+        const projTableBody = [
+            [
+                { text: [{ text: t('projectName') + ':  ', bold: true, fontSize: 9, color: '#64748b' }, { text: d.oem_project || '-', fontSize: 9, color: '#1e293b' }], margin: [8, 6, 8, 6] },
+                { text: [{ text: t('styleCount') + ':  ', bold: true, fontSize: 9, color: '#64748b' }, { text: String(d.oem_style_count || '-'), fontSize: 9, color: '#1e293b' }], margin: [8, 6, 8, 6] }
+            ]
+        ];
+        if (d.oem_project_desc) {
+            projTableBody.push([
+                { text: [{ text: t('projectDesc') + ':  ', bold: true, fontSize: 9, color: '#64748b' }, { text: d.oem_project_desc, fontSize: 9, color: '#1e293b' }], margin: [8, 6, 8, 6], colSpan: 2 },
+                {}
+            ]);
+        }
         content.push({
             table: {
                 widths: ['*', '*'],
-                body: [[
-                    { text: [{ text: t('projectName') + ':  ', bold: true, fontSize: 9, color: '#64748b' }, { text: d.oem_project || '-', fontSize: 9, color: '#1e293b' }], margin: [8, 6, 8, 6] },
-                    { text: [{ text: t('styleCount') + ':  ', bold: true, fontSize: 9, color: '#64748b' }, { text: String(d.oem_style_count || '-'), fontSize: 9, color: '#1e293b' }], margin: [8, 6, 8, 6] }
-                ]]
+                body: projTableBody
             },
             layout: {
                 hLineWidth: () => 0.5, vLineWidth: () => 0.5,
@@ -444,11 +453,6 @@ async function buildStyleSection(d, fileMap, odmStyleImages, t) {
             },
             margin: [0, 4, 0, 8]
         });
-
-        // ── 1.5. Project description (optional) ──
-        if (d.oem_project_desc) {
-            content.push(kvRow(t('projectDesc'), d.oem_project_desc));
-        }
 
         // ── 2. Style descriptions table ──
         if (Array.isArray(oemDescs) && oemDescs.length) {

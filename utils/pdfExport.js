@@ -542,21 +542,11 @@ async function buildStyleSection(d, fileMap, odmStyleImages, t) {
             ]);
         }
 
-        // Row: 补充说明
-        const suppItems = [];
+        // Row: 补充说明 (only remark, shipping moved below table)
         if (d.oem_remark) {
-            suppItems.push({ text: t('remark') + ': ' + d.oem_remark, fontSize: 9, margin: [0, 0, 0, 4] });
-        }
-        if (d.oem_physical_sample) {
-            const trackingText = d.oem_tracking_no
-                ? t('shipped') + ' (' + t('trackingNo') + ': ' + d.oem_tracking_no + ')'
-                : t('shipped') + ' (' + t('pendingTracking') + ')';
-            suppItems.push({ text: t('sampleShipping') + ': ' + trackingText, fontSize: 9, margin: [0, 0, 0, 4] });
-        }
-        if (suppItems.length) {
             detailRows.push([
                 { text: t('supplementary'), fontSize: 9, bold: true, color: '#475569' },
-                { stack: suppItems }
+                { text: d.oem_remark, fontSize: 9 }
             ]);
         }
 
@@ -578,6 +568,14 @@ async function buildStyleSection(d, fileMap, odmStyleImages, t) {
                 },
                 margin: [0, 4, 0, 8]
             });
+        }
+
+        // ── Physical sample shipping (below table) ──
+        if (d.oem_physical_sample) {
+            const trackingText = d.oem_tracking_no
+                ? t('shipped') + ' (' + t('trackingNo') + ': ' + d.oem_tracking_no + ')'
+                : t('shipped') + ' (' + t('pendingTracking') + ')';
+            content.push(kvRow(t('sampleShipping'), trackingText));
         }
     }
 

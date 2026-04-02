@@ -167,7 +167,7 @@ function formatSize(bytes) {
 }
 
 /* ── Fetch remote image as base64 data URI (with timeout & size limit) ── */
-function fetchImageAsBase64(url, maxWidth = 200) {
+function fetchImageAsBase64(url, maxWidth = 200, quality = 85) {
     return new Promise((resolve) => {
         const timer = setTimeout(() => resolve(null), 8000);
         const proto = url.startsWith('https') ? https : http;
@@ -189,12 +189,22 @@ function fetchImageAsBase64(url, maxWidth = 200) {
                     clearTimeout(timer);
                     try {
                         const buf = Buffer.concat(chunks);
-                        // Resize with sharp for smaller PDF
-                        const resized = await sharp(buf)
-                            .resize({ width: maxWidth, withoutEnlargement: true })
-                            .jpeg({ quality: 70 })
-                            .toBuffer();
-                        resolve('data:image/jpeg;base64,' + resized.toString('base64'));
+                        const meta = await sharp(buf).metadata();
+                        const isPng = (meta.format === 'png');
+                        let resized;
+                        if (isPng) {
+                            resized = await sharp(buf)
+                                .resize({ width: maxWidth, withoutEnlargement: true })
+                                .png({ compressionLevel: 6 })
+                                .toBuffer();
+                            resolve('data:image/png;base64,' + resized.toString('base64'));
+                        } else {
+                            resized = await sharp(buf)
+                                .resize({ width: maxWidth, withoutEnlargement: true })
+                                .jpeg({ quality })
+                                .toBuffer();
+                            resolve('data:image/jpeg;base64,' + resized.toString('base64'));
+                        }
                     } catch { resolve(null); }
                 });
                 res.on('error', () => { clearTimeout(timer); resolve(null); });
@@ -964,7 +974,7 @@ async function buildFilesSection(files, t) {
     // Images: one per row, large preview (fit page width)
     for (const f of imageFiles) {
         const url = FILE_BASE + encodeURIComponent(f.stored_name);
-        const imgData = await fetchImageAsBase64(url, 500);
+        const imgData = await fetchImageAsBase64(url, 1500, 92);
         const label = (f.orig_name || '-') + (f.size_bytes ? '  (' + formatSize(f.size_bytes) + ')' : '');
         if (imgData) {
             content.push({

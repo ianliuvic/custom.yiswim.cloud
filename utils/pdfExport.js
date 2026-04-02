@@ -475,43 +475,109 @@ async function buildStyleSection(d, fileMap, odmStyleImages, t) {
             });
         }
 
-        // ── 3. Design files by sub-category ──
+        // ── 3. OEM details summary table (2-col: label | content) ──
         const oemFiles = fileMap['oem'] || [];
         const refFiles = oemFiles.filter(f => f.sub_key === 'ref');
         const techFiles = oemFiles.filter(f => f.sub_key === 'tech');
         const oemSizeFiles = oemFiles.filter(f => f.sub_key === 'size');
         const otherOemFiles = oemFiles.filter(f => !['ref', 'tech', 'size'].includes(f.sub_key));
 
+        // Helper: build cell content stack for a list of files (images as thumbnails, others as text)
+        async function buildFileCellContent(files) {
+            const items = [];
+            for (const f of files) {
+                const isImg = /\.(jpg|jpeg|png|gif|webp)$/i.test(f.orig_name || '');
+                if (isImg) {
+                    const url = FILE_BASE + encodeURIComponent(f.stored_name);
+                    const imgData = await fetchImageAsBase64(url, 150);
+                    if (imgData) {
+                        items.push({ image: imgData, width: 100, height: 70, margin: [0, 2, 0, 2] });
+                    }
+                    items.push({ text: f.orig_name || '-', fontSize: 7, color: '#475569', margin: [0, 0, 0, 6] });
+                } else {
+                    items.push({ text: '📎 ' + (f.orig_name || '-'), fontSize: 8, color: '#475569', margin: [0, 2, 0, 4] });
+                }
+            }
+            return items;
+        }
+
+        const detailRows = [];
+
+        // Row: 参考图与灵感
         if (refFiles.length) {
-            content.push(...await buildFileDisplay(refFiles, t('refImages'), t));
+            detailRows.push([
+                { text: t('refImages'), fontSize: 9, bold: true, color: '#475569' },
+                { stack: await buildFileCellContent(refFiles) }
+            ]);
         }
+
+        // Row: 工艺单 / 设计稿
         if (techFiles.length) {
-            content.push(...await buildFileDisplay(techFiles, t('techFiles'), t));
+            detailRows.push([
+                { text: t('techFiles'), fontSize: 9, bold: true, color: '#475569' },
+                { stack: await buildFileCellContent(techFiles) }
+            ]);
         }
+
+        // Row: other design files (fallback)
         if (otherOemFiles.length) {
-            content.push(...await buildFileDisplay(otherOemFiles, t('designFiles'), t));
+            detailRows.push([
+                { text: t('designFiles'), fontSize: 9, bold: true, color: '#475569' },
+                { stack: await buildFileCellContent(otherOemFiles) }
+            ]);
         }
 
-        // ── 4. Size information ──
+        // Row: 尺寸信息
         if (d.oem_size_remark || oemSizeFiles.length) {
-            content.push(subTitle(t('sizeFiles')));
-            if (d.oem_size_remark) content.push(kvRow(t('sizeRemark'), d.oem_size_remark));
-            if (oemSizeFiles.length) {
-                content.push(...await buildFileDisplay(oemSizeFiles, null, t));
+            const sizeItems = [];
+            if (d.oem_size_remark) {
+                sizeItems.push({ text: d.oem_size_remark, fontSize: 9, margin: [0, 0, 0, 4] });
             }
+            if (oemSizeFiles.length) {
+                sizeItems.push(...await buildFileCellContent(oemSizeFiles));
+            }
+            detailRows.push([
+                { text: t('sizeFiles'), fontSize: 9, bold: true, color: '#475569' },
+                { stack: sizeItems }
+            ]);
         }
 
-        // ── 5. Supplementary info ──
-        const hasSupp = d.oem_remark || d.oem_physical_sample;
-        if (hasSupp) {
-            content.push(subTitle(t('supplementary')));
-            if (d.oem_remark) content.push(kvRow(t('remark'), d.oem_remark));
-            if (d.oem_physical_sample) {
-                const trackingText = d.oem_tracking_no
-                    ? t('shipped') + ' (' + t('trackingNo') + ': ' + d.oem_tracking_no + ')'
-                    : t('shipped') + ' (' + t('pendingTracking') + ')';
-                content.push(kvRow(t('sampleShipping'), trackingText));
-            }
+        // Row: 补充说明
+        const suppItems = [];
+        if (d.oem_remark) {
+            suppItems.push({ text: t('remark') + ': ' + d.oem_remark, fontSize: 9, margin: [0, 0, 0, 4] });
+        }
+        if (d.oem_physical_sample) {
+            const trackingText = d.oem_tracking_no
+                ? t('shipped') + ' (' + t('trackingNo') + ': ' + d.oem_tracking_no + ')'
+                : t('shipped') + ' (' + t('pendingTracking') + ')';
+            suppItems.push({ text: t('sampleShipping') + ': ' + trackingText, fontSize: 9, margin: [0, 0, 0, 4] });
+        }
+        if (suppItems.length) {
+            detailRows.push([
+                { text: t('supplementary'), fontSize: 9, bold: true, color: '#475569' },
+                { stack: suppItems }
+            ]);
+        }
+
+        if (detailRows.length) {
+            content.push({
+                table: {
+                    widths: [90, '*'],
+                    body: detailRows
+                },
+                layout: {
+                    hLineWidth: (i, node) => (i === 0 || i === node.table.body.length) ? 0.5 : 0.3,
+                    vLineWidth: () => 0.5,
+                    hLineColor: (i) => i === 0 ? '#cbd5e1' : '#e2e8f0',
+                    vLineColor: () => '#e2e8f0',
+                    paddingTop: () => 6,
+                    paddingBottom: () => 6,
+                    paddingLeft: () => 8,
+                    paddingRight: () => 8,
+                },
+                margin: [0, 4, 0, 8]
+            });
         }
     }
 

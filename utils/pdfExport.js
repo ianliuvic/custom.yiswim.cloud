@@ -256,6 +256,69 @@ function buildFileTable(files, label, t) {
     return result;
 }
 
+/* ── Build file display with image previews ── */
+async function buildFileDisplay(files, label, t) {
+    if (!files || !files.length) return [];
+    const result = [];
+    if (label) result.push(subTitle(label));
+
+    const imageFiles = files.filter(f => /\.(jpg|jpeg|png|gif|webp)$/i.test(f.orig_name || ''));
+    const otherFiles = files.filter(f => !/\.(jpg|jpeg|png|gif|webp)$/i.test(f.orig_name || ''));
+
+    // Image thumbnails in rows of 3
+    if (imageFiles.length) {
+        const imgItems = [];
+        for (const f of imageFiles) {
+            const url = FILE_BASE + encodeURIComponent(f.stored_name);
+            const imgData = await fetchImageAsBase64(url, 180);
+            if (imgData) {
+                imgItems.push({
+                    stack: [
+                        { image: imgData, width: 140, height: 100, margin: [0, 0, 0, 3] },
+                        { text: f.orig_name || '-', fontSize: 7, color: '#475569' }
+                    ],
+                    width: 155
+                });
+            } else {
+                imgItems.push({
+                    stack: [
+                        { canvas: [{ type: 'rect', x: 0, y: 0, w: 140, h: 100, r: 4, lineColor: '#e2e8f0', color: '#f8fafc' }], width: 140, height: 100, margin: [0, 0, 0, 3] },
+                        { text: f.orig_name || '-', fontSize: 7, color: '#475569' }
+                    ],
+                    width: 155
+                });
+            }
+        }
+        const rowSize = 3;
+        for (let i = 0; i < imgItems.length; i += rowSize) {
+            const row = imgItems.slice(i, i + rowSize);
+            while (row.length < rowSize) row.push({ text: '', width: 155 });
+            result.push({ columns: row, columnGap: 10, margin: [0, 4, 0, 4] });
+        }
+    }
+
+    // Non-image files in compact table
+    if (otherFiles.length) {
+        const rows = [[
+            { text: t('fileName'), style: 'tableHeader' },
+            { text: t('fileSize'), style: 'tableHeader' }
+        ]];
+        otherFiles.forEach(f => {
+            rows.push([
+                { text: f.orig_name || '-', fontSize: 8 },
+                { text: formatSize(f.size_bytes), fontSize: 8 }
+            ]);
+        });
+        result.push({
+            table: { headerRows: 1, widths: ['*', 60], body: rows },
+            layout: 'lightHorizontalLines',
+            margin: [0, 2, 0, 6]
+        });
+    }
+
+    return result;
+}
+
 /* ═══════════════════════════════════════════════
    Section Builders - mirror the 5 sections in user.js
    ═══════════════════════════════════════════════ */
@@ -295,7 +358,8 @@ async function buildStyleSection(d, fileMap, odmStyleImages, t) {
 
             const customFiles = (fileMap['odmCustom'] || []).filter(f => f.sub_key === displayName);
             if (customFiles.length) {
-                items.push({ text: t('customFiles') + ': ' + customFiles.map(f => f.orig_name).join(', '), fontSize: 8, color: '#64748b', margin: [0, 2, 0, 2] });
+                const cfDisplay = await buildFileDisplay(customFiles, t('customFiles'), t);
+                items.push(...cfDisplay);
             }
 
             content.push({
@@ -325,11 +389,11 @@ async function buildStyleSection(d, fileMap, odmStyleImages, t) {
         const oemDesignFiles = oemFiles.filter(f => f.sub_key !== 'size');
         const oemSizeFiles = oemFiles.filter(f => f.sub_key === 'size');
         if (oemDesignFiles.length) {
-            content.push(...buildFileTable(oemDesignFiles, t('designFiles'), t));
+            content.push(...await buildFileDisplay(oemDesignFiles, t('designFiles'), t));
         }
         if (d.oem_size_remark) content.push(kvRow(t('sizeRemark'), d.oem_size_remark));
         if (oemSizeFiles.length) {
-            content.push(...buildFileTable(oemSizeFiles, t('sizeFiles'), t));
+            content.push(...await buildFileDisplay(oemSizeFiles, t('sizeFiles'), t));
         }
 
         if (d.oem_remark) content.push(kvRow(t('remark'), d.oem_remark));
@@ -342,7 +406,7 @@ async function buildStyleSection(d, fileMap, odmStyleImages, t) {
     return content.filter(Boolean);
 }
 
-function buildFabricSection(d, fileMap, t) {
+async function buildFabricSection(d, fileMap, t) {
     const fab = tryParse(d.fabric_selection);
     if (!fab || typeof fab !== 'object' || !Object.keys(fab).length) return [];
 
@@ -350,16 +414,16 @@ function buildFabricSection(d, fileMap, t) {
     const fabricFiles = fileMap['fabric'] || [];
     const cmtFabricFiles = (fileMap['cmt'] || []).filter(f => f.sub_key === 'fabric');
 
-    Object.keys(fab).forEach(catKey => {
+    for (const catKey of Object.keys(fab)) {
         const cat = fab[catKey];
-        if (!cat || !cat.configs) return;
+        if (!cat || !cat.configs) continue;
         const originalCat = cat.originalCatName || catKey;
         const isLining = /里料|[Ll]ining/.test(originalCat);
         const configs = cat.configs;
 
-        Object.keys(configs).forEach(fabricName => {
+        for (const fabricName of Object.keys(configs)) {
             const cfg = configs[fabricName];
-            if (!cfg) return;
+            if (!cfg) continue;
             const isCS = fabricName === 'CUSTOM_SOURCING';
             const mode = isCS ? 'custom' : (cfg.mode || 'solid');
             const modeLabel = { solid: t('solid'), print: t('print'), custom: t('customSourcing') }[mode] || mode;
@@ -397,7 +461,7 @@ function buildFabricSection(d, fileMap, t) {
                     printFiles = fabricFiles.filter(f => f.sub_key === baseKey && f.mime_type && f.mime_type.startsWith('image/'));
                 }
                 if (printFiles.length) {
-                    content.push({ text: t('printPatternFiles') + ': ' + printFiles.map(f => f.orig_name).join(', '), fontSize: 8, color: '#64748b', margin: [0, 2, 0, 2] });
+                    content.push(...await buildFileDisplay(printFiles, t('printPatternFiles'), t));
                 }
             } else if (mode === 'custom') {
                 if (cfg.customDesc) content.push(kvRow(t('reqDesc'), cfg.customDesc));
@@ -416,10 +480,10 @@ function buildFabricSection(d, fileMap, t) {
             const subKey = catKey + '__' + fabricName;
             const matched = fabricFiles.filter(f => f.sub_key === subKey);
             if (matched.length) {
-                content.push({ text: t('refFiles') + ': ' + matched.map(f => f.orig_name).join(', '), fontSize: 8, color: '#64748b', margin: [0, 2, 0, 2] });
+                content.push(...await buildFileDisplay(matched, t('refFiles'), t));
             }
-        });
-    });
+        }
+    }
 
     // CMT
     const cmtData = tryParse(d.cmt_enabled);
@@ -430,7 +494,7 @@ function buildFabricSection(d, fileMap, t) {
         if (fabricCmt && fabricCmt.desc) content.push(kvRow(t('detailDesc'), fabricCmt.desc));
         if (fabricCmt && fabricCmt.trackingNo) content.push(kvRow(t('trackingNo'), fabricCmt.trackingNo));
         if (cmtFabricFiles.length) {
-            content.push({ text: t('refFiles') + ': ' + cmtFabricFiles.map(f => f.orig_name).join(', '), fontSize: 8, color: '#64748b', margin: [0, 2, 0, 2] });
+            content.push(...await buildFileDisplay(cmtFabricFiles, t('refFiles'), t));
         }
     }
 
@@ -438,7 +502,7 @@ function buildFabricSection(d, fileMap, t) {
     return content.filter(Boolean);
 }
 
-function buildTrimsSection(d, fileMap, t) {
+async function buildTrimsSection(d, fileMap, t) {
     const trimDefs = [
         { key: 'metal_config', cat: 'metal', name: t('metalHardware') },
         { key: 'pad_config', cat: 'pad', name: t('chestPad') },
@@ -452,12 +516,12 @@ function buildTrimsSection(d, fileMap, t) {
     const cmtData = tryParse(d.cmt_enabled) || {};
     const items = [];
 
-    trimDefs.forEach(td => {
+    for (const td of trimDefs) {
         const val = tryParse(d[td.key]);
         const cmtInfo = cmtData[td.cat];
         const cmtEnabled = cmtInfo === true || (cmtInfo && cmtInfo.enabled);
         const hasConfig = val && typeof val === 'object' && Object.keys(val).length;
-        if (!hasConfig && !cmtEnabled) return;
+        if (!hasConfig && !cmtEnabled) continue;
 
         const trimFiles = fileMap[td.cat] || [];
         const cmtFiles = (fileMap['cmt'] || []).filter(f => f.sub_key === td.cat);
@@ -567,14 +631,14 @@ function buildTrimsSection(d, fileMap, t) {
 
         // Trim files
         if (trimFiles.length) {
-            sub.push({ text: t('attachments') + ': ' + trimFiles.map(f => f.orig_name).join(', '), fontSize: 8, color: '#64748b', margin: [0, 2, 0, 2] });
+            sub.push(...await buildFileDisplay(trimFiles, null, t));
         }
         if (cmtFiles.length) {
-            sub.push({ text: t('cmtAttachments') + ': ' + cmtFiles.map(f => f.orig_name).join(', '), fontSize: 8, color: '#64748b', margin: [0, 2, 0, 2] });
+            sub.push(...await buildFileDisplay(cmtFiles, t('cmtAttachments'), t));
         }
 
         items.push(...sub);
-    });
+    }
 
     if (items.length === 0) return [];
 
@@ -584,7 +648,7 @@ function buildTrimsSection(d, fileMap, t) {
     return content.filter(Boolean);
 }
 
-function buildShippingSection(d, fileMap, t) {
+async function buildShippingSection(d, fileMap, t) {
     const content = [sectionTitle(t('sec4'))];
     const isSample = d.delivery_mode !== 'bulk';
     content.push(kvRow(t('deliveryMode'), isSample ? t('sampleOrder') : t('bulkOrder')));
@@ -670,13 +734,13 @@ function buildShippingSection(d, fileMap, t) {
 
         const bpFiles = fileMap['bulkPacking'] || [];
         if (bpFiles.length) {
-            content.push(...buildFileTable(bpFiles, t('packRefFiles'), t));
+            content.push(...await buildFileDisplay(bpFiles, t('packRefFiles'), t));
         }
     }
 
     const fdFiles = fileMap['finalDocs'] || [];
     if (fdFiles.length) {
-        content.push(...buildFileTable(fdFiles, t('techPlanFiles'), t));
+        content.push(...await buildFileDisplay(fdFiles, t('techPlanFiles'), t));
     }
 
     content.push(divider());
@@ -696,9 +760,9 @@ function buildContactSection(d, t) {
     return content.filter(Boolean);
 }
 
-function buildFilesSection(files, t) {
+async function buildFilesSection(files, t) {
     if (!files || !files.length) return [];
-    return [sectionTitle(t('sec6')), ...buildFileTable(files, null, t)];
+    return [sectionTitle(t('sec6')), ...await buildFileDisplay(files, null, t)];
 }
 
 /* ═══════════════════════════════════════════════
@@ -727,14 +791,14 @@ async function generateInquiryPDF(inquiry, files, odmStyleImages, lang) {
 
     // Build sections
     const styleContent = await buildStyleSection(inquiry, fileMap, odmStyleImages, t);
-    const fabricContent = buildFabricSection(inquiry, fileMap, t);
-    const trimsContent = buildTrimsSection(inquiry, fileMap, t);
-    const shippingContent = buildShippingSection(inquiry, fileMap, t);
+    const fabricContent = await buildFabricSection(inquiry, fileMap, t);
+    const trimsContent = await buildTrimsSection(inquiry, fileMap, t);
+    const shippingContent = await buildShippingSection(inquiry, fileMap, t);
     const contactContent = buildContactSection(inquiry, t);
 
     // All files list
     const allFiles = files || [];
-    const filesContent = buildFilesSection(allFiles, t);
+    const filesContent = await buildFilesSection(allFiles, t);
 
     // Header info block
     const headerBlock = [

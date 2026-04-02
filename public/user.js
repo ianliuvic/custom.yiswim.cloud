@@ -343,6 +343,14 @@
                 if (!isCS && displayName) h += '<span class="u-fabric-cat-tag">' + esc(originalCat) + '</span>';
                 h += '<span class="u-fabric-mode ' + mode + '">' + modeLabel + '</span></div>';
 
+                // 通用：成分和克重（所有模式可用）
+                if (cfg.comp) h += kv('成分', esc(cfg.comp));
+                if (cfg.gsm) {
+                    var gsmVal = cfg.gsm;
+                    if (!/g/i.test(gsmVal)) gsmVal += ' g/m²';
+                    h += kv('克重', esc(gsmVal));
+                }
+
                 if (mode === 'solid') {
                     var colors = cfg.colors;
                     if (Array.isArray(colors) && colors.length) {
@@ -376,8 +384,6 @@
                     if (cfg.printScale) h += kv('缩放比例', esc(cfg.printScale));
                 } else if (mode === 'custom') {
                     if (cfg.customDesc) h += kv('需求描述', esc(cfg.customDesc));
-                    if (cfg.comp) h += kv('成分', esc(cfg.comp));
-                    if (cfg.gsm) h += kv('克重', esc(cfg.gsm) + ' g/m²');
                     if (cfg.colorReq) h += kv('颜色要求', esc(cfg.colorReq));
                     if (cfg.physical) h += kv('实物邮寄', '是' + (cfg.trackingNo ? '（单号：' + esc(cfg.trackingNo) + '）' : ''));
                 }

@@ -290,11 +290,14 @@
                 oemDesignFiles.forEach(function (f) { h += renderFileItem(f); });
                 h += '</div>';
             }
-            if (oemSizeFiles.length) {
+            if (oemSizeFiles.length || d.oem_size_remark) {
                 h += '<div class="u-sub-label" style="margin-top:12px">尺寸信息</div>';
-                h += '<div class="u-file-grid">';
-                oemSizeFiles.forEach(function (f) { h += renderFileItem(f); });
-                h += '</div>';
+                if (d.oem_size_remark) h += kv('尺寸说明', esc(d.oem_size_remark));
+                if (oemSizeFiles.length) {
+                    h += '<div class="u-file-grid">';
+                    oemSizeFiles.forEach(function (f) { h += renderFileItem(f); });
+                    h += '</div>';
+                }
             }
             if (d.oem_remark) h += kv('备注', esc(d.oem_remark));
             // 寄送实体样衣

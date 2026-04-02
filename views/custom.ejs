@@ -147,7 +147,7 @@
                                     <!-- 左：文字描述 -->
                                     <div style="display: flex; flex-direction: column;">
                                         <span class="oem-subtitle" style="display: block; margin-bottom: 8px;">尺寸文字说明</span>
-                                        <textarea id="oem-size-remark" class="oem-textarea" style="flex: 1; min-height: 120px;" placeholder="请描述尺码范围、各部位尺寸要求等..." spellcheck="false" oninput="updateCombinedStyleSummary()"></textarea>
+                                        <textarea id="oem-size-remark" class="oem-textarea" style="height: auto; flex: 1; min-height: 120px;" placeholder="请描述尺码范围、各部位尺寸要求等..." spellcheck="false" oninput="updateCombinedStyleSummary()"></textarea>
                                     </div>
                                     <!-- 右：文件上传 -->
                                     <div style="display: flex; flex-direction: column;">
@@ -159,9 +159,9 @@
                                             </div>
                                             <input type="file" id="oemSizeFile" multiple class="hidden" onchange="handleOemFiles(this, 'size')">
                                         </div>
-                                        <div id="oemSizePreview" class="oem-image-preview-grid"></div>
                                     </div>
                                 </div>
+                                <div id="oemSizePreview" class="oem-image-preview-grid"></div>
                             </div>
                         
                             <div class="oem-upload-section" style="margin-bottom: 25px;">

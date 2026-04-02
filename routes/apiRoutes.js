@@ -49,6 +49,7 @@ function parseInquiryFields(d) {
         safeJSON(d.odm_styles, []),
         safeJSON(d.odm_custom_data, {}),
         d.oem_project || null,
+        d.oem_project_desc || null,
         parseInt(d.oem_style_count) || 0,
         safeJSON(d.oem_descriptions, []),
         safeJSON(d.oem_checklist, []),
@@ -86,7 +87,7 @@ function parseInquiryFields(d) {
     ];
 }
 
-const INQUIRY_COLUMNS = `odm_styles, odm_custom_data, oem_project, oem_style_count, oem_descriptions, oem_checklist, oem_remark, oem_physical_sample, oem_tracking_no,
+const INQUIRY_COLUMNS = `odm_styles, odm_custom_data, oem_project, oem_project_desc, oem_style_count, oem_descriptions, oem_checklist, oem_remark, oem_physical_sample, oem_tracking_no,
     fabric_selection,
     cmt_enabled, metal_config, pad_config, bag_config, hangtag_config, label_config, hygiene_config, other_config,
     delivery_mode, sample_rows, sample_config, sample_dest, bulk_rows, bulk_logistics, bulk_dest, bulk_target_price, bulk_packing_remark,
@@ -94,15 +95,15 @@ const INQUIRY_COLUMNS = `odm_styles, odm_custom_data, oem_project, oem_style_cou
     assign_sales, assign_pattern, assign_sewing,
     nda_agreed_at, oem_size_remark`;
 
-const INQUIRY_UPDATE_SET = `odm_styles=$1, odm_custom_data=$2, oem_project=$3, oem_style_count=$4,
-    oem_descriptions=$5, oem_checklist=$6, oem_remark=$7, oem_physical_sample=$8, oem_tracking_no=$9,
-    fabric_selection=$10,
-    cmt_enabled=$11, metal_config=$12, pad_config=$13, bag_config=$14, hangtag_config=$15, label_config=$16, hygiene_config=$17, other_config=$18,
-    delivery_mode=$19, sample_rows=$20, sample_config=$21, sample_dest=$22,
-    bulk_rows=$23, bulk_logistics=$24, bulk_dest=$25, bulk_target_price=$26, bulk_packing_remark=$27,
-    contact_name=$28, contact_info=$29, brand_name=$30, website=$31, final_remark=$32,
-    assign_sales=$33, assign_pattern=$34, assign_sewing=$35,
-    nda_agreed_at=$36, oem_size_remark=$37`;
+const INQUIRY_UPDATE_SET = `odm_styles=$1, odm_custom_data=$2, oem_project=$3, oem_project_desc=$4, oem_style_count=$5,
+    oem_descriptions=$6, oem_checklist=$7, oem_remark=$8, oem_physical_sample=$9, oem_tracking_no=$10,
+    fabric_selection=$11,
+    cmt_enabled=$12, metal_config=$13, pad_config=$14, bag_config=$15, hangtag_config=$16, label_config=$17, hygiene_config=$18, other_config=$19,
+    delivery_mode=$20, sample_rows=$21, sample_config=$22, sample_dest=$23,
+    bulk_rows=$24, bulk_logistics=$25, bulk_dest=$26, bulk_target_price=$27, bulk_packing_remark=$28,
+    contact_name=$29, contact_info=$30, brand_name=$31, website=$32, final_remark=$33,
+    assign_sales=$34, assign_pattern=$35, assign_sewing=$36,
+    nda_agreed_at=$37, oem_size_remark=$38`;
 
 async function handleUploadedFiles(client, inquiryId, files) {
     if (!files || files.length === 0) return;
@@ -414,7 +415,7 @@ router.post('/submit-inquiry', authenticateToken, upload.any(), async (req, res)
                 oldStoredNames = oldFiles.rows.map(r => r.stored_name);
                 await client.query('DELETE FROM custom_inquiry_files WHERE inquiry_id = $1', [inquiryId]);
                 await client.query(
-                    `UPDATE custom_inquiries SET status = 'pending', ${INQUIRY_UPDATE_SET}, modified_at = NOW() WHERE id = $38`,
+                    `UPDATE custom_inquiries SET status = 'pending', ${INQUIRY_UPDATE_SET}, modified_at = NOW() WHERE id = $39`,
                     [...fieldValues, inquiryId]
                 );
             }
@@ -429,13 +430,13 @@ router.post('/submit-inquiry', authenticateToken, upload.any(), async (req, res)
                     inquiry_no, user_id, ${INQUIRY_COLUMNS}
                 ) VALUES (
                     $1, $2,
-                    $3, $4, $5, $6, $7, $8, $9, $10, $11,
-                    $12,
-                    $13, $14, $15, $16, $17, $18, $19, $20,
-                    $21, $22, $23, $24, $25, $26, $27, $28, $29,
-                    $30, $31, $32, $33, $34,
-                    $35, $36, $37,
-                    $38, $39
+                    $3, $4, $5, $6, $7, $8, $9, $10, $11, $12,
+                    $13,
+                    $14, $15, $16, $17, $18, $19, $20, $21,
+                    $22, $23, $24, $25, $26, $27, $28, $29, $30,
+                    $31, $32, $33, $34, $35,
+                    $36, $37, $38,
+                    $39, $40
                 ) RETURNING id`, [inquiryNo, req.user.id, ...fieldValues]);
             inquiryId = insertResult.rows[0].id;
         }
@@ -729,7 +730,7 @@ router.post('/save-draft', authenticateToken, upload.any(), async (req, res) => 
             oldStoredNames = oldFiles.rows.map(r => r.stored_name);
             await client.query('DELETE FROM custom_inquiry_files WHERE inquiry_id = $1', [inquiryId]);
             await client.query(
-                `UPDATE custom_inquiries SET ${INQUIRY_UPDATE_SET}, modified_at = NOW() WHERE id = $38`,
+                `UPDATE custom_inquiries SET ${INQUIRY_UPDATE_SET}, modified_at = NOW() WHERE id = $39`,
                 [...fieldValues, inquiryId]
             );
         } else {
@@ -741,13 +742,13 @@ router.post('/save-draft', authenticateToken, upload.any(), async (req, res) => 
                     inquiry_no, user_id, status, ${INQUIRY_COLUMNS}
                 ) VALUES (
                     $1, $2, 'draft',
-                    $3, $4, $5, $6, $7, $8, $9, $10, $11,
-                    $12,
-                    $13, $14, $15, $16, $17, $18, $19, $20,
-                    $21, $22, $23, $24, $25, $26, $27, $28, $29,
-                    $30, $31, $32, $33, $34,
-                    $35, $36, $37,
-                    $38, $39
+                    $3, $4, $5, $6, $7, $8, $9, $10, $11, $12,
+                    $13,
+                    $14, $15, $16, $17, $18, $19, $20, $21,
+                    $22, $23, $24, $25, $26, $27, $28, $29, $30,
+                    $31, $32, $33, $34, $35,
+                    $36, $37, $38,
+                    $39, $40
                 ) RETURNING id`, [inquiryNo, req.user.id, ...fieldValues]);
             inquiryId = insertResult.rows[0].id;
         }

@@ -32,7 +32,7 @@ const I18N = {
         odmSelected: '【ODM 已选款式】', oemDesign: '【OEM 自主设计】',
         customRemark: '轻定制备注', customFiles: '轻定制文件',
         projectName: '项目名称', styleCount: '款式数量', styleDesc: '款式描述',
-        designFiles: '设计文件', remark: '备注', sampleShipping: '寄送样衣', shipped: '已寄送',
+        designFiles: '设计文件', sizeFiles: '尺寸信息', remark: '备注', sampleShipping: '寄送样衣', shipped: '已寄送',
         // Fabric
         solid: '纯色', print: '印花', customSourcing: '开发/找样',
         color: '颜色', colorDesc: '色彩描述',
@@ -90,7 +90,7 @@ const I18N = {
         odmSelected: '[ODM Selected Styles]', oemDesign: '[OEM Custom Design]',
         customRemark: 'Customization Remark', customFiles: 'Customization Files',
         projectName: 'Project Name', styleCount: 'Style Count', styleDesc: 'Style Descriptions',
-        designFiles: 'Design Files', remark: 'Remark', sampleShipping: 'Sample Shipping', shipped: 'Shipped',
+        designFiles: 'Design Files', sizeFiles: 'Size Information', remark: 'Remark', sampleShipping: 'Sample Shipping', shipped: 'Shipped',
         solid: 'Solid', print: 'Print', customSourcing: 'Custom Sourcing',
         color: 'Color', colorDesc: 'Color Description',
         printType: 'Print Type', seamless: 'Seamless Pattern', placement: 'Placement Print',
@@ -322,8 +322,13 @@ async function buildStyleSection(d, fileMap, odmStyleImages, t) {
         }
 
         const oemFiles = fileMap['oem'] || [];
-        if (oemFiles.length) {
-            content.push(...buildFileTable(oemFiles, t('designFiles'), t));
+        const oemDesignFiles = oemFiles.filter(f => f.sub_key !== 'size');
+        const oemSizeFiles = oemFiles.filter(f => f.sub_key === 'size');
+        if (oemDesignFiles.length) {
+            content.push(...buildFileTable(oemDesignFiles, t('designFiles'), t));
+        }
+        if (oemSizeFiles.length) {
+            content.push(...buildFileTable(oemSizeFiles, t('sizeFiles'), t));
         }
 
         if (d.oem_remark) content.push(kvRow(t('remark'), d.oem_remark));

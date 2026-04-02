@@ -1028,9 +1028,12 @@
         // ── User Center: Detail Panel ──
         "返回列表": "Back to List",
         "复制为新询盘": "Copy as New Inquiry",
-        "导出 PDF": "Export PDF",
+        "导出 PDF": "Export",
+        "导出PDF": "Export",
+        "导出": "Export",
+        "打包中...": "Packaging...",
+        "导出失败：": "Export failed: ",
         "生成中...": "Generating...",
-        "导出PDF": "Export PDF",
 
         // ── User Center: Detail Sections ──
         "款式信息": "Style Information",

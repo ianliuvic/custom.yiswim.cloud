@@ -33,6 +33,7 @@ const I18N = {
         customRemark: '轻定制备注', customFiles: '轻定制文件', preview: '预览',
         projectName: '项目名称', styleCount: '款式数量', styleDesc: '款式描述',
         designFiles: '设计文件', sizeFiles: '尺寸信息', sizeRemark: '尺寸说明', remark: '备注', sampleShipping: '寄送样衣', shipped: '已寄送',
+        refImages: '参考图与灵感', techFiles: '工艺单 / 设计稿', description: '描述', supplementary: '补充说明', pendingTracking: '待更新物流单号',
         // Fabric
         solid: '纯色', print: '印花', customSourcing: '开发/找样',
         color: '颜色', colorDesc: '色彩描述',
@@ -91,6 +92,7 @@ const I18N = {
         customRemark: 'Customization Remark', customFiles: 'Customization Files', preview: 'Preview',
         projectName: 'Project Name', styleCount: 'Style Count', styleDesc: 'Style Descriptions',
         designFiles: 'Design Files', sizeFiles: 'Size Information', sizeRemark: 'Size Description', remark: 'Remark', sampleShipping: 'Sample Shipping', shipped: 'Shipped',
+        refImages: 'Reference & Inspiration', techFiles: 'Tech Pack / Design Docs', description: 'Description', supplementary: 'Additional Notes', pendingTracking: 'Tracking TBD',
         solid: 'Solid', print: 'Print', customSourcing: 'Custom Sourcing',
         color: 'Color', colorDesc: 'Color Description',
         printType: 'Print Type', seamless: 'Seamless Pattern', placement: 'Placement Print',
@@ -426,31 +428,90 @@ async function buildStyleSection(d, fileMap, odmStyleImages, t) {
     if (hasOEM) {
         if (hasODM) content.push(divider());
         content.push({ text: t('oemDesign'), bold: true, fontSize: 10, margin: [0, 4, 0, 4] });
-        content.push(kvRow(t('projectName'), d.oem_project));
-        content.push(kvRow(t('styleCount'), d.oem_style_count || '-'));
 
+        // ── 1. Project overview header bar ──
+        content.push({
+            table: {
+                widths: ['*', '*'],
+                body: [[
+                    { text: [{ text: t('projectName') + ':  ', bold: true, fontSize: 9, color: '#64748b' }, { text: d.oem_project || '-', fontSize: 9, color: '#1e293b' }], margin: [8, 6, 8, 6] },
+                    { text: [{ text: t('styleCount') + ':  ', bold: true, fontSize: 9, color: '#64748b' }, { text: String(d.oem_style_count || '-'), fontSize: 9, color: '#1e293b' }], margin: [8, 6, 8, 6] }
+                ]]
+            },
+            layout: {
+                hLineWidth: () => 0.5, vLineWidth: () => 0.5,
+                hLineColor: () => '#cbd5e1', vLineColor: () => '#cbd5e1',
+            },
+            margin: [0, 4, 0, 8]
+        });
+
+        // ── 2. Style descriptions table ──
         if (Array.isArray(oemDescs) && oemDescs.length) {
-            content.push(subTitle(t('styleDesc')));
+            const descTableBody = [
+                [
+                    { text: '#', style: 'tableHeader', alignment: 'center' },
+                    { text: t('description'), style: 'tableHeader' }
+                ]
+            ];
             oemDescs.forEach((desc, i) => {
                 const text = typeof desc === 'object' ? JSON.stringify(desc) : desc;
-                content.push({ text: `${t('style')} ${i + 1}: ${text}`, fontSize: 9, margin: [8, 2, 0, 2] });
+                descTableBody.push([
+                    { text: String(i + 1), fontSize: 9, alignment: 'center', color: '#64748b' },
+                    { text: text || '-', fontSize: 9 }
+                ]);
+            });
+            content.push(subTitle(t('styleDesc')));
+            content.push({
+                table: { headerRows: 1, widths: [30, '*'], body: descTableBody },
+                layout: {
+                    hLineWidth: (i, node) => (i <= 1 || i === node.table.body.length) ? 0.5 : 0.3,
+                    vLineWidth: () => 0.5,
+                    hLineColor: (i) => i <= 1 ? '#cbd5e1' : '#e2e8f0',
+                    vLineColor: () => '#e2e8f0',
+                    paddingTop: () => 5, paddingBottom: () => 5,
+                    paddingLeft: () => 6, paddingRight: () => 6,
+                },
+                margin: [0, 2, 0, 8]
             });
         }
 
+        // ── 3. Design files by sub-category ──
         const oemFiles = fileMap['oem'] || [];
-        const oemDesignFiles = oemFiles.filter(f => f.sub_key !== 'size');
+        const refFiles = oemFiles.filter(f => f.sub_key === 'ref');
+        const techFiles = oemFiles.filter(f => f.sub_key === 'tech');
         const oemSizeFiles = oemFiles.filter(f => f.sub_key === 'size');
-        if (oemDesignFiles.length) {
-            content.push(...await buildFileDisplay(oemDesignFiles, t('designFiles'), t));
+        const otherOemFiles = oemFiles.filter(f => !['ref', 'tech', 'size'].includes(f.sub_key));
+
+        if (refFiles.length) {
+            content.push(...await buildFileDisplay(refFiles, t('refImages'), t));
         }
-        if (d.oem_size_remark) content.push(kvRow(t('sizeRemark'), d.oem_size_remark));
-        if (oemSizeFiles.length) {
-            content.push(...await buildFileDisplay(oemSizeFiles, t('sizeFiles'), t));
+        if (techFiles.length) {
+            content.push(...await buildFileDisplay(techFiles, t('techFiles'), t));
+        }
+        if (otherOemFiles.length) {
+            content.push(...await buildFileDisplay(otherOemFiles, t('designFiles'), t));
         }
 
-        if (d.oem_remark) content.push(kvRow(t('remark'), d.oem_remark));
-        if (d.oem_physical_sample) {
-            content.push(kvRow(t('sampleShipping'), t('shipped') + (d.oem_tracking_no ? ' (' + t('trackingNo') + ': ' + d.oem_tracking_no + ')' : '')));
+        // ── 4. Size information ──
+        if (d.oem_size_remark || oemSizeFiles.length) {
+            content.push(subTitle(t('sizeFiles')));
+            if (d.oem_size_remark) content.push(kvRow(t('sizeRemark'), d.oem_size_remark));
+            if (oemSizeFiles.length) {
+                content.push(...await buildFileDisplay(oemSizeFiles, null, t));
+            }
+        }
+
+        // ── 5. Supplementary info ──
+        const hasSupp = d.oem_remark || d.oem_physical_sample;
+        if (hasSupp) {
+            content.push(subTitle(t('supplementary')));
+            if (d.oem_remark) content.push(kvRow(t('remark'), d.oem_remark));
+            if (d.oem_physical_sample) {
+                const trackingText = d.oem_tracking_no
+                    ? t('shipped') + ' (' + t('trackingNo') + ': ' + d.oem_tracking_no + ')'
+                    : t('shipped') + ' (' + t('pendingTracking') + ')';
+                content.push(kvRow(t('sampleShipping'), trackingText));
+            }
         }
     }
 

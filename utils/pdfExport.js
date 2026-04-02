@@ -615,6 +615,14 @@ async function buildFabricSection(d, fileMap, t) {
                 margin: [0, 6, 0, 4]
             });
 
+            // 通用：成分和克重（所有模式可用）
+            if (cfg.comp) content.push(kvRow(t('composition'), cfg.comp));
+            if (cfg.gsm) {
+                let gsmVal = cfg.gsm;
+                if (!/g/i.test(gsmVal)) gsmVal += ' g/m²';
+                content.push(kvRow(t('gsm'), gsmVal));
+            }
+
             if (mode === 'solid') {
                 const colors = cfg.colors;
                 if (Array.isArray(colors) && colors.length) {
@@ -642,8 +650,6 @@ async function buildFabricSection(d, fileMap, t) {
                 }
             } else if (mode === 'custom') {
                 if (cfg.customDesc) content.push(kvRow(t('reqDesc'), cfg.customDesc));
-                if (cfg.comp) content.push(kvRow(t('composition'), cfg.comp));
-                if (cfg.gsm) content.push(kvRow(t('gsm'), cfg.gsm + ' g/m²'));
                 if (cfg.colorReq) content.push(kvRow(t('colorReq'), cfg.colorReq));
                 if (cfg.physical) content.push(kvRow(t('physicalSend'), t('yes') + (cfg.trackingNo ? ' (' + t('trackingNo') + ': ' + cfg.trackingNo + ')' : '')));
             }

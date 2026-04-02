@@ -268,6 +268,7 @@
             h += '<div class="u-sec-divider"><span class="u-sec-divider-tag oem">OEM</span><span class="u-sec-divider-text">自主设计</span><span class="u-sec-divider-line"></span></div>';
             h += kv('项目名称', esc(d.oem_project));
             h += kv('款式数量', d.oem_style_count || '-');
+            if (d.oem_project_desc) h += kv('项目描述', esc(d.oem_project_desc));
             if (Array.isArray(oemDescs) && oemDescs.length) {
                 h += '<div class="u-sub-label" style="margin-top:12px">款式描述</div>';
                 h += '<div class="u-style-grid">';

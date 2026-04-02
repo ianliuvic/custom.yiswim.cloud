@@ -717,19 +717,29 @@
         return h;
     }
 
-    // Shared file item renderer
+    // Shared file item renderer — images show as thumbnail previews
     function renderFileItem(f) {
         var url = FILE_BASE + encodeURIComponent(f.stored_name);
         var ext = (f.orig_name || '').split('.').pop().toLowerCase();
+        var isImg = /^(jpg|jpeg|png|gif|webp)$/i.test(ext);
+        var sizeStr = f.size_bytes ? formatSize(f.size_bytes) : '';
+
+        if (isImg) {
+            return '<a href="' + url + '" target="_blank" rel="noopener noreferrer" class="u-file-img-preview">' +
+                '<div class="u-file-img-thumb"><img src="' + url + '" alt="' + esc(f.orig_name) + '" loading="lazy"></div>' +
+                '<div class="u-file-img-info"><div class="u-file-name">' + esc(f.orig_name) + '</div>' +
+                (sizeStr ? '<div class="u-file-meta">' + sizeStr + '</div>' : '') +
+                '</div></a>';
+        }
+
         var iconClass = 'other';
         var iconText = ext.toUpperCase();
-        if (/^(jpg|jpeg|png|gif|webp|svg)$/.test(ext)) { iconClass = 'img'; iconText = 'IMG'; }
-        else if (ext === 'pdf') { iconClass = 'pdf'; iconText = 'PDF'; }
+        if (ext === 'pdf') { iconClass = 'pdf'; iconText = 'PDF'; }
         else if (/^(doc|docx)$/.test(ext)) { iconClass = 'doc'; iconText = 'DOC'; }
         else if (/^(zip|rar)$/.test(ext)) { iconClass = 'zip'; iconText = 'ZIP'; }
         else if (/^(xls|xlsx)$/.test(ext)) { iconClass = 'doc'; iconText = 'XLS'; }
         else if (/^(ai|eps)$/.test(ext)) { iconClass = 'doc'; iconText = 'AI'; }
-        var sizeStr = f.size_bytes ? formatSize(f.size_bytes) : '';
+        else if (/^(svg)$/.test(ext)) { iconClass = 'img'; iconText = 'SVG'; }
         return '<a href="' + url + '" target="_blank" rel="noopener noreferrer" class="u-file-item">' +
             '<div class="u-file-icon ' + iconClass + '">' + iconText + '</div>' +
             '<div class="u-file-info"><div class="u-file-name">' + esc(f.orig_name) + '</div>' +
@@ -742,17 +752,7 @@
         var h = '<div class="u-inline-files">';
         if (label) h += '<div class="u-sub-label" style="margin-top:12px">' + esc(label) + '</div>';
         h += '<div class="u-file-grid">';
-        files.forEach(function (f) {
-            var url = FILE_BASE + encodeURIComponent(f.stored_name);
-            var isImg = /\.(jpg|jpeg|png|gif|webp)$/i.test(f.orig_name);
-            if (isImg) {
-                h += '<a href="' + url + '" target="_blank" rel="noopener noreferrer" class="u-inline-img-wrap">' +
-                    '<img src="' + url + '" alt="' + esc(f.orig_name) + '" loading="lazy">' +
-                    '<span>' + esc(f.orig_name) + '</span></a>';
-            } else {
-                h += renderFileItem(f);
-            }
-        });
+        files.forEach(function (f) { h += renderFileItem(f); });
         h += '</div></div>';
         return h;
     }

@@ -220,6 +220,8 @@
                 }
                 const remarkEl = document.getElementById('oem-remark');
                 if (remarkEl) remarkEl.value = d.oem_remark || '';
+                const sizeRemarkEl = document.getElementById('oem-size-remark');
+                if (sizeRemarkEl) sizeRemarkEl.value = d.oem_size_remark || '';
                 // 实体样衣
                 if (d.oem_physical_sample) {
                     const physEl = document.getElementById('oem-physical');
@@ -1315,10 +1317,11 @@
             // 2. 处理 OEM 部分 (判断是否有文件或备注)
             const hasOemFiles = oemFilesData.tech.length > 0 || oemFilesData.ref.length > 0 || oemFilesData.size.length > 0;
             const oemRemark = document.getElementById('oem-remark').value.trim();
+            const oemSizeRemark = (document.getElementById('oem-size-remark')?.value || '').trim();
             const collectionName = document.getElementById('oem-collection-name') ? document.getElementById('oem-collection-name').value.trim() : '';
             const collectionCount = parseInt(document.getElementById('oem-collection-count')?.value) || 0;
             const oemPhysical = document.getElementById('oem-physical').checked; // 新增：获取寄样勾选状态
-            if (hasOemFiles || oemRemark !== '' || oemPhysical || collectionName !== '') {
+            if (hasOemFiles || oemRemark !== '' || oemSizeRemark !== '' || oemPhysical || collectionName !== '') {
                 html += `<div style="border-top: 1px dashed #e2e8f0; padding-top: 8px;">`;
                 html += `<strong style="color:var(--primary-color);">${_t('OEM 自主设计包:')}</strong><br>`;
                 
@@ -1347,7 +1350,7 @@
                 }
         
                 // 如果只有备注没有文件和寄样，显示提示
-                if (!hasOemFiles && !oemPhysical && oemRemark !== '') {
+                if (!hasOemFiles && !oemPhysical && (oemRemark !== '' || oemSizeRemark !== '')) {
                     html += `<span style="font-size: 11px; color: #64748b; display:block;">- ${_t('仅文字需求说明')}</span>`;
                 }
                 html += `</div>`;
@@ -1496,6 +1499,9 @@
             
             const oemRemarkEl = document.getElementById('oem-remark');
             const hasRemark = oemRemarkEl && oemRemarkEl.value.trim() !== '';
+
+            const oemSizeRemarkEl = document.getElementById('oem-size-remark');
+            const hasSizeRemark = oemSizeRemarkEl && oemSizeRemarkEl.value.trim() !== '';
             
             const physicalEl = document.getElementById('oem-physical');
             const hasPhysical = physicalEl && physicalEl.checked;
@@ -1505,7 +1511,7 @@
             const hasCollection = collectionName !== '' || collectionCount > 0;
             
             // 只要有任何一项满足，就认为用户有 OEM 需求
-            return hasRef || hasTech || hasSize || hasRemark || hasPhysical || hasCollection;
+            return hasRef || hasTech || hasSize || hasSizeRemark || hasRemark || hasPhysical || hasCollection;
         }
 
         // ==========================================
@@ -1801,10 +1807,11 @@
 
                 // 2) 备注、参考图、技术文件、尺寸文件 至少有一项
                 const hasRemark = (document.getElementById('oem-remark')?.value || '').trim() !== '';
+                const hasSizeRemark = (document.getElementById('oem-size-remark')?.value || '').trim() !== '';
                 const hasRef = typeof oemFilesData !== 'undefined' && oemFilesData.ref.length > 0;
                 const hasTech = typeof oemFilesData !== 'undefined' && oemFilesData.tech.length > 0;
                 const hasSize = typeof oemFilesData !== 'undefined' && oemFilesData.size.length > 0;
-                if (!hasRemark && !hasRef && !hasTech && !hasSize) oemComplete = false;
+                if (!hasRemark && !hasSizeRemark && !hasRef && !hasTech && !hasSize) oemComplete = false;
 
                 // 3) checklist 全部勾选
                 const checklists = document.querySelectorAll('.oem-checklist-item input[type="checkbox"]');
@@ -2310,6 +2317,7 @@
                 oem_descriptions: oemStyleDescriptions,
                 oem_checklist: checkedIds,
                 oem_remark: document.getElementById('oem-remark')?.value || '',
+                oem_size_remark: document.getElementById('oem-size-remark')?.value || '',
                 oem_physical_sample: document.getElementById('oem-physical')?.checked || false,
                 oem_tracking_no: document.querySelector('#oem-address-info input')?.value.trim() || '',
                 oem_mode_active: document.getElementById('mode-oem')?.classList.contains('active') || false,
@@ -2394,6 +2402,7 @@
             });
             fd.append('oem_checklist', JSON.stringify(checkedIds));
             fd.append('oem_remark', document.getElementById('oem-remark')?.value || '');
+            fd.append('oem_size_remark', document.getElementById('oem-size-remark')?.value || '');
             fd.append('oem_physical_sample', document.getElementById('oem-physical')?.checked ? '1' : '0');
             var _trackInput = document.querySelector('#oem-address-info input');
             fd.append('oem_tracking_no', _trackInput ? _trackInput.value.trim() : '');
@@ -6811,6 +6820,8 @@
                 var oemSizePreviewEl = document.getElementById('oemSizePreview');
                 if (oemSizePreviewEl) oemSizePreviewEl.innerHTML = '';
                 document.getElementById('oem-remark').value = '';
+                var oemSizeRemarkEl = document.getElementById('oem-size-remark');
+                if (oemSizeRemarkEl) oemSizeRemarkEl.value = '';
                 
                 // --- 修复点：彻底清空 A. 项目基本信息 ---
                 const collectionNameInput = document.getElementById('oem-collection-name');

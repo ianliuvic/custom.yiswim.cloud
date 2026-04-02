@@ -282,10 +282,18 @@
             }
             // OEM files inline
             var oemFiles = fileMap['oem'] || [];
-            if (oemFiles.length) {
+            var oemDesignFiles = oemFiles.filter(function (f) { return f.sub_key !== 'size'; });
+            var oemSizeFiles = oemFiles.filter(function (f) { return f.sub_key === 'size'; });
+            if (oemDesignFiles.length) {
                 h += '<div class="u-sub-label" style="margin-top:12px">设计文件</div>';
                 h += '<div class="u-file-grid">';
-                oemFiles.forEach(function (f) { h += renderFileItem(f); });
+                oemDesignFiles.forEach(function (f) { h += renderFileItem(f); });
+                h += '</div>';
+            }
+            if (oemSizeFiles.length) {
+                h += '<div class="u-sub-label" style="margin-top:12px">尺寸信息</div>';
+                h += '<div class="u-file-grid">';
+                oemSizeFiles.forEach(function (f) { h += renderFileItem(f); });
                 h += '</div>';
             }
             if (d.oem_remark) h += kv('备注', esc(d.oem_remark));

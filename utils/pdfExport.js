@@ -31,7 +31,7 @@ const I18N = {
         // Style
         odmSelected: '【ODM 已选款式】', oemDesign: '【OEM 自主设计】',
         customRemark: '轻定制备注', customFiles: '轻定制文件', preview: '预览',
-        projectName: '项目名称', styleCount: '款式数量', projectDesc: '项目描述', styleDesc: '款式描述',
+        projectName: '项目名称', styleCount: '款式数量', projectDesc: '项目描述', projectOverview: '项目概览', styleDesc: '款式描述', styleDetail: '款式详情',
         designFiles: '设计文件', sizeFiles: '尺寸信息', sizeRemark: '尺寸说明', remark: '备注', sampleShipping: '寄送样衣', shipped: '已寄送',
         refImages: '参考图与灵感', techFiles: '工艺单 / 设计稿', description: '描述', supplementary: '补充说明', pendingTracking: '待更新物流单号',
         // Fabric
@@ -90,7 +90,7 @@ const I18N = {
         sec1: '1. Style Information', sec2: '2. Fabric Information', sec3: '3. Trims / Packaging', sec4: '4. Delivery Information', sec5: '5. Contact Information', sec6: '6. Attachments',
         odmSelected: '[ODM Selected Styles]', oemDesign: '[OEM Custom Design]',
         customRemark: 'Customization Remark', customFiles: 'Customization Files', preview: 'Preview',
-        projectName: 'Project Name', styleCount: 'Style Count', projectDesc: 'Project Description', styleDesc: 'Style Descriptions',
+        projectName: 'Project Name', styleCount: 'Style Count', projectDesc: 'Project Description', projectOverview: 'Project Overview', styleDesc: 'Style Descriptions', styleDetail: 'Style Details',
         designFiles: 'Design Files', sizeFiles: 'Size Information', sizeRemark: 'Size Description', remark: 'Remark', sampleShipping: 'Sample Shipping', shipped: 'Shipped',
         refImages: 'Reference & Inspiration', techFiles: 'Tech Pack / Design Docs', description: 'Description', supplementary: 'Additional Notes', pendingTracking: 'Tracking TBD',
         solid: 'Solid', print: 'Print', customSourcing: 'Custom Sourcing',
@@ -430,6 +430,7 @@ async function buildStyleSection(d, fileMap, odmStyleImages, t) {
         content.push({ text: t('oemDesign'), bold: true, fontSize: 10, margin: [0, 4, 0, 4] });
 
         // ── 1. Project overview header bar ──
+        content.push(subTitle(t('projectOverview')));
         const projTableBody = [
             [
                 { text: [{ text: t('projectName') + ':  ', bold: true, fontSize: 9, color: '#64748b' }, { text: d.oem_project || '-', fontSize: 9, color: '#1e293b' }], margin: [8, 6, 8, 6] },
@@ -560,6 +561,7 @@ async function buildStyleSection(d, fileMap, odmStyleImages, t) {
         }
 
         if (detailRows.length) {
+            content.push(subTitle(t('styleDetail')));
             content.push({
                 table: {
                     widths: [90, '*'],

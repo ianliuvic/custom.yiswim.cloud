@@ -30,7 +30,7 @@ const I18N = {
         sec1: '一、款式信息', sec2: '二、面料信息', sec3: '三、辅料 / 包装', sec4: '四、交付信息', sec5: '五、联系信息', sec6: '六、附件清单',
         // Style
         odmSelected: '【ODM 已选款式】', oemDesign: '【OEM 自主设计】',
-        customRemark: '轻定制备注', customFiles: '轻定制文件',
+        customRemark: '轻定制备注', customFiles: '轻定制文件', preview: '预览',
         projectName: '项目名称', styleCount: '款式数量', styleDesc: '款式描述',
         designFiles: '设计文件', sizeFiles: '尺寸信息', sizeRemark: '尺寸说明', remark: '备注', sampleShipping: '寄送样衣', shipped: '已寄送',
         // Fabric
@@ -88,7 +88,7 @@ const I18N = {
         bulkOrder: 'Bulk Order', sampleOrder: 'Sample Order',
         sec1: '1. Style Information', sec2: '2. Fabric Information', sec3: '3. Trims / Packaging', sec4: '4. Delivery Information', sec5: '5. Contact Information', sec6: '6. Attachments',
         odmSelected: '[ODM Selected Styles]', oemDesign: '[OEM Custom Design]',
-        customRemark: 'Customization Remark', customFiles: 'Customization Files',
+        customRemark: 'Customization Remark', customFiles: 'Customization Files', preview: 'Preview',
         projectName: 'Project Name', styleCount: 'Style Count', styleDesc: 'Style Descriptions',
         designFiles: 'Design Files', sizeFiles: 'Size Information', sizeRemark: 'Size Description', remark: 'Remark', sampleShipping: 'Sample Shipping', shipped: 'Shipped',
         solid: 'Solid', print: 'Print', customSourcing: 'Custom Sourcing',
@@ -337,37 +337,89 @@ async function buildStyleSection(d, fileMap, odmStyleImages, t) {
     if (hasODM) {
         content.push({ text: t('odmSelected'), bold: true, fontSize: 10, margin: [0, 4, 0, 4] });
 
+        // Build ODM table: columns = 款号 | 预览图 | 轻定制备注 | 轻定制文件
+        const odmTableBody = [
+            [
+                { text: t('style'), style: 'tableHeader' },
+                { text: t('preview'), style: 'tableHeader' },
+                { text: t('customRemark'), style: 'tableHeader' },
+                { text: t('customFiles'), style: 'tableHeader' }
+            ]
+        ];
+
         for (const name of odmArr) {
             const displayName = typeof name === 'object' ? (name.name || name.id || JSON.stringify(name)) : name;
-            const items = [{ text: displayName, bold: true, fontSize: 10 }];
 
+            // Col 1: style name
+            const col1 = { text: displayName, fontSize: 9, bold: true };
+
+            // Col 2: preview image
+            let col2 = { text: '-', fontSize: 8, color: '#94a3b8' };
+            const imgs = odmStyleImages[displayName];
+            if (Array.isArray(imgs) && imgs.length) {
+                const imgData = await fetchImageAsBase64(imgs[0], 120);
+                if (imgData) {
+                    col2 = { image: imgData, width: 80, height: 60 };
+                }
+            }
+
+            // Col 3: remark
             let remark = '';
             if (odmCustom && typeof odmCustom === 'object') {
                 const cd = odmCustom[displayName];
                 if (cd && cd.remark) remark = cd.remark;
             }
-            if (remark) items.push(kvRow(t('customRemark'), remark));
+            const col3 = remark
+                ? { text: remark, fontSize: 8 }
+                : { text: '-', fontSize: 8, color: '#94a3b8' };
 
-            const imgs = odmStyleImages[displayName];
-            if (Array.isArray(imgs) && imgs.length) {
-                const imgData = await fetchImageAsBase64(imgs[0], 150);
-                if (imgData) {
-                    items.push({ image: imgData, width: 120, margin: [0, 4, 0, 4] });
-                }
-            }
-
+            // Col 4: custom files (images as previews + non-images as file names)
             const customFiles = (fileMap['odmCustom'] || []).filter(f => f.sub_key === displayName);
+            let col4 = { text: '-', fontSize: 8, color: '#94a3b8' };
             if (customFiles.length) {
-                const cfDisplay = await buildFileDisplay(customFiles, t('customFiles'), t);
-                items.push(...cfDisplay);
+                const cfImgs = customFiles.filter(f => /\.(jpg|jpeg|png|gif|webp)$/i.test(f.orig_name || ''));
+                const cfOther = customFiles.filter(f => !/\.(jpg|jpeg|png|gif|webp)$/i.test(f.orig_name || ''));
+                const stackItems = [];
+
+                // Image previews
+                for (const cf of cfImgs) {
+                    const cfUrl = FILE_BASE + encodeURIComponent(cf.stored_name);
+                    const cfData = await fetchImageAsBase64(cfUrl, 100);
+                    if (cfData) {
+                        stackItems.push({ image: cfData, width: 70, height: 50, margin: [0, 0, 0, 2] });
+                    }
+                    stackItems.push({ text: cf.orig_name || '-', fontSize: 7, color: '#475569', margin: [0, 0, 0, 4] });
+                }
+
+                // Other file names
+                for (const cf of cfOther) {
+                    stackItems.push({ text: '📎 ' + (cf.orig_name || '-'), fontSize: 7, color: '#475569', margin: [0, 0, 0, 2] });
+                }
+
+                col4 = stackItems.length ? { stack: stackItems } : col4;
             }
 
-            content.push({
-                stack: items,
-                margin: [8, 4, 0, 8],
-                unbreakable: true
-            });
+            odmTableBody.push([col1, col2, col3, col4]);
         }
+
+        content.push({
+            table: {
+                headerRows: 1,
+                widths: [80, 90, '*', 100],
+                body: odmTableBody
+            },
+            layout: {
+                hLineWidth: (i, node) => (i === 0 || i === 1 || i === node.table.body.length) ? 1 : 0.5,
+                vLineWidth: () => 0.5,
+                hLineColor: (i) => i <= 1 ? '#cbd5e1' : '#e2e8f0',
+                vLineColor: () => '#e2e8f0',
+                paddingTop: () => 6,
+                paddingBottom: () => 6,
+                paddingLeft: () => 6,
+                paddingRight: () => 6,
+            },
+            margin: [0, 4, 0, 8]
+        });
     }
 
     // OEM

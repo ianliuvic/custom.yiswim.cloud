@@ -81,7 +81,8 @@ function parseInquiryFields(d) {
         d.assign_sales || null,
         d.assign_pattern || null,
         d.assign_sewing || null,
-        d.nda_agreed ? new Date() : null
+        d.nda_agreed ? new Date() : null,
+        d.oem_size_remark || null
     ];
 }
 
@@ -91,7 +92,7 @@ const INQUIRY_COLUMNS = `odm_styles, odm_custom_data, oem_project, oem_style_cou
     delivery_mode, sample_rows, sample_config, sample_dest, bulk_rows, bulk_logistics, bulk_dest, bulk_target_price, bulk_packing_remark,
     contact_name, contact_info, brand_name, website, final_remark,
     assign_sales, assign_pattern, assign_sewing,
-    nda_agreed_at`;
+    nda_agreed_at, oem_size_remark`;
 
 const INQUIRY_UPDATE_SET = `odm_styles=$1, odm_custom_data=$2, oem_project=$3, oem_style_count=$4,
     oem_descriptions=$5, oem_checklist=$6, oem_remark=$7, oem_physical_sample=$8, oem_tracking_no=$9,
@@ -101,7 +102,7 @@ const INQUIRY_UPDATE_SET = `odm_styles=$1, odm_custom_data=$2, oem_project=$3, o
     bulk_rows=$23, bulk_logistics=$24, bulk_dest=$25, bulk_target_price=$26, bulk_packing_remark=$27,
     contact_name=$28, contact_info=$29, brand_name=$30, website=$31, final_remark=$32,
     assign_sales=$33, assign_pattern=$34, assign_sewing=$35,
-    nda_agreed_at=$36`;
+    nda_agreed_at=$36, oem_size_remark=$37`;
 
 async function handleUploadedFiles(client, inquiryId, files) {
     if (!files || files.length === 0) return;
@@ -413,7 +414,7 @@ router.post('/submit-inquiry', authenticateToken, upload.any(), async (req, res)
                 oldStoredNames = oldFiles.rows.map(r => r.stored_name);
                 await client.query('DELETE FROM custom_inquiry_files WHERE inquiry_id = $1', [inquiryId]);
                 await client.query(
-                    `UPDATE custom_inquiries SET status = 'pending', ${INQUIRY_UPDATE_SET}, modified_at = NOW() WHERE id = $37`,
+                    `UPDATE custom_inquiries SET status = 'pending', ${INQUIRY_UPDATE_SET}, modified_at = NOW() WHERE id = $38`,
                     [...fieldValues, inquiryId]
                 );
             }
@@ -434,7 +435,7 @@ router.post('/submit-inquiry', authenticateToken, upload.any(), async (req, res)
                     $21, $22, $23, $24, $25, $26, $27, $28, $29,
                     $30, $31, $32, $33, $34,
                     $35, $36, $37,
-                    $38
+                    $38, $39
                 ) RETURNING id`, [inquiryNo, req.user.id, ...fieldValues]);
             inquiryId = insertResult.rows[0].id;
         }
@@ -728,7 +729,7 @@ router.post('/save-draft', authenticateToken, upload.any(), async (req, res) => 
             oldStoredNames = oldFiles.rows.map(r => r.stored_name);
             await client.query('DELETE FROM custom_inquiry_files WHERE inquiry_id = $1', [inquiryId]);
             await client.query(
-                `UPDATE custom_inquiries SET ${INQUIRY_UPDATE_SET}, modified_at = NOW() WHERE id = $37`,
+                `UPDATE custom_inquiries SET ${INQUIRY_UPDATE_SET}, modified_at = NOW() WHERE id = $38`,
                 [...fieldValues, inquiryId]
             );
         } else {
@@ -746,7 +747,7 @@ router.post('/save-draft', authenticateToken, upload.any(), async (req, res) => 
                     $21, $22, $23, $24, $25, $26, $27, $28, $29,
                     $30, $31, $32, $33, $34,
                     $35, $36, $37,
-                    $38
+                    $38, $39
                 ) RETURNING id`, [inquiryNo, req.user.id, ...fieldValues]);
             inquiryId = insertResult.rows[0].id;
         }

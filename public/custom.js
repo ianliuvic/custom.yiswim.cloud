@@ -210,6 +210,8 @@
             if (d.oem_project || d.oem_mode_active || d.oem_style_count) {
                 const projEl = document.getElementById('oem-collection-name');
                 if (projEl) projEl.value = d.oem_project || '';
+                const projDescEl = document.getElementById('oem-project-desc');
+                if (projDescEl) projDescEl.value = d.oem_project_desc || '';
                 const countEl = document.getElementById('oem-collection-count');
                 if (countEl) {
                     countEl.value = d.oem_style_count || 0;
@@ -2313,6 +2315,7 @@
                 odm_styles: selectedOdmStyles,
                 odm_custom_data: odmClean,
                 oem_project: document.getElementById('oem-collection-name')?.value || '',
+                oem_project_desc: document.getElementById('oem-project-desc')?.value || '',
                 oem_style_count: parseInt(document.getElementById('oem-collection-count')?.value) || 0,
                 oem_descriptions: oemStyleDescriptions,
                 oem_checklist: checkedIds,
@@ -2394,6 +2397,7 @@
             }
             fd.append('odm_custom_data', JSON.stringify(odmClean));
             fd.append('oem_project', document.getElementById('oem-collection-name')?.value || '');
+            fd.append('oem_project_desc', document.getElementById('oem-project-desc')?.value || '');
             fd.append('oem_style_count', document.getElementById('oem-collection-count')?.value || '0');
             fd.append('oem_descriptions', JSON.stringify(oemStyleDescriptions));
             const checkedIds = [];
@@ -6837,6 +6841,9 @@
                 const collectionNameInput = document.getElementById('oem-collection-name');
                 if (collectionNameInput) collectionNameInput.value = '';
                 
+                const projDescInput = document.getElementById('oem-project-desc');
+                if (projDescInput) projDescInput.value = '';
+                
                 const collectionCountInput = document.getElementById('oem-collection-count');
                 if (collectionCountInput) {
                     collectionCountInput.value = '0'; // 恢复默认值 0
@@ -6886,6 +6893,7 @@
             const oemTechPreview = _el('oemTechPreview'); if (oemTechPreview) oemTechPreview.innerHTML = '';
             const oemRemark = _el('oem-remark'); if (oemRemark) oemRemark.value = '';
             const oemCollName = _el('oem-collection-name'); if (oemCollName) oemCollName.value = '';
+            const oemProjDesc = _el('oem-project-desc'); if (oemProjDesc) oemProjDesc.value = '';
             const oemCollCount = _el('oem-collection-count'); if (oemCollCount) { oemCollCount.value = '0'; renderOemStyleDescInputs(); }
             const oemPhysical = _el('oem-physical'); if (oemPhysical) { oemPhysical.checked = false; togglePhysicalInfo(false); }
             const oemAddr = _q('#oem-address-info input'); if(oemAddr) oemAddr.value = '';

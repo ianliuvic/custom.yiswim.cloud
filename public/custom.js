@@ -926,7 +926,7 @@
                 (filesByCategory.oem || []).forEach(function(f) {
                     if (oemFilesData[f.sub_key]) oemFilesData[f.sub_key].push(makeRemote(f));
                 });
-                ['tech', 'ref'].forEach(function(type) {
+                ['tech', 'ref', 'size'].forEach(function(type) {
                     var grid = document.getElementById('oem' + type.charAt(0).toUpperCase() + type.slice(1) + 'Preview');
                     if (!grid) return;
                     oemFilesData[type].forEach(function(file, idx) {
@@ -1313,7 +1313,7 @@
             }
         
             // 2. 处理 OEM 部分 (判断是否有文件或备注)
-            const hasOemFiles = oemFilesData.tech.length > 0 || oemFilesData.ref.length > 0;
+            const hasOemFiles = oemFilesData.tech.length > 0 || oemFilesData.ref.length > 0 || oemFilesData.size.length > 0;
             const oemRemark = document.getElementById('oem-remark').value.trim();
             const collectionName = document.getElementById('oem-collection-name') ? document.getElementById('oem-collection-name').value.trim() : '';
             const collectionCount = parseInt(document.getElementById('oem-collection-count')?.value) || 0;
@@ -1331,7 +1331,7 @@
                 
                 // 显示上传状态
                 if (hasOemFiles) {
-                    html += `<span style="font-size: 11px; color: #64748b; display:block;">- ${_t('已传:')} ${oemFilesData.ref.length}${_t('图 /')} ${oemFilesData.tech.length}${_t('文件')}</span>`;
+                    html += `<span style="font-size: 11px; color: #64748b; display:block;">- ${_t('已传:')} ${oemFilesData.ref.length}${_t('图 /')} ${oemFilesData.tech.length}${_t('文件')}${oemFilesData.size.length > 0 ? ' / ' + oemFilesData.size.length + _t('尺寸') : ''}</span>`;
                 }
                 
                 // 新增：显示寄样状态
@@ -1492,6 +1492,7 @@
         function checkOemHasContent() {
             const hasRef = typeof oemFilesData !== 'undefined' && oemFilesData.ref.length > 0;
             const hasTech = typeof oemFilesData !== 'undefined' && oemFilesData.tech.length > 0;
+            const hasSize = typeof oemFilesData !== 'undefined' && oemFilesData.size.length > 0;
             
             const oemRemarkEl = document.getElementById('oem-remark');
             const hasRemark = oemRemarkEl && oemRemarkEl.value.trim() !== '';
@@ -1504,13 +1505,13 @@
             const hasCollection = collectionName !== '' || collectionCount > 0;
             
             // 只要有任何一项满足，就认为用户有 OEM 需求
-            return hasRef || hasTech || hasRemark || hasPhysical || hasCollection;
+            return hasRef || hasTech || hasSize || hasRemark || hasPhysical || hasCollection;
         }
 
         // ==========================================
         // 3. OEM 自主设计模块
         // ==========================================
-        let oemFilesData = { tech: [], ref: [] }; 
+        let oemFilesData = { tech: [], ref: [], size: [] }; 
         let oemStyleDescriptions = []; // 存储每款的简述
 
         function renderOemStyleDescInputs() {
@@ -1648,7 +1649,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            ['Tech', 'Ref'].forEach(type => {
+            ['Tech', 'Ref', 'Size'].forEach(type => {
                 const zone = document.getElementById(`oem${type}Dropzone`);
                 if(!zone) return;
                 zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('dragover'); });
@@ -1798,11 +1799,12 @@
                 const collectionCount = parseInt(document.getElementById('oem-collection-count')?.value) || 0;
                 if (!collectionName || collectionCount <= 0) oemComplete = false;
 
-                // 2) 备注、参考图、技术文件 至少有一项
+                // 2) 备注、参考图、技术文件、尺寸文件 至少有一项
                 const hasRemark = (document.getElementById('oem-remark')?.value || '').trim() !== '';
                 const hasRef = typeof oemFilesData !== 'undefined' && oemFilesData.ref.length > 0;
                 const hasTech = typeof oemFilesData !== 'undefined' && oemFilesData.tech.length > 0;
-                if (!hasRemark && !hasRef && !hasTech) oemComplete = false;
+                const hasSize = typeof oemFilesData !== 'undefined' && oemFilesData.size.length > 0;
+                if (!hasRemark && !hasRef && !hasTech && !hasSize) oemComplete = false;
 
                 // 3) checklist 全部勾选
                 const checklists = document.querySelectorAll('.oem-checklist-item input[type="checkbox"]');
@@ -2402,6 +2404,10 @@
             (oemFilesData.ref || []).forEach(f => {
                 if (isRemoteFile(f)) { remoteFiles.push({ category: 'oem', sub_key: 'ref', orig_name: f.name, stored_name: f.stored_name, mime_type: f.mime, size_bytes: f.size }); }
                 else { fd.append('files[oem][ref]', f); }
+            });
+            (oemFilesData.size || []).forEach(f => {
+                if (isRemoteFile(f)) { remoteFiles.push({ category: 'oem', sub_key: 'size', orig_name: f.name, stored_name: f.stored_name, mime_type: f.mime, size_bytes: f.size }); }
+                else { fd.append('files[oem][size]', f); }
             });
 
             // —— Step 2: 面料 ——
@@ -6787,7 +6793,7 @@
                 // 【清空 OEM 逻辑】
                 
                 // 1. 释放图片预览的 Blob 内存 (防止内存泄漏)
-                ['tech', 'ref'].forEach(type => {
+                ['tech', 'ref', 'size'].forEach(type => {
                     if (oemFilesData[type] && oemFilesData[type].length > 0) {
                         oemFilesData[type].forEach(file => {
                             if (file.previewUrl) URL.revokeObjectURL(file.previewUrl);
@@ -6796,12 +6802,14 @@
                 });
 
                 // 2. 清空全局数据对象
-                oemFilesData = { tech: [], ref: [] };
+                oemFilesData = { tech: [], ref: [], size: [] };
                 oemStyleDescriptions = []; // 清空款式简述数组
                 
                 // 3. 清空 DOM 输入与预览区域
                 document.getElementById('oemRefPreview').innerHTML = '';
                 document.getElementById('oemTechPreview').innerHTML = '';
+                var oemSizePreviewEl = document.getElementById('oemSizePreview');
+                if (oemSizePreviewEl) oemSizePreviewEl.innerHTML = '';
                 document.getElementById('oem-remark').value = '';
                 
                 // --- 修复点：彻底清空 A. 项目基本信息 ---

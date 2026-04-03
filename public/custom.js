@@ -1731,6 +1731,18 @@
         // 5. 步进器及面料、辅料逻辑
         // ==========================================
         let currentStep = 1; const totalSteps = 5;
+
+        // 延迟加载背景图：将 data-bg 转为真实 backgroundImage
+        function lazyLoadStepImages(stepNum) {
+            const stepEl = document.getElementById('step-' + stepNum);
+            if (!stepEl) return;
+            stepEl.querySelectorAll('[data-bg]').forEach(el => {
+                if (!el.style.backgroundImage || el.style.backgroundImage === 'none' || el.style.backgroundImage === '') {
+                    el.style.backgroundImage = "url('" + el.dataset.bg + "')";
+                }
+            });
+        }
+
         function changeStep(n) {
             // 隐藏当前步骤
             document.getElementById(`step-${currentStep}`).classList.add('hidden'); 
@@ -1742,6 +1754,9 @@
             // 显示新步骤
             document.getElementById(`step-${currentStep}`).classList.remove('hidden'); 
             document.getElementById(`step-${currentStep}-label`).classList.add('active');
+
+            // 延迟加载当前步骤的背景图
+            lazyLoadStepImages(currentStep);
             
             // 按钮状态更新
             const prevBtn = document.getElementById('prevBtn');

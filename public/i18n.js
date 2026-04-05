@@ -23,7 +23,7 @@
     // ==================== Chinese → English dictionary ====================
     var dict = {
         // ── Header ──
-        "红绣服饰自定义系统": "Hongxiu Custom System",
+        "红绣服饰定制系统": "Hongxiu Custom System",
         "当前用户：": "Current User: ",
         "安全退出": "Log Out",
         "用户中心": "User Center",

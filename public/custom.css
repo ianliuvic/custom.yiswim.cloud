@@ -902,9 +902,68 @@
            Mobile Responsive
            ========================================================= */
 
+        /* 桌面端隐藏移动端专用元素 */
+        .mobile-summary-fab { display: none; }
+        .drawer-backdrop { display: none; }
+        .drawer-handle { display: none; }
+
         /* ---- Tablet / Small Desktop ---- */
         @media (max-width: 1024px) {
-            .summary-sidebar { display: none; }
+            /* 侧边栏 → 底部抽屉 */
+            .summary-sidebar {
+                display: block;
+                position: fixed;
+                bottom: 0; left: 0; right: 0;
+                width: 100%; min-width: unset;
+                max-height: 75vh;
+                z-index: 9999;
+                background: #fff;
+                border-radius: 20px 20px 0 0;
+                box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
+                padding: 24px 24px 32px;
+                transform: translateY(100%);
+                transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+                overflow-y: auto;
+            }
+            .summary-sidebar.drawer-open { transform: translateY(0); }
+
+            /* 抽屉遮罩 */
+            .drawer-backdrop {
+                position: fixed; inset: 0;
+                background: rgba(0,0,0,0.4);
+                z-index: 9998;
+                backdrop-filter: blur(2px);
+                opacity: 0; pointer-events: none;
+                transition: opacity 0.3s;
+            }
+            .drawer-backdrop.active { display: block; opacity: 1; pointer-events: auto; }
+
+            /* 浮动按钮 — 放左下角，避让 Chatwoot */
+            .mobile-summary-fab {
+                display: flex;
+                position: fixed;
+                bottom: 20px; left: 20px;
+                z-index: 9990;
+                width: 52px; height: 52px;
+                border-radius: 50%;
+                background: var(--primary-color);
+                color: #fff; border: none;
+                align-items: center; justify-content: center;
+                box-shadow: 0 4px 16px rgba(170,0,0,0.35);
+                cursor: pointer;
+                transition: transform 0.2s, box-shadow 0.2s;
+            }
+            .mobile-summary-fab:active { transform: scale(0.92); }
+
+            /* 抽屉拖拽条 */
+            .drawer-handle {
+                display: block;
+                width: 40px; height: 4px;
+                background: #cbd5e1;
+                border-radius: 4px;
+                margin: 0 auto 16px;
+            }
+
             .config-main { border-right: none; }
             .config-scroll-area { padding: 24px 28px 32px; }
             .button-group { padding: 12px 28px; }

@@ -2777,6 +2777,7 @@
 
         <!-- 右侧汇总 -->
         <aside class="summary-sidebar">
+            <div class="drawer-handle"></div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
                 <span class="summary-title" style="margin-bottom: 0;">定制详情</span>
                 <div style="display: flex; align-items: center; gap: 8px;">
@@ -2825,6 +2826,18 @@
             </div>
         </aside>
     </div>
+
+    <!-- 移动端：定制详情浮动按钮 (左下角，避让 Chatwoot) -->
+    <button class="mobile-summary-fab" onclick="toggleMobileDrawer()" title="查看定制详情">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+        </svg>
+    </button>
+    <!-- 移动端：抽屉遮罩 -->
+    <div class="drawer-backdrop" id="drawerBackdrop" onclick="toggleMobileDrawer()"></div>
 
     <footer class="site-footer">
         © 2026 红绣服饰. All Rights Reserved. | 专属定制 · 品质追踪
@@ -3067,6 +3080,17 @@
          核心 JavaScript 逻辑
          ========================================================================= -->
     <script src="/custom.js"></script>
+
+    <!-- 移动端抽屉切换 -->
+    <script>
+    function toggleMobileDrawer() {
+        var sidebar = document.querySelector('.summary-sidebar');
+        var backdrop = document.getElementById('drawerBackdrop');
+        var isOpen = sidebar.classList.contains('drawer-open');
+        sidebar.classList.toggle('drawer-open', !isOpen);
+        backdrop.classList.toggle('active', !isOpen);
+    }
+    </script>
 
     <!-- === 1. Chatwoot 动态配置 (含多语言同步) === -->
     <script>

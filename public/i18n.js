@@ -1278,7 +1278,7 @@
         // Step 1 OEM: upload tip
         { m: '上传对应提示：', h: '<strong>Upload Tip:</strong> If you submitted multiple designs, please ensure the <strong>reference image filenames</strong> or <strong>tech pack page numbers</strong> uploaded below clearly correspond to the "Style 1, Style 2\u2026" descriptions in Area A.' },
         // Step 1 OEM: sample shipping address (2x)
-        { m: '收件地址：', h: '<strong>Shipping Address:</strong> Hongxiu Garment Co., Ltd., 10-8A Tiexi Rd, Xingcheng, Liaoning, China (Recipient: Mr. Liu 177-1101-4152)' },
+        { m: '收件地址：', h: '<strong>Shipping Address:</strong> Hongxiu Clothing Co., Ltd., 10-8A Tiexi Rd, Xingcheng, Liaoning, China (Recipient: Mr. Liu 177-1101-4152)' },
         // Step 1 OEM: core process checklist intro
         { m: '为确保大货落地的极致精准度', h: 'To ensure ultimate precision in bulk production, below are the <strong>most critical and easily overlooked process specifications</strong> in your custom design. Please verify that your uploaded design files or supplementary notes above cover all the following items, and <strong style="color: #ef4444;">check each box to confirm</strong> before proceeding.' },
         // Step 2: fabric sourcing note
@@ -1288,11 +1288,11 @@
         // Step 2: print size tip
         { m: '如果您对尺寸没有概念', h: 'If you have no concept of the dimensions, please upload a <strong>garment mockup image</strong> in the area above. By showing the print\'s proportional placement on the swimwear, our pattern maker will accurately reproduce it for you.' },
         // Step 2: material warehouse (fabric)
-        { m: '收件仓库：', h: '<strong>Receiving Warehouse:</strong> Hongxiu Garment Co., Ltd. Material Warehouse, 10-8A Tiexi Rd, Xingcheng, Liaoning (Recipient: Material Dept. 191-6891-9352)' },
+        { m: '收件仓库：', h: '<strong>Receiving Warehouse:</strong> Hongxiu Clothing Co., Ltd. Material Warehouse, 10-8A Tiexi Rd, Xingcheng, Liaoning (Recipient: Material Dept. 191-6891-9352)' },
         // Step 3: development stage note
         { m: '开发阶段说明：', h: '<strong style="color: #475569;">Development Stage Note:</strong><br>All brand trims configured in this step are primarily for <strong>bulk production cost estimation and planning</strong>. During the sampling phase, factory standard trims will be used by default. Note that trims involving Logo molding or custom printing are subject to MOQ requirements and typically <strong>will not be fulfilled separately during sampling</strong>.' },
         // Step 3: trim warehouse address (7x)
-        { m: '收件仓：', h: '<strong>Receiving Warehouse:</strong> Hongxiu Garment Co., Ltd. Material Warehouse, 10-8A Tiexi Rd, Xingcheng, Liaoning<br><strong>Recipient:</strong> Trim Dept. 191-6891-9352' },
+        { m: '收件仓：', h: '<strong>Receiving Warehouse:</strong> Hongxiu Clothing Co., Ltd. Material Warehouse, 10-8A Tiexi Rd, Xingcheng, Liaoning<br><strong>Recipient:</strong> Trim Dept. 191-6891-9352' },
         // Step 3: metal smart match (inner div with <strong>)
         { m: '逐一挑选基础五金', h: '<strong style="color:var(--primary-color);">Smart Match Description:</strong> No need to individually select basic hardware. The pattern maker will auto-match high-quality, rust-proof and chlorine-resistant standard parts (e.g., figure-8 clasps, O-rings, back clasps) based on your style structure, ensuring colors perfectly match your selection above.' },
         // Step 3: pad smart match (inner div with <strong>)

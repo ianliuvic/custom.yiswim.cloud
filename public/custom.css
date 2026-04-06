@@ -20,11 +20,15 @@
         /* 优化：移除不必要的 !important，规范全屏 Flex 布局 */
         body {
             height: 100vh; height: 100dvh; width: 100vw; overflow: hidden; 
-            display: flex; flex-direction: column;
-            justify-content: flex-start; align-items: stretch;
             margin: 0; padding: 0; background-color: #fff;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             -webkit-font-smoothing: antialiased;
+        }
+
+        #app-root {
+            display: flex; flex-direction: column;
+            justify-content: flex-start; align-items: stretch;
+            height: 100%; width: 100%; overflow: hidden;
         }
 
         /* 滚动条美化 */

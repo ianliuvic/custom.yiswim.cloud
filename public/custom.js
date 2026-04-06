@@ -6703,26 +6703,28 @@
                 }
         
                 // 生成整行的 HTML，包含款式和类型的 selected 状态，以及尺码数量的 value
+                var _isEn = (window.__lang && window.__lang !== 'zh');
                 tr.setAttribute('data-index', index + 1);
+                tr.setAttribute('data-card-title', _isEn ? ('Sample #' + (index + 1)) : ('打样项 #' + (index + 1)));
                 tr.innerHTML = `
-                    <td data-label="对应款式">
+                    <td data-label="${_isEn ? 'Style' : '对应款式'}">
                         <select onchange="updateRowData(${index}, 'style', this.value)">
                             ${rowStyleOptions}
                         </select>
                     </td>
-                    <td data-label="样衣类型">
+                    <td data-label="${_isEn ? 'Sample Type' : '样衣类型'}">
                         <select onchange="updateRowData(${index}, 'type', this.value)">
                             <option value="初样 (Proto)" ${row.type==='初样 (Proto)'?'selected':''}>初样 (Proto)</option>
                             <option value="正确样 (PP)" ${row.type==='正确样 (PP)'?'selected':''}>正确样 (PP)</option>
                         </select>
                     </td>
-                    <td data-label="尺码">
+                    <td data-label="${_isEn ? 'Size' : '尺码'}">
                         <input type="text" list="common-sizes" value="${row.size}" placeholder="选或填" onchange="updateRowData(${index}, 'size', this.value)">
                     </td>
-                    <td data-label="数量">
+                    <td data-label="${_isEn ? 'Qty' : '数量'}">
                         <input type="number" value="${row.qty}" min="1" oninput="updateRowData(${index}, 'qty', this.value)">
                     </td>
-                    <td data-label="备注">
+                    <td data-label="${_isEn ? 'Notes' : '备注'}">
                         <input type="text" value="${row.desc}" placeholder="例: 黑色碎花款" oninput="updateRowData(${index}, 'desc', this.value)">
                     </td>
                     <td class="sample-card-remove" style="text-align:center;">

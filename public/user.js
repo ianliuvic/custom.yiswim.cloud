@@ -158,6 +158,9 @@
             });
             var html = '';
 
+            // ─── Admin Response (top) ───
+            html += renderAdminResponseSection(d);
+
             // ─── Section 1: Styles ───
             html += renderStyleSection(d, fileMap);
 
@@ -172,9 +175,6 @@
 
             // ─── Section 5: Contact ───
             html += renderContactSection(d);
-
-            // ─── Section 6: Admin Response ───
-            html += renderAdminResponseSection(d);
 
             // ─── Uncategorized files ───
             var shownCats = ['odmCustom', 'oem', 'fabric', 'cmt', 'metal', 'pad', 'bag', 'hangtag', 'label', 'hygiene', 'other', 'bulkPacking', 'finalDocs'];
@@ -728,12 +728,49 @@
         h += '</div><div class="u-sec-body">';
 
         if (d.admin_reply) h += kv('回复内容', '<div class="u-reply-text">' + esc(d.admin_reply) + '</div>');
-        if (d.project_link) h += kv('项目链接', '<a href="' + esc(d.project_link) + '" target="_blank" rel="noopener noreferrer">' + esc(d.project_link) + '</a>');
-        if (d.project_token) h += kv('项目 Token', '<code class="u-token">' + esc(d.project_token) + '</code>');
+        if (d.project_link) {
+            h += kv('项目链接', '<span class="u-copyable-row">' +
+                '<a href="' + esc(d.project_link) + '" target="_blank" rel="noopener noreferrer">' + esc(d.project_link) + '</a>' +
+                '<button class="u-copy-btn" onclick="copyText(\'' + esc(d.project_link).replace(/'/g, "\\'") + '\', this)" title="复制">' +
+                '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>' +
+                '</button></span>');
+        }
+        if (d.project_token) {
+            var masked = d.project_token.replace(/./g, '•');
+            h += kv('项目 Token', '<span class="u-copyable-row">' +
+                '<code class="u-token" id="tokenDisplay" data-real="' + esc(d.project_token) + '">' + masked + '</code>' +
+                '<button class="u-copy-btn u-reveal-btn" onclick="toggleToken(this)" title="查看">' +
+                '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' +
+                '</button>' +
+                '<button class="u-copy-btn" onclick="copyText(\'' + esc(d.project_token).replace(/'/g, "\\'") + '\', this)" title="复制">' +
+                '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>' +
+                '</button></span>');
+        }
 
         h += '</div></div>';
         return h;
     }
+
+    window.copyText = function (text, btn) {
+        navigator.clipboard.writeText(text).then(function () {
+            var orig = btn.innerHTML;
+            btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+            setTimeout(function () { btn.innerHTML = orig; }, 1500);
+        });
+    };
+
+    window.toggleToken = function (btn) {
+        var code = document.getElementById('tokenDisplay');
+        if (!code) return;
+        var real = code.getAttribute('data-real');
+        if (code.textContent === real) {
+            code.textContent = real.replace(/./g, '•');
+            btn.title = '查看';
+        } else {
+            code.textContent = real;
+            btn.title = '隐藏';
+        }
+    };
 
     function renderFilesSection(files, title) {
         if (!files || !files.length) return '';

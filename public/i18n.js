@@ -1345,6 +1345,8 @@
         { m: '上述金额仅为', h: '<strong style="color: #64748b;">Cost Estimation Note:</strong> The amounts above are only <span style="color: var(--text-main);">preliminary estimates based on pattern-making and basic labor</span>.<br>This estimate <strong style="color: #ef4444;">does not include</strong> digital print/Logo screen setup fees, multi-size grading fees, special hardware molding, or imported fabric surcharges. The final development cost will be confirmed in the official PI (Proforma Invoice) after comprehensive evaluation by the sales manager.' },
         // MOQ modal: Level 4 special materials
         { m: '包含且不限于', h: 'Including: custom Pantone dyeing, custom placement printing, special texture sourcing, brand exclusive hardware mold, etc. <strong>(Subject to minimum production requirements of dyeing factories and trim supply chains)</strong>' },
+        // Sample extra warning (contains <strong>)
+        { m: '提示：', h: '<strong>\u26a0\ufe0f Notice:</strong> Some styles exceed 2 samples, extra pieces will incur sewing fees.' },
         // Fee standard modal: section I heading
         { m: '初样（', h: 'I. Proto Sample (<span style="color: var(--primary-color); font-weight: 700;">$40 / style</span>)' },
         // Fee standard modal: section II heading

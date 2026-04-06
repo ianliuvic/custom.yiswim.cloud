@@ -998,6 +998,12 @@
             /* 吊牌tab：所有自定义区域的文件上传和文本输入各占一行 */
             #content-hangtag div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
 
+            /* 标签tab：2区域及AB自定义的文件上传和文本输入各占一行 */
+            #content-label div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
+
+            /* 卫生贴tab：ABC自定义区域的文件上传和文本输入各占一行 */
+            #hygiene-custom-details div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
+
             /* step3 toggle-section 字体缩小，保证单行放下 */
             .toggle-section { gap: 10px !important; padding: 12px 14px !important; }
             .toggle-title { font-size: 12px !important; }

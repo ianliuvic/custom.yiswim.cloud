@@ -3151,6 +3151,34 @@
     }
     </script>
 
+    <!-- 防止第三方脚本(Chatwoot等)注入的DOM破坏body flex布局 -->
+    <script>
+    (function() {
+        var known = ['site-header','main-container','site-footer','mobile-summary-fab',
+            'drawer-backdrop','detailModal','customModal','ndaModal','swatchFullModal',
+            'labelComplianceModal','uploadModal'];
+        function neutralize(node) {
+            if (node.nodeType !== 1) return; // 只处理元素节点
+            if (node.tagName === 'SCRIPT' || node.tagName === 'STYLE' || node.tagName === 'LINK') return;
+            var cls = node.className || '';
+            var id = node.id || '';
+            for (var i = 0; i < known.length; i++) {
+                if (cls.indexOf(known[i]) !== -1 || id === known[i]) return;
+            }
+            // 非应用元素，从flex布局中移除
+            node.style.setProperty('position', 'fixed', 'important');
+            node.style.setProperty('flex', 'none', 'important');
+        }
+        new MutationObserver(function(mutations) {
+            mutations.forEach(function(m) {
+                m.addedNodes.forEach(function(n) {
+                    if (n.parentNode === document.body) neutralize(n);
+                });
+            });
+        }).observe(document.body, { childList: true });
+    })();
+    </script>
+
     <!-- === 1. Chatwoot 动态配置 (含多语言同步) === -->
     <script>
       var systemLang = window.__lang || 'zh';

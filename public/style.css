@@ -11,154 +11,36 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    margin: 0;
+    background-color: var(--bg-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 100vh;
-    overflow: hidden;
-}
-
-/* 全屏分屏布局 */
-.auth-split {
-    display: flex;
-    width: 100vw;
-    height: 100vh;
-}
-
-/* ── 左侧品牌区 ── */
-.auth-brand-panel {
-    flex: 5;
-    background: linear-gradient(160deg, #1a0508 0%, #8b0000 40%, #aa0000 70%, #6b0000 100%);
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 60px 50px;
-    position: relative;
-    overflow: hidden;
-}
-
-/* 装饰圆 */
-.auth-brand-panel::before {
-    content: '';
-    position: absolute;
-    top: -120px;
-    right: -100px;
-    width: 360px;
-    height: 360px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.04);
-}
-.auth-brand-panel::after {
-    content: '';
-    position: absolute;
-    bottom: -80px;
-    left: -80px;
-    width: 280px;
-    height: 280px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.03);
-}
-
-.auth-brand-panel .brand-icon {
-    width: 72px;
-    height: 72px;
-    border-radius: 18px;
-    background: rgba(255,255,255,0.12);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 28px;
-    backdrop-filter: blur(6px);
-    border: 1px solid rgba(255,255,255,0.1);
-}
-.auth-brand-panel h1 {
     margin: 0;
-    font-size: 30px;
-    font-weight: 700;
-    letter-spacing: 3px;
-    line-height: 1.5;
-    text-align: center;
-}
-.auth-brand-panel .brand-sub {
-    margin: 10px 0 0;
-    font-size: 14px;
-    opacity: 0.6;
-    letter-spacing: 1px;
-    font-weight: 300;
-}
-.auth-brand-panel .brand-divider {
-    width: 40px;
-    height: 2px;
-    background: rgba(255,255,255,0.25);
-    margin: 32px 0;
-    border: none;
-}
-.auth-brand-panel .brand-desc {
-    margin: 0;
-    font-size: 14px;
-    line-height: 2;
-    opacity: 0.45;
-    text-align: center;
-    max-width: 280px;
-}
-
-/* 品牌区底部版权 */
-.auth-brand-panel .brand-footer {
-    position: absolute;
-    bottom: 28px;
-    font-size: 11px;
-    opacity: 0.3;
-    letter-spacing: 0.3px;
-}
-
-/* ── 右侧登录区 ── */
-.auth-form-panel {
-    flex: 4;
-    background: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    min-width: 0;
-}
-
-/* ── 移动端：纵向堆叠 ── */
-@media (max-width: 768px) {
-    body { overflow: auto; height: auto; min-height: 100vh; }
-    .auth-split {
-        flex-direction: column;
-        width: 100%;
-        height: auto;
-        min-height: 100vh;
-    }
-    .auth-brand-panel {
-        flex: none;
-        padding: 36px 24px 28px;
-    }
-    .auth-brand-panel h1 { font-size: 22px; letter-spacing: 1px; }
-    .auth-brand-panel .brand-divider,
-    .auth-brand-panel .brand-desc,
-    .auth-brand-panel .brand-footer { display: none; }
-    .auth-brand-panel .brand-icon { width: 52px; height: 52px; margin-bottom: 16px; }
-    .auth-form-panel { flex: 1; padding: 0 0 40px; }
 }
 
 /* 核心表单卡片 */
 .auth-container {
     width: 100%;
     max-width: 400px;
-    background: transparent;
+    background: var(--card-bg);
     padding: 40px 35px;
-    border-radius: 0;
-    box-shadow: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     position: relative;
     overflow: hidden;
     box-sizing: border-box;
 }
 
-/* 去掉原来的顶部装饰条（分屏布局不需要） */
+/* 顶部主题色装饰条 */
 .auth-container::before {
-    display: none;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background-color: var(--primary-color);
 }
 
 /* 消息提示框基础样式 */

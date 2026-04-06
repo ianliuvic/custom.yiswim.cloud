@@ -988,6 +988,10 @@
             #metal-config-panel > div:last-of-type > div:first-child { flex-direction: column !important; align-items: flex-start !important; }
             #metal-config-panel > div:last-of-type > div:first-child > div:last-child { margin-top: 8px; }
 
+            /* 胸垫A区(形状定制)和D区(材质描述)：文本/上传各占一行 */
+            #pad-shape-custom-area > div[style*="grid-template-columns"],
+            #pad-custom-details .attr-section > div > div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
+
             /* 轻定制弹窗：标题缩小 + 隐藏左侧图片 */
             #customModal .custom-modal-header { padding: 20px 18px 14px; }
             #customModal .custom-modal-header h3 { font-size: 15px; gap: 6px; }

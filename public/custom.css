@@ -974,6 +974,14 @@
             .option-item.selected .details-btn,
             .option-item.selected .customize-btn { opacity: 1 !important; visibility: visible !important; transform: scale(1) !important; }
 
+            /* step3 子标签可横向滑动 */
+            .sub-tabs {
+                overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+                -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
+                mask-image: linear-gradient(to right, black 80%, transparent 100%);
+            }
+            .sub-tabs::-webkit-scrollbar { display: none; }
+
             /* 轻定制弹窗：标题缩小 + 隐藏左侧图片 */
             #customModal .custom-modal-header { padding: 20px 18px 14px; }
             #customModal .custom-modal-header h3 { font-size: 15px; gap: 6px; }

@@ -7011,7 +7011,7 @@
 
             document.querySelectorAll('.custom-badge').forEach(badge => badge.classList.remove('active'));
             
-            oemFilesData = { tech: [], ref: [] };
+            oemFilesData = { tech: [], ref: [], size: [] };
             oemStyleDescriptions = [];
             const oemRefPreview = _el('oemRefPreview'); if (oemRefPreview) oemRefPreview.innerHTML = '';
             const oemTechPreview = _el('oemTechPreview'); if (oemTechPreview) oemTechPreview.innerHTML = '';

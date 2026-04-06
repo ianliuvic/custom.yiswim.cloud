@@ -27,18 +27,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* 防止 Chatwoot 注入的 DOM 元素参与 body flex 布局 */
-        body > .woot-widget-holder,
-        body > .woot--bubble-holder,
-        body > [id*="chatwoot"],
-        body > [id*="cw-widget"] {
-            position: fixed !important;
-            flex: 0 0 0px !important;
-            width: 0 !important;
-            height: 0 !important;
-            overflow: visible !important;
-        }
-    
         /* 滚动条美化 */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }

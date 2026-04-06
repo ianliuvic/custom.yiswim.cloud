@@ -19,7 +19,7 @@
 
         /* 优化：移除不必要的 !important，规范全屏 Flex 布局 */
         body {
-            height: 100vh; width: 100vw; overflow: hidden; 
+            height: 100vh; height: 100dvh; width: 100vw; overflow: hidden; 
             display: flex; flex-direction: column;
             justify-content: flex-start; align-items: stretch;
             margin: 0; padding: 0; background-color: #fff;

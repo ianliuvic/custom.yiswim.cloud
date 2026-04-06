@@ -6557,26 +6557,30 @@
                 // 处理选中态
                 let currentOptions = styleOptionsHtml.replace(`value="${row.style}"`, `value="${row.style}" selected`);
         
+                var _isEn = (window.__lang && window.__lang !== 'zh');
+                tr.setAttribute('data-index', index + 1);
+                tr.setAttribute('data-card-title', _isEn ? ('Bulk #' + (index + 1)) : ('大货项 #' + (index + 1)));
+
                 tr.innerHTML = `
-                    <td>
+                    <td data-label="${_isEn ? 'Style' : '对应款式'}">
                         <select class="bulk-table-input" onchange="updateBulkRowData(${index}, 'style', this.value)">
                             ${currentOptions}
                         </select>
                     </td>
-                    <td>
+                    <td data-label="${_isEn ? 'Total Qty' : '总数量'}">
                         <input type="number" class="bulk-table-input" value="${row.qty}" min="0" 
                                onchange="validateMOQ(${index}, this.value)" 
                                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                     </td>
-                    <td>
+                    <td data-label="${_isEn ? 'Size Details' : '尺码及数量明细'}">
                         <textarea class="bulk-table-input" placeholder="例：&#10;S: 20&#10;M: 50&#10;L: 30" 
                                   oninput="updateBulkRowData(${index}, 'sizeDetail', this.value)">${row.sizeDetail}</textarea>
                     </td>
-                    <td>
+                    <td data-label="${_isEn ? 'Notes' : '备注 / 描述'}">
                         <textarea class="bulk-table-input" placeholder="例：&#10;主体黑色，撞色滚边&#10;注意防水拉链" 
                                   oninput="updateBulkRowData(${index}, 'desc', this.value)">${row.desc}</textarea>
                     </td>
-                    <td style="text-align:center;">
+                    <td class="bulk-card-remove" style="text-align:center;">
                         <button type="button" class="btn-remove-row" onclick="removeBulkRow(${index})">&times;</button>
                     </td>
                 `;

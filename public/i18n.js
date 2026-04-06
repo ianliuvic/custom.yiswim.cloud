@@ -38,10 +38,10 @@
 
         // ── Step 1 ──
         "请选择定制模式：从现有库中挑选 (ODM) 或 上传自主设计包 (OEM)，支持同时选择/上传多款。": "Choose your customization mode: select from our library (ODM) or upload your own design package (OEM). Multiple styles supported.",
-        "现有款式 (ODM)": "Existing Styles (ODM)",
-        "自主设计 (OEM)": "Custom Design (OEM)",
+        "现有款式 (ODM)": "ODM",
+        "自主设计 (OEM)": "OEM",
         "仅清空当前模式的选择": "Clear current mode selections only",
-        "清空当前选择": "Clear Current Selection",
+        "清空当前选择": "Clear",
         "正在加载款式数据...": "Loading style data...",
         "项目基本信息": "Project Basic Info",
         "项目/系列名称": "Project/Collection Name",

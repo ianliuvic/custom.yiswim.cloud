@@ -6770,14 +6770,9 @@
             sampleRows[index][field] = value;
         
             // 2. 触发后续更新
-            // 如果修改的是数量，需要重绘表格以触发布板费预警（数量>2件）
-            if (field === 'qty') {
-                renderSampleTable(); 
-            } else {
-                // 其他字段修改（如款式、尺码、描述等）只需更新汇总和费用
-                calculateSampleCost();
-                updateLogisticsSummary();
-            }
+            // 数量变化只需重算费用和更新汇总，不重绘表格（避免丢失焦点）
+            calculateSampleCost();
+            updateLogisticsSummary();
         }
 
         

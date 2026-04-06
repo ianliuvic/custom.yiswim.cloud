@@ -2636,7 +2636,7 @@
                 if (result.success) {
                     currentDraftId = null;
                     await showMsg(_t("✅ 提交成功！") + `\n\n${_t('您的需求编号为:')} ${result.inquiry_no}\n${_t('专属业务经理将在 24 小时内为您提供正式报价。')}`, 'success');
-                    window.location.reload();
+                    window.location.href = '/user';
                 } else {
                     showMsg(_t('提交失败，请稍后重试。') + (result.message ? `\n${result.message}` : ''), 'error');
                     nextBtn.innerHTML = originalBtnHTML;

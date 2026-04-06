@@ -84,6 +84,21 @@
             <span class="header-user-text">当前用户：<strong><%= user.username %></strong> | 
             <a href="/user" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">用户中心</a> | 
             <a href="/logout" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">安全退出</a></span>
+            <!-- 移动端：头像按钮 + 下拉菜单 -->
+            <div class="header-avatar-wrap">
+                <button class="header-avatar-btn" onclick="toggleUserMenu(event)"><%= user.username.charAt(0).toUpperCase() %></button>
+                <div class="header-user-menu" id="headerUserMenu">
+                    <div class="header-user-menu-name"><%= user.username %></div>
+                    <a href="/user" class="header-user-menu-item">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        用户中心
+                    </a>
+                    <a href="/logout" class="header-user-menu-item header-user-menu-logout">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                        安全退出
+                    </a>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -3143,6 +3158,17 @@
             var atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 2;
             el.classList.toggle('scrolled-end', atEnd);
         });
+    });
+
+    // 移动端头像下拉菜单
+    function toggleUserMenu(e) {
+        e.stopPropagation();
+        var menu = document.getElementById('headerUserMenu');
+        menu.classList.toggle('open');
+    }
+    document.addEventListener('click', function() {
+        var menu = document.getElementById('headerUserMenu');
+        if (menu) menu.classList.remove('open');
     });
     </script>
 

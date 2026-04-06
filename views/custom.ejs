@@ -2627,15 +2627,16 @@
                                             <!-- 附件上传区 -->
                                             <div style="display: flex; flex-direction: column;">
                                                 <label style="font-size:11px; font-weight:700; color:#94a3b8; margin-bottom:8px; display:block; text-transform:uppercase;">包装参考 / 贴标样照</label>
-                                                <div class="premium-upload-box" onclick="document.getElementById('bulkPackingFile').click()" style="flex: 1; padding: 0; border-style: dashed; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-sizing: border-box;">
+                                                <div class="premium-upload-box" onclick="document.getElementById('bulkPackingFile').click()" style="flex: 1; flex-shrink: 0; min-height: 140px; padding: 0; border-style: dashed; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-sizing: border-box;">
                                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="margin-bottom:8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
                                                     <p id="bulkPackingFileName" style="font-size: 11px; color: #94a3b8; margin:0;">点击上传唛头样式 / FBA标签 / 包装参考图</p>
                                                     <input type="file" id="bulkPackingFile" class="hidden" multiple onchange="handleBulkPackingFiles(this)">
                                                 </div>
+                                                <!-- 预览网格 -->
+                                                <div id="bulkPackingPreview" class="oem-image-preview-grid" style="margin-top:12px; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));"></div>
                                             </div>
                                         </div>
-                                        <!-- 预览网格（独立于 grid 行，不影响上传框高度） -->
-                                        <div id="bulkPackingPreview" class="oem-image-preview-grid" style="margin-top:12px; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));"></div>
+                                        
                                     </div>
                                 </div>
                             </div>

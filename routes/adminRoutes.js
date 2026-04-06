@@ -198,4 +198,182 @@ router.post('/api/inquiries/batch-delete', authenticateAdmin, async (req, res) =
     }
 });
 
+// 获取询盘详情 (管理员 — 不限制 user_id)
+router.get('/api/inquiry/:id', authenticateAdmin, async (req, res) => {
+    try {
+        const inquiryResult = await db.query(
+            'SELECT i.*, u.username, u.email FROM custom_inquiries i JOIN custom_users u ON i.user_id = u.id WHERE i.id = $1',
+            [req.params.id]
+        );
+        if (inquiryResult.rows.length === 0) {
+            return res.status(404).json({ success: false, message: '询盘不存在' });
+        }
+
+        const filesResult = await db.query(
+            'SELECT id, category, sub_key, orig_name, stored_name, mime_type, size_bytes, created_at FROM custom_inquiry_files WHERE inquiry_id = $1 ORDER BY category, sub_key',
+            [req.params.id]
+        );
+
+        const inquiry = inquiryResult.rows[0];
+
+        // ODM 款式图片
+        let odmStyleImages = {};
+        try {
+            let odmNames = inquiry.odm_styles;
+            if (typeof odmNames === 'string') odmNames = JSON.parse(odmNames);
+            if (Array.isArray(odmNames) && odmNames.length > 0) {
+                const stylesResult = await db.query(`
+                    SELECT s.name,
+                        COALESCE(
+                            json_agg('https://files.yiswim.cloud/' || i.unique_image_id) FILTER (WHERE i.unique_image_id IS NOT NULL),
+                            '[]'
+                        ) as image_urls
+                    FROM custom_odm_styles s
+                    LEFT JOIN images i ON s.id = i.notion_page_id
+                    WHERE s.name = ANY($1)
+                    GROUP BY s.id`, [odmNames]);
+                stylesResult.rows.forEach(r => { odmStyleImages[r.name] = r.image_urls; });
+            }
+        } catch (e) { /* ignore */ }
+
+        res.json({
+            success: true,
+            data: { ...inquiry, files: filesResult.rows, odm_style_images: odmStyleImages }
+        });
+    } catch (error) {
+        console.error('管理员获取询盘详情失败:', error);
+        res.status(500).json({ success: false, message: '服务器错误' });
+    }
+});
+
+// 导出询盘 PDF (管理员)
+router.get('/api/inquiry/:id/pdf', authenticateAdmin, async (req, res) => {
+    try {
+        const { generateInquiryPDF } = require('../utils/pdfExport');
+        const inquiryResult = await db.query('SELECT * FROM custom_inquiries WHERE id = $1', [req.params.id]);
+        if (inquiryResult.rows.length === 0) {
+            return res.status(404).json({ success: false, message: '询盘不存在' });
+        }
+        const inquiry = inquiryResult.rows[0];
+        const filesResult = await db.query(
+            'SELECT id, category, sub_key, orig_name, stored_name, mime_type, size_bytes, created_at FROM custom_inquiry_files WHERE inquiry_id = $1 ORDER BY category, sub_key',
+            [req.params.id]
+        );
+
+        let odmStyleImages = {};
+        try {
+            let odmNames = inquiry.odm_styles;
+            if (typeof odmNames === 'string') odmNames = JSON.parse(odmNames);
+            if (Array.isArray(odmNames) && odmNames.length > 0) {
+                const stylesResult = await db.query(`
+                    SELECT s.name,
+                        COALESCE(json_agg('https://files.yiswim.cloud/' || i.unique_image_id) FILTER (WHERE i.unique_image_id IS NOT NULL), '[]') as image_urls
+                    FROM custom_odm_styles s LEFT JOIN images i ON s.id = i.notion_page_id
+                    WHERE s.name = ANY($1) GROUP BY s.id`, [odmNames]);
+                stylesResult.rows.forEach(r => { odmStyleImages[r.name] = r.image_urls; });
+            }
+        } catch (e) { /* ignore */ }
+
+        const lang = req.cookies && req.cookies.lng || 'zh';
+        const pdfBuffer = await generateInquiryPDF(inquiry, filesResult.rows, odmStyleImages, lang);
+        const filename = 'inquiry_' + (inquiry.inquiry_no || inquiry.id) + '.pdf';
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename="' + filename + '"');
+        res.setHeader('Content-Length', pdfBuffer.length);
+        res.send(pdfBuffer);
+    } catch (error) {
+        console.error('Admin PDF generation failed:', error);
+        res.status(500).json({ success: false, message: 'PDF generation failed: ' + error.message });
+    }
+});
+
+// 导出询盘 ZIP (管理员)
+router.get('/api/inquiry/:id/export', authenticateAdmin, async (req, res) => {
+    try {
+        const { generateInquiryPDF } = require('../utils/pdfExport');
+        const archiver = require('archiver');
+        const https = require('https');
+        const http = require('http');
+
+        const inquiryResult = await db.query('SELECT * FROM custom_inquiries WHERE id = $1', [req.params.id]);
+        if (inquiryResult.rows.length === 0) {
+            return res.status(404).json({ success: false, message: '询盘不存在' });
+        }
+        const inquiry = inquiryResult.rows[0];
+        const filesResult = await db.query(
+            'SELECT id, category, sub_key, orig_name, stored_name, mime_type, size_bytes, created_at FROM custom_inquiry_files WHERE inquiry_id = $1 ORDER BY category, sub_key',
+            [req.params.id]
+        );
+
+        let odmStyleImages = {};
+        try {
+            let odmNames = inquiry.odm_styles;
+            if (typeof odmNames === 'string') odmNames = JSON.parse(odmNames);
+            if (Array.isArray(odmNames) && odmNames.length > 0) {
+                const stylesResult = await db.query(`
+                    SELECT s.name,
+                        COALESCE(json_agg('https://files.yiswim.cloud/' || i.unique_image_id) FILTER (WHERE i.unique_image_id IS NOT NULL), '[]') as image_urls
+                    FROM custom_odm_styles s LEFT JOIN images i ON s.id = i.notion_page_id
+                    WHERE s.name = ANY($1) GROUP BY s.id`, [odmNames]);
+                stylesResult.rows.forEach(r => { odmStyleImages[r.name] = r.image_urls; });
+            }
+        } catch (e) { /* ignore */ }
+
+        const lang = req.cookies && req.cookies.lng || 'zh';
+        const pdfBuffer = await generateInquiryPDF(inquiry, filesResult.rows, odmStyleImages, lang);
+        const inquiryNo = inquiry.inquiry_no || String(inquiry.id);
+
+        res.setHeader('Content-Type', 'application/zip');
+        res.setHeader('Content-Disposition', 'attachment; filename="' + inquiryNo + '.zip"');
+
+        const archive = archiver('zip', { zlib: { level: 5 } });
+        archive.on('error', () => { if (!res.headersSent) res.status(500).end(); });
+        archive.pipe(res);
+        archive.append(pdfBuffer, { name: inquiryNo + '.pdf' });
+
+        const FILE_BASE = 'https://files.yiswim.cloud/uploads/inquiries/';
+        const usedNames = new Set();
+
+        function fetchFileStream(url) {
+            return new Promise((resolve, reject) => {
+                const timer = setTimeout(() => reject(new Error('timeout')), 15000);
+                const proto = url.startsWith('https') ? https : http;
+                const doReq = (u) => {
+                    proto.get(u, (resp) => {
+                        if (resp.statusCode >= 300 && resp.statusCode < 400 && resp.headers.location) { doReq(resp.headers.location); return; }
+                        if (resp.statusCode !== 200) { clearTimeout(timer); reject(new Error('HTTP ' + resp.statusCode)); return; }
+                        clearTimeout(timer); resolve(resp);
+                    }).on('error', (e) => { clearTimeout(timer); reject(e); });
+                };
+                doReq(url);
+            });
+        }
+
+        for (const f of filesResult.rows) {
+            const url = FILE_BASE + encodeURIComponent(f.stored_name);
+            let folder = f.category || 'other';
+            if (f.sub_key) folder += '/' + f.sub_key;
+            let name = f.orig_name || f.stored_name;
+            const fullPath = folder + '/' + name;
+            if (usedNames.has(fullPath)) {
+                const dotIdx = name.lastIndexOf('.');
+                const ext = dotIdx > 0 ? name.substring(dotIdx) : '';
+                const base = ext ? name.substring(0, dotIdx) : name;
+                name = base + '_' + f.id + ext;
+            }
+            usedNames.add(folder + '/' + name);
+            try {
+                const stream = await fetchFileStream(url);
+                archive.append(stream, { name: folder + '/' + name });
+            } catch (e) { console.warn('ZIP: failed to fetch', f.stored_name, e.message); }
+        }
+
+        await archive.finalize();
+    } catch (error) {
+        console.error('Admin export ZIP failed:', error);
+        if (!res.headersSent) res.status(500).json({ success: false, message: 'Export failed: ' + error.message });
+    }
+});
+
 module.exports = router;

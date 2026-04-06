@@ -3523,32 +3523,90 @@
             updateSwatchTransform();
         });
 
-        // 6. 移动端手指滑动切换图片
+        // 6. 移动端手指连续滑动切换图片（带跟手动画）
         (function() {
             var touchStartX = 0, touchStartY = 0, touchMoveX = 0, isHSwipe = null;
+            var isSwiping = false; // 动画进行中锁
+            var THRESHOLD = 40;   // 触发切换的最小滑动距离(px)
+
             swatchCont.addEventListener('touchstart', function(e) {
-                if (e.touches.length === 1) {
-                    touchStartX = touchMoveX = e.touches[0].clientX;
-                    touchStartY = e.touches[0].clientY;
-                    isHSwipe = null;
-                }
+                if (isSwiping || e.touches.length !== 1) return;
+                // 缩放状态下不拦截（让平移手势正常工作）
+                if (zoom > 1.05) return;
+                touchStartX = touchMoveX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+                isHSwipe = null;
+                // 取消图片过渡，实现即时跟手
+                swatchImg.style.transition = 'none';
             }, { passive: true });
+
             swatchCont.addEventListener('touchmove', function(e) {
-                if (e.touches.length !== 1) return;
+                if (isSwiping || e.touches.length !== 1 || zoom > 1.05) return;
                 touchMoveX = e.touches[0].clientX;
-                var dx = Math.abs(touchMoveX - touchStartX);
-                var dy = Math.abs(e.touches[0].clientY - touchStartY);
-                // 一旦确定为水平滑动，阻止默认行为（防止 Safari 返回手势等）
-                if (isHSwipe === null && (dx > 10 || dy > 10)) {
-                    isHSwipe = dx > dy;
-                }
-                if (isHSwipe) e.preventDefault();
-            }, { passive: false });
-            swatchCont.addEventListener('touchend', function(e) {
                 var dx = touchMoveX - touchStartX;
-                if (isHSwipe && Math.abs(dx) > 40) {
-                    swatchCarouselMove(dx < 0 ? 1 : -1);
+                var dy = e.touches[0].clientY - touchStartY;
+                // 判定滑动方向（只判定一次）
+                if (isHSwipe === null && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) {
+                    isHSwipe = Math.abs(dx) > Math.abs(dy);
                 }
+                if (!isHSwipe) return;
+                e.preventDefault(); // 阻止 Safari 后退手势 / 页面滚动
+                // 图片跟手水平位移
+                swatchImg.style.transform = 'translate(' + dx + 'px, 0px) scale(1)';
+            }, { passive: false });
+
+            swatchCont.addEventListener('touchend', function(e) {
+                if (zoom > 1.05 || isHSwipe === null || !isHSwipe) {
+                    isHSwipe = null;
+                    return;
+                }
+                var dx = touchMoveX - touchStartX;
+                var absDx = Math.abs(dx);
+
+                if (absDx < THRESHOLD || currentSwatchImages.length <= 1) {
+                    // 未达阈值 → 弹回原位
+                    swatchImg.style.transition = 'transform 0.18s ease';
+                    swatchImg.style.transform = 'translate(0px, 0px) scale(1)';
+                    isHSwipe = null;
+                    return;
+                }
+
+                isSwiping = true;
+                var dir = dx < 0 ? 1 : -1; // 左滑→下一张, 右滑→上一张
+                var w = window.innerWidth;
+
+                // ① 当前图滑出屏幕
+                swatchImg.style.transition = 'transform 0.18s ease-in';
+                swatchImg.style.transform = 'translate(' + (-dir * w) + 'px, 0px) scale(1)';
+
+                setTimeout(function() {
+                    // ② 切换索引 & 加载新图
+                    currentSwatchIndex = (currentSwatchIndex + dir + currentSwatchImages.length) % currentSwatchImages.length;
+                    swatchImg.src = currentSwatchImages[currentSwatchIndex];
+                    // 更新计数器
+                    var counter = document.getElementById('swatch-counter');
+                    if (counter && currentSwatchImages.length > 1) {
+                        counter.innerText = (currentSwatchIndex + 1) + ' / ' + currentSwatchImages.length;
+                    }
+
+                    // ③ 新图从对侧入场
+                    swatchImg.style.transition = 'none';
+                    swatchImg.style.transform = 'translate(' + (dir * w) + 'px, 0px) scale(1)';
+
+                    // 强制回流后执行入场动画
+                    void swatchImg.offsetWidth;
+                    swatchImg.style.transition = 'transform 0.22s ease-out';
+                    swatchImg.style.transform = 'translate(0px, 0px) scale(1)';
+
+                    setTimeout(function() {
+                        // ④ 动画结束，重置状态
+                        zoom = 1;
+                        offset = { x: 0, y: 0 };
+                        swatchImg.style.transition = 'transform 0.05s linear';
+                        isSwiping = false;
+                    }, 230);
+                }, 190);
+
                 isHSwipe = null;
             }, { passive: true });
         })();

@@ -89,7 +89,7 @@
         "请分别选择对应部位的面料材质。选中后在下方配置台中定义颜色或印花。": "Please select fabric material for each section. After selection, define colors or prints in the configuration panel below.",
         "正在加载面料数据...": "Loading fabric data...",
         "仅清空当前面料分类的选择": "Clear current fabric category selections only",
-        "清空当前分类": "Clear Current Category",
+        "清空当前分类": "Clear",
         "配置选项": "Configuration Options",
         "面料": "Shell",
         "找样特别说明": "Sourcing Notice",

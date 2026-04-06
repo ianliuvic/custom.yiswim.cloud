@@ -211,6 +211,7 @@ body {
 .u-sec-icon.shipping { background: #fefce8; color: #ca8a04; }
 .u-sec-icon.contact { background: #faf5ff; color: #9333ea; }
 .u-sec-icon.files { background: #f0f9ff; color: #0284c7; }
+.u-sec-icon.response { background: #eff6ff; color: #2563eb; }
 .u-sec-icon.time { background: #f1f5f9; color: #64748b; }
 .u-sec-head h4 { font-size: 14px; font-weight: 700; color: var(--text-main); }
 .u-sec-head .u-sec-count {
@@ -507,6 +508,23 @@ body {
 .u-file-info { flex: 1; min-width: 0; }
 .u-file-name { font-size: 12px; color: var(--text-main); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .u-file-meta { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+
+/* Admin Response Section */
+.u-sec-response { border-color: #bfdbfe; }
+.u-sec-response .u-sec-head { background: #eff6ff; border-color: #bfdbfe; }
+.u-reply-text { white-space: pre-wrap; line-height: 1.7; }
+.u-token {
+    display: inline-block;
+    padding: 3px 10px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
+    color: var(--text-main);
+    user-select: all;
+    letter-spacing: 0.5px;
+}
 
 /* Timeline */
 .u-timeline { display: flex; gap: 32px; }

@@ -557,6 +557,7 @@
         "包装参考/贴标样照": "Packaging Reference / Labeling Sample Photo",
         "包装参考 / 贴标样照": "Packaging Reference / Labeling Sample Photo",
         "点击上传唛头样式 / FBA标签 / 包装参考图": "Click to Upload Shipping Marks / FBA Labels / Packaging Reference",
+        "请详细描述您的包装与装箱需求。\n例如：\n1. 单件入袋方式：独立 OPP 袋 + 吊牌外挂\n2. 外箱规则：独色独码，每箱不超过 15kg\n3. 侧唛需印：SKU / 颜色 / 尺码 / 数量\n4. 需贴 Amazon FBA 入仓标签": "Please describe your packing & carton requirements in detail.\nExamples:\n1. Individual bagging: OPP bag + hang tag attached\n2. Outer carton: one color one size, max 15kg per carton\n3. Side marks: SKU / Color / Size / Quantity\n4. Amazon FBA warehouse labels required",
         "上传参考文件": "Upload Reference Files",
 
         // ── MOQ Modal ──

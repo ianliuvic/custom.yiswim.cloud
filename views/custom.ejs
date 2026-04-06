@@ -2203,7 +2203,7 @@
                                     <!-- 左侧标题 -->
                                     <h4 style="font-size: 14px; margin: 0; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 详细打样清单</h4>
                                     
-                                    <!-- 右侧按钮组：确保两个按钮紧贴并靠右 -->
+                                    <!-- 右侧按钮组 -->
                                     <div style="display: flex; gap: 10px;">
                                         <button type="button" class="btn-outline" style="padding: 4px 12px; font-size: 11px; display: flex; align-items: center; gap: 5px; border-color: #cbd5e1; color: #64748b;" onclick="openSampleGuide()">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" cy="17" x2="12.01" y2="17"></line></svg>
@@ -2238,33 +2238,6 @@
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                                         添加新打样项
                                     </button>
-                            
-                                    <!-- 2. 费用计算区域 (紧跟表格) -->
-                                    <div style="padding: 25px; background: #fdfdfd;">
-                                        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px;">
-                                            <div id="sample-fee-details" style="font-size: 12px; color: #94a3b8; line-height: 2;">
-                                                <!-- JS 填充 -->
-                                                请在上方清单中选择款式以计算费用...
-                                            </div>
-                                            <div style="text-align: right; display: flex; flex-direction: column; justify-content: center;">
-                                                <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">预估开发总计 (USD)</div>
-                                                <div id="sample-fee-total" style="font-size: 32px; font-weight: 800; color: var(--primary-color);">$0.00</div>
-                                                <div style="font-size: 10px; color: #27ae60; font-weight: 600;">💎 大货单款 >300件 样板费全额退还</div>
-                                            </div>
-                                        </div>
-                                        <!-- 提示文案 -->
-                                        <div id="sample-qty-warning" class="hidden" style="margin-top: 15px; background: #fee2e2; color: #ef4444; padding: 8px 12px; border-radius: 6px; font-size: 11px; display: flex; align-items: center; gap: 8px;">
-                                            <strong>⚠️ 收费提示：</strong>单款打样超过 2 件，将产生额外的小批量开发费。
-                                        </div>
-                                        <!-- 【新增】费用免责与核算说明 -->
-                                        <div style="margin-top: 20px; padding-top: 15px; border-top: 1px dashed #e2e8f0; display: flex; gap: 10px; align-items: flex-start;">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" style="margin-top: 2px; flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-                                            <div style="font-size: 11px; color: #94a3b8; line-height: 1.6;">
-                                                <strong style="color: #64748b;">费用核算说明：</strong> 上述金额仅为<span style="color: var(--text-main);">基于制版与基础人工的初始预估</span>。<br>
-                                                此预估<strong style="color: #ef4444;">未包含</strong>数码印花/Logo胶印开版费、多尺码放码费、特殊五金开模及进口面料溢价。最终准确的开发费用，需业务经理结合您前序步骤提交的所有图纸与工艺要求综合评估后，在正式 PI（形式发票）中确认。
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                             
@@ -2279,16 +2252,15 @@
                                         <div style="background: #f8fafc; padding: 15px; border-radius: 8px;">
                                             <h5 style="color:var(--primary-color); margin-top:0;">样衣类型</h5>
                                             <p style="font-size:12px; color:#64748b; line-height:1.6;">
-                                                <strong>初版样(Proto):</strong> 看版型，确认比例。可用替代料。<br><br>
-                                                <strong>修改样(Fit):</strong> 调细节，试穿舒适度。<br><br>
-                                                <strong>产前样(PP):</strong> 最终封样。必须用正确大货面辅料。
+                                                <strong>初样 (Proto):</strong> 首版确认，看版型、确认比例。可用替代面料。<br><br>
+                                                <strong>正确样 (PP):</strong> 最终封样。使用大货正确面辅料，精细缝制。
                                             </p>
                                         </div>
                                         <div style="background: #f8fafc; padding: 15px; border-radius: 8px;">
                                             <h5 style="color:var(--primary-color); margin-top:0;">尺码建议</h5>
                                             <p style="font-size:12px; color:#64748b; line-height:1.6;">
                                                 建议选择 <strong>M 码 (US 6-8)</strong> 作为打样基准码。<br><br>
-                                                如果您需要核对放码比例，建议在 PP 样阶段增加一个最大或最小码。
+                                                如果您需要核对放码比例，建议在正确样阶段增加一个最大或最小码。
                                             </p>
                                         </div>
                                         <div style="background: #f8fafc; padding: 15px; border-radius: 8px;">
@@ -2318,30 +2290,20 @@
                             
                                         <h5 style="font-size: 14px; color: #1e293b; margin: 20px 0 10px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">一、 基础开发与制版费</h5>
                                         <ul style="font-size: 13px; color: #475569; line-height: 1.8; margin: 0; padding-left: 20px;">
-                                            <li><strong>自主设计 (OEM) 制版：</strong> $20 / 款</li>
-                                            <li><strong>现有款式 (ODM) 借版：</strong> <span style="color: #27ae60; font-weight: 600;">免费 ($0)</span></li>
-                                            <li><strong>开发管理费：</strong> $10 / 款 (含前期技术评估、辅料找样及专属项目跟单跟进)</li>
+                                            <li><strong>制版费：</strong> $20 / 款</li>
+                                            <li><strong>管理费：</strong> $10 / 款 (含前期技术评估、辅料找样及专属项目跟单跟进)</li>
                                         </ul>
                             
-                                        <h5 style="font-size: 14px; color: #1e293b; margin: 25px 0 10px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">二、 样衣制作费 (按件收取)</h5>
+                                        <h5 style="font-size: 14px; color: #1e293b; margin: 25px 0 10px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">二、 样衣缝制费 (按套收取)</h5>
                                         <ul style="font-size: 13px; color: #475569; line-height: 1.8; margin: 0; padding-left: 20px;">
-                                            <li><strong>初版样 (Proto)：</strong> $10 / 件</li>
-                                            <li><strong>修改样 / 产前样：</strong> $20 / 件 (精细缝制并使用大货正确面料)</li>
+                                            <li><strong>初样 (Proto)：</strong> $10 / 套</li>
+                                            <li><strong>正确样 (PP)：</strong> $20 / 套 (精细缝制并使用大货正确面辅料)</li>
                                         </ul>
                             
-                                        <h5 style="font-size: 14px; color: #1e293b; margin: 25px 0 10px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">三、 高级工艺附加费 (如涉及需另算)</h5>
+                                        <h5 style="font-size: 14px; color: #1e293b; margin: 25px 0 10px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">三、 💎 商业退还计划</h5>
                                         <ul style="font-size: 13px; color: #475569; line-height: 1.8; margin: 0; padding-left: 20px;">
-                                            <li><strong>Logo 胶印/烫印开机：</strong> 预估 $25 / 款</li>
-                                            <li><strong>数码定位印花/满印调试：</strong> 预估 $10 / 款</li>
-                                            <li><strong>多尺码放码费：</strong> $10 / 款 (如需在打样阶段同时制作 2 个以上不同尺码)</li>
-                                            <li><strong>特殊物料溢价：</strong> 选用进口面料(如 Carvico 回收纱) 或特殊开模五金，需补足材料差价。</li>
-                                        </ul>
-                            
-                                        <h5 style="font-size: 14px; color: #1e293b; margin: 25px 0 10px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">四、 修改规则与 💎 商业退还计划</h5>
-                                        <ul style="font-size: 13px; color: #475569; line-height: 1.8; margin: 0; padding-left: 20px;">
-                                            <li><strong>免费微调：</strong> 制版费内含 <strong style="color:var(--primary-color);">1 次</strong> 基于初样的免费版型微调。自第 2 次修改起，每次收取 $10 调版费。(重大设计变更需视为新款重新制版)。</li>
-                                            <li style="margin-top: 10px; padding: 10px; background: #dcfce7; border-radius: 6px; color: #166534; list-style: none; margin-left: -20px;">
-                                                <strong>💎 大货退还计划：</strong> 当您的款式成功转化为大货订单（单款数量 ≥ 300件）时，对应款式的<strong style="text-decoration: underline;">所有样衣开发相关费用</strong>，将在大货尾款中 100% 予以抵扣退还！
+                                            <li style="padding: 10px; background: #dcfce7; border-radius: 6px; color: #166534; list-style: none; margin-left: -20px;">
+                                                <strong>💎 大货退还计划：</strong> 当您的款式成功转化为大货订单（单款数量 ≥ 300件）时，对应款式的<strong style="text-decoration: underline;">所有打样相关费用</strong>，将在大货尾款中 100% 予以抵扣退还！
                                             </li>
                                         </ul>
                                     </div>

@@ -6703,28 +6703,29 @@
                 }
         
                 // 生成整行的 HTML，包含款式和类型的 selected 状态，以及尺码数量的 value
+                tr.setAttribute('data-index', index + 1);
                 tr.innerHTML = `
-                    <td>
+                    <td data-label="对应款式">
                         <select onchange="updateRowData(${index}, 'style', this.value)">
                             ${rowStyleOptions}
                         </select>
                     </td>
-                    <td>
+                    <td data-label="样衣类型">
                         <select onchange="updateRowData(${index}, 'type', this.value)">
                             <option value="初样 (Proto)" ${row.type==='初样 (Proto)'?'selected':''}>初样 (Proto)</option>
                             <option value="正确样 (PP)" ${row.type==='正确样 (PP)'?'selected':''}>正确样 (PP)</option>
                         </select>
                     </td>
-                    <td>
+                    <td data-label="尺码">
                         <input type="text" list="common-sizes" value="${row.size}" placeholder="选或填" onchange="updateRowData(${index}, 'size', this.value)">
                     </td>
-                    <td>
+                    <td data-label="数量">
                         <input type="number" value="${row.qty}" min="1" oninput="updateRowData(${index}, 'qty', this.value)">
                     </td>
-                    <td>
+                    <td data-label="备注">
                         <input type="text" value="${row.desc}" placeholder="例: 黑色碎花款" oninput="updateRowData(${index}, 'desc', this.value)">
                     </td>
-                    <td style="text-align:center;">
+                    <td class="sample-card-remove" style="text-align:center;">
                         <button type="button" class="btn-remove-row" onclick="removeSampleRow(${index})">&times;</button>
                     </td>
                 `;

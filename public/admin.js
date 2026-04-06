@@ -322,6 +322,10 @@
             });
 
             let html = '';
+
+            // Admin action form (top)
+            html += renderAdminActionForm(d);
+
             html += renderStyleSection(d, fileMap);
             html += renderFabricSection(d, fileMap);
             html += renderTrimsSection(d, fileMap);
@@ -335,9 +339,6 @@
                 if (!shownCats.includes(cat)) remainFiles = remainFiles.concat(fileMap[cat]);
             });
             if (remainFiles.length) html += renderFilesSection(remainFiles, '其他附件');
-
-            // Admin action form
-            html += renderAdminActionForm(d);
 
             html += renderTimelineSection(d);
 

@@ -246,6 +246,51 @@ router.get('/api/inquiry/:id', authenticateAdmin, async (req, res) => {
     }
 });
 
+// 更新询盘状态 & 管理员回复信息
+router.post('/api/inquiry/:id/update', authenticateAdmin, async (req, res) => {
+    try {
+        const { status, admin_reply, project_link, project_token } = req.body;
+        const allowedStatuses = ['pending', 'processing', 'quoted', 'closed'];
+        if (status && !allowedStatuses.includes(status)) {
+            return res.status(400).json({ success: false, message: '无效的状态值' });
+        }
+
+        const fields = [];
+        const values = [];
+        let idx = 1;
+
+        if (status) { fields.push(`status = $${idx++}`); values.push(status); }
+        // admin_reply 允许空字符串（清空）
+        if (admin_reply !== undefined) { fields.push(`admin_reply = $${idx++}`); values.push(admin_reply || null); }
+        if (project_link !== undefined) { fields.push(`project_link = $${idx++}`); values.push(project_link || null); }
+        if (project_token !== undefined) { fields.push(`project_token = $${idx++}`); values.push(project_token || null); }
+
+        if (!fields.length) {
+            return res.status(400).json({ success: false, message: '没有需要更新的字段' });
+        }
+
+        // 如果有回复内容，更新回复时间
+        if (admin_reply) { fields.push(`admin_replied_at = NOW()`); }
+
+        fields.push(`modified_at = NOW()`);
+        values.push(parseInt(req.params.id));
+
+        const result = await db.query(
+            `UPDATE custom_inquiries SET ${fields.join(', ')} WHERE id = $${idx} RETURNING id, inquiry_no, status`,
+            values
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ success: false, message: '询盘不存在' });
+        }
+
+        res.json({ success: true, message: '更新成功', data: result.rows[0] });
+    } catch (error) {
+        console.error('更新询盘失败:', error);
+        res.status(500).json({ success: false, message: '服务器错误' });
+    }
+});
+
 // 导出询盘 PDF (管理员)
 router.get('/api/inquiry/:id/pdf', authenticateAdmin, async (req, res) => {
     try {

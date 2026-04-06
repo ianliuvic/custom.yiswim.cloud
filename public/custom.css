@@ -988,4 +988,8 @@
             .site-header { padding: 0 12px; }
             .site-logo { height: 28px; }
             .site-title { font-size: 15px; font-weight: 700; }
+
+            /* 大图预览：隐藏箭头和提示文字 */
+            #swatch-prev-btn, #swatch-next-btn { display: none !important; }
+            .swatch-hint-desktop { display: none !important; }
         }

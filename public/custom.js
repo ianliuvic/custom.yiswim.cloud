@@ -3522,6 +3522,27 @@
             offset = { x: 0, y: 0 }; // 坐标归零
             updateSwatchTransform();
         });
+
+        // 6. 移动端手指滑动切换图片
+        (function() {
+            var touchStartX = 0, touchStartY = 0, swiping = false;
+            swatchCont.addEventListener('touchstart', function(e) {
+                if (e.touches.length === 1) {
+                    touchStartX = e.touches[0].clientX;
+                    touchStartY = e.touches[0].clientY;
+                    swiping = true;
+                }
+            }, { passive: true });
+            swatchCont.addEventListener('touchend', function(e) {
+                if (!swiping || e.changedTouches.length !== 1) return;
+                swiping = false;
+                var dx = e.changedTouches[0].clientX - touchStartX;
+                var dy = e.changedTouches[0].clientY - touchStartY;
+                if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+                    swatchCarouselMove(dx < 0 ? 1 : -1);
+                }
+            }, { passive: true });
+        })();
         
         function closeSwatchModal() {
             document.getElementById('swatchFullModal').classList.remove('active');

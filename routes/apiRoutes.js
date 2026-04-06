@@ -446,6 +446,22 @@ router.post('/submit-inquiry', authenticateToken, upload.any(), async (req, res)
         await handleRemoteFiles(client, inquiryId, req.user.id, d.remote_files, oldStoredNames);
 
         await client.query('COMMIT');
+
+        // 异步通知 n8n（不阻塞响应）
+        fetch(`${N8N_BASE_URL}/get_new_inquiry`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                inquiry_id: inquiryId,
+                inquiry_no: inquiryNo,
+                user_id: req.user.id,
+                contact_name: d.contact_name,
+                brand_name: d.brand_name,
+                delivery_mode: d.delivery_mode,
+                submitted_at: new Date().toISOString()
+            })
+        }).catch(err => console.error('n8n webhook 通知失败:', err));
+
         res.json({ success: true, inquiry_no: inquiryNo });
 
     } catch (error) {

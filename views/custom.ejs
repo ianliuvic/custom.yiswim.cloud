@@ -64,12 +64,16 @@
                 margin: 0 auto 16px;
             }
         }
+        @media (max-width: 768px) {
+            .site-header { padding-top: 6px !important; padding-bottom: 6px !important; height: auto !important; min-height: 48px !important; }
+        }
     </style>
     <script>window.__lang = '<%= lng %>';</script>
     <script src="/i18n.js"></script>
     <script src="/modal.js"></script>
 </head>
 <body>
+<div id="app-root">
 
     <header class="site-header">
         <div class="header-left" onclick="goToStep1()" style="cursor:pointer" title="返回第一步">
@@ -3134,6 +3138,7 @@
             <div id="uploadPercent" style="font-size:13px; font-weight:600; color:var(--primary-color);">0%</div>
         </div>
     </div>
+</div><!-- /app-root -->
 
     <!-- =========================================================================
          核心 JavaScript 逻辑
@@ -3149,34 +3154,6 @@
         sidebar.classList.toggle('drawer-open', !isOpen);
         backdrop.classList.toggle('active', !isOpen);
     }
-    </script>
-
-    <!-- 防止第三方脚本(Chatwoot等)注入的DOM破坏body flex布局 -->
-    <script>
-    (function() {
-        var known = ['site-header','main-container','site-footer','mobile-summary-fab',
-            'drawer-backdrop','detailModal','customModal','ndaModal','swatchFullModal',
-            'labelComplianceModal','uploadModal'];
-        function neutralize(node) {
-            if (node.nodeType !== 1) return; // 只处理元素节点
-            if (node.tagName === 'SCRIPT' || node.tagName === 'STYLE' || node.tagName === 'LINK') return;
-            var cls = node.className || '';
-            var id = node.id || '';
-            for (var i = 0; i < known.length; i++) {
-                if (cls.indexOf(known[i]) !== -1 || id === known[i]) return;
-            }
-            // 非应用元素，从flex布局中移除
-            node.style.setProperty('position', 'fixed', 'important');
-            node.style.setProperty('flex', 'none', 'important');
-        }
-        new MutationObserver(function(mutations) {
-            mutations.forEach(function(m) {
-                m.addedNodes.forEach(function(n) {
-                    if (n.parentNode === document.body) neutralize(n);
-                });
-            });
-        }).observe(document.body, { childList: true });
-    })();
     </script>
 
     <!-- === 1. Chatwoot 动态配置 (含多语言同步) === -->

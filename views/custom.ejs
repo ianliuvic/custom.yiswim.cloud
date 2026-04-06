@@ -3149,6 +3149,14 @@
         sidebar.classList.toggle('drawer-open', !isOpen);
         backdrop.classList.toggle('active', !isOpen);
     }
+
+    // 横向滚动容器：滑到底部时移除渐隐遮罩
+    document.querySelectorAll('.sub-tabs, .stepper, .category-nav').forEach(function(el) {
+        el.addEventListener('scroll', function() {
+            var atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 2;
+            el.classList.toggle('scrolled-end', atEnd);
+        });
+    });
     </script>
 
     <!-- === 1. Chatwoot 动态配置 (含多语言同步) === -->

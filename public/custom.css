@@ -48,10 +48,10 @@
         .header-avatar-wrap { display: none; position: relative; }
         .header-avatar-btn {
             background: none; color: var(--text-light);
-            border: 1px solid var(--border-color); border-radius: 20px;
-            padding: 5px 14px; font-size: 12px; font-weight: 500;
-            cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
-            letter-spacing: 0.3px; line-height: 1;
+            border: 1px solid var(--border-color); border-radius: 50%;
+            width: 30px; height: 30px; padding: 0;
+            font-size: 12px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
             transition: all 0.25s;
         }
         .header-avatar-btn:active { border-color: var(--primary-color); color: var(--primary-color); }

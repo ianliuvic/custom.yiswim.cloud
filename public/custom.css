@@ -965,6 +965,12 @@
 
             .site-footer { font-size: 10px; padding: 0 16px; }
 
+            /* 移动端：禁用卡片 hover 效果，按钮常驻显示，避免需要点两次 */
+            .option-item:hover { transform: none; box-shadow: none; }
+            .option-item:hover .option-img { transform: none; }
+            .details-btn { opacity: 1 !important; visibility: visible !important; transform: scale(1) !important; }
+            .customize-btn { opacity: 1 !important; visibility: visible !important; transform: scale(1) !important; }
+
             /* 轻定制弹窗：标题缩小 + 隐藏左侧图片 */
             #customModal .custom-modal-header { padding: 20px 18px 14px; }
             #customModal .custom-modal-header h3 { font-size: 15px; gap: 6px; }
@@ -985,7 +991,6 @@
             .button-group { padding: 10px 12px; }
 
             .option-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
-            .option-item:hover { transform: none; box-shadow: none; }
 
             .premium-upload-box { padding: 20px 10px; }
             .premium-upload-box .upload-icon-container { display: none; }

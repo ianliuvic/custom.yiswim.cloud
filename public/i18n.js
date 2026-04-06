@@ -91,7 +91,7 @@
         "仅清空当前面料分类的选择": "Clear current fabric category selections only",
         "清空当前分类": "Clear Current Category",
         "配置选项": "Configuration Options",
-        "面料": "Shell Fabric",
+        "面料": "Shell",
         "找样特别说明": "Sourcing Notice",
         "服务周期：预计 3-7 个工作日，具体视物料稀缺程度而定。": "Service period: estimated 3-7 business days, depending on material scarcity.",
         "服务费用：特殊找样可能产生额外的采购服务费及物流溢价。": "Service fee: special sourcing may incur additional procurement service fees and logistics surcharges.",

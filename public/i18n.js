@@ -565,7 +565,7 @@
         "OEM + 常规面辅料、颜色/印花": "OEM + Standard Materials, Colors & Prints",
         "由您提供设计稿/参考图全新开版，搭配市场现货常规面料与通用辅料。": "You provide design drafts/references for new pattern development, with standard market fabrics and universal trims.",
         "任何模式 + 特殊面辅料、颜色/印花": "Any Mode + Special Materials, Colors & Prints",
-        "包含且不限于：面料定染指定 Pantone 色、定制定位印花、特殊肌理面料找样、品牌专属五金开模等。": "Including: custom Pantone dyeing, custom placement printing, special texture sourcing, brand exclusive hardware mold, etc.",
+        "包含且不限于：面料定染指定 Pantone 色、特殊肌理面料找样、品牌专属五金开模等。": "Including: custom Pantone dyeing, special texture sourcing, brand exclusive hardware mold, etc.",
         "受限于面料染厂及辅料供应链的最低开机起订要求": "Subject to minimum production requirements of dyeing factories and trim supply chains",
         "※ OEM 起订量可能会随款式难度等因素有所调整，具体以实际评估为准。": "※ OEM MOQ may vary depending on style complexity and other factors. Subject to actual assessment.",
         "MOQ 50件": "MOQ 50 pcs",
@@ -1342,7 +1342,7 @@
         // Step 4: cost estimate note (in sampling section)
         { m: '上述金额仅为', h: '<strong style="color: #64748b;">Cost Estimation Note:</strong> The amounts above are only <span style="color: var(--text-main);">preliminary estimates based on pattern-making and basic labor</span>.<br>This estimate <strong style="color: #ef4444;">does not include</strong> digital print/Logo screen setup fees, multi-size grading fees, special hardware molding, or imported fabric surcharges. The final development cost will be confirmed in the official PI (Proforma Invoice) after comprehensive evaluation by the sales manager.' },
         // MOQ modal: Level 4 special materials
-        { m: '包含且不限于', h: 'Including: custom Pantone dyeing, custom placement printing, special texture sourcing, brand exclusive hardware mold, etc. <strong>(Subject to minimum production requirements of dyeing factories and trim supply chains)</strong>' },
+        { m: '包含且不限于', h: 'Including: custom Pantone dyeing, special texture sourcing, brand exclusive hardware mold, etc. <strong>(Subject to minimum production requirements of dyeing factories and trim supply chains)</strong>' },
         // Sample extra warning (contains <strong>)
         { m: '提示：', h: '<strong>\u26a0\ufe0f Notice:</strong> Some styles exceed 2 samples, extra pieces will incur sewing fees.' },
         // Fee standard modal: section I heading

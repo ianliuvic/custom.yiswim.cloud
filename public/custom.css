@@ -923,6 +923,7 @@
                 -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
                 mask-image: linear-gradient(to right, black 80%, transparent 100%);
             }
+            .stepper.scrolled-end { -webkit-mask-image: none; mask-image: none; }
             .stepper::-webkit-scrollbar { display: none; }
             .step { flex: none; font-size: 10px; letter-spacing: 0.5px; padding: 8px 14px 10px; white-space: nowrap; }
 
@@ -931,6 +932,7 @@
                 mask-image: linear-gradient(to right, black 80%, transparent 100%);
                 scrollbar-width: none; -webkit-overflow-scrolling: touch;
             }
+            .category-nav.scrolled-end { -webkit-mask-image: none; mask-image: none; }
             .category-nav::-webkit-scrollbar { display: none; }
 
             .config-scroll-area { padding: 16px 16px 28px; }
@@ -980,6 +982,10 @@
                 flex-wrap: nowrap;
                 -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
                 mask-image: linear-gradient(to right, black 80%, transparent 100%);
+            }
+            .sub-tabs.scrolled-end {
+                -webkit-mask-image: none;
+                mask-image: none;
             }
             .sub-tabs::-webkit-scrollbar { display: none; }
 

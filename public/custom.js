@@ -1798,6 +1798,13 @@
             if (currentStep !== 1) changeStep(1 - currentStep);
         };
 
+        // 点击顶部 step tab 直接跳转
+        window.goToStep = function (target) {
+            if (target !== currentStep && target >= 1 && target <= totalSteps) {
+                changeStep(target - currentStep);
+            }
+        };
+
         // ==========================================
         // 实时表单验证系统 (Real-time Validation)
         // ==========================================

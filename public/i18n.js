@@ -33,8 +33,8 @@
         "款式定义": "Style Definition",
         "面料材质": "Fabric Material",
         "品牌辅料": "Brand Trims",
-        "物流交付": "Logistics & Delivery",
-        "需求汇总": "Requirements Summary",
+        "下单交付": "Order & Delivery",
+        "确认提交": "Confirm & Submit",
 
         // ── Step 1 ──
         "请选择定制模式：从现有库中挑选 (ODM) 或 上传自主设计包 (OEM)，支持同时选择/上传多款。": "Choose your customization mode: select from our library (ODM) or upload your own design package (OEM). Multiple styles supported.",
@@ -976,7 +976,7 @@
         "① 款式定义：请至少选择一个 ODM 款式或上传 OEM 设计；OEM 需填写项目名称、款式数量，提供描述/图片/文件之一，并勾选全部确认项": "① Style: Select at least one ODM style or upload OEM designs; OEM requires project name, style count, at least one description/image/file, and all checklist items checked",
         "② 面料材质：请至少选择一种面料": "② Fabric: Please select at least one fabric",
         "③ 品牌辅料：已启用的辅料需完善配置": "③ Trims: Enabled trims need to be configured",
-        "④ 物流交付：请在表格中至少选择一个款式": "④ Delivery: Please select at least one style in the table",
+        "④ 下单交付：请在表格中至少选择一个款式": "④ Delivery: Please select at least one style in the table",
         "⑤ 客户档案：请填写姓名、联系方式和品牌名称": "⑤ Profile: Please fill in name, contact info, and brand name",
         "提交前请阅读并勾选同意商业保密协议 (NDA)。": "Please read and agree to the NDA before submitting.",
         "例: 黑色碎花款": "e.g., Black floral style",

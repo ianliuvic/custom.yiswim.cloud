@@ -1105,6 +1105,12 @@
                 grid-template-columns: 1fr !important;
                 gap: 20px !important;
             }
+
+            /* 大货包装区域：描述 & 上传各占一行 */
+            #bulk-packing-grid {
+                grid-template-columns: 1fr !important;
+                gap: 20px !important;
+            }
             #sample-logic-table select,
             #sample-logic-table input {
                 width: 100%;

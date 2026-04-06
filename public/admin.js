@@ -383,13 +383,12 @@
             });
             const json = await resp.json();
             if (json.success) {
-                btn.textContent = '✓ 已保存';
+                btn.textContent = '✓ 已更新';
                 btn.style.background = '#16a34a';
+                // Refresh detail page after a short delay so timeline shows latest update
                 setTimeout(() => {
-                    btn.textContent = '保存';
-                    btn.style.background = '';
-                    btn.disabled = false;
-                }, 1500);
+                    window.openDetail(_currentDetailId);
+                }, 1000);
             } else {
                 alert(json.message || '保存失败');
                 btn.textContent = '保存';

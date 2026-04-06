@@ -43,6 +43,36 @@
         .header-left { display: flex; align-items: center; gap: 12px; }
         .site-logo { height: 26px; width: auto; } 
         .site-title { font-size: 15px; font-weight: 600; color: var(--text-main); letter-spacing: -0.3px; }
+
+        /* 移动端头像菜单 — PC端隐藏 */
+        .header-avatar-wrap { display: none; position: relative; }
+        .header-avatar-btn {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: var(--primary-color); color: #fff;
+            border: none; font-size: 14px; font-weight: 700;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            letter-spacing: 0; line-height: 1;
+        }
+        .header-user-menu {
+            display: none; position: absolute; top: calc(100% + 8px); right: 0;
+            background: #fff; border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04);
+            min-width: 180px; padding: 8px 0; z-index: 9999;
+            animation: fadeIn 0.15s ease;
+        }
+        .header-user-menu.open { display: block; }
+        .header-user-menu-name {
+            padding: 10px 16px 8px; font-size: 13px; font-weight: 700;
+            color: #1e293b; border-bottom: 1px solid #f1f5f9; margin-bottom: 4px;
+        }
+        .header-user-menu-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 16px; font-size: 13px; color: #475569;
+            text-decoration: none; transition: background 0.15s;
+        }
+        .header-user-menu-item:hover { background: #f8fafc; }
+        .header-user-menu-logout { color: #ef4444; }
+        .header-user-menu-logout:hover { background: #fef2f2; }
     
         .main-container { flex: 1; display: flex; overflow: hidden; width: 100%; }
     
@@ -916,6 +946,7 @@
             .site-header { padding: 0 16px; }
             .header-right { font-size: 12px; gap: 8px; }
             .header-right .header-user-text { display: none; }
+            .header-avatar-wrap { display: block; }
             .site-title { font-size: 17px; font-weight: 700; }
             .site-logo { height: 32px; }
 

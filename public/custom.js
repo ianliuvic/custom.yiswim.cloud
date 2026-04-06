@@ -795,7 +795,7 @@
             }
             if (typeof validateTrims === 'function') validateTrims();
 
-            // ── Step 4: 物流交付 ──
+            // ── Step 4: 下单交付 ──
             var mode = d.delivery_mode || 'sample';
             currentDeliveryMode = mode;
 
@@ -887,7 +887,7 @@
             updateLogisticsSummary();
             if (typeof validateShipping === 'function') validateShipping();
 
-            // ── Step 5: 客户档案 ──
+            // ── Step 5: 确认提交 ──
             var fieldMap = {
                 'final-contact-name': d.contact_name,
                 'final-contact-info': d.contact_info,
@@ -2501,7 +2501,7 @@
                 }
             }
 
-            // —— Step 4: 物流 ——
+            // —— Step 4: 下单交付 ——
             fd.append('delivery_mode', currentDeliveryMode);
             fd.append('sample_rows', JSON.stringify(sampleRows));
             fd.append('sample_config', JSON.stringify(sampleConfig));
@@ -2516,7 +2516,7 @@
                 else { fd.append('files[bulkPacking][ref]', f); }
             });
 
-            // —— Step 5: 客户档案 ——
+            // —— Step 5: 确认提交 ——
             fd.append('contact_name', document.getElementById('final-contact-name')?.value.trim() || '');
             fd.append('contact_info', document.getElementById('final-contact-info')?.value.trim() || '');
             fd.append('brand_name', document.getElementById('final-brand-name')?.value.trim() || '');
@@ -2575,7 +2575,7 @@
                 if (!v.style) missing.push(_t('① 款式定义：请至少选择一个 ODM 款式或上传 OEM 设计；OEM 需填写项目名称、款式数量，提供描述/图片/文件之一，并勾选全部确认项'));
                 if (!v.fabric) missing.push(_t('② 面料材质：请至少选择一种面料'));
                 if (!v.trims) missing.push(_t('③ 品牌辅料：已启用的辅料需完善配置'));
-                if (!v.shipping) missing.push(_t('④ 物流交付：请在表格中至少选择一个款式'));
+                if (!v.shipping) missing.push(_t('④ 下单交付：请在表格中至少选择一个款式'));
                 if (!v.contact) missing.push(_t('⑤ 客户档案：请填写姓名、联系方式和品牌名称'));
                 
                 showMsg(_t('提交前请完善以下必填内容：') + '\n\n' + missing.join('\n'), 'warn');
@@ -7091,7 +7091,7 @@
             const labelRemark = _el('label-remark'); if (labelRemark) labelRemark.value = '';
             const labelPreviewGrid = _el('labelPreviewGrid'); if (labelPreviewGrid) labelPreviewGrid.innerHTML = '';
 
-            // 4. 重置物流交付
+            // 4. 重置下单交付
             currentDeliveryMode = 'sample';
             sampleRows = [];
             bulkRows = [];

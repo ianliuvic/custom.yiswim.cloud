@@ -335,6 +335,10 @@
                 if (!shownCats.includes(cat)) remainFiles = remainFiles.concat(fileMap[cat]);
             });
             if (remainFiles.length) html += renderFilesSection(remainFiles, '其他附件');
+
+            // Admin action form
+            html += renderAdminActionForm(d);
+
             html += renderTimelineSection(d);
 
             content.innerHTML = html;
@@ -357,6 +361,44 @@
     window.exportZIP = function () {
         if (!_currentDetailId) return;
         window.open('/admin/api/inquiry/' + _currentDetailId + '/export', '_blank');
+    };
+
+    window.saveAdminAction = async function () {
+        if (!_currentDetailId) return;
+        const btn = document.getElementById('adminSaveBtn');
+        btn.disabled = true;
+        btn.textContent = '保存中...';
+
+        const status = document.getElementById('adminStatusSelect').value;
+        const admin_reply = document.getElementById('adminReplyInput').value.trim();
+        const project_link = document.getElementById('adminProjectLink').value.trim();
+        const project_token = document.getElementById('adminProjectToken').value.trim();
+
+        try {
+            const resp = await fetch('/admin/api/inquiry/' + _currentDetailId + '/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status, admin_reply, project_link, project_token })
+            });
+            const json = await resp.json();
+            if (json.success) {
+                btn.textContent = '✓ 已保存';
+                btn.style.background = '#16a34a';
+                setTimeout(() => {
+                    btn.textContent = '保存';
+                    btn.style.background = '';
+                    btn.disabled = false;
+                }, 1500);
+            } else {
+                alert(json.message || '保存失败');
+                btn.textContent = '保存';
+                btn.disabled = false;
+            }
+        } catch {
+            alert('网络错误');
+            btn.textContent = '保存';
+            btn.disabled = false;
+        }
     };
 
     // ── Detail Helpers ──
@@ -773,6 +815,44 @@
         files.forEach(f => { h += renderFileItem(f); });
         h += '</div>';
         h += dsecEnd();
+        return h;
+    }
+
+    function renderAdminActionForm(d) {
+        const statusOpts = [
+            { val: 'pending', label: '待处理' },
+            { val: 'processing', label: '处理中' },
+            { val: 'quoted', label: '已报价' },
+            { val: 'closed', label: '已关闭' }
+        ];
+        const curStatus = d.status || 'pending';
+
+        let h = '<div class="adm-sec adm-action-sec"><div class="adm-sec-head"><h4>📋 管理员操作</h4></div><div class="adm-sec-body">';
+
+        // Status
+        h += '<div class="adm-form-row"><label class="adm-form-label">询盘状态</label>';
+        h += '<select id="adminStatusSelect" class="adm-form-select">';
+        statusOpts.forEach(o => {
+            h += '<option value="' + o.val + '"' + (curStatus === o.val ? ' selected' : '') + '>' + o.label + '</option>';
+        });
+        h += '</select></div>';
+
+        // Admin reply
+        h += '<div class="adm-form-row"><label class="adm-form-label">询盘回复</label>';
+        h += '<textarea id="adminReplyInput" class="adm-form-textarea" rows="4" placeholder="输入对客户的回复内容...">' + esc(d.admin_reply || '') + '</textarea></div>';
+
+        // Project link
+        h += '<div class="adm-form-row"><label class="adm-form-label">项目链接</label>';
+        h += '<input type="text" id="adminProjectLink" class="adm-form-input" placeholder="输入项目链接 URL" value="' + esc(d.project_link || '') + '"></div>';
+
+        // Project token
+        h += '<div class="adm-form-row"><label class="adm-form-label">项目 Token</label>';
+        h += '<input type="text" id="adminProjectToken" class="adm-form-input" placeholder="输入项目访问 Token" value="' + esc(d.project_token || '') + '"></div>';
+
+        // Save button
+        h += '<div class="adm-form-row adm-form-actions"><button id="adminSaveBtn" class="adm-btn adm-btn-save" onclick="saveAdminAction()">保存</button></div>';
+
+        h += '</div></div>';
         return h;
     }
 

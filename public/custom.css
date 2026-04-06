@@ -47,12 +47,14 @@
         /* 移动端头像菜单 — PC端隐藏 */
         .header-avatar-wrap { display: none; position: relative; }
         .header-avatar-btn {
-            width: 28px; height: 28px; border-radius: 50%;
-            background: var(--primary-color); color: #fff;
-            border: none; font-size: 12px; font-weight: 700;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            letter-spacing: 0; line-height: 1;
+            background: none; color: var(--text-light);
+            border: 1px solid var(--border-color); border-radius: 20px;
+            padding: 5px 14px; font-size: 12px; font-weight: 500;
+            cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
+            letter-spacing: 0.3px; line-height: 1;
+            transition: all 0.25s;
         }
+        .header-avatar-btn:active { border-color: var(--primary-color); color: var(--primary-color); }
         .header-user-menu {
             display: none; position: absolute; top: calc(100% + 8px); right: 0;
             background: #fff; border-radius: 12px;

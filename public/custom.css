@@ -1111,6 +1111,18 @@
                 grid-template-columns: 1fr !important;
                 gap: 20px !important;
             }
+
+            /* Step 5 所有网格：移动端各项各占一行 */
+            #step5-grid-a1,
+            #step5-grid-a2,
+            #step5-grid-b,
+            #step5-grid-c1,
+            #step5-grid-c2 {
+                grid-template-columns: 1fr !important;
+                gap: 15px !important;
+            }
+            /* C区预览行隐藏左侧占位符 */
+            #step5-grid-c2 > div:first-child:empty { display: none; }
             #sample-logic-table select,
             #sample-logic-table input {
                 width: 100%;

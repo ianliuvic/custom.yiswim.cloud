@@ -6641,7 +6641,7 @@
         
         // 增加一行
         function addSampleRow() {
-            const newRow = { style: '', type: '初版样 (Proto)', size: 'M', qty: 1, desc: '' };
+            const newRow = { style: '', type: '初样 (Proto)', size: 'M', qty: 1, desc: '' };
             sampleRows.push(newRow);
             renderSampleTable();
         }
@@ -6653,7 +6653,7 @@
                 sampleRows.splice(index, 1);
             } else {
                 // 【优化】如果只剩最后一行，点击删除则重置该行数据
-                sampleRows[0] = { style: '', type: '初版样 (Proto)', size: 'M', qty: 1, desc: '' };
+                sampleRows[0] = { style: '', type: '初样 (Proto)', size: 'M', qty: 1, desc: '' };
                 // 同时手动重置一下 OEM 数量（可选）
                 // document.getElementById('oem-style-count').value = 0;
             }
@@ -6671,8 +6671,6 @@
             const odmStyles = (typeof selectedOdmStyles !== 'undefined') ? selectedOdmStyles : [];
             const oemCountInput = document.getElementById('oem-collection-count');
             const oemCount = oemCountInput ? (parseInt(oemCountInput.value) || 0) : 0;
-            
-            let hasHighQty = false; // 标记是否存在数量 > 2 的行
         
             tbody.innerHTML = '';
             
@@ -6713,9 +6711,8 @@
                     </td>
                     <td>
                         <select onchange="updateRowData(${index}, 'type', this.value)">
-                            <option value="初版样 (Proto)" ${row.type==='初版样 (Proto)'?'selected':''}>初版样 (Proto)</option>
-                            <option value="修改/试穿样 (Fit)" ${row.type==='修改/试穿样 (Fit)'?'selected':''}>修改/试穿样 (Fit)</option>
-                            <option value="正确/产前样 (PP)" ${row.type==='正确/产前样 (PP)'?'selected':''}>正确/产前样 (PP)</option>
+                            <option value="初样 (Proto)" ${row.type==='初样 (Proto)'?'selected':''}>初样 (Proto)</option>
+                            <option value="正确样 (PP)" ${row.type==='正确样 (PP)'?'selected':''}>正确样 (PP)</option>
                         </select>
                     </td>
                     <td>
@@ -6731,26 +6728,10 @@
                         <button type="button" class="btn-remove-row" onclick="removeSampleRow(${index})">&times;</button>
                     </td>
                 `;
-                
-                // 检查收费预警
-                if (parseInt(row.qty) > 2) {
-                    hasHighQty = true;
-                }
         
                 tbody.appendChild(tr);
             });
         
-            // 处理收费预警框显隐
-            const warningEl = document.getElementById('sample-qty-warning');
-            if (warningEl) {
-                if (hasHighQty) {
-                    warningEl.classList.remove('hidden');
-                } else {
-                    warningEl.classList.add('hidden');
-                }
-            }
-        
-            calculateSampleCost(); 
             updateLogisticsSummary();
         }
 
@@ -6816,70 +6797,10 @@
         }
 
         // ==========================================
-        // 打样费用计算核心逻辑
+        // 打样费用（不在页面展示，保留函数接口避免报错）
         // ==========================================
-        // 3. 优化计算逻辑 (确保能抓取到最新值)
         function calculateSampleCost() {
-            const totalEl = document.getElementById('sample-fee-total');
-            const detailsEl = document.getElementById('sample-fee-details');
-            if (!totalEl || !detailsEl) return;
-        
-            const RATES = { PATTERN_OEM: 20, GRADING: 10, DEV_MANAGE: 10, SEWING_PROTO: 10, SEWING_FIT_PP: 20, LOGO_SETUP: 25, PRINT_SETUP: 10 };
-        
-            let totalPattern = 0, totalManage = 0, totalGrading = 0, totalSewing = 0, totalOptional = 0;
-            const uniqueStyles = new Set();
-            let hasHighQty = false;
-        
-            sampleRows.forEach(row => {
-                if (!row.style || row.style === "") return;
-                
-                uniqueStyles.add(row.style);
-                
-                // 计算件数费
-                const qty = parseInt(row.qty) || 0;
-                const sewingRate = row.type.includes('Proto') ? RATES.SEWING_PROTO : RATES.SEWING_FIT_PP;
-                totalSewing += sewingRate * qty;
-                
-                if (qty > 2) hasHighQty = true;
-            });
-        
-            uniqueStyles.forEach(styleName => {
-                totalManage += RATES.DEV_MANAGE;
-                totalGrading += RATES.GRADING;
-                if (styleName.startsWith('OEM')) totalPattern += RATES.PATTERN_OEM;
-            });
-        
-            // 这里可以根据实际需要开启印花/Logo检测...
-            // (逻辑同上一步)
-        
-            const grandTotal = totalPattern + totalManage + totalGrading + totalSewing + totalOptional;
-        
-            // 更新 UI
-            if (uniqueStyles.size === 0) {
-                detailsEl.innerHTML = "尚未添加任何款式到打样清单...";
-                totalEl.innerText = "$0.00";
-            } else {
-                // 优化费用明细输出格式
-                detailsEl.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                        <span>基础开发与管理 (${uniqueStyles.size}款)</span>
-                        <span style="font-weight:600; color:#475569;">$${totalManage + totalGrading}.00</span>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                        <span>OEM 新版制版费</span>
-                        <span style="font-weight:600; color:#475569;">$${totalPattern}.00</span>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; padding-top:6px; border-top:1px dashed #e2e8f0;">
-                        <span>样衣制作工时费 (总计)</span>
-                        <span style="font-weight:600; color:#475569;">$${totalSewing}.00</span>
-                    </div>
-                `;
-                totalEl.innerText = `$${grandTotal.toFixed(2)}`;
-            }
-        
-            // 预警框显隐
-            const warn = document.getElementById('sample-qty-warning');
-            if (warn) hasHighQty ? warn.classList.remove('hidden') : warn.classList.add('hidden');
+            // 费用计算已移除页面展示，此函数保留为空以兼容调用
         }
 
 

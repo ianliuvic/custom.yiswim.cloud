@@ -965,11 +965,14 @@
 
             .site-footer { font-size: 10px; padding: 0 16px; }
 
-            /* 移动端：禁用卡片 hover 效果，按钮常驻显示，避免需要点两次 */
+            /* 移动端：禁用卡片 hover 效果，避免需要点两次 */
             .option-item:hover { transform: none; box-shadow: none; }
             .option-item:hover .option-img { transform: none; }
-            .details-btn { opacity: 1 !important; visibility: visible !important; transform: scale(1) !important; }
-            .customize-btn { opacity: 1 !important; visibility: visible !important; transform: scale(1) !important; }
+            /* hover 不显示按钮，仅选中后显示 */
+            .option-item:hover .details-btn,
+            .option-item:hover .customize-btn { opacity: 0; visibility: hidden; transform: scale(0.8); }
+            .option-item.selected .details-btn,
+            .option-item.selected .customize-btn { opacity: 1 !important; visibility: visible !important; transform: scale(1) !important; }
 
             /* 轻定制弹窗：标题缩小 + 隐藏左侧图片 */
             #customModal .custom-modal-header { padding: 20px 18px 14px; }

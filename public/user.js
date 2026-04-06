@@ -724,7 +724,7 @@
         var h = '<div class="u-sec u-sec-response"><div class="u-sec-head"><div class="u-sec-icon response">' +
             '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
             '</div><h4>询盘回复</h4>';
-        if (d.admin_replied_at) h += '<span class="u-sec-count">' + fmtDate(d.admin_replied_at) + '</span>';
+        if (d.admin_replied_at) h += '<span class="u-sec-count">' + fmtDate(d.admin_replied_at) + ' (UTC+8)</span>';
         h += '</div><div class="u-sec-body">';
 
         if (d.admin_reply) h += kv('回复内容', '<div class="u-reply-text">' + esc(d.admin_reply) + '</div>');

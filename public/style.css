@@ -11,12 +11,44 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--bg-color);
+    background: linear-gradient(160deg, #1a0005 0%, #3d0010 30%, #5c0018 60%, #2a0008 100%);
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 波浪背景层 */
+body::before,
+body::after {
+    content: '';
+    position: absolute;
+    left: -10%;
+    width: 120%;
+    height: 260px;
+    border-radius: 45%;
+    animation: waveFloat 8s ease-in-out infinite;
+}
+body::before {
+    bottom: -80px;
+    background: rgba(170, 0, 0, 0.18);
+    animation-duration: 8s;
+}
+body::after {
+    bottom: -120px;
+    background: rgba(170, 0, 0, 0.10);
+    animation-duration: 11s;
+    animation-delay: -3s;
+}
+
+@keyframes waveFloat {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    25%      { transform: translateX(2%) rotate(1deg); }
+    50%      { transform: translateX(-1%) rotate(-0.5deg); }
+    75%      { transform: translateX(1.5%) rotate(0.8deg); }
 }
 
 /* 核心表单卡片 */
@@ -26,10 +58,11 @@ body {
     background: var(--card-bg);
     padding: 40px 35px;
     border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* 整体柔和阴影 */
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
     position: relative;
     overflow: hidden;
     box-sizing: border-box;
+    z-index: 1;
 }
 
 /* 顶部主题色装饰条 */

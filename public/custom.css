@@ -963,6 +963,75 @@
             .sample-table th, .sample-table td { padding: 8px 10px; font-size: 12px; }
             .sample-table select, .sample-table input { padding: 6px; font-size: 11px; }
 
+            /* step4 打样表格 → 移动端卡片化布局 */
+            #sample-logic-table thead { display: none; }
+            #sample-logic-table,
+            #sample-logic-table tbody { display: block; width: 100%; }
+            #sample-logic-table tr {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 0;
+                background: #f8fafc;
+                border: 1px solid #e2e8f0;
+                border-radius: 10px;
+                padding: 14px;
+                margin-bottom: 12px;
+                position: relative;
+            }
+            #sample-logic-table tr::before {
+                content: '打样项 #' attr(data-index);
+                grid-column: 1 / -1;
+                font-size: 11px;
+                font-weight: 700;
+                color: var(--primary-color);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                padding-bottom: 10px;
+                margin-bottom: 4px;
+                border-bottom: 1px dashed #e2e8f0;
+            }
+            #sample-logic-table td {
+                display: flex;
+                flex-direction: column;
+                padding: 6px 0;
+                border: none;
+                font-size: 12px;
+            }
+            #sample-logic-table td::before {
+                content: attr(data-label);
+                font-size: 10px;
+                font-weight: 600;
+                color: #94a3b8;
+                text-transform: uppercase;
+                letter-spacing: 0.3px;
+                margin-bottom: 4px;
+            }
+            /* 款式下拉：独占一行 */
+            #sample-logic-table td[data-label="对应款式"] { grid-column: 1 / -1; }
+            /* 备注：独占一行 */
+            #sample-logic-table td[data-label="备注"] { grid-column: 1 / -1; }
+            /* 删除按钮：绝对定位到卡片右上角 */
+            #sample-logic-table td.sample-card-remove {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                padding: 0;
+                width: auto;
+            }
+            #sample-logic-table td.sample-card-remove::before { display: none; }
+            #sample-logic-table td.sample-card-remove .btn-remove-row {
+                font-size: 20px;
+                color: #cbd5e1;
+            }
+            #sample-logic-table select,
+            #sample-logic-table input {
+                width: 100%;
+                padding: 8px 10px;
+                font-size: 13px;
+                border-radius: 6px;
+                box-sizing: border-box;
+            }
+
             .input-group input, .input-group select, #final_remark { padding: 10px 12px; font-size: 13px; }
 
             .site-footer { font-size: 10px; padding: 0 16px; }

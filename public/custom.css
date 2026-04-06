@@ -979,7 +979,7 @@
                 position: relative;
             }
             #sample-logic-table tr::before {
-                content: '打样项 #' attr(data-index);
+                content: attr(data-card-title);
                 grid-column: 1 / -1;
                 font-size: 11px;
                 font-weight: 700;
@@ -1013,8 +1013,8 @@
             /* 删除按钮：绝对定位到卡片右上角 */
             #sample-logic-table td.sample-card-remove {
                 position: absolute;
-                top: 10px;
-                right: 10px;
+                top: 4px;
+                right: 6px;
                 padding: 0;
                 width: auto;
             }

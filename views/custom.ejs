@@ -2238,6 +2238,23 @@
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                                         添加新打样项
                                     </button>
+
+                                    <!-- 费用预览区域 -->
+                                    <div style="padding: 20px 25px; background: #fdfdfd; border-top: 1px solid #f1f5f9;">
+                                        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px;">
+                                            <div id="sample-fee-details" style="font-size: 12px; color: #94a3b8; line-height: 2;">
+                                                请在上方清单中选择款式以预览费用...
+                                            </div>
+                                            <div style="text-align: right; display: flex; flex-direction: column; justify-content: center;">
+                                                <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">预估打样费 (USD)</div>
+                                                <div id="sample-fee-total" style="font-size: 32px; font-weight: 800; color: var(--primary-color);">$0.00</div>
+                                                <div style="font-size: 10px; color: #27ae60; font-weight: 600;">💎 同款同色大货 >300件 基础打样费全额退还</div>
+                                            </div>
+                                        </div>
+                                        <div id="sample-extra-warning" class="hidden" style="margin-top: 12px; background: #fef3c7; color: #92400e; padding: 8px 12px; border-radius: 6px; font-size: 11px; display: flex; align-items: center; gap: 8px;">
+                                            <strong>⚠️ 提示：</strong>部分款式打样数量超过 2 件，超出部分将加收缝制费。
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             

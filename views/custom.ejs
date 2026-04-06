@@ -3188,14 +3188,20 @@
       })(document,"script");
     </script>
     
-    <!-- === 3. 寄生注入遮盖层 (去水印终极 Hack) === -->
+    <!-- === 3. 寄生注入遮盖层 (去水印终极 Hack) + 移动端气泡上移 === -->
     <script>
       window.addEventListener("chatwoot:ready", function () {
         let radar = setInterval(function() {
            let wootContainer = document.querySelector('.woot-widget-holder');
            if (wootContainer) {
               clearInterval(radar); 
-    
+
+              // 移动端：将 Chatwoot 气泡上移，避免遮挡底部按钮栏
+              if (window.innerWidth <= 1024) {
+                var bubble = document.querySelector('.woot--bubble-holder');
+                if (bubble) bubble.style.setProperty('bottom', '70px', 'important');
+              }
+
               let shield = document.createElement('a');
               
               // 根据当前的语言，遮盖层的文字也做相应的翻译！极其专业！

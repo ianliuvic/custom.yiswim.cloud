@@ -1737,7 +1737,7 @@
             const stepEl = document.getElementById('step-' + stepNum);
             if (!stepEl) return;
             stepEl.querySelectorAll('[data-bg]').forEach(el => {
-                if (!el.style.backgroundImage || el.style.backgroundImage === 'none' || el.style.backgroundImage === '') {
+                if (!el.style.backgroundImage || !el.style.backgroundImage.includes('url')) {
                     el.style.backgroundImage = "url('" + el.dataset.bg + "')";
                 }
             });

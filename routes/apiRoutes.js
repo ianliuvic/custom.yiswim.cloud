@@ -458,7 +458,7 @@ router.post('/submit-inquiry', authenticateToken, upload.any(), async (req, res)
                 contact_name: d.contact_name,
                 brand_name: d.brand_name,
                 delivery_mode: d.delivery_mode,
-                submitted_at: new Date().toISOString()
+                submitted_at: new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })
             })
         }).catch(err => console.error('n8n webhook 通知失败:', err));
 

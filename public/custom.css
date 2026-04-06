@@ -47,9 +47,9 @@
         /* 移动端头像菜单 — PC端隐藏 */
         .header-avatar-wrap { display: none; position: relative; }
         .header-avatar-btn {
-            width: 32px; height: 32px; border-radius: 50%;
+            width: 28px; height: 28px; border-radius: 50%;
             background: var(--primary-color); color: #fff;
-            border: none; font-size: 14px; font-weight: 700;
+            border: none; font-size: 12px; font-weight: 700;
             cursor: pointer; display: flex; align-items: center; justify-content: center;
             letter-spacing: 0; line-height: 1;
         }

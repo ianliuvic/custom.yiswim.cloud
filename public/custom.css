@@ -971,6 +971,10 @@
             #customModal .custom-modal-header h3 span[style*="font-size:12px"] { font-size: 10px !important; padding: 3px 6px !important; }
             #customModal .custom-modal-body { flex-direction: column; padding: 18px 16px 20px; gap: 0; }
             #customModal .custom-modal-body > div:first-child { display: none !important; }
+
+            /* OEM模块：B/C各占一行，D内两部分各占一行 */
+            #custom-upload > div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
+            #custom-upload .oem-upload-section > div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
         }
 
         /* ---- Phone ---- */

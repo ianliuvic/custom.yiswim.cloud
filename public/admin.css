@@ -716,3 +716,68 @@ body {
 }
 .adm-timeline-dot.muted { background: #94a3b8; }
 .adm-timeline-dot.danger { background: var(--danger-color); }
+
+/* ── Admin Action Form ── */
+.adm-action-sec {
+    border-color: #bfdbfe;
+    background: #f0f7ff;
+}
+.adm-action-sec .adm-sec-head {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+}
+.adm-form-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #e8ecf1;
+}
+.adm-form-row:last-child { border-bottom: none; }
+.adm-form-label {
+    width: 100px;
+    flex-shrink: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    padding-top: 8px;
+}
+.adm-form-select,
+.adm-form-input,
+.adm-form-textarea {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text-main);
+    background: #fff;
+    outline: none;
+    transition: border-color 0.2s;
+    font-family: inherit;
+}
+.adm-form-select:focus,
+.adm-form-input:focus,
+.adm-form-textarea:focus {
+    border-color: var(--primary-color);
+}
+.adm-form-textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+.adm-form-actions {
+    justify-content: flex-end;
+    border-bottom: none;
+    padding-top: 14px;
+}
+.adm-btn-save {
+    background: var(--primary-color);
+    color: #fff;
+    padding: 8px 32px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+.adm-btn-save:hover { opacity: 0.9; }
+.adm-btn-save:disabled { opacity: 0.5; cursor: default; }

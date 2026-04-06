@@ -1017,6 +1017,12 @@
             /* step4 打样规格建议弹窗：各项各占一行 */
             .sample-guide-grid { grid-template-columns: 1fr !important; }
 
+            /* step4 C区：目的地和快递方式各占一行 */
+            #pane-delivery-sample .attr-section > div > div[style*="grid-template-columns: 1fr 1.5fr"] { grid-template-columns: 1fr !important; }
+
+            /* step4 D区：预估数量和期望单价各占一行 */
+            #sample-bulk-intent-fields > div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
+
             /* step3 toggle-section 字体缩小，保证单行放下 */
             .toggle-section { gap: 10px !important; padding: 12px 14px !important; }
             .toggle-title { font-size: 12px !important; }

@@ -602,6 +602,10 @@ body {
     .u-detail-hero-title { gap: 8px; }
 
     .u-kv-label { width: 90px; font-size: 12px; }
+
+    .u-kv { flex-direction: column; gap: 2px; }
+    .u-kv .u-kv-label { width: 100%; }
+
     .u-style-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
     .u-trim-grid { grid-template-columns: 1fr; }
     .u-file-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }

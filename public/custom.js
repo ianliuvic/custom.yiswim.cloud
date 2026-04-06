@@ -6733,9 +6733,8 @@
             });
         
             updateLogisticsSummary();
+            calculateSampleCost();
         }
-
-        // 标签合规提示弹窗控制
         function openLabelComplianceModal() {
             document.getElementById('labelComplianceModal').classList.add('active');
         }
@@ -6797,10 +6796,102 @@
         }
 
         // ==========================================
-        // 打样费用（不在页面展示，保留函数接口避免报错）
+        // 打样费用计算核心逻辑
+        // 规则：每款 $20制版 + $10管理 + 首件缝制费(按最贵类型) = 基础费
+        //       初样 $40/款 = $20+$10+$10, 正确样 $50/款 = $20+$10+$20
+        //       每款含2件免费(已包含在基础费中)，超出按件收缝制费
+        //       同款多行合并计算，免费名额优先消耗贵的类型
         // ==========================================
         function calculateSampleCost() {
-            // 费用计算已移除页面展示，此函数保留为空以兼容调用
+            const totalEl = document.getElementById('sample-fee-total');
+            const detailsEl = document.getElementById('sample-fee-details');
+            if (!totalEl || !detailsEl) return;
+
+            const PATTERN_FEE = 20;
+            const MANAGE_FEE = 10;
+            const SEWING_PROTO = 10;
+            const SEWING_PP = 20;
+            const FREE_QTY = 2;
+
+            // 按款式分组汇总
+            const styleMap = {};
+            sampleRows.forEach(row => {
+                if (!row.style || row.style === '') return;
+                if (!styleMap[row.style]) styleMap[row.style] = { protoQty: 0, ppQty: 0 };
+                const qty = parseInt(row.qty) || 0;
+                if (row.type.includes('Proto')) {
+                    styleMap[row.style].protoQty += qty;
+                } else {
+                    styleMap[row.style].ppQty += qty;
+                }
+            });
+
+            const styles = Object.keys(styleMap);
+
+            if (styles.length === 0) {
+                detailsEl.innerHTML = _t('请在上方清单中选择款式以预览费用...');
+                totalEl.innerText = '$0.00';
+                const w = document.getElementById('sample-extra-warning');
+                if (w) w.classList.add('hidden');
+                return;
+            }
+
+            let totalBase = 0;
+            let totalExtraSewing = 0;
+            let hasExtra = false;
+
+            styles.forEach(style => {
+                const { protoQty, ppQty } = styleMap[style];
+                const totalQty = protoQty + ppQty;
+
+                // 基础费 = 制版 + 管理 + 首件缝制(取最贵类型)
+                const baseSewing = ppQty > 0 ? SEWING_PP : SEWING_PROTO;
+                totalBase += PATTERN_FEE + MANAGE_FEE + baseSewing;
+
+                // 超出2件的缝制费
+                if (totalQty > FREE_QTY) {
+                    // 免费名额优先消耗贵的 (PP)，让客户少付额外费用
+                    let ppRemain = ppQty;
+                    let protoRemain = protoQty;
+                    let freeLeft = FREE_QTY;
+
+                    const ppFree = Math.min(ppRemain, freeLeft);
+                    ppRemain -= ppFree;
+                    freeLeft -= ppFree;
+
+                    const protoFree = Math.min(protoRemain, freeLeft);
+                    protoRemain -= protoFree;
+
+                    totalExtraSewing += ppRemain * SEWING_PP + protoRemain * SEWING_PROTO;
+                    hasExtra = true;
+                }
+            });
+
+            const grandTotal = totalBase + totalExtraSewing;
+
+            let html = `
+                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                    <span>${_t('基础打样费')} (${styles.length}${_t('款')})</span>
+                    <span style="font-weight:600; color:#475569;">$${totalBase}.00</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                    <span style="color:#64748b;">${_t('含制版·管理·缝制，每款免费含2件')}</span>
+                </div>`;
+
+            if (totalExtraSewing > 0) {
+                html += `
+                <div style="display:flex; justify-content:space-between; padding-top:6px; border-top:1px dashed #e2e8f0;">
+                    <span>${_t('超出缝制费')}</span>
+                    <span style="font-weight:600; color:#ef4444;">+$${totalExtraSewing}.00</span>
+                </div>`;
+            }
+
+            detailsEl.innerHTML = html;
+            totalEl.innerText = `$${grandTotal.toFixed(2)}`;
+
+            // 超量提示
+            const warn = document.getElementById('sample-extra-warning');
+            if (warn) hasExtra ? warn.classList.remove('hidden') : warn.classList.add('hidden');
         }
 
 

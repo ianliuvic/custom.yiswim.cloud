@@ -1351,6 +1351,8 @@
         { m: '正确样（', h: 'II. PP Sample (<span style="color: var(--primary-color); font-weight: 700;">$50 / style</span>)' },
         // Fee standard modal: qty policy
         { m: '每款打样默认包含', h: 'Each style includes <strong>1</strong> sample by default, with 1 additional piece free (max <strong style="color: var(--primary-color);">2 pcs</strong> free per style); beyond 2, extra sewing fee charged per piece' },
+        // Sample guide modal: qty card
+        { m: '每款默认包含', h: 'Each style includes <strong>1</strong> sample, with 1 additional piece free (max <strong style="color:var(--primary-color);">2 pcs free</strong>).<br><br>Beyond 2 pieces, extra sewing fee charged per piece.' },
         // Fee standard modal: refund plan
         { m: '当同款同色大货数量超过', h: '<strong>Bulk Refund Plan:</strong> When same style &amp; same color bulk quantity exceeds <strong>300 pcs</strong>, basic sample fees will be fully refunded!' }
     ];

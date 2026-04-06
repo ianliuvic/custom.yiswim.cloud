@@ -1007,9 +1007,11 @@
                 margin-bottom: 4px;
             }
             /* 款式下拉：独占一行 */
-            #sample-logic-table td[data-label="对应款式"] { grid-column: 1 / -1; }
+            #sample-logic-table td[data-label="对应款式"],
+            #sample-logic-table td[data-label="Style"] { grid-column: 1 / -1; }
             /* 备注：独占一行 */
-            #sample-logic-table td[data-label="备注"] { grid-column: 1 / -1; }
+            #sample-logic-table td[data-label="备注"],
+            #sample-logic-table td[data-label="Notes"] { grid-column: 1 / -1; }
             /* 删除按钮：绝对定位到卡片右上角 */
             #sample-logic-table td.sample-card-remove {
                 position: absolute;
@@ -1022,6 +1024,86 @@
             #sample-logic-table td.sample-card-remove .btn-remove-row {
                 font-size: 20px;
                 color: #cbd5e1;
+            }
+
+            /* step4 大货表格 → 移动端卡片化布局 */
+            #bulk-logic-table thead { display: none; }
+            #bulk-logic-table,
+            #bulk-logic-table tbody { display: block; width: 100%; }
+            #bulk-logic-table tr {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 0;
+                background: #f8fafc;
+                border: 1px solid #e2e8f0;
+                border-radius: 10px;
+                padding: 14px;
+                margin-bottom: 12px;
+                position: relative;
+            }
+            #bulk-logic-table tr::before {
+                content: attr(data-card-title);
+                grid-column: 1 / -1;
+                font-size: 11px;
+                font-weight: 700;
+                color: var(--primary-color);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                padding-bottom: 10px;
+                margin-bottom: 4px;
+                border-bottom: 1px dashed #e2e8f0;
+            }
+            #bulk-logic-table td {
+                display: flex;
+                flex-direction: column;
+                padding: 6px 0;
+                border: none;
+                font-size: 12px;
+            }
+            #bulk-logic-table td::before {
+                content: attr(data-label);
+                font-size: 10px;
+                font-weight: 600;
+                color: #94a3b8;
+                text-transform: uppercase;
+                letter-spacing: 0.3px;
+                margin-bottom: 4px;
+            }
+            /* 款式下拉：独占一行 */
+            #bulk-logic-table td[data-label="对应款式"],
+            #bulk-logic-table td[data-label="Style"] { grid-column: 1 / -1; }
+            /* 尺码明细 & 备注：独占一行 */
+            #bulk-logic-table td[data-label="尺码及数量明细"],
+            #bulk-logic-table td[data-label="Size Details"] { grid-column: 1 / -1; }
+            #bulk-logic-table td[data-label="备注 / 描述"],
+            #bulk-logic-table td[data-label="Notes"] { grid-column: 1 / -1; }
+            /* 删除按钮：绝对定位到卡片右上角 */
+            #bulk-logic-table td.bulk-card-remove {
+                position: absolute;
+                top: 4px;
+                right: 6px;
+                padding: 0;
+                width: auto;
+            }
+            #bulk-logic-table td.bulk-card-remove::before { display: none; }
+            #bulk-logic-table td.bulk-card-remove .btn-remove-row {
+                font-size: 20px;
+                color: #cbd5e1;
+            }
+            #bulk-logic-table select,
+            #bulk-logic-table input,
+            #bulk-logic-table textarea {
+                width: 100%;
+                padding: 8px 10px;
+                font-size: 13px;
+                border-radius: 6px;
+                box-sizing: border-box;
+            }
+
+            /* 大货价格区域：期望价格 & 核算说明各占一行 */
+            #bulk-price-grid {
+                grid-template-columns: 1fr !important;
+                gap: 20px !important;
             }
             #sample-logic-table select,
             #sample-logic-table input {

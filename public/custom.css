@@ -23,9 +23,20 @@
             display: flex; flex-direction: column;
             justify-content: flex-start; align-items: stretch;
             margin: 0; padding: 0; background-color: #fff;
-            padding-top: env(safe-area-inset-top, 0px);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             -webkit-font-smoothing: antialiased;
+        }
+
+        /* 防止 Chatwoot 注入的 DOM 元素参与 body flex 布局 */
+        body > .woot-widget-holder,
+        body > .woot--bubble-holder,
+        body > [id*="chatwoot"],
+        body > [id*="cw-widget"] {
+            position: fixed !important;
+            flex: 0 0 0px !important;
+            width: 0 !important;
+            height: 0 !important;
+            overflow: visible !important;
         }
     
         /* 滚动条美化 */

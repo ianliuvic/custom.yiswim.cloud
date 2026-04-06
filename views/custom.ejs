@@ -64,16 +64,12 @@
                 margin: 0 auto 16px;
             }
         }
-        @media (max-width: 768px) {
-            .site-header { padding-top: 6px !important; padding-bottom: 6px !important; height: auto !important; min-height: 48px !important; }
-        }
     </style>
     <script>window.__lang = '<%= lng %>';</script>
     <script src="/i18n.js"></script>
     <script src="/modal.js"></script>
 </head>
 <body>
-<div id="app-root">
 
     <header class="site-header">
         <div class="header-left" onclick="goToStep1()" style="cursor:pointer" title="返回第一步">
@@ -3138,7 +3134,6 @@
             <div id="uploadPercent" style="font-size:13px; font-weight:600; color:var(--primary-color);">0%</div>
         </div>
     </div>
-</div><!-- /app-root -->
 
     <!-- =========================================================================
          核心 JavaScript 逻辑

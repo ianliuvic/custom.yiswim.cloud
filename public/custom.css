@@ -1014,6 +1014,9 @@
             #pane-delivery-sample .attr-section > div[style*="display: flex"],
             #pane-delivery-bulk .attr-section > div[style*="display: flex"] { flex-direction: column !important; gap: 12px !important; align-items: flex-start !important; }
 
+            /* step4 打样规格建议弹窗：各项各占一行 */
+            .sample-guide-grid { grid-template-columns: 1fr !important; }
+
             /* step3 toggle-section 字体缩小，保证单行放下 */
             .toggle-section { gap: 10px !important; padding: 12px 14px !important; }
             .toggle-title { font-size: 12px !important; }

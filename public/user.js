@@ -173,6 +173,9 @@
             // ─── Section 5: Contact ───
             html += renderContactSection(d);
 
+            // ─── Section 6: Admin Response ───
+            html += renderAdminResponseSection(d);
+
             // ─── Uncategorized files ───
             var shownCats = ['odmCustom', 'oem', 'fabric', 'cmt', 'metal', 'pad', 'bag', 'hangtag', 'label', 'hygiene', 'other', 'bulkPacking', 'finalDocs'];
             var remainFiles = [];
@@ -711,6 +714,24 @@
         if (d.final_remark) h += kv('整体备注', esc(d.final_remark));
         if (d.nda_agreed_at) h += kv('NDA 签署', '<span class="u-check-item" style="display:inline-flex"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>已签署 ' + fmtDate(d.nda_agreed_at) + '</span>');
         h += secEnd();
+        return h;
+    }
+
+    function renderAdminResponseSection(d) {
+        // 如果没有任何管理员回复信息，不显示此区块
+        if (!d.admin_reply && !d.project_link && !d.project_token) return '';
+
+        var h = '<div class="u-sec u-sec-response"><div class="u-sec-head"><div class="u-sec-icon response">' +
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
+            '</div><h4>询盘回复</h4>';
+        if (d.admin_replied_at) h += '<span class="u-sec-count">' + fmtDate(d.admin_replied_at) + '</span>';
+        h += '</div><div class="u-sec-body">';
+
+        if (d.admin_reply) h += kv('回复内容', '<div class="u-reply-text">' + esc(d.admin_reply) + '</div>');
+        if (d.project_link) h += kv('项目链接', '<a href="' + esc(d.project_link) + '" target="_blank" rel="noopener noreferrer">' + esc(d.project_link) + '</a>');
+        if (d.project_token) h += kv('项目 Token', '<code class="u-token">' + esc(d.project_token) + '</code>');
+
+        h += '</div></div>';
         return h;
     }
 

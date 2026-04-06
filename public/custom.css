@@ -992,4 +992,11 @@
             /* 大图预览：隐藏箭头和提示文字 */
             #swatch-prev-btn, #swatch-next-btn { display: none !important; }
             .swatch-hint-desktop { display: none !important; }
+
+            /* 轻定制弹窗：标题缩小 + 隐藏左侧图片 */
+            #customModal .custom-modal-header { padding: 20px 18px 14px; }
+            #customModal .custom-modal-header h3 { font-size: 15px; gap: 6px; }
+            #customModal .custom-modal-header h3 span[style*="font-size:12px"] { font-size: 10px !important; padding: 3px 6px !important; }
+            #customModal .custom-modal-body { flex-direction: column; padding: 18px 16px 20px; gap: 0; }
+            #customModal .custom-modal-body > div:first-child { display: none; }
         }

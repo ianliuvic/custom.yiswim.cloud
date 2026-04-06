@@ -1344,7 +1344,15 @@
         // Step 4: cost estimate note (in sampling section)
         { m: '上述金额仅为', h: '<strong style="color: #64748b;">Cost Estimation Note:</strong> The amounts above are only <span style="color: var(--text-main);">preliminary estimates based on pattern-making and basic labor</span>.<br>This estimate <strong style="color: #ef4444;">does not include</strong> digital print/Logo screen setup fees, multi-size grading fees, special hardware molding, or imported fabric surcharges. The final development cost will be confirmed in the official PI (Proforma Invoice) after comprehensive evaluation by the sales manager.' },
         // MOQ modal: Level 4 special materials
-        { m: '包含且不限于', h: 'Including: custom Pantone dyeing, custom placement printing, special texture sourcing, brand exclusive hardware mold, etc. <strong>(Subject to minimum production requirements of dyeing factories and trim supply chains)</strong>' }
+        { m: '包含且不限于', h: 'Including: custom Pantone dyeing, custom placement printing, special texture sourcing, brand exclusive hardware mold, etc. <strong>(Subject to minimum production requirements of dyeing factories and trim supply chains)</strong>' },
+        // Fee standard modal: section I heading
+        { m: '初样（', h: 'I. Proto Sample (<span style="color: var(--primary-color); font-weight: 700;">$40 / style</span>)' },
+        // Fee standard modal: section II heading
+        { m: '正确样（', h: 'II. PP Sample (<span style="color: var(--primary-color); font-weight: 700;">$50 / style</span>)' },
+        // Fee standard modal: qty policy
+        { m: '每款打样默认包含', h: 'Each style includes <strong>1</strong> sample by default, with 1 additional piece free (max <strong style="color: var(--primary-color);">2 pcs</strong> free per style); beyond 2, extra sewing fee charged per piece' },
+        // Fee standard modal: refund plan
+        { m: '当同款同色大货数量超过', h: '<strong>Bulk Refund Plan:</strong> When same style &amp; same color bulk quantity exceeds <strong>300 pcs</strong>, basic sample fees will be fully refunded!' }
     ];
 
     // Merge jsDynamic into dict
@@ -1428,7 +1436,7 @@
     function translateRichElements(root) {
         if (LANG === 'zh' || richDict.length === 0) return;
         root = root || document.body;
-        var els = Array.prototype.slice.call(root.querySelectorAll('div, span, p, li, td, label'));
+        var els = Array.prototype.slice.call(root.querySelectorAll('div, span, p, li, td, label, h5'));
         // Process innermost elements first so parent doesn't clobber children
         els.reverse();
         for (var i = 0; i < els.length; i++) {

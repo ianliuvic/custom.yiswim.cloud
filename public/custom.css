@@ -1010,6 +1010,10 @@
             /* 卫生贴tab：ABC自定义区域的文件上传和文本输入各占一行 */
             #hygiene-custom-details div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
 
+            /* step4 A区域：ODM/OEM数量及note各占一行 */
+            #pane-delivery-sample .attr-section > div[style*="display: flex"],
+            #pane-delivery-bulk .attr-section > div[style*="display: flex"] { flex-direction: column !important; gap: 12px !important; align-items: flex-start !important; }
+
             /* step3 toggle-section 字体缩小，保证单行放下 */
             .toggle-section { gap: 10px !important; padding: 12px 14px !important; }
             .toggle-title { font-size: 12px !important; }

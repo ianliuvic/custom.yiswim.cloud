@@ -437,6 +437,7 @@
         "基础打样费": "Base Sample Fee",
         "含制版·管理·缝制，每款免费含2件": "Incl. pattern, management & sewing, 2 pcs free per style",
         "超出缝制费": "Extra Sewing Fee",
+        "上述费用为基础打样费，不含印标、镶钻、数码印花等增值工艺，如涉及将另行核算。": "Above fees are basic sampling costs, excluding printed labels, rhinestones, digital printing, etc. Extra charges apply if needed.",
         "样品接收配置": "Sample Shipping Configuration",
         "样品接收目的地": "Sample Receiving Destination",
         "请选择国家...": "Please select country...",

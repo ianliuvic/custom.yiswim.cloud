@@ -3525,22 +3525,31 @@
 
         // 6. 移动端手指滑动切换图片
         (function() {
-            var touchStartX = 0, touchStartY = 0, swiping = false;
+            var touchStartX = 0, touchStartY = 0, touchMoveX = 0, isHSwipe = null;
             swatchCont.addEventListener('touchstart', function(e) {
                 if (e.touches.length === 1) {
-                    touchStartX = e.touches[0].clientX;
+                    touchStartX = touchMoveX = e.touches[0].clientX;
                     touchStartY = e.touches[0].clientY;
-                    swiping = true;
+                    isHSwipe = null;
                 }
             }, { passive: true });
+            swatchCont.addEventListener('touchmove', function(e) {
+                if (e.touches.length !== 1) return;
+                touchMoveX = e.touches[0].clientX;
+                var dx = Math.abs(touchMoveX - touchStartX);
+                var dy = Math.abs(e.touches[0].clientY - touchStartY);
+                // 一旦确定为水平滑动，阻止默认行为（防止 Safari 返回手势等）
+                if (isHSwipe === null && (dx > 10 || dy > 10)) {
+                    isHSwipe = dx > dy;
+                }
+                if (isHSwipe) e.preventDefault();
+            }, { passive: false });
             swatchCont.addEventListener('touchend', function(e) {
-                if (!swiping || e.changedTouches.length !== 1) return;
-                swiping = false;
-                var dx = e.changedTouches[0].clientX - touchStartX;
-                var dy = e.changedTouches[0].clientY - touchStartY;
-                if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+                var dx = touchMoveX - touchStartX;
+                if (isHSwipe && Math.abs(dx) > 40) {
                     swatchCarouselMove(dx < 0 ? 1 : -1);
                 }
+                isHSwipe = null;
             }, { passive: true });
         })();
         

@@ -8,32 +8,38 @@
     <script>window.__lang = '<%= typeof lng !== 'undefined' ? lng : "zh" %>';</script>
     <script src="/i18n.js"></script>
     <style>
+        :root {
+            --primary-color: #aa0000;
+            --primary-hover: #880000;
+            --primary-light: rgba(170, 0, 0, 0.1);
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif; color: #1e293b; background: #fff; }
+
         /* Nav */
         .landing-nav { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 20px 24px; }
         .landing-nav .logo-area { display: flex; align-items: center; gap: 10px; }
         .landing-nav .logo-area img { height: 36px; }
         .landing-nav .logo-area span { font-size: 18px; font-weight: 700; color: #1e293b; }
         .landing-nav .nav-actions { display: flex; align-items: center; gap: 12px; }
-        .btn-login { padding: 8px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; transition: all 0.25s; border: 1.5px solid #aa0000; color: #aa0000; background: transparent; }
-        .btn-login:hover { background: #aa0000; color: #fff; }
-        .btn-register { padding: 8px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; transition: all 0.25s; border: 1.5px solid #aa0000; background: #aa0000; color: #fff; }
-        .btn-register:hover { background: #8b0000; border-color: #8b0000; }
+        .btn-login { padding: 8px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; transition: all 0.25s; border: 1.5px solid var(--primary-color); color: var(--primary-color); background: transparent; }
+        .btn-login:hover { background: var(--primary-color); color: #fff; }
+        .btn-register { padding: 8px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; transition: all 0.25s; border: 1.5px solid var(--primary-color); background: var(--primary-color); color: #fff; }
+        .btn-register:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
         .btn-lang { background: none; border: 1px solid #e0e0e0; border-radius: 20px; padding: 5px 14px; font-size: 12px; cursor: pointer; color: #64748b; transition: all 0.25s; display: inline-flex; align-items: center; gap: 5px; font-weight: 500; }
-        .btn-lang:hover { border-color: #aa0000; color: #aa0000; }
+        .btn-lang:hover { border-color: var(--primary-color); color: var(--primary-color); }
 
         /* Hero */
         .hero { text-align: center; padding: 80px 24px 60px; background: linear-gradient(180deg, #fdf2f2 0%, #fff 100%); }
         .hero h1 { font-size: 42px; font-weight: 800; margin-bottom: 20px; line-height: 1.3; }
-        .hero h1 span { color: #aa0000; }
+        .hero h1 span { color: var(--primary-color); }
         .hero p { font-size: 18px; color: #64748b; max-width: 600px; margin: 0 auto 40px; line-height: 1.7; }
         .hero .cta-group { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-        .btn-cta { padding: 14px 40px; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; text-decoration: none; transition: all 0.25s; }
-        .btn-cta-primary { background: #aa0000; color: #fff; border: 2px solid #aa0000; }
-        .btn-cta-primary:hover { background: #8b0000; border-color: #8b0000; }
-        .btn-cta-secondary { background: #fff; color: #aa0000; border: 2px solid #aa0000; }
-        .btn-cta-secondary:hover { background: #aa0000; color: #fff; }
+        .btn-cta { padding: 14px 40px; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; text-decoration: none; transition: all 0.25s; display: inline-block; }
+        .btn-cta-primary { background: var(--primary-color); color: #fff; border: 2px solid var(--primary-color); }
+        .btn-cta-primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+        .btn-cta-secondary { background: #fff; color: var(--primary-color); border: 2px solid var(--primary-color); }
+        .btn-cta-secondary:hover { background: var(--primary-color); color: #fff; }
 
         /* Features */
         .features { max-width: 1100px; margin: 0 auto; padding: 80px 24px; }
@@ -48,11 +54,54 @@
         /* Footer */
         .landing-footer { text-align: center; padding: 40px 24px; color: #94a3b8; font-size: 13px; border-top: 1px solid #f1f1f1; }
 
+        /* ===== Auth Modal ===== */
+        .auth-overlay { display: none; position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,0.45); justify-content: center; align-items: center; animation: overlayIn 0.2s ease; }
+        .auth-overlay.active { display: flex; }
+        @keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .auth-modal { position: relative; width: 100%; max-width: 420px; background: #fff; border-radius: 16px; padding: 40px 35px 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); animation: modalIn 0.25s ease; overflow: hidden; }
+        @keyframes modalIn { from { opacity: 0; transform: translateY(24px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .auth-modal::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: var(--primary-color); }
+
+        .auth-close { position: absolute; top: 14px; right: 18px; background: none; border: none; font-size: 22px; color: #94a3b8; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: all 0.2s; line-height: 1; }
+        .auth-close:hover { color: #1e293b; background: #f1f5f9; }
+
+        .auth-modal h2 { text-align: center; font-size: 22px; font-weight: 700; color: #1e293b; margin-bottom: 24px; }
+
+        .auth-modal .status-msg { padding: 10px 14px; border-radius: 8px; font-size: 13px; text-align: center; margin-bottom: 16px; animation: fadeIn 0.3s ease; }
+        .auth-modal .status-error { background: #fde8e8; color: #c81e1e; border: 1px solid #f8b4b4; }
+        .auth-modal .status-success { background: #defadb; color: #1e5e20; border: 1px solid #bcf0da; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .auth-modal form { display: flex; flex-direction: column; }
+        .auth-modal input { width: 100%; padding: 13px 14px; margin-bottom: 16px; border: 1px solid #e1e4e8; border-radius: 8px; font-size: 14px; outline: none; transition: all 0.25s; background: #fafbfc; }
+        .auth-modal input:focus { background: #fff; border-color: var(--primary-color); box-shadow: 0 0 0 3px var(--primary-light); }
+
+        .auth-modal .password-wrapper { position: relative; width: 100%; margin-bottom: 16px; }
+        .auth-modal .password-wrapper input { margin-bottom: 0; padding-right: 44px; }
+        .auth-modal .toggle-password { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; display: flex; align-items: center; color: #999; transition: color 0.3s; }
+        .auth-modal .toggle-password:hover { color: var(--primary-color); }
+        .auth-modal .eye-icon { width: 18px; height: 18px; }
+
+        .auth-modal button[type="submit"] { background: var(--primary-color); color: #fff; border: none; padding: 13px; font-size: 15px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: background 0.25s, transform 0.1s; margin-top: 4px; }
+        .auth-modal button[type="submit"]:hover { background: var(--primary-hover); }
+        .auth-modal button[type="submit"]:active { transform: scale(0.98); }
+        .auth-modal button[type="submit"]:disabled { background: #d48080; cursor: not-allowed; transform: none; }
+
+        .auth-modal .links { margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; font-size: 13px; color: #666; }
+        .auth-modal .links span { color: var(--primary-color); cursor: pointer; font-weight: 500; transition: color 0.2s; }
+        .auth-modal .links span:hover { color: var(--primary-hover); text-decoration: underline; }
+
+        .auth-modal .help-text { font-size: 13px; color: #666; text-align: center; margin-bottom: 16px; line-height: 1.5; }
+
+        .hidden { display: none !important; }
+
         @media (max-width: 768px) {
             .hero h1 { font-size: 28px; }
             .hero p { font-size: 15px; }
             .btn-cta { padding: 12px 28px; font-size: 14px; }
             .landing-nav .logo-area span { font-size: 15px; }
+            .auth-modal { margin: 16px; padding: 32px 24px 24px; }
         }
     </style>
 </head>
@@ -69,15 +118,15 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8l6 0"/><path d="M4 12l7 0"/><path d="M8 8c0 2.5-1.5 5-4 6.5"/><path d="M6 8c0 1.5.8 3 2.5 4.5"/><path d="M14 12l3.5 8"/><path d="M14 12l-3.5 8"/><path d="M11.5 17h5"/></svg>
                 <%= typeof lng !== 'undefined' && lng === 'en' ? '中文' : 'EN' %>
             </button>
-            <a href="/login" class="btn-login"><%= typeof lng !== 'undefined' && lng === 'en' ? 'Login' : '登录' %></a>
-            <a href="/login#register" class="btn-register"><%= typeof lng !== 'undefined' && lng === 'en' ? 'Register' : '注册' %></a>
+            <button class="btn-login" onclick="openAuth('login')"><%= typeof lng !== 'undefined' && lng === 'en' ? 'Login' : '登录' %></button>
+            <button class="btn-register" onclick="openAuth('register')"><%= typeof lng !== 'undefined' && lng === 'en' ? 'Register' : '注册' %></button>
         </div>
     </nav>
 
     <!-- Hero Section -->
     <section class="hero">
         <h1>
-            <%= typeof lng !== 'undefined' && lng === 'en'
+            <%- typeof lng !== 'undefined' && lng === 'en'
                 ? 'Professional Apparel <span>Custom</span> Service'
                 : '专业服装<span>定制</span>服务' %>
         </h1>
@@ -87,12 +136,12 @@
                 : '从设计到生产，一站式 ODM/OEM 定制平台。轻松提交需求、实时追踪进度、获取专业报价。' %>
         </p>
         <div class="cta-group">
-            <a href="/login#register" class="btn-cta btn-cta-primary">
+            <button class="btn-cta btn-cta-primary" onclick="openAuth('register')">
                 <%= typeof lng !== 'undefined' && lng === 'en' ? 'Get Started Free' : '免费开始使用' %>
-            </a>
-            <a href="/login" class="btn-cta btn-cta-secondary">
+            </button>
+            <button class="btn-cta btn-cta-secondary" onclick="openAuth('login')">
                 <%= typeof lng !== 'undefined' && lng === 'en' ? 'Login' : '已有账号登录' %>
-            </a>
+            </button>
         </div>
     </section>
 
@@ -128,6 +177,219 @@
     <footer class="landing-footer">
         &copy; 2026 Hongxiu Custom. All rights reserved.
     </footer>
+
+    <!-- ===== Auth Modal ===== -->
+    <div class="auth-overlay" id="authOverlay">
+        <div class="auth-modal">
+            <button class="auth-close" onclick="closeAuth()">&times;</button>
+            <div id="auth-status-msg" class="status-msg hidden"></div>
+
+            <!-- Login Form -->
+            <div id="login-box" class="form-box">
+                <h2><%= typeof lng !== 'undefined' && lng === 'en' ? 'Login' : '用户登录' %></h2>
+                <form id="loginForm">
+                    <input type="text" id="loginUser" placeholder="<%= typeof lng !== 'undefined' && lng === 'en' ? 'Username or Email' : '用户名或邮箱' %>" required>
+                    <div class="password-wrapper">
+                        <input type="password" id="loginPass" placeholder="<%= typeof lng !== 'undefined' && lng === 'en' ? 'Password' : '密码' %>" required>
+                        <span class="toggle-password" onclick="togglePassword('loginPass', this)">
+                            <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                        </span>
+                    </div>
+                    <button type="submit"><%= typeof lng !== 'undefined' && lng === 'en' ? 'Login' : '登 录' %></button>
+                </form>
+                <div class="links">
+                    <span onclick="switchAuthBox('register-box')"><%= typeof lng !== 'undefined' && lng === 'en' ? "Don't have an account? Register" : '没有账号？点击注册' %></span>
+                    <span onclick="switchAuthBox('forgot-box')"><%= typeof lng !== 'undefined' && lng === 'en' ? 'Forgot password?' : '忘记密码？' %></span>
+                </div>
+            </div>
+
+            <!-- Register Form -->
+            <div id="register-box" class="form-box hidden">
+                <h2><%= typeof lng !== 'undefined' && lng === 'en' ? 'Create Account' : '创建账号' %></h2>
+                <form id="registerForm">
+                    <input type="text" id="regUser" placeholder="<%= typeof lng !== 'undefined' && lng === 'en' ? 'Username' : '设置用户名' %>" required>
+                    <input type="email" id="regEmail" placeholder="<%= typeof lng !== 'undefined' && lng === 'en' ? 'Email' : '常用邮箱' %>" required>
+                    <div class="password-wrapper">
+                        <input type="password" id="regPass" placeholder="<%= typeof lng !== 'undefined' && lng === 'en' ? 'Password (min 8 chars)' : '设置密码 (至少8位)' %>" required minlength="8">
+                        <span class="toggle-password" onclick="togglePassword('regPass', this)">
+                            <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                        </span>
+                    </div>
+                    <button type="submit"><%= typeof lng !== 'undefined' && lng === 'en' ? 'Register' : '注 册' %></button>
+                </form>
+                <div class="links">
+                    <span onclick="switchAuthBox('login-box')"><%= typeof lng !== 'undefined' && lng === 'en' ? 'Already have an account? Login' : '已有账号？返回登录' %></span>
+                </div>
+            </div>
+
+            <!-- Forgot Password Form -->
+            <div id="forgot-box" class="form-box hidden">
+                <h2><%= typeof lng !== 'undefined' && lng === 'en' ? 'Reset Password' : '找回密码' %></h2>
+                <p class="help-text">
+                    <%= typeof lng !== 'undefined' && lng === 'en'
+                        ? 'Enter the email you registered with and we will send you a reset link.'
+                        : '请输入您注册时使用的邮箱，<br>我们将向您发送重置链接。' %>
+                </p>
+                <form id="forgotForm">
+                    <input type="email" id="forgotEmail" placeholder="<%= typeof lng !== 'undefined' && lng === 'en' ? 'Registered email' : '注册邮箱' %>" required>
+                    <button type="submit"><%= typeof lng !== 'undefined' && lng === 'en' ? 'Send Reset Email' : '发送重置邮件' %></button>
+                </form>
+                <div class="links">
+                    <span onclick="switchAuthBox('login-box')"><%= typeof lng !== 'undefined' && lng === 'en' ? 'Remember your password? Login' : '记起密码了？返回登录' %></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ===== Modal open / close ===== */
+        function openAuth(type) {
+            var overlay = document.getElementById('authOverlay');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            if (type === 'register') {
+                switchAuthBox('register-box');
+            } else {
+                switchAuthBox('login-box');
+            }
+        }
+
+        function closeAuth() {
+            var overlay = document.getElementById('authOverlay');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+            hideMessage();
+        }
+
+        // Close on overlay click (not modal itself)
+        document.getElementById('authOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeAuth();
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeAuth();
+        });
+
+        /* ===== Toggle password visibility ===== */
+        function togglePassword(inputId, el) {
+            var input = document.getElementById(inputId);
+            var eyeOpen = '<svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+            var eyeClose = '<svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
+            if (input.type === 'password') {
+                input.type = 'text';
+                el.innerHTML = eyeOpen;
+            } else {
+                input.type = 'password';
+                el.innerHTML = eyeClose;
+            }
+        }
+
+        /* ===== Message helpers ===== */
+        function showMessage(text, type) {
+            var box = document.getElementById('auth-status-msg');
+            box.innerText = text;
+            box.classList.remove('hidden', 'status-error', 'status-success');
+            box.classList.add(type === 'success' ? 'status-success' : 'status-error');
+        }
+
+        function hideMessage() {
+            var box = document.getElementById('auth-status-msg');
+            if (box) box.classList.add('hidden');
+        }
+
+        /* ===== Switch between login / register / forgot ===== */
+        function switchAuthBox(boxId) {
+            hideMessage();
+            document.querySelectorAll('.auth-modal .form-box').forEach(function(b) { b.classList.add('hidden'); });
+            document.getElementById(boxId).classList.remove('hidden');
+            // Reset password fields
+            document.querySelectorAll('.auth-modal input').forEach(function(inp) {
+                if (inp.id.includes('Pass')) inp.type = 'password';
+            });
+        }
+
+        /* ===== Unified form submit ===== */
+        async function handleFormSubmit(e, endpoint, payload) {
+            e.preventDefault();
+            hideMessage();
+            var btn = e.target.querySelector('button[type="submit"]');
+            var originalText = btn.innerText;
+            btn.innerText = window.__lang === 'en' ? 'Processing...' : '处理中...';
+            btn.disabled = true;
+            try {
+                var response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                var result = await response.json();
+                if (result.success) {
+                    if (endpoint === '/api/login') {
+                        window.location.href = '/home';
+                    } else {
+                        showMessage(result.message || (window.__lang === 'en' ? 'Success!' : '操作成功！'), 'success');
+                    }
+                } else {
+                    showMessage(result.message || (window.__lang === 'en' ? 'Operation failed, please retry' : '操作失败，请重试'));
+                }
+            } catch (error) {
+                showMessage(window.__lang === 'en' ? 'Network error, please try later' : '网络连接失败，请稍后再试');
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // Auto-hide message on input
+        document.querySelectorAll('.auth-modal input').forEach(function(inp) {
+            inp.addEventListener('input', hideMessage);
+        });
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            handleFormSubmit(e, '/api/login', {
+                username: document.getElementById('loginUser').value,
+                password: document.getElementById('loginPass').value
+            });
+        });
+
+        // Register
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            var pw = document.getElementById('regPass').value;
+            if (pw.length < 8) {
+                showMessage(window.__lang === 'en' ? 'Password must be at least 8 characters' : '密码长度至少需要 8 位', 'error');
+                e.preventDefault();
+                return;
+            }
+            handleFormSubmit(e, '/api/register', {
+                username: document.getElementById('regUser').value,
+                email: document.getElementById('regEmail').value,
+                password: pw
+            });
+        });
+
+        // Forgot password
+        document.getElementById('forgotForm').addEventListener('submit', function(e) {
+            handleFormSubmit(e, '/api/forgot-password', {
+                email: document.getElementById('forgotEmail').value
+            });
+        });
+
+        // Handle ?activated=true query param (from email activation link)
+        (function() {
+            var params = new URLSearchParams(window.location.search);
+            if (params.get('activated') === 'true') {
+                openAuth('login');
+                setTimeout(function() {
+                    showMessage(window.__lang === 'en' ? 'Account activated! Please login.' : '账号已激活，请登录。', 'success');
+                }, 100);
+            }
+            // Support /login redirect → open modal
+            if (params.get('auth') === 'login') openAuth('login');
+            if (params.get('auth') === 'register') openAuth('register');
+        })();
+    </script>
 
 </body>
 </html>

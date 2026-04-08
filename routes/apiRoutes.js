@@ -6,10 +6,13 @@ const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
+const { OAuth2Client } = require('google-auth-library');
 const db = require('../config/db');
 const { JWT_SECRET, N8N_BASE_URL } = require('../config/constants');
 const authenticateToken = require('../middleware/auth');
 const { loginLimiter, registerLimiter } = require('../middleware/rateLimiters');
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // 文件上传配置
 const UPLOAD_BASE = process.env.UPLOAD_PATH || path.join(__dirname, '..', 'uploads');
@@ -297,6 +300,61 @@ router.post('/register', registerLimiter, async (req, res) => {
     }
 });
 
+// Google 登录/注册二合一逻辑
+router.post('/google-auth', async (req, res) => {
+    const { token } = req.body;
+    if (!token) return res.status(400).json({ success: false, message: 'Missing token' });
+
+    try {
+        const ticket = await googleClient.verifyIdToken({
+            idToken: token,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+        const payload = ticket.getPayload();
+        const googleId = payload['sub'];
+        const email = payload['email'];
+        const name = payload['name'];
+
+        let result = await db.query('SELECT * FROM custom_users WHERE google_id = $1 OR email = $2', [googleId, email]);
+        let user = result.rows[0];
+
+        if (user) {
+            if (!user.google_id) {
+                await db.query('UPDATE custom_users SET google_id = $1 WHERE id = $2', [googleId, user.id]);
+            }
+        } else {
+            const insertRes = await db.query(
+                `INSERT INTO custom_users (username, email, google_id, is_active) 
+                 VALUES ($1, $2, $3, true) RETURNING *`,
+                [name || email.split('@')[0], email, googleId]
+            );
+            user = insertRes.rows[0];
+        }
+
+        if (user.is_active === false) {
+            return res.status(403).json({ success: false, message: req.t('api.activateFirst') });
+        }
+
+        const authToken = jwt.sign(
+            { id: user.id, username: user.username, email: user.email, role: user.role || 'user' },
+            JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.cookie('auth_token', authToken, {
+            httpOnly: true,
+            secure: false,
+            maxAge: 24 * 60 * 60 * 1000 
+        });
+
+        res.json({ success: true });
+
+    } catch (err) {
+        console.error('Google Auth Error:', err);
+        res.status(401).json({ success: false, message: req.t ? req.t('api.loginFailed') : 'Google verification failed' });
+    }
+});
+
 // 3. 登录逻辑 (直连 PostgreSQL)
 router.post('/login', loginLimiter, async (req, res) => {
     try {
@@ -317,6 +375,10 @@ router.post('/login', loginLimiter, async (req, res) => {
 
         if (user.is_active === false) {
             return res.status(403).json({ success: false, message: req.t('api.activateFirst') });
+        }
+
+        if (!user.password_hash) {
+            return res.status(401).json({ success: false, message: req.t('api.loginFailed') });
         }
 
         const validPassword = await bcrypt.compare(password, user.password_hash);

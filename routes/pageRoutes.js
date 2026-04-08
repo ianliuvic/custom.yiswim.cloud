@@ -24,7 +24,7 @@ router.get('/home', authenticateToken, (req, res) => {
 // 2. 处理用户点击邮箱里的激活链接
 router.get('/activate', async (req, res) => {
     const token = req.query.token;
-    if (!token) return res.redirect('/login');
+    if (!token) return res.redirect('/?auth=login');
 
     try {
         const n8nResponse = await fetch(`${N8N_BASE_URL}/custom-user-activate`, {
@@ -35,7 +35,7 @@ router.get('/activate', async (req, res) => {
         const data = await n8nResponse.json();
 
         if (data.success) {
-            res.redirect('/login?activated=true');
+            res.redirect('/?activated=true');
         } else {
             res.send(req.t('api.activateInvalid'));
         }
@@ -44,12 +44,12 @@ router.get('/activate', async (req, res) => {
     }
 });
 
-// 3. 登录页面
+// 3. 登录页面：重定向到着陆页弹窗
 router.get('/login', (req, res) => {
     if (req.cookies.auth_token) {
         return res.redirect('/home');
     }
-    res.render('login', { title: req.t('pageTitle.auth') });
+    res.redirect('/?auth=login');
 });
 
 // 4. 退出登录
@@ -62,7 +62,7 @@ router.get('/logout', (req, res) => {
 router.get('/reset-password', (req, res) => {
     const token = req.query.token;
     if (!token) {
-        return res.redirect('/login');
+        return res.redirect('/?auth=login');
     }
     res.render('reset', { title: req.t('pageTitle.reset'), token: token });
 });

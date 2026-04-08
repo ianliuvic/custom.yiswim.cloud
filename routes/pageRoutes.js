@@ -13,7 +13,10 @@ router.get('/', (req, res) => {
             return res.redirect('/home');
         } catch (_) { /* token 无效，继续显示推广页 */ }
     }
-    res.render('landing', { title: req.t('pageTitle.landing') });
+    res.render('landing', { 
+        title: req.t('pageTitle.landing'),
+        googleClientId: process.env.GOOGLE_CLIENT_ID || '' // 提供个安全的空字符串保底
+    });
 });
 
 // 1a. 隐私政策页面（公开访问）

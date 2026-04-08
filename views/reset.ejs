@@ -40,7 +40,7 @@
             </form>
             
             <div class="links">
-                <a href="/login" style="text-decoration: none;"><span>返回登录</span></a>
+                <a href="/?auth=login" style="text-decoration: none;"><span>返回登录</span></a>
             </div>
         </div>
     </div>
@@ -115,9 +115,9 @@
                 
                 if(result.success) {
                     showMessage('密码重置成功！即将跳转到登录页...', 'success');
-                    // 3秒后自动跳转回登录页
+                    // 3秒后自动跳转回首页并打开登录弹窗
                     setTimeout(() => {
-                        window.location.href = '/login';
+                        window.location.href = '/?auth=login';
                     }, 3000);
                 } else {
                     showMessage(result.message || '操作失败，请检查链接是否过期');

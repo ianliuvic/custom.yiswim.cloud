@@ -111,7 +111,7 @@
     <nav class="landing-nav">
         <div class="logo-area">
             <img src="/logo.png" alt="Logo" onerror="this.style.display='none'">
-            <span><%= typeof lng !== 'undefined' && lng === 'en' ? 'Hongxiu Custom' : '红绣定制' %></span>
+            <span><%= typeof lng !== 'undefined' && lng === 'en' ? 'Hongxiu Custom System' : '红绣定制系统' %></span>
         </div>
         <div class="nav-actions">
             <button class="btn-lang" onclick="setLanguage(window.__lang === 'en' ? 'zh' : 'en')">
@@ -175,7 +175,12 @@
 
     <!-- Footer -->
     <footer class="landing-footer">
-        &copy; 2026 Hongxiu Custom. All rights reserved.
+        <p>&copy; 2026 Hongxiu Custom System. All rights reserved.</p>
+        <p style="margin-top: 10px;">
+            <a href="/privacy" style="color: #64748b; text-decoration: none; font-size: 12px; transition: color 0.2s;" onmouseover="this.style.color='#1e293b'" onmouseout="this.style.color='#64748b'">
+                <%= typeof lng !== 'undefined' && lng === 'en' ? 'Privacy Policy' : '隐私权政策' %>
+            </a>
+        </p>
     </footer>
 
     <!-- ===== Auth Modal ===== -->

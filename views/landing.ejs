@@ -391,5 +391,82 @@
         })();
     </script>
 
+    <!-- === 1. Chatwoot 动态配置 (含多语言同步) === -->
+    <script>
+      var systemLang = window.__lang || 'zh';
+      var chatwootLocale = systemLang === 'en' ? 'en' : 'zh_CN';
+      var chatwootToken = systemLang === 'en'
+        ? '7SvUcM7Q35czsNHZYcZiXtNu'
+        : 'qQNjoJ2DsKdY4Hxmv2pCNM6S';  // 中文Token
+    
+      window.chatwootSettings = {
+        "position": "right",
+        "type": "standard",
+        "launcherTitle": "",
+        "locale": chatwootLocale,
+        "useBrowserLanguage": false
+      };
+    </script>
+    
+    <!-- === 2. Chatwoot 官方加载核心 === -->
+    <script>
+      (function(d,t) {
+        var BASE_URL="https://chat.yiswim.cloud";
+        var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+        g.src=BASE_URL+"/packs/js/sdk.js";
+        g.async = true;
+        s.parentNode.insertBefore(g,s);
+        g.onload=function(){
+          window.chatwootSDK.run({
+            websiteToken: chatwootToken,   // 这里改为动态变量
+            baseUrl: BASE_URL
+          })
+        }
+      })(document,"script");
+    </script>
+    
+    <!-- === 3. 寄生注入遮盖层 (去水印终极 Hack) === -->
+    <script>
+      window.addEventListener("chatwoot:ready", function () {
+        let radar = setInterval(function() {
+           let wootContainer = document.querySelector('.woot-widget-holder');
+           if (wootContainer) {
+              clearInterval(radar); 
+
+              let shield = document.createElement('a');
+              
+              // 根据当前的语言，遮盖层的文字也做相应的翻译！极其专业！
+              if (chatwootLocale === 'en') {
+                  shield.innerHTML = '⚡️ Powered by Hongxiu Clothing';
+              } else {
+                  shield.innerHTML = '⚡️ 由红绣服饰支持';
+              }
+              
+              shield.href = 'https://wearhongxiu.com'; // 修改为真实链接
+              shield.target = '_blank';
+              
+              shield.style.cssText = `
+                  display: block;
+                  position: absolute;
+                  bottom: 10px;
+                  left: 0px;
+                  width: 100%;
+                  height: 24px;       /* 完美贴合输入框下方 */
+                  line-height: 24px;
+                  font-size: 12px;
+                  background-color: #f9fafb; 
+                  z-index: 2147483647; 
+                  text-align: center;
+                  color: #9ca3af;
+                  text-decoration: none; 
+                  cursor: pointer; 
+                  border-radius: 0 0 10px 10px;
+              `;
+              wootContainer.appendChild(shield);
+           }
+        }, 100);
+        setTimeout(() => clearInterval(radar), 5000);
+      });
+    </script>
 </body>
 </html>

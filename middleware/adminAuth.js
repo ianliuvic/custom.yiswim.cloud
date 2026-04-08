@@ -6,7 +6,7 @@ const authenticateAdmin = async (req, res, next) => {
     const token = req.cookies.auth_token;
 
     if (!token) {
-        return res.redirect('/login');
+        return res.redirect('/?auth=login');
     }
 
     try {
@@ -16,7 +16,7 @@ const authenticateAdmin = async (req, res, next) => {
 
         if (result.rows.length === 0) {
             res.clearCookie('auth_token');
-            return res.redirect('/login');
+            return res.redirect('/?auth=login');
         }
 
         const user = result.rows[0];
@@ -28,7 +28,7 @@ const authenticateAdmin = async (req, res, next) => {
         next();
     } catch (err) {
         res.clearCookie('auth_token');
-        return res.redirect('/login');
+        return res.redirect('/?auth=login');
     }
 };
 

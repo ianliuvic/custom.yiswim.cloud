@@ -7,6 +7,7 @@
     <title><%= title %></title>
     <script>window.__lang = '<%= typeof lng !== 'undefined' ? lng : "zh" %>';</script>
     <script src="/i18n.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         :root {
             --primary-color: #aa0000;
@@ -202,6 +203,11 @@
                     </div>
                     <button type="submit"><%= typeof lng !== 'undefined' && lng === 'en' ? 'Login' : '登 录' %></button>
                 </form>
+                <div style="text-align: center; margin: 16px 0; color: #94a3b8; font-size: 12px; position: relative;">
+                    <span style="background: #fff; padding: 0 10px; position: relative; z-index: 1;">OR</span>
+                    <div style="position: absolute; top: 50%; left: 0; right: 0; border-top: 1px solid #e1e4e8; z-index: 0;"></div>
+                </div>
+                <div class="google-btn-container" style="display: flex; justify-content: center; margin-bottom: 16px;"></div>
                 <div class="links">
                     <span onclick="switchAuthBox('register-box')"><%= typeof lng !== 'undefined' && lng === 'en' ? "Don't have an account? Register" : '没有账号？点击注册' %></span>
                     <span onclick="switchAuthBox('forgot-box')"><%= typeof lng !== 'undefined' && lng === 'en' ? 'Forgot password?' : '忘记密码？' %></span>
@@ -222,6 +228,11 @@
                     </div>
                     <button type="submit"><%= typeof lng !== 'undefined' && lng === 'en' ? 'Register' : '注 册' %></button>
                 </form>
+                <div style="text-align: center; margin: 16px 0; color: #94a3b8; font-size: 12px; position: relative;">
+                    <span style="background: #fff; padding: 0 10px; position: relative; z-index: 1;">OR</span>
+                    <div style="position: absolute; top: 50%; left: 0; right: 0; border-top: 1px solid #e1e4e8; z-index: 0;"></div>
+                </div>
+                <div class="google-btn-container" style="display: flex; justify-content: center; margin-bottom: 16px;"></div>
                 <div class="links">
                     <span onclick="switchAuthBox('login-box')"><%= typeof lng !== 'undefined' && lng === 'en' ? 'Already have an account? Login' : '已有账号？返回登录' %></span>
                 </div>
@@ -247,6 +258,44 @@
     </div>
 
     <script>
+        /* ===== Google Auth Init ===== */
+        window.onload = function () {
+            var gClientId = '<%= typeof googleClientId !== "undefined" ? googleClientId : "" %>';
+            if (gClientId) {
+                google.accounts.id.initialize({
+                    client_id: gClientId,
+                    callback: handleGoogleResponse
+                });
+                var googleBtnContainers = document.querySelectorAll('.google-btn-container');
+                googleBtnContainers.forEach(function(container) {
+                    google.accounts.id.renderButton(
+                        container,
+                        { theme: 'outline', size: 'large', width: '100%', locale: window.__lang || 'en' }
+                    );
+                });
+            }
+        };
+
+        async function handleGoogleResponse(response) {
+            hideMessage();
+            var idToken = response.credential;
+            try {
+                var res = await fetch('/api/google-auth', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: idToken })
+                });
+                var result = await res.json();
+                if (result.success) {
+                    window.location.href = '/home';
+                } else {
+                    showMessage(result.message || (window.__lang === 'en' ? 'Google Login Failed' : 'Google 登录失败'), 'error');
+                }
+            } catch (err) {
+                showMessage(window.__lang === 'en' ? 'Network error, try later' : '网络连接失败，请稍后再试', 'error');
+            }
+        }
+
         /* ===== Modal open / close ===== */
         function openAuth(type) {
             var overlay = document.getElementById('authOverlay');

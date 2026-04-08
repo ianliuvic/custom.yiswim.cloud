@@ -1,10 +1,23 @@
 const express = require('express');
 const router = express.Router();
+const jwt = require('jsonwebtoken');
 const authenticateToken = require('../middleware/auth');
-const { N8N_BASE_URL } = require('../config/constants');
+const { N8N_BASE_URL, JWT_SECRET } = require('../config/constants');
 
-// 1. 根目录：受保护，登录后才能看
-router.get('/', authenticateToken, (req, res) => {
+// 1. 根目录：推广着陆页（公开访问），已登录用户自动跳转到 /home
+router.get('/', (req, res) => {
+    const token = req.cookies.auth_token;
+    if (token) {
+        try {
+            jwt.verify(token, JWT_SECRET);
+            return res.redirect('/home');
+        } catch (_) { /* token 无效，继续显示推广页 */ }
+    }
+    res.render('landing', { title: req.t('pageTitle.landing') });
+});
+
+// 1b. 定制主页：需登录
+router.get('/home', authenticateToken, (req, res) => {
     res.render('custom', { title: req.t('pageTitle.home'), user: req.user });
 });
 
@@ -34,7 +47,7 @@ router.get('/activate', async (req, res) => {
 // 3. 登录页面
 router.get('/login', (req, res) => {
     if (req.cookies.auth_token) {
-        return res.redirect('/');
+        return res.redirect('/home');
     }
     res.render('login', { title: req.t('pageTitle.auth') });
 });
@@ -42,7 +55,7 @@ router.get('/login', (req, res) => {
 // 4. 退出登录
 router.get('/logout', (req, res) => {
     res.clearCookie('auth_token');
-    res.redirect('/login');
+    res.redirect('/');
 });
 
 // 5. 重置密码页面

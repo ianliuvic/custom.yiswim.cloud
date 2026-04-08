@@ -16,6 +16,15 @@ router.get('/', (req, res) => {
     res.render('landing', { title: req.t('pageTitle.landing') });
 });
 
+// 1a. 隐私政策页面（公开访问）
+router.get('/privacy', (req, res) => {
+    // 渲染新增加的 privacy.ejs
+    res.render('privacy', { 
+        title: req.t ? req.t('pageTitle.privacy') || 'Privacy Policy' : '隐私权政策',
+        currentDate: '2026年4月8日'
+    });
+});
+
 // 1b. 定制主页：需登录
 router.get('/home', authenticateToken, (req, res) => {
     res.render('custom', { title: req.t('pageTitle.home'), user: req.user });

@@ -27,8 +27,8 @@
         .btn-login:hover { background: var(--primary-color); color: #fff; }
         .btn-register { padding: 8px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; transition: all 0.25s; border: 1.5px solid var(--primary-color); background: var(--primary-color); color: #fff; }
         .btn-register:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
-        .btn-lang { background: none; border: 1px solid #e0e0e0; border-radius: 20px; padding: 5px 14px; font-size: 12px; cursor: pointer; color: #64748b; transition: all 0.25s; display: inline-flex; align-items: center; gap: 5px; font-weight: 500; }
-        .btn-lang:hover { border-color: var(--primary-color); color: var(--primary-color); }
+        .btn-lang { background: none; border: none; padding: 8px 12px; font-size: 14px; cursor: pointer; color: #64748b; transition: all 0.25s; display: inline-flex; align-items: center; gap: 6px; font-weight: 500; border-radius: 8px; }
+        .btn-lang:hover { color: var(--primary-color); background: rgba(185, 28, 28, 0.06); }
 
         /* Hero */
         .hero { text-align: center; padding: 80px 24px 60px; background: linear-gradient(180deg, #fdf2f2 0%, #fff 100%); }
@@ -116,11 +116,11 @@
         </div>
         <div class="nav-actions">
             <button class="btn-lang" onclick="setLanguage(window.__lang === 'en' ? 'zh' : 'en')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8l6 0"/><path d="M4 12l7 0"/><path d="M8 8c0 2.5-1.5 5-4 6.5"/><path d="M6 8c0 1.5.8 3 2.5 4.5"/><path d="M14 12l3.5 8"/><path d="M14 12l-3.5 8"/><path d="M11.5 17h5"/></svg>
-                <%= typeof lng !== 'undefined' && lng === 'en' ? '中文' : 'EN' %>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                <%= typeof lng !== 'undefined' && lng === 'zh' ? 'EN' : '中文' %>
             </button>
-            <button class="btn-login" onclick="openAuth('login')"><%= typeof lng !== 'undefined' && lng === 'en' ? 'Login' : '登录' %></button>
-            <button class="btn-register" onclick="openAuth('register')"><%= typeof lng !== 'undefined' && lng === 'en' ? 'Register' : '注册' %></button>
+            <button class="btn-login" onclick="openAuth('login')"><%= typeof lng !== 'undefined' && lng === 'zh' ? '登录' : 'Login' %></button>
+            <button class="btn-register" onclick="openAuth('register')"><%= typeof lng !== 'undefined' && lng === 'zh' ? '注册' : 'Register' %></button>
         </div>
     </nav>
 

@@ -76,14 +76,16 @@
             <img src="/logo.png" alt="Hongxiu Logo" class="site-logo" onerror="this.style.display='none'">
             <span class="site-title">红绣服饰定制系统</span>
         </div>
-        <div class="header-right" style="font-size: 14px; color: var(--text-light); display: flex; align-items: center; gap: 12px;">
-            <button onclick="setLanguage('<%= lng === 'en' ? 'zh' : 'en' %>')" style="background: none; border: 1px solid var(--border-color); border-radius: 20px; padding: 5px 14px; font-size: 12px; cursor: pointer; color: var(--text-light); transition: all 0.25s; display: inline-flex; align-items: center; gap: 5px; font-weight: 500; letter-spacing: 0.3px;" onmouseover="this.style.borderColor='var(--primary-color)';this.style.color='var(--primary-color)';this.querySelector('svg').style.stroke='var(--primary-color)'" onmouseout="this.style.borderColor='var(--border-color)';this.style.color='var(--text-light)';this.querySelector('svg').style.stroke='currentColor'">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition: stroke 0.25s;"><path d="M5 8l6 0"/><path d="M4 12l7 0"/><path d="M8 8c0 2.5-1.5 5-4 6.5"/><path d="M6 8c0 1.5.8 3 2.5 4.5"/><path d="M14 12l3.5 8"/><path d="M14 12l-3.5 8"/><path d="M11.5 17h5"/></svg>
+        <div class="header-right" style="font-size: 13px; color: var(--text-light); display: flex; align-items: center; gap: 20px;">
+            <button onclick="setLanguage('<%= lng === 'en' ? 'zh' : 'en' %>')" style="background: none; border: none; padding: 0; font-size: 13px; cursor: pointer; color: var(--text-light); transition: color 0.2s; display: inline-flex; align-items: center; gap: 5px;" onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='var(--text-light)'">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                 <%= lng === 'en' ? '中文' : 'EN' %>
             </button>
-            <span class="header-user-text">当前用户：<strong><%= user.username %></strong> | 
-            <a href="/user" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">用户中心</a> | 
-            <a href="/logout" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">安全退出</a></span>
+            <span class="header-user-text" style="display: flex; align-items: center; gap: 16px;">
+                <strong style="color: var(--text-main);"><%= user.username %></strong>
+                <a href="/user" style="color: var(--text-light); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='var(--text-light)'"><%= lng === 'en' ? 'User Center' : '用户中心' %></a>
+                <a href="/logout" style="color: var(--text-light); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='var(--text-light)'"><%= lng === 'en' ? 'Log Out' : '退出' %></a>
+            </span>
             <!-- 移动端：头像按钮 + 下拉菜单 -->
             <div class="header-avatar-wrap">
                 <button class="header-avatar-btn" onclick="toggleUserMenu(event)">

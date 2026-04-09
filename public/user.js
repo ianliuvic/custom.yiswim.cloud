@@ -1050,7 +1050,7 @@
                 msg.className = 'u-form-msg success';
                 msg.textContent = isEn ? 'Username updated successfully' : '用户名修改成功';
                 document.getElementById('usernameDisplay').textContent = json.username;
-                var headerName = document.querySelector('.u-user-name strong');
+                var headerName = document.querySelector('.u-user-info strong');
                 if (headerName) headerName.textContent = json.username;
                 setTimeout(function () { window.toggleUsernameEdit(); }, 1000);
             } else {

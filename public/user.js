@@ -66,7 +66,10 @@
                     '<div class="u-inquiry-card-right">' +
                     '<span class="u-status-tag u-status-' + esc(r.status) + '">' + statusLabel(r.status) + '</span>' +
                     '<span style="font-size:12px;color:#94a3b8">' + fmtDate(r.created_at) + '</span>' +
-                    '<button class="u-copy-btn" onclick="event.stopPropagation();copyToNewInquiry(' + r.id + ')" title="复制为新询盘">' +
+                    '<button class="u-copy-btn" onclick="event.stopPropagation();editInquiry(' + r.id + ')" title="' + (window.__lang === 'en' ? 'Edit' : '修改') + '">' +
+                    '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>' +
+                    '</button>' +
+                    '<button class="u-copy-btn" onclick="event.stopPropagation();copyToNewInquiry(' + r.id + ')" title="' + (window.__lang === 'en' ? 'Copy as New' : '复制为新询盘') + '">' +
                     '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>' +
                     '</button>' +
                     '<button class="u-del-btn" onclick="event.stopPropagation();deleteInquiry(' + r.id + ',\'' + esc(r.inquiry_no) + '\')" title="删除">' +
@@ -1138,6 +1141,31 @@
             btn.disabled = false;
             btn.innerHTML = origText;
         }
+    };
+
+    /* ---------- Edit inquiry ---------- */
+    window.editInquiry = function (id) {
+        if (!id && _currentInquiryData) {
+            try {
+                sessionStorage.setItem('copyInquiryData', JSON.stringify(_currentInquiryData));
+                sessionStorage.setItem('editInquiryId', String(_currentInquiryData.id));
+                window.location.href = '/home';
+            } catch (e) {
+                showMsg(window.__lang === 'en' ? 'Failed: data too large' : '操作失败：数据过大或存储不可用', 'error');
+            }
+            return;
+        }
+        fetch('/api/inquiry/' + id)
+            .then(function (res) { return res.json(); })
+            .then(function (json) {
+                if (!json.success) throw new Error(json.message);
+                sessionStorage.setItem('copyInquiryData', JSON.stringify(json.data));
+                sessionStorage.setItem('editInquiryId', String(json.data.id));
+                window.location.href = '/home';
+            })
+            .catch(function (e) {
+                showMsg((window.__lang === 'en' ? 'Failed to load inquiry: ' : '获取询盘数据失败：') + e.message, 'error');
+            });
     };
 
     /* ---------- Copy to new inquiry ---------- */

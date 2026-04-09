@@ -18,7 +18,8 @@
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif; color: #1e293b; background: #fff; }
 
         /* Nav */
-        .landing-nav { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 20px 24px; }
+        .nav-wrapper { border-bottom: 1px solid #e5e7eb; }
+        .landing-nav { display: flex; align-items: center; justify-content: space-between; max-width: 1440px; margin: 0 auto; padding: 16px 32px; }
         .landing-nav .logo-area { display: flex; align-items: center; gap: 10px; }
         .landing-nav .logo-area img { height: 48px; }
         .landing-nav .logo-area span { font-size: 18px; font-weight: 700; color: #1e293b; }
@@ -115,6 +116,7 @@
 <body>
 
     <!-- Navigation -->
+    <div class="nav-wrapper">
     <nav class="landing-nav">
         <div class="logo-area">
             <img src="/logo.png" alt="Logo" onerror="this.style.display='none'">
@@ -129,6 +131,7 @@
             <button class="btn-register" onclick="openAuth('register')"><%= typeof lng !== 'undefined' && lng === 'zh' ? '注册' : 'Register' %></button>
         </div>
     </nav>
+    </div>
 
     <!-- Hero Section -->
     <section class="hero">

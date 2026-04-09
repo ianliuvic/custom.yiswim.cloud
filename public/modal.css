@@ -1,4 +1,5 @@
 /* ── Shared Modal (alert / confirm replacement) ── */
+.u-modal-btn { font-family: inherit; }
 .u-modal-overlay {
     position: fixed; inset: 0; z-index: 99999;
     display: flex; align-items: center; justify-content: center;

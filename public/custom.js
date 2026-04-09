@@ -7054,7 +7054,7 @@
             const fabricRemark = _el('fabric-remark'); if (fabricRemark) fabricRemark.value = '';
             
             const sumFabric = _el('sum-fabric');
-            if (sumFabric) { sumFabric.innerHTML = _t('未选'); sumFabric.style.color = '#94a3b8'; sumFabric.style.fontWeight = 'normal'; }
+            if (sumFabric) { sumFabric.innerHTML = _t('未选'); sumFabric.removeAttribute('style'); }
 
             // 3. 重置辅料
             ['metal', 'pad', 'bag', 'hangtag', 'label', 'hygiene', 'other'].forEach(category => {
@@ -7086,7 +7086,7 @@
             const metalSourcePreview = _el('metalSourcePreview');
             if (metalSourcePreview) metalSourcePreview.innerHTML = '';
             const sumTrimMetal = _el('sum-trim-metal');
-            if (sumTrimMetal) { sumTrimMetal.innerText = '不需要'; sumTrimMetal.style.color = '#666'; sumTrimMetal.style.fontWeight = 'normal'; }
+            if (sumTrimMetal) { sumTrimMetal.innerText = _t('不需要'); sumTrimMetal.removeAttribute('style'); }
             const bagDesignFile = _el('bag-design-file'); if (bagDesignFile) bagDesignFile.value = '';
 
             // 重置吊牌
@@ -7139,7 +7139,7 @@
             // 切回样衣模式并重新渲染
             switchDeliveryMode('sample');
             // 强制恢复交付摘要为初始状态
-            const sumShipping = _el('sum-shipping'); if (sumShipping) { sumShipping.innerHTML = _t('未选择'); sumShipping.style.color = ''; sumShipping.style.fontWeight = ''; }
+            const sumShipping = _el('sum-shipping'); if (sumShipping) { sumShipping.innerHTML = _t('未选择'); sumShipping.removeAttribute('style'); }
 
             // 5. 重置商业评估 (Step 5)
             const stageRadio = _q('input[name="project_stage"][value="concept"]');
@@ -7166,7 +7166,12 @@
             _resetting = false;
             document.querySelectorAll('.status-dot').forEach(d => d.classList.remove('ok', 'warn'));
 
-            // 7. 返回第一步
+            // 7. 清除侧边栏摘要元素的内联样式，使 CSS 类生效
+            document.querySelectorAll('.summary-sidebar .value, .summary-sidebar .summary-sub-row .value').forEach(el => {
+                el.removeAttribute('style');
+            });
+
+            // 8. 返回第一步
             if (currentStep !== 1) changeStep(1 - currentStep); 
         }
 

@@ -19,6 +19,8 @@ body {
     margin: 0;
 }
 
+input, textarea, select, button { font-family: inherit; }
+
 /* 核心表单卡片 */
 .auth-container {
     width: 100%;

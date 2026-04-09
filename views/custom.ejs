@@ -2842,18 +2842,18 @@
         <!-- 右侧汇总 -->
         <aside class="summary-sidebar">
             <div class="drawer-handle"></div>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-                <span class="summary-title" style="margin-bottom: 0;">定制详情</span>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <button type="button" id="draftBtn" class="draft-btn" onclick="saveDraft()" title="暂存草稿">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:3px;vertical-align:text-bottom;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                        暂存
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
+                <span class="summary-title" style="margin-bottom: 0;"><%= lng === 'en' ? 'Order Summary' : '定制详情' %></span>
+                <div style="display: flex; align-items: center; gap: 4px;">
+                    <button type="button" id="draftBtn" class="draft-btn" onclick="saveDraft()" title="<%= lng === 'en' ? 'Save Draft' : '暂存草稿' %>">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                        <%= lng === 'en' ? 'Save' : '暂存' %>
                     </button>
-                    <button type="button" class="clear-all-btn" onclick="clearAllSelections()" title="清空当前所有选项">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: text-bottom;">
+                    <button type="button" class="clear-all-btn" onclick="clearAllSelections()" title="<%= lng === 'en' ? 'Reset all selections' : '清空当前所有选项' %>">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                         </svg>
-                        重置
+                        <%= lng === 'en' ? 'Reset' : '重置' %>
                     </button>
                 </div>
             </div>

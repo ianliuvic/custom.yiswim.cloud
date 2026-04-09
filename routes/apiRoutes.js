@@ -855,6 +855,51 @@ router.post('/change-password', authenticateToken, async (req, res) => {
     }
 });
 
+// 9.5 修改用户名
+router.post('/change-username', authenticateToken, async (req, res) => {
+    try {
+        const { newUsername } = req.body;
+        if (!newUsername || !newUsername.trim()) {
+            return res.status(400).json({ success: false, message: '用户名不能为空' });
+        }
+        const username = newUsername.trim();
+        if (username.length < 2 || username.length > 30) {
+            return res.status(400).json({ success: false, message: '用户名长度需在2-30字符之间' });
+        }
+
+        // 检查用户名是否已被占用
+        const existing = await db.query(
+            'SELECT id FROM custom_users WHERE username = $1 AND id != $2',
+            [username, req.user.id]
+        );
+        if (existing.rows.length > 0) {
+            return res.status(409).json({ success: false, message: '该用户名已被使用' });
+        }
+
+        await db.query(
+            'UPDATE custom_users SET username = $1 WHERE id = $2',
+            [username, req.user.id]
+        );
+
+        // 重新签发 JWT
+        const token = jwt.sign(
+            { id: req.user.id, username: username, email: req.user.email, role: req.user.role || 'user' },
+            JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+        res.cookie('auth_token', token, {
+            httpOnly: true,
+            secure: false,
+            maxAge: 24 * 60 * 60 * 1000
+        });
+
+        res.json({ success: true, message: '用户名修改成功', username: username });
+    } catch (error) {
+        console.error('修改用户名失败:', error);
+        res.status(500).json({ success: false, message: '服务器错误' });
+    }
+});
+
 // 10. 软删除询盘
 router.delete('/inquiry/:id', authenticateToken, async (req, res) => {
     try {

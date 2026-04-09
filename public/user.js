@@ -1023,20 +1023,21 @@
         var msg = document.getElementById('username-msg');
         var input = document.getElementById('newUsername');
         var newName = input.value.trim();
+        var isEn = window.__lang === 'en';
 
         if (!newName || newName.length < 2) {
             msg.className = 'u-form-msg error';
-            msg.textContent = '用户名至少需要2个字符';
+            msg.textContent = isEn ? 'Username must be at least 2 characters' : '用户名至少需要2个字符';
             return;
         }
         if (newName.length > 30) {
             msg.className = 'u-form-msg error';
-            msg.textContent = '用户名不能超过30个字符';
+            msg.textContent = isEn ? 'Username cannot exceed 30 characters' : '用户名不能超过30个字符';
             return;
         }
 
         msg.className = 'u-form-msg';
-        msg.textContent = '提交中...';
+        msg.textContent = isEn ? 'Submitting...' : '提交中...';
 
         try {
             var res = await fetch('/api/change-username', {
@@ -1047,19 +1048,18 @@
             var json = await res.json();
             if (json.success) {
                 msg.className = 'u-form-msg success';
-                msg.textContent = '用户名修改成功';
+                msg.textContent = isEn ? 'Username updated successfully' : '用户名修改成功';
                 document.getElementById('usernameDisplay').textContent = json.username;
-                // 更新页面上其他显示用户名的地方
                 var headerName = document.querySelector('.u-user-name strong');
                 if (headerName) headerName.textContent = json.username;
-                setTimeout(function () { toggleUsernameEdit(); }, 1000);
+                setTimeout(function () { window.toggleUsernameEdit(); }, 1000);
             } else {
                 msg.className = 'u-form-msg error';
-                msg.textContent = json.message || '修改失败';
+                msg.textContent = json.message || (isEn ? 'Update failed' : '修改失败');
             }
         } catch (err) {
             msg.className = 'u-form-msg error';
-            msg.textContent = '网络错误，请重试';
+            msg.textContent = isEn ? 'Network error, please retry' : '网络错误，请重试';
         }
     };
 

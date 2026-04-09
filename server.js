@@ -18,9 +18,9 @@ i18next
         backend: {
             loadPath: path.join(__dirname, 'locales/{{lng}}/{{ns}}.json'),
         },
-        fallbackLng: 'zh',
-        supportedLngs: ['zh', 'en'],
-        preload: ['zh', 'en'],
+        fallbackLng: 'en',
+        supportedLngs: ['en', 'zh'],
+        preload: ['en', 'zh'],
         ns: ['translation'],
         defaultNS: 'translation',
         detection: {

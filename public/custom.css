@@ -948,8 +948,8 @@
         @media (max-width: 768px) {
             .site-footer { display: none; }
             .site-header { padding: 0 16px; }
-            .header-right { font-size: 12px; gap: 8px; }
-            .header-right .header-user-text { display: none; }
+            .header-right { font-size: 12px; gap: 10px !important; }
+            .header-right .header-user-text { display: none !important; }
             .header-avatar-wrap { display: block; }
             .site-title { font-size: 17px; font-weight: 700; }
             .site-logo { height: 32px; }

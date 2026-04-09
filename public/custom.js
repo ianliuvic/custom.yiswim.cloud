@@ -7054,7 +7054,13 @@
             const fabricRemark = _el('fabric-remark'); if (fabricRemark) fabricRemark.value = '';
             
             const sumFabric = _el('sum-fabric');
-            if (sumFabric) sumFabric.innerHTML = '<div>' + _t('面') + ': ' + _t('未选') + '</div><div>' + _t('里') + ': ' + _t('未选') + '</div>';
+            if (sumFabric) {
+                let resetHtml = '';
+                for (let key in fabricSelection) {
+                    resetHtml += '<div>' + fabricSelection[key].originalCatName + ': ' + _t('未选') + '</div>';
+                }
+                sumFabric.innerHTML = resetHtml || _t('未选');
+            }
 
             // 3. 重置辅料
             ['metal', 'pad', 'bag', 'hangtag', 'label', 'hygiene', 'other'].forEach(category => {

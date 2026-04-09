@@ -9,6 +9,7 @@
 
         // 全局 CMT 数据管理
         let currentDraftId = null; // Scheme C: 当前草稿询盘 ID
+        let currentEditInquiryId = null; // 编辑模式：要覆盖更新的询盘 ID
         let cmtFilesData = {
             fabric: [],
             pad: [],
@@ -133,12 +134,15 @@
                     // 检查是否有复制询盘数据需要恢复
                     const copyRaw = sessionStorage.getItem('copyInquiryData');
                     const draftId = sessionStorage.getItem('restoreDraftId');
+                    const editId = sessionStorage.getItem('editInquiryId');
                     if (copyRaw) {
                         sessionStorage.removeItem('copyInquiryData');
                         sessionStorage.removeItem('restoreDraftId');
+                        sessionStorage.removeItem('editInquiryId');
                         try {
                             const copyData = JSON.parse(copyRaw);
                             if (draftId) currentDraftId = parseInt(draftId);
+                            if (editId) currentEditInquiryId = parseInt(editId);
                             restoreFromInquiry(copyData);
                         } catch(e) { console.warn('恢复询盘数据失败:', e); }
                     } else {
@@ -1017,11 +1021,14 @@
             // ── 提示用户 ──
             var hasRestoredFiles = d.files && d.files.length > 0;
             var isDraftRestore = !!currentDraftId;
+            var isEditMode = !!currentEditInquiryId;
             setTimeout(function() {
                 var toast = document.createElement('div');
                 toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:10px;background:#065f46;color:#fff;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.15);transition:opacity .5s;';
                 toast.textContent = isDraftRestore
                     ? _t('已恢复暂存草稿')
+                    : isEditMode
+                    ? _t('已加载询盘数据，修改后重新提交')
                     : (hasRestoredFiles ? _t('已从历史询盘复制数据（含附件）') : _t('已从历史询盘复制数据'));
                 document.body.appendChild(toast);
                 setTimeout(function() { toast.style.opacity = '0'; }, 3000);
@@ -2609,7 +2616,8 @@
         
             // 3. 构造 FormData
             const fd = buildFormData();
-            if (currentDraftId) fd.append('draft_id', String(currentDraftId));
+            if (currentEditInquiryId) fd.append('edit_inquiry_id', String(currentEditInquiryId));
+            else if (currentDraftId) fd.append('draft_id', String(currentDraftId));
 
             // 4. 显示上传弹窗 & 压缩图片
             const nextBtn = document.getElementById('nextBtn');
@@ -2643,6 +2651,7 @@
                 hideUploadModal();
                 if (result.success) {
                     currentDraftId = null;
+                    currentEditInquiryId = null;
                     await showMsg(_t("✅ 提交成功！") + `\n\n${_t('您的需求编号为:')} ${result.inquiry_no}\n${_t('专属业务经理将在 24 小时内为您提供正式报价。')}`, 'success');
                     window.location.href = '/user';
                 } else {

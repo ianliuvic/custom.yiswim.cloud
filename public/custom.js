@@ -3772,7 +3772,8 @@
         
             const sumFabricEl = document.getElementById('sum-fabric');
             if (sumFabricEl) {
-                sumFabricEl.innerHTML = hasSelection ? html : _t('未选');
+                sumFabricEl.innerHTML = hasSelection ? html : _t('未选择');
+                if (!hasSelection) sumFabricEl.removeAttribute('style');
             }
             validateFabric();
         }
@@ -7054,7 +7055,7 @@
             const fabricRemark = _el('fabric-remark'); if (fabricRemark) fabricRemark.value = '';
             
             const sumFabric = _el('sum-fabric');
-            if (sumFabric) { sumFabric.innerHTML = _t('未选'); sumFabric.removeAttribute('style'); }
+            if (sumFabric) { sumFabric.innerHTML = _t('未选择'); sumFabric.removeAttribute('style'); }
 
             // 3. 重置辅料
             ['metal', 'pad', 'bag', 'hangtag', 'label', 'hygiene', 'other'].forEach(category => {

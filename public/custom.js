@@ -1808,12 +1808,18 @@
         // ==========================================
         // 实时表单验证系统 (Real-time Validation)
         // ==========================================
+        const dotActivated = {};
         function setDot(id, state) {
             const dot = document.getElementById(id);
             if (!dot) return;
             dot.classList.remove('ok', 'warn');
-            if (state === true) dot.classList.add('ok');
-            else if (state === false) dot.classList.add('warn');
+            if (state === true) {
+                dot.classList.add('ok');
+                dotActivated[id] = true;
+            } else if (state === false) {
+                if (dotActivated[id]) dot.classList.add('warn');
+                // else stay grey — section not yet interacted
+            }
             // state === null → neutral (grey, no class)
         }
 

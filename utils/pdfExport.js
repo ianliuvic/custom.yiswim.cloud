@@ -1017,7 +1017,7 @@ async function buildFilesSection(files, t) {
    Main export function
    ═══════════════════════════════════════════════ */
 async function generateInquiryPDF(inquiry, files, odmStyleImages, lang) {
-    const t = getT(lang || 'zh');
+    const t = getT(lang || 'en');
     const fontPaths = await ensureFonts();
 
     const printer = new PdfPrinter({

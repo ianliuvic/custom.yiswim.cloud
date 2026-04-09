@@ -1010,7 +1010,7 @@
         showLbImage();
     };
 
-    /* ---------- Change password ---------- */
+    /* ---------- Change Username ---------- */
     window.toggleUsernameEdit = function () {
         var editRow = document.getElementById('usernameEditRow');
         var isHidden = editRow.style.display === 'none';

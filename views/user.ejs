@@ -122,7 +122,17 @@
                     <h3>基本信息</h3>
                     <div class="u-info-row">
                         <label>用户名</label>
-                        <span><%= user.username %></span>
+                        <span id="usernameDisplay"><%= user.username %></span>
+                        <a href="javascript:void(0)" onclick="toggleUsernameEdit()" id="usernameEditLink" style="margin-left: 12px; font-size: 12px; color: #64748b; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='#64748b'">修改</a>
+                    </div>
+                    <div id="usernameEditRow" class="u-info-row" style="display: none;">
+                        <label>新用户名</label>
+                        <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
+                            <input type="text" id="newUsername" value="<%= user.username %>" maxlength="30" minlength="2" placeholder="2-30字符" style="flex: 1; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; font-family: inherit;">
+                            <button type="button" onclick="handleChangeUsername()" class="u-btn-primary" style="padding: 8px 16px; font-size: 13px; white-space: nowrap;">保存</button>
+                            <button type="button" onclick="toggleUsernameEdit()" style="padding: 8px 16px; font-size: 13px; white-space: nowrap; background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer;">取消</button>
+                        </div>
+                        <div id="username-msg" class="u-form-msg" style="margin-top: 6px;"></div>
                     </div>
                     <div class="u-info-row">
                         <label>邮箱</label>

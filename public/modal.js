@@ -1,10 +1,10 @@
 /* ── Shared Modal: showMsg / showConfirm ── */
 (function () {
     var ICONS = {
-        error: '<svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="22" stroke="#ef4444" stroke-width="3"/><path d="M16 16l16 16M32 16L16 32" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/></svg>',
-        success: '<svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="22" stroke="#22c55e" stroke-width="3"/><path d="M14 25l7 7 13-14" stroke="#22c55e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-        info: '<svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="22" stroke="#3b82f6" stroke-width="3"/><path d="M24 22v12" stroke="#3b82f6" stroke-width="3" stroke-linecap="round"/><circle cx="24" cy="15" r="2" fill="#3b82f6"/></svg>',
-        warn: '<svg viewBox="0 0 48 48" fill="none"><path d="M24 4L2 44h44L24 4z" stroke="#f59e0b" stroke-width="3" stroke-linejoin="round"/><path d="M24 20v10" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/><circle cx="24" cy="36" r="2" fill="#f59e0b"/></svg>'
+        error: '<div class="u-modal-icon-circle icon-error"><svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></div>',
+        success: '<div class="u-modal-icon-circle icon-success"><svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>',
+        info: '<div class="u-modal-icon-circle icon-info"><svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"><path d="M12 16v-4"/><circle cx="12" cy="8" r="0.5" fill="#3b82f6"/></svg></div>',
+        warn: '<div class="u-modal-icon-circle icon-warn"><svg viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round"><path d="M12 9v4"/><circle cx="12" cy="16" r="0.5" fill="#d97706"/></svg></div>'
     };
 
     function createOverlay() {

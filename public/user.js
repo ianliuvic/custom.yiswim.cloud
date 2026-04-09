@@ -1011,6 +1011,58 @@
     };
 
     /* ---------- Change password ---------- */
+    window.toggleUsernameEdit = function () {
+        var editRow = document.getElementById('usernameEditRow');
+        var isHidden = editRow.style.display === 'none';
+        editRow.style.display = isHidden ? 'flex' : 'none';
+        if (isHidden) document.getElementById('newUsername').focus();
+        document.getElementById('username-msg').textContent = '';
+    };
+
+    window.handleChangeUsername = async function () {
+        var msg = document.getElementById('username-msg');
+        var input = document.getElementById('newUsername');
+        var newName = input.value.trim();
+
+        if (!newName || newName.length < 2) {
+            msg.className = 'u-form-msg error';
+            msg.textContent = '用户名至少需要2个字符';
+            return;
+        }
+        if (newName.length > 30) {
+            msg.className = 'u-form-msg error';
+            msg.textContent = '用户名不能超过30个字符';
+            return;
+        }
+
+        msg.className = 'u-form-msg';
+        msg.textContent = '提交中...';
+
+        try {
+            var res = await fetch('/api/change-username', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ newUsername: newName })
+            });
+            var json = await res.json();
+            if (json.success) {
+                msg.className = 'u-form-msg success';
+                msg.textContent = '用户名修改成功';
+                document.getElementById('usernameDisplay').textContent = json.username;
+                // 更新页面上其他显示用户名的地方
+                var headerName = document.querySelector('.u-user-name strong');
+                if (headerName) headerName.textContent = json.username;
+                setTimeout(function () { toggleUsernameEdit(); }, 1000);
+            } else {
+                msg.className = 'u-form-msg error';
+                msg.textContent = json.message || '修改失败';
+            }
+        } catch (err) {
+            msg.className = 'u-form-msg error';
+            msg.textContent = '网络错误，请重试';
+        }
+    };
+
     window.handleChangePwd = async function (e) {
         e.preventDefault();
         var msg = document.getElementById('pwd-msg');

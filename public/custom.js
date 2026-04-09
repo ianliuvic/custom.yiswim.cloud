@@ -3772,7 +3772,7 @@
         
             const sumFabricEl = document.getElementById('sum-fabric');
             if (sumFabricEl) {
-                sumFabricEl.innerHTML = hasSelection ? html : '<div style="text-align:right; font-size:12px; color:#94a3b8;">' + _t('未选') + '</div>';
+                sumFabricEl.innerHTML = hasSelection ? html : _t('未选');
             }
             validateFabric();
         }

@@ -13,6 +13,7 @@
     
         /* 全局表单控件主题色 */
         input, textarea, select, button { font-family: inherit; }
+        input::placeholder, textarea::placeholder { color: #cbd5e1; }
         input[type="radio"],
         input[type="checkbox"] {
             accent-color: var(--primary-color);

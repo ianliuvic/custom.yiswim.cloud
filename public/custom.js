@@ -7177,12 +7177,9 @@
         }
 
                 // --- 新增：清空当前面料分类的选择 ---
-        async function clearCurrentFabric() {
+        function clearCurrentFabric() {
             if (!activeFabricCat || !fabricSelection[activeFabricCat]) return;
-            if (fabricSelection[activeFabricCat].activeName === '') return; // 修正：判断 activeName
-            
-            const catName = fabricSelection[activeFabricCat].originalCatName;
-            if (!(await showConfirm(_t(`确定要清空 [${catName}] 的选择吗？`)))) return; // 建议加上防误触提示
+            if (fabricSelection[activeFabricCat].activeName === '') return;
 
             // 1. 重置当前分类的数据 (colors和remark已经在清空configs时连带清空了)
             fabricSelection[activeFabricCat].activeName = '';

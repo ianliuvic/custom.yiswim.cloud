@@ -614,6 +614,7 @@
         "暂存草稿": "Save Draft",
         "已从历史询盘复制数据（含附件）": "Inquiry data restored (with attachments)",
         "已从历史询盘复制数据": "Inquiry data restored",
+        "已加载询盘数据，修改后重新提交": "Inquiry data loaded. Edit and resubmit.",
         "已恢复暂存草稿": "Draft restored",
         "暂存成功，可在用户中心恢复": "Draft saved. Restore from User Center.",
         "暂存失败：": "Save draft failed: ",

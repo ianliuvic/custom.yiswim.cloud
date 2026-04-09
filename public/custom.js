@@ -1809,7 +1809,9 @@
         // 实时表单验证系统 (Real-time Validation)
         // ==========================================
         const dotActivated = {};
+        let _resetting = false;
         function setDot(id, state) {
+            if (_resetting) return;
             const dot = document.getElementById(id);
             if (!dot) return;
             dot.classList.remove('ok', 'warn');
@@ -7005,7 +7007,8 @@
         async function clearAllSelections() {
             if (!(await showConfirm(_t('确定要清空所有已选配置并重头开始吗？')))) return;
 
-            // 重置圆点激活状态，使所有圆点回到灰色
+            // 抑制重置过程中的 setDot 调用
+            _resetting = true;
             Object.keys(dotActivated).forEach(k => delete dotActivated[k]);
 
             // 安全获取元素的辅助函数
@@ -7160,7 +7163,11 @@
             if(ndaAgree) ndaAgree.checked = false;
             if (typeof updateStep5Summary === 'function') updateStep5Summary();
 
-            // 6. 返回第一步
+            // 6. 所有圆点恢复灰色
+            _resetting = false;
+            document.querySelectorAll('.status-dot').forEach(d => d.classList.remove('ok', 'warn'));
+
+            // 7. 返回第一步
             if (currentStep !== 1) changeStep(1 - currentStep); 
         }
 

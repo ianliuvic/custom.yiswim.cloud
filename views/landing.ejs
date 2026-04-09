@@ -187,12 +187,7 @@
 
     <!-- Footer -->
     <footer class="landing-footer">
-        <p>&copy; <script>document.write(new Date().getFullYear())</script> Hongxiu Custom System. All rights reserved.</p>
-        <p style="margin-top: 10px;">
-            <a href="/privacy" style="color: #64748b; text-decoration: none; font-size: 12px; transition: color 0.2s;" onmouseover="this.style.color='#1e293b'" onmouseout="this.style.color='#64748b'">
-                <%= typeof lng !== 'undefined' && lng === 'en' ? 'Privacy Policy' : '隐私权政策' %>
-            </a>
-        </p>
+        <p>&copy; <script>document.write(new Date().getFullYear())</script> Hongxiu Custom System. All rights reserved. <span style="color: #d1d5db; margin: 0 6px;">|</span><a href="/privacy" style="color: #64748b; text-decoration: none; font-size: 13px; transition: color 0.2s;" onmouseover="this.style.color='#1e293b'" onmouseout="this.style.color='#64748b'"><%= typeof lng !== 'undefined' && lng === 'en' ? 'Privacy Policy' : '隐私权政策' %></a></p>
     </footer>
 
     <!-- ===== Auth Modal ===== -->

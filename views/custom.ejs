@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="<%= lng === 'en' ? 'en' : 'zh-CN' %>">
+<html lang="<%= lng === 'zh' ? 'zh-CN' : 'en' %>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -3176,7 +3176,7 @@
 
     <!-- === 1. Chatwoot 动态配置 (含多语言同步) === -->
     <script>
-      var systemLang = window.__lang || 'zh';
+      var systemLang = window.__lang || 'en';
       var chatwootLocale = systemLang === 'en' ? 'en' : 'zh_CN';
       var chatwootToken = systemLang === 'en'
         ? '7SvUcM7Q35czsNHZYcZiXtNu'

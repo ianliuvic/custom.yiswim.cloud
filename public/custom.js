@@ -7053,11 +7053,8 @@
             }
             const fabricRemark = _el('fabric-remark'); if (fabricRemark) fabricRemark.value = '';
             
-            let resetHtml = '';
-            for (let key in fabricSelection) {
-                resetHtml += `<div style="font-size:12px; margin-bottom:4px; color:var(--text-main); text-align:right;">${fabricSelection[key].originalCatName}: 未选</div>`;
-            }
-            const sumFabric = _el('sum-fabric'); if (sumFabric) sumFabric.innerHTML = resetHtml || '未选';
+            const sumFabric = _el('sum-fabric');
+            if (sumFabric) sumFabric.innerHTML = '<div>' + _t('面') + ': ' + _t('未选') + '</div><div>' + _t('里') + ': ' + _t('未选') + '</div>';
 
             // 3. 重置辅料
             ['metal', 'pad', 'bag', 'hangtag', 'label', 'hygiene', 'other'].forEach(category => {
@@ -7141,6 +7138,8 @@
             document.querySelectorAll('.bulk-method').forEach(item => item.classList.remove('selected'));
             // 切回样衣模式并重新渲染
             switchDeliveryMode('sample');
+            // 强制恢复交付摘要为初始状态
+            const sumShipping = _el('sum-shipping'); if (sumShipping) { sumShipping.innerHTML = _t('未选择'); sumShipping.style.color = ''; sumShipping.style.fontWeight = ''; }
 
             // 5. 重置商业评估 (Step 5)
             const stageRadio = _q('input[name="project_stage"][value="concept"]');

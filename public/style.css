@@ -20,6 +20,7 @@ body {
 }
 
 input, textarea, select, button { font-family: inherit; }
+input::placeholder, textarea::placeholder { color: #cbd5e1; }
 
 /* 核心表单卡片 */
 .auth-container {

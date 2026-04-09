@@ -319,7 +319,7 @@ router.get('/api/inquiry/:id/pdf', authenticateAdmin, async (req, res) => {
             }
         } catch (e) { /* ignore */ }
 
-        const lang = req.cookies && req.cookies.lng || 'zh';
+        const lang = req.cookies && req.cookies.lng || 'en';
         const pdfBuffer = await generateInquiryPDF(inquiry, filesResult.rows, odmStyleImages, lang);
         const filename = 'inquiry_' + (inquiry.inquiry_no || inquiry.id) + '.pdf';
 
@@ -365,7 +365,7 @@ router.get('/api/inquiry/:id/export', authenticateAdmin, async (req, res) => {
             }
         } catch (e) { /* ignore */ }
 
-        const lang = req.cookies && req.cookies.lng || 'zh';
+        const lang = req.cookies && req.cookies.lng || 'en';
         const pdfBuffer = await generateInquiryPDF(inquiry, filesResult.rows, odmStyleImages, lang);
         const inquiryNo = inquiry.inquiry_no || String(inquiry.id);
 

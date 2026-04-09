@@ -7005,6 +7005,9 @@
         async function clearAllSelections() {
             if (!(await showConfirm(_t('确定要清空所有已选配置并重头开始吗？')))) return;
 
+            // 重置圆点激活状态，使所有圆点回到灰色
+            Object.keys(dotActivated).forEach(k => delete dotActivated[k]);
+
             // 安全获取元素的辅助函数
             const _el = (id) => document.getElementById(id);
             const _q = (sel) => document.querySelector(sel);

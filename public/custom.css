@@ -499,20 +499,20 @@
         /* 暂存按钮（汇总栏顶部） */
         .draft-btn {
             background: none;
-            color: #64748b;
-            border: 1px dashed #cbd5e1;
+            color: #94a3b8;
+            border: none;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
-            font-weight: 600;
-            padding: 4px 10px;
-            border-radius: 4px;
-            letter-spacing: 0.5px;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 6px 10px;
+            border-radius: 6px;
+            gap: 4px;
+            transition: all 0.2s;
         }
         .draft-btn:hover {
             background: #f0fdf4;
-            border-color: #86efac;
             color: #065f46;
         }
         .draft-btn:active {
@@ -553,7 +553,7 @@
         /* =========================================================
            8. 右侧侧边栏汇总细节
            ========================================================= */
-        .summary-title { font-size: 13px; font-weight: 800; margin-bottom: 30px; display: block; color: #1e293b; letter-spacing: 1.5px; text-transform: uppercase; }
+        .summary-title { font-size: 14px; font-weight: 700; margin-bottom: 30px; display: block; color: #1e293b; }
         .summary-row { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 13px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 12px; align-items: center; }
         .summary-row .label { color: #64748b; }
         .summary-row .value { color: var(--text-main); font-weight: 700; text-align: right; }
@@ -562,8 +562,8 @@
         .placeholder-box { padding: 60px 20px; border: 1px dashed #e2e8f0; text-align: center; color: #94a3b8; font-size: 13px; background: #fff; border-radius: 8px; }
 
         .clear-all-btn {
-            background: none; border: none; color: #94a3b8; font-size: 11px; font-weight: 600; cursor: pointer; 
-            display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 4px; transition: all 0.2s ease; letter-spacing: 0.5px;
+            background: none; border: none; color: #94a3b8; font-size: 12px; font-weight: 500; cursor: pointer; 
+            display: inline-flex; align-items: center; padding: 6px 10px; border-radius: 6px; transition: all 0.2s ease; gap: 4px;
         }
         .clear-all-btn:hover { background: #fee2e2; color: #ef4444; }
 

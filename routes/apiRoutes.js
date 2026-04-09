@@ -483,6 +483,25 @@ router.post('/submit-inquiry', authenticateToken, upload.any(), async (req, res)
             }
         }
 
+        // 检查是否编辑已有询盘
+        if (!inquiryId && d.edit_inquiry_id) {
+            const ec = await client.query(
+                'SELECT id, inquiry_no FROM custom_inquiries WHERE id = $1 AND user_id = $2 AND deleted_at IS NULL',
+                [parseInt(d.edit_inquiry_id), req.user.id]
+            );
+            if (ec.rows.length > 0) {
+                inquiryId = ec.rows[0].id;
+                inquiryNo = ec.rows[0].inquiry_no;
+                const oldFiles = await client.query('SELECT stored_name FROM custom_inquiry_files WHERE inquiry_id = $1', [inquiryId]);
+                oldStoredNames = oldFiles.rows.map(r => r.stored_name);
+                await client.query('DELETE FROM custom_inquiry_files WHERE inquiry_id = $1', [inquiryId]);
+                await client.query(
+                    `UPDATE custom_inquiries SET status = 'pending', ${INQUIRY_UPDATE_SET}, modified_at = NOW() WHERE id = $39`,
+                    [...fieldValues, inquiryId]
+                );
+            }
+        }
+
         if (!inquiryId) {
             // 生成询盘编号 & 插入新询盘
             const seqResult = await client.query('SELECT generate_inquiry_no() AS no');

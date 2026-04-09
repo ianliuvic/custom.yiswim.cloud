@@ -48,9 +48,9 @@
     cursor: pointer; border: none; transition: all .2s; min-width: 100px;
 }
 .u-modal-btn-primary {
-    background: #1e293b; color: #fff;
+    background: var(--primary-color, #aa0000); color: #fff;
 }
-.u-modal-btn-primary:hover { background: #334155; }
+.u-modal-btn-primary:hover { filter: brightness(1.12); }
 .u-modal-btn-cancel {
     background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0;
 }

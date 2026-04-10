@@ -540,14 +540,16 @@
         
         /* 特殊：第五步提交状态的样式增强（不再使用绿色） */
         #nextBtn.is-final {
-            background: #1e293b; /* 方案：最后一步使用稳重的深海军蓝，或保持红色 */
+            background: #1e293b;
             border-color: #1e293b;
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.2);
             padding-left: 45px;
             padding-right: 45px;
         }
         
-        #nextBtn.is-final:hover {
+        #nextBtn.is-final:hover:not(:disabled) {
             background: #0f172a;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.3);
         }
     
         /* =========================================================

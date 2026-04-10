@@ -160,10 +160,10 @@
     <!-- Navigation -->
     <div class="nav-wrapper">
     <nav class="landing-nav">
-        <div class="logo-area">
+        <a class="logo-area" href="/" style="text-decoration:none;color:inherit;">
             <img src="/logo.png" alt="Logo" onerror="this.style.display='none'">
             <span><%= typeof lng !== 'undefined' && lng === 'en' ? 'Hongxiu Custom System' : '红绣定制系统' %></span>
-        </div>
+        </a>
         <div class="nav-actions">
             <button class="btn-lang" onclick="setLanguage(window.__lang === 'en' ? 'zh' : 'en')">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>

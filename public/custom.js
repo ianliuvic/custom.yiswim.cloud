@@ -3810,6 +3810,13 @@
                 if(autoHint) autoHint.classList.add('hidden');
                 if(customDetails) customDetails.classList.remove('hidden');
                 
+                // 切换到自定义时，默认显示克重区域（除非当前选中了非标准材质）
+                const weightArea = document.getElementById('hangtag-weight-area');
+                if (weightArea) {
+                    const nonStandard = ['其他'].includes(hangtagConfig.material);
+                    weightArea.classList.toggle('hidden', nonStandard);
+                }
+
                 // 向上滚动，将 Switcher 停留在 Stepper 底部
                 setTimeout(() => {
                     scrollElementToTop('hangtag-mode-custom', 60);

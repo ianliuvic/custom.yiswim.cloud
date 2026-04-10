@@ -2587,7 +2587,7 @@
             if (!v.allValid) {
                 // 构造缺失项提示
                 const missing = [];
-                if (!v.style) missing.push(_t('① 款式定义：请至少选择一个 ODM 款式或上传 OEM 设计；OEM 需填写项目名称、款式数量，提供描述/图片/文件之一，并勾选全部确认项'));
+                if (!v.style) missing.push(_t('① 款式定义：请至少选择一个 ODM 款式或上传一个 OEM 设计'));
                 if (!v.fabric) missing.push(_t('② 面料材质：请至少选择一种面料'));
                 if (!v.trims) missing.push(_t('③ 品牌辅料：已启用的辅料需完善配置'));
                 if (!v.shipping) missing.push(_t('④ 下单交付：请在表格中至少选择一个款式'));

@@ -895,6 +895,8 @@
         "适合卫衣/长裤/外套": "For hoodies/pants/outerwear",
         "自定义规格": "Custom specifications",
         "自定义尺寸": "Custom size",
+        "自定义": "Custom",
+        "自定义尺寸 (未输入)": "Custom size (not entered)",
         "已开启 (待选择材质)": "Enabled",
         "无印": "No print",
         "彩色印刷": "Multi-Color Print",

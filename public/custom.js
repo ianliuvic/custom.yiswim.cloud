@@ -2593,7 +2593,7 @@
                 if (!v.shipping) missing.push(_t('④ 下单交付：请在表格中至少选择一个款式'));
                 if (!v.contact) missing.push(_t('⑤ 客户档案：请填写姓名、联系方式和品牌名称'));
                 
-                showMsg(_t('提交前请完善以下必填内容：') + '\n\n' + missing.join('\n'), 'warn');
+                await showMsg(_t('提交前请完善以下必填内容：') + '\n\n' + missing.join('\n'), 'warn');
                 
                 // 跳转到第一个有问题的步骤
                 const stepMap = { style: 1, fabric: 2, trims: 3, shipping: 4, contact: 5 };

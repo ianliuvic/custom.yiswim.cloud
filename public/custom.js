@@ -6134,9 +6134,9 @@
             const w = document.getElementById('bag-custom-width').value.trim();
             const h = document.getElementById('bag-custom-height').value.trim();
             if (w && h) {
-                bagConfig.size = `自定义: ${w}x${h}cm`;
+                bagConfig.size = `${_t('自定义')}: ${w}x${h}cm`;
             } else {
-                bagConfig.size = '自定义尺寸 (未输入)';
+                bagConfig.size = _t('自定义尺寸 (未输入)');
             }
             updateBagSummary();
         }

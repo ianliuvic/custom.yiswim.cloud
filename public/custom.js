@@ -6092,7 +6092,6 @@
                     container.insertAdjacentHTML('beforeend', `
                         <div class="bag-size-card bag-size" onclick="selectBagAttr('size', '${size}', this)">
                             <div class="size-val">${size}</div>
-                            <div class="size-scene">${sceneDesc}</div>
                         </div>
                     `);
                 });

@@ -6628,15 +6628,17 @@
             const style = bulkRows[index].style;
             
             let minAllowed = 50; // 默认按 ODM 算
-            let typeName = "现有款式(ODM)";
+            let typeName = _t("现有款式(ODM)");
         
             if (style.startsWith('OEM')) {
                 minAllowed = 100;
-                typeName = "自主设计(OEM)";
+                typeName = _t("自主设计(OEM)");
             }
         
             if (qty < minAllowed) {
-                showMsg(`⚠️ 起订量提醒：\n您选择的是 ${typeName}，该类型单款最低起订量为 ${minAllowed} 件。\n\n系统已自动为您调整为最低起订量。`, 'warn');
+                showMsg(_t('⚠️ 起订量提醒：') + '\n' + (window.__lang === 'en'
+                    ? `You selected ${typeName}, the minimum order quantity per style is ${minAllowed} pcs.\n\nThe quantity has been automatically adjusted to the minimum.`
+                    : `您选择的是 ${typeName}，该类型单款最低起订量为 ${minAllowed} 件。\n\n系统已自动为您调整为最低起订量。`), 'warn');
                 bulkRows[index].qty = minAllowed;
             } else {
                 bulkRows[index].qty = qty;

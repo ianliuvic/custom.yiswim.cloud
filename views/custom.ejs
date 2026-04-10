@@ -358,7 +358,7 @@
                                 </div>
 
                                 <!-- 1. 需求描述区 -->
-                                <label style="display:block; font-size:13px; font-weight:600; color:var(--text-main); margin-bottom:8px;">面料需求描述</label>
+                                <label style="display:block; font-size:13px; font-weight:600; color:var(--text-main); margin-bottom:8px;"><%= lng === 'en' ? 'Fabric Requirements Description' : '面料需求描述' %><span style="color:#ef4444; margin-left:4px;">*</span></label>
                                 <textarea id="custom-fabric-desc" placeholder="请详细描述您需要的面料质感、特性（如：冰丝感、高弹、抗菌、防泼水、起皱肌理等）..." class="oem-textarea" style="height: 70px; margin-bottom: 15px;" oninput="updateCustomFabricData()"></textarea>
 
                                 <!-- 2. 参数输入区 (三列布局，增加 box-sizing 和 min-width 防止粘连) -->

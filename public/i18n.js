@@ -396,7 +396,7 @@
         "我需要自定义特定尺寸 (否则默认使用红绣常规尺寸)": "I need custom specific size",
         "注：如果是通用葫芦形，常规尺寸默认约为 5x11cm。": "Note: For universal gourd shape, default standard size is about 5x11cm.",
         "印刷内容与设计": "Print Content & Design",
-        "定制印刷（单色/彩色）起订量 MOQ 均为 5000 枚。若无图稿，默认印制通用英文安全提示语。": "Custom printing MOQ is 5000 pcs. Without artwork, default English safety message printed.",
+        "定制印刷（单色/彩色）起订量 MOQ 均为 10000 枚。若无图稿，默认印制通用英文安全提示语。": "Custom printing MOQ is 10000 pcs. Without artwork, default English safety message printed.",
         "排版要求 / 文字内容": "Layout Requirements / Text Content",
         "粘贴与交付规则": "Application & Delivery Rules",
         "我不需要工厂代贴标，请随大货卷装发出自行贴标。": "I don't need factory application. Ship in rolls with bulk order for self-application.",

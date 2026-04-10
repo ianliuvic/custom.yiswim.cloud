@@ -6238,7 +6238,7 @@
             } 
             
             const matPart = (window.__lang === 'en' && bagConfig.materialEn) ? bagConfig.materialEn : bagConfig.material;
-            const sizePart = bagConfig.size !== '未选尺寸' ? bagConfig.size.split(' ')[0] : _t('尺寸待定');
+            const sizePart = bagConfig.size !== '未选尺寸' ? bagConfig.size : _t('尺寸待定');
             
             // 组装工艺文字
             let printText = bagConfig.print === '空白无印' ? _t('无印') : _t(bagConfig.print);

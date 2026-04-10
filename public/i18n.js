@@ -154,7 +154,7 @@
         "开发阶段说明": "Sampling Stage Notice",
         "本步骤配置的所有品牌辅料主要用于大货生产的成本核算与规划。打样阶段将优先使用工厂通用辅料，暂不受此配置影响。需注意，涉及 Logo 开模或定制印刷的辅料因受最低起订量 (MOQ) 限制，通常不会在打样环节单独落实。": "All brand trims configured here are for bulk production cost estimation. The sampling stage uses factory standard trims. Trims involving Logo mold or custom printing are subject to MOQ limits and typically won't be implemented during sampling.",
         "金属饰品": "Metal Hardware",
-        "胸垫": "Chest Pad",
+        "胸垫": "Padding",
         "包装袋": "Packaging Bag",
         "吊牌": "Hang Tag",
         "标签": "Label",
@@ -207,13 +207,13 @@
         "注：定制专属 Logo 模具需支付开模费，且大货起订量 (MOQ) 通常为 500-1000 件/款。": "Note: Custom Logo mold requires a mold opening fee, and bulk MOQ is typically 500-1000 pcs/style.",
         "点击上传品牌 Logo 矢量图 (AI / PDF / 高清 PNG)": "Click to upload brand Logo vector file",
 
-        // ── Chest Pad ──
-        "是否需要配备罩杯/胸垫？": "Do you need cups/chest pads?",
-        "胸垫配置模式": "Chest Pad Configuration Mode",
+        // ── Padding ──
+        "是否需要配备罩杯/胸垫？": "Do you need cups/padding?",
+        "胸垫配置模式": "Padding Configuration Mode",
         "罩杯形状与尺码": "Cup Shape & Size",
         "红绣专业建议：": "Hongxiu Professional Suggestions:",
         "形状适配：": "Shape Adaptation:",
-        "由于胸垫必须严格适配外部成衣裁片，系统已默认将杯型与您的款式绑定（如三角杯配三角垫，抹胸配圆垫等）。": "Since chest pads must strictly fit outer garment panels, the system defaults to binding cup type with your style.",
+        "由于胸垫必须严格适配外部成衣裁片，系统已默认将杯型与您的款式绑定（如三角杯配三角垫，抹胸配圆垫等）。": "Since padding must strictly fit outer garment panels, the system defaults to binding cup type with your style.",
         "尺码放缩：": "Size Grading:",
         "我们将在大货生产中，根据成衣的不同尺码 (如 S, M, L, XL)，自动为您放缩并匹配对应大小的胸垫，确保每件衣物呈现完美的穿着比例。除非您有特殊的开模定制需求，否则建议交由我们自动匹配。": "During bulk production, we auto-grade and match pad sizes for different garment sizes (S, M, L, XL). Unless you have special mold requirements, we recommend auto matching.",
         "我有特殊的定制形状或特定尺寸需求 (需重新开模)": "I have special custom shape or specific size requirements",
@@ -227,7 +227,7 @@
         "上薄下厚": "Top Thin Bottom Thick",
         "聚拢": "Push-up",
         "底部加厚垫高 1.5cm+": "Bottom thickened, raised 1.5cm+",
-        "胸垫颜色": "Chest Pad Color",
+        "胸垫颜色": "Padding Color",
         "海绵裸色": "Nude Sponge",
         "白色": "White",
         "黑色": "Black",
@@ -472,8 +472,8 @@
         "请描述您需要的特殊标签材质...": "Describe your special label material requirements...",
         "请详细输入辅料名称、材质、尺寸、颜色，以及预期用在衣物的哪个部位。\n例如：需要 15cm 长的黑色 YKK 隐形拉链，用于后背开襟...": "Enter trim name, material, size, color, and expected garment placement.\ne.g., Need a 15cm black YKK invisible zipper for back opening...",
         "例如：自供 15cm YKK 金属拉链，金色，100条...": "e.g., Self-supplied 15cm YKK metal zipper, gold, 100 pcs...",
-        "例如：自供透气直立棉胸垫，肤色，500副...": "e.g., Self-supplied breathable standing cotton chest pads, nude, 500 pairs...",
-        "如：需要定制特殊的一体式连体胸垫，或者是指定每个尺码的具体杯长杯宽...": "e.g., Need a custom one-piece chest pad, or specify cup length and width for each size...",
+        "例如：自供透气直立棉胸垫，肤色，500副...": "e.g., Self-supplied breathable standing cotton padding, nude, 500 pairs...",
+        "如：需要定制特殊的一体式连体胸垫，或者是指定每个尺码的具体杯长杯宽...": "e.g., Need a custom one-piece padding, or specify cup length and width for each size...",
         "A. 材质与袋型": "A. Material & Bag Type",
         "请详细描述您的装箱需求。\n例如：\n1. 外箱需贴 Amazon FBA 标签\n2. 每箱重量不得超过 15kg\n3. 侧唛需印制单号和 SKU 信息": "Please describe your packing requirements in detail.\ne.g.:\n1. Outer cartons need Amazon FBA labels\n2. Each carton must not exceed 15kg\n3. Side marks should include tracking number and SKU info",
         "期望 EXW 单价": "Target EXW Unit Price",
@@ -1059,7 +1059,7 @@
         "客供面料文件": "Customer-supplied Fabric Files",
         "辅料 / 包装": "Trims / Packaging",
         "五金配件": "Metal Hardware",
-        "胸垫": "Chest Pad",
+        "胸垫": "Padding",
         "包装袋": "Packaging Bag",
         "吊牌": "Hang Tag",
         "标签": "Label",
@@ -1287,9 +1287,9 @@
         // Step 3: metal smart match (inner div with <strong>)
         { m: '逐一挑选基础五金', h: '<strong style="color:var(--primary-color);">Smart Match Description:</strong> No need to individually select basic hardware. The pattern maker will auto-match high-quality, rust-proof and chlorine-resistant standard parts (e.g., figure-8 clasps, O-rings, back clasps) based on your style structure, ensuring colors perfectly match your selection above.' },
         // Step 3: pad smart match (inner div with <strong>)
-        { m: '确定的款式轮廓', h: '<strong style="color:var(--primary-color);">Smart Match Description:</strong> Based on the style silhouette(s) confirmed in Step 1, we will automatically match the best-fitting chest pad shape, thickness (default: light and natural), and color (default: Nude/Black). Ensuring perfect integration with the garment pattern for optimal wearing experience \u2014 no additional configuration needed.' },
+        { m: '确定的款式轮廓', h: '<strong style="color:var(--primary-color);">Smart Match Description:</strong> Based on the style silhouette(s) confirmed in Step 1, we will automatically match the best-fitting padding shape, thickness (default: light and natural), and color (default: Nude/Black). Ensuring perfect integration with the garment pattern for optimal wearing experience \u2014 no additional configuration needed.' },
         // Step 3: pad expert advice
-        { m: '红绣专业建议：', h: '<strong>Hongxiu Expert Advice:</strong><br>1. <strong>Shape Matching:</strong> Since breast pads must precisely conform to the outer garment panels, the system has automatically linked the cup type to your style (e.g., triangle cups with triangle pads, bandeau with round pads, etc.).<br>2. <strong>Size Grading:</strong> During bulk production, we will <strong>automatically grade and match appropriately sized breast pads based on garment sizes (e.g., S, M, L, XL)</strong>, ensuring perfect proportions for each piece. Unless you have special molding requirements, we recommend leaving this to our automatic matching.' },
+        { m: '红绣专业建议：', h: '<strong>Hongxiu Expert Advice:</strong><br>1. <strong>Shape Matching:</strong> Since padding must precisely conform to the outer garment panels, the system has automatically linked the cup type to your style (e.g., triangle cups with triangle pads, bandeau with round pads, etc.).<br>2. <strong>Size Grading:</strong> During bulk production, we will <strong>automatically grade and match appropriately sized padding based on garment sizes (e.g., S, M, L, XL)</strong>, ensuring perfect proportions for each piece. Unless you have special molding requirements, we recommend leaving this to our automatic matching.' },
         // Step 3: pad molding commercial tip
         { m: '重新开发特殊形状的模杯', h: '<strong style="color: #b45309;">Commercial Note:</strong> Developing custom-shaped molded cups/pads requires a mold fee, and the bulk MOQ is typically <strong>3,000 pairs/size</strong> minimum.' },
         // Step 3: pad dye reminder

@@ -100,6 +100,7 @@
            3. ODM 款式网格与卡片 (电商大气风格)
            ========================================================= */
         .step-desc { font-size: 13px; color: #64748b; background: #f8fafc; padding: 14px 20px; border-left: 3px solid var(--primary-color); border-radius: 4px; margin-bottom: 30px; line-height: 1.6; }
+        .section-heading { font-size: 14px; border-left: 3px solid var(--primary-color); padding-left: 10px; margin-bottom: 15px; }
         
         .option-grid { 
             display: grid; 

@@ -1675,20 +1675,20 @@
                                             
                                             <!-- 第一层：选择安装的服装部件 (多选) -->
                                             <div style="margin-bottom: 25px;">
-                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:12px;">1. 目标服装部件 (Target Component - 可多选)</label>
+                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:12px;"><%= lng === 'en' ? '1. Target Garment Components (multi-select)' : '1. 目标服装部件 (Target Component - 可多选)' %></label>
                                                 <div class="chip-container" style="gap: 15px;">
                                                     <div class="chip selected" style="padding: 10px 20px; font-size: 13px;" onclick="toggleLabelComponent('上装/连体', this)">
-                                                        上装 / 连体泳装
+                                                        <%= lng === 'en' ? 'Top / One-Piece Swimsuit' : '上装 / 连体泳装' %>
                                                     </div>
                                                     <div class="chip" style="padding: 10px 20px; font-size: 13px;" onclick="toggleLabelComponent('下装/裤装', this)">
-                                                        下装 / 泳裤
+                                                        <%= lng === 'en' ? 'Bottom / Swim Trunks' : '下装 / 泳裤' %>
                                                     </div>
                                                 </div>
                                             </div>
                                     
                                             <!-- 第二层：动态显示的安装位置选项 -->
                                             <div>
-                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:12px;">2. 详细缝制/烫印位置</label>
+                                                <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:12px;"><%= lng === 'en' ? '2. Detailed Placement Position' : '2. 详细缝制/烫印位置' %></label>
                                                 
                                                 <!-- 上装/连体的选项 (默认显示) -->
                                                 <div id="label-placement-top-area" style="margin-bottom: 20px; animation: fadeIn 0.3s ease;">

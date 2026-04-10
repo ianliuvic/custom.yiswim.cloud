@@ -5610,7 +5610,7 @@
         // ==========================================
         let metalConfig = {
             mode: 'auto', // 新增：默认智能代配
-            finish: '亮金色',
+            finish: '亮銀色',
             activeCategory: '', // 当前正在编辑的分类名
             details: {},
             categories: [],
@@ -7084,7 +7084,7 @@
             const bagDesignPreview = _el('bagDesignPreview'); if (bagDesignPreview) bagDesignPreview.innerHTML = '';
             const bagRemark = _el('bag-remark'); if (bagRemark) bagRemark.value = '';
             // 重置金属饰品
-            metalConfig = { finish: '亮金色', categories: [], logoCustom: false, logoTypes: [], logoFiles: [], sourceFiles: [] };
+            metalConfig = { finish: '亮銀色', categories: [], logoCustom: false, logoTypes: [], logoFiles: [], sourceFiles: [] };
             document.querySelectorAll('.finish-item').forEach(item => item.classList.remove('selected'));
             document.querySelectorAll('.finish-item')[0]?.classList.add('selected'); 
             document.querySelectorAll('.metal-item').forEach(item => item.classList.remove('selected'));

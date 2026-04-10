@@ -253,7 +253,7 @@
         "保持原质感，极简优选": "Maintain original texture, minimalist preferred",
         "印制单色 Logo/警示语": "Print single-color Logo/warning text",
         "彩色Logo或平铺满印": "Color Logo or full tiled print",
-        "商业提示：定制印刷包装袋（单色或彩色）起订量 (MOQ) 通常为 5000 个起。": "Commercial notice: Custom printed packaging bags MOQ is typically 5000+.",
+        "商业提示：定制印刷包装袋单色 MOQ 1000 个起，彩色 MOQ 5000 个起。": "Commercial notice: Custom printed packaging bags — 1-color MOQ 1000 pcs, multi-color MOQ 5000 pcs.",
         "设计图稿/Logo上传": "Design Draft / Logo Upload",
         "点击上传 AI / PDF / 高清图": "Click to upload AI / PDF / HD images",
         "印刷排版要求": "Print Layout Requirements",
@@ -1283,7 +1283,7 @@
         // Step 2: material warehouse (fabric)
         { m: '收件仓库：', h: '<strong>Receiving Warehouse:</strong> Hongxiu Clothing Co., Ltd. Material Warehouse, 10-8A Tiexi Rd, Xingcheng, Liaoning (Recipient: Material Dept. +86 191-6891-9352)' },
         // Step 3: development stage note
-        { m: '开发阶段说明：', h: '<strong style="color: #475569;">Development Stage Note:</strong><br>All brand trims configured in this step are primarily for <strong>bulk production cost estimation and planning</strong>. During the sampling phase, factory standard trims will be used by default. Note that trims involving Logo molding or custom printing are subject to MOQ requirements and typically <strong>will not be fulfilled separately during sampling</strong>.' },
+        { m: '开发阶段说明：', h: '<strong style="color: #000001;">Development Stage Note:</strong><br>All brand trims configured in this step are primarily for <strong>bulk production cost estimation and planning</strong>. During the sampling phase, factory standard trims will be used by default. Note that trims involving Logo molding or custom printing are subject to MOQ requirements and typically <strong>will not be fulfilled separately during sampling</strong>.' },
         // Step 3: trim warehouse address (7x)
         { m: '收件仓：', h: '<strong>Receiving Warehouse:</strong> Hongxiu Clothing Co., Ltd. Material Warehouse, 10-8A Tiexi Rd, Xingcheng, Liaoning<br><strong>Recipient:</strong> Trim Dept. +86 191-6891-9352' },
         // Step 3: metal smart match (inner div with <strong>)

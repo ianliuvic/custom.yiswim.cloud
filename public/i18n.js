@@ -779,7 +779,7 @@
         "暂无面料数据": "No fabric data available",
         "里料": "Lining",
         "网纱": "Mesh",
-        "常用": "Common",
+        "常用": "Most popular",
         "推荐": "Recommended",
         "精选定制面料": "Premium custom fabric",
         "找不到心仪面料？": "Can't find your fabric?",

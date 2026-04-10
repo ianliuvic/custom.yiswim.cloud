@@ -1353,7 +1353,7 @@
         // MOQ modal: Level 4 special materials
         { m: '包含且不限于', h: 'Including: custom Pantone dyeing, special texture sourcing, brand exclusive hardware mold, etc. <strong>(Subject to minimum production requirements of dyeing factories and trim supply chains)</strong>' },
         // Sample extra warning (contains <strong>)
-        { m: '提示：', h: '<strong>\u26a0\ufe0f Notice:</strong> Some styles exceed 2 samples, extra pieces will incur sewing fees.' },
+        { m: '部分款式打样数量超过 2 件', h: '<strong>\u26a0\ufe0f Notice:</strong> Some styles exceed 2 samples, extra pieces will incur sewing fees.' },
         // Packing instruction banner (contains <strong> and <br>)
         { m: '装箱包装说明', h: '<strong>Packing Instructions:</strong> Please describe your requirements for individual packing, outer carton, and shipping marks below.<br>Common requests: individual OPP bagging, Amazon FBA labels, carton weight limits, mixed color/size rules, etc. If no special requirements, the factory will use industry-standard packing.' },
         // Fee standard modal: section I heading

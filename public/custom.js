@@ -2941,7 +2941,8 @@
 
                     if (isCustomSourcing) {
                         // 定制找样逻辑
-                        document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：定制开发/全球找样`;
+                        const _csLabel = window.__lang === 'en' ? 'Custom Sourcing / Global Development' : '定制开发/全球找样';
+                        document.getElementById('selected-fabric-display').innerText = window.__lang === 'en' ? `${selection.originalCatName}: ${_csLabel}` : `${selection.originalCatName}：${_csLabel}`;
                         [modeSwitcher, solidArea, printArea].forEach(area => area?.classList.add('hidden'));
                         if(customForm) customForm.classList.remove('hidden');
                         
@@ -2956,7 +2957,8 @@
                         renderCustomFabricPreview(config.customFiles || []);
                     } else {
                         // 标准面料逻辑
-                        document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：${selection.activeName}`;
+                        const _activeEnName = (window.__lang === 'en' && window.globalFabricsMap && window.globalFabricsMap[selection.activeName] && window.globalFabricsMap[selection.activeName].name_en) ? window.globalFabricsMap[selection.activeName].name_en : selection.activeName;
+                        document.getElementById('selected-fabric-display').innerText = window.__lang === 'en' ? `${selection.originalCatName}: ${_activeEnName}` : `${selection.originalCatName}：${selection.activeName}`;
                         [solidArea, printArea].forEach(area => area?.classList.remove('hidden'));
                         if(customForm) customForm.classList.add('hidden');
                         
@@ -3214,7 +3216,8 @@
                 // A. 定制找样模式 UI
                 [modeSwitcher, solidArea, printArea].forEach(area => area?.classList.add('hidden'));
                 customForm.classList.remove('hidden');
-                document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：定制开发/全球找样`;
+                const _csLabelB = window.__lang === 'en' ? 'Custom Sourcing / Global Development' : '定制开发/全球找样';
+                document.getElementById('selected-fabric-display').innerText = window.__lang === 'en' ? `${selection.originalCatName}: ${_csLabelB}` : `${selection.originalCatName}：${_csLabelB}`;
                 
                 // 恢复定制表单数据
                 document.getElementById('custom-fabric-desc').value = config.customDesc || '';
@@ -3232,7 +3235,8 @@
                 // B. 标准面料模式 UI
                 [modeSwitcher, solidArea, printArea].forEach(area => area?.classList.remove('hidden'));
                 if(customForm) customForm.classList.add('hidden');
-                document.getElementById('selected-fabric-display').innerText = `${selection.originalCatName}：${name}`;
+                const _fabricEnName = (window.__lang === 'en' && window.globalFabricsMap && window.globalFabricsMap[name] && window.globalFabricsMap[name].name_en) ? window.globalFabricsMap[name].name_en : name;
+                document.getElementById('selected-fabric-display').innerText = window.__lang === 'en' ? `${selection.originalCatName}: ${_fabricEnName}` : `${selection.originalCatName}：${name}`;
                 
                 if (isSimplified) config.mode = 'solid'; // 里料强制纯色数据
                 switchFabricMode(config.mode); 

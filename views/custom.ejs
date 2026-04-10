@@ -149,7 +149,7 @@
                         <div id="custom-upload" class="hidden" style="animation: fadeIn 0.4s ease;">
                             <!-- 新增：项目系列名称与款式数量 -->
                             <div class="oem-section-header" style="margin-bottom: 18px;">
-                                <h4 style="font-size: 14px; margin: 0; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 项目基本信息</h4>
+                                <h4 class="section-heading" style="margin: 0;">A. 项目基本信息</h4>
                             </div>  
                             <div class="oem-upload-section" style="margin-bottom: 25px; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; background: #fbfcfd;">
                                 <div style="display: flex; gap: 20px; align-items: flex-start; margin-bottom: 15px;">
@@ -189,7 +189,7 @@
                                 <!-- A. 灵感参考图 -->
                                 <div class="oem-upload-section">
                                     <div class="oem-section-header" style="margin-bottom: 12px;">
-                                        <h4 style="font-size: 14px; margin: 0 0 4px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 参考图与灵感</h4>
+                                        <h4 class="section-heading" style="margin: 0 0 4px;">B. 参考图与灵感</h4>
                                         <span class="oem-subtitle" style="margin-left: 13px;">请上传款式参考图或草图 (仅限图片)</span>
                                     </div>
                                     <div class="oem-dropzone" id="oemRefDropzone" onclick="document.getElementById('oemRefFile').click()">
@@ -205,7 +205,7 @@
                                 <!-- B. 工艺单/设计稿 -->
                                 <div class="oem-upload-section">
                                     <div class="oem-section-header" style="margin-bottom: 12px;">
-                                        <h4 style="font-size: 14px; margin: 0 0 4px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 工艺单/设计稿</h4>
+                                        <h4 class="section-heading" style="margin: 0 0 4px;">C. 工艺单/设计稿</h4>
                                         <span class="oem-subtitle" style="margin-left: 13px;">支持图片、PDF、AI、EPS 等格式</span>
                                     </div>
 
@@ -223,7 +223,7 @@
                             <!-- D. 尺寸信息 -->
                             <div class="oem-upload-section" style="margin-bottom: 25px;">
                                 <div class="oem-section-header" style="margin-bottom: 12px;">
-                                    <h4 style="font-size: 14px; margin: 0 0 4px; border-left: 3px solid var(--primary-color); padding-left: 10px;">D. 尺寸信息</h4>
+                                    <h4 class="section-heading" style="margin: 0 0 4px;">D. 尺寸信息</h4>
                                     <span class="oem-subtitle" style="margin-left: 13px;">请提供尺寸说明或上传尺寸文件</span>
                                 </div>
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
@@ -248,7 +248,7 @@
                             </div>
                         
                             <div class="oem-upload-section" style="margin-bottom: 25px;">
-                                <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">E. 补充说明</h4>
+                                <h4 class="section-heading">E. 补充说明</h4>
                                 <textarea id="oem-remark" class="oem-textarea" style="min-height: 150px; resize: vertical;" placeholder="请详细描述您的修改要求或特定工艺要求..." spellcheck="false" oninput="updateCombinedStyleSummary()"></textarea>
                             </div>
 
@@ -661,7 +661,7 @@
                             <div id="content-metal" class="hidden" style="animation: fadeIn 0.4s ease;">
                                 <!-- 1. 全局电镀色调 -->
                                 <div class="attr-section" style="margin-bottom: 35px;">
-                                    <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">1. 硬件电镀色调</h4>
+                                    <h4 class="section-heading" style="margin-bottom: 18px;">1. 硬件电镀色调</h4>
                                     <div class="metal-finish-grid" id="metal-finish-container" style="margin-left:13px;">
                                         <div class="finish-item selected" onclick="selectMetalAttr('finish', '亮金色', this)">
                                             <div class="finish-swatch bg-gold"></div><span class="finish-label">亮金色</span>
@@ -680,7 +680,7 @@
 
                                 <!-- ================= 新增：配置模式选择 ================= -->
                                 <div class="attr-section" style="margin-bottom: 30px;">
-                                    <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">2. 饰品配置模式</h4>
+                                    <h4 class="section-heading">2. 饰品配置模式</h4>
                                     <div style="margin-left: 13px;">
                                         <div class="mode-switcher" style="margin-bottom: 12px;">
                                             <div class="mode-option active" id="metal-mode-auto" onclick="switchMetalMode('auto')">红绣智能代配 (推荐)</div>
@@ -890,7 +890,7 @@
                             <div id="content-pad" class="hidden" style="animation: fadeIn 0.4s ease;">
                                 <!-- 配置模式选择 -->
                                 <div class="attr-section" style="margin-bottom: 25px;">
-                                    <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">1. 胸垫配置模式</h4>
+                                    <h4 class="section-heading">1. 胸垫配置模式</h4>
                                     <div style="margin-left: 13px;">
                                         <div class="mode-switcher" style="margin-bottom: 12px;">
                                             <div class="mode-option active" id="pad-mode-auto" onclick="switchPadMode('auto')">红绣智能代配 (推荐)</div>
@@ -907,7 +907,7 @@
                                     
                                     <!-- A. 形状与尺码 -->
                                     <div class="attr-section" style="margin-bottom: 30px;">
-                                        <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 罩杯形状与尺码</h4>
+                                        <h4 class="section-heading" style="margin-bottom: 12px;">A. 罩杯形状与尺码</h4>
                                         <div style="margin-left: 13px;">
                                             <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #f1f5f9; margin-bottom: 15px; font-size: 12px; color: #475569; display: flex; gap: 10px; align-items: flex-start;">
                                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2" style="margin-top: 2px; flex-shrink: 0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
@@ -951,7 +951,7 @@
 
                                     <!-- B. 厚度与聚拢 -->
                                     <div class="attr-section" style="margin-bottom: 30px;">
-                                        <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 厚度与聚拢需求</h4>
+                                        <h4 class="section-heading">B. 厚度与聚拢需求</h4>
                                         <div class="option-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-left: 13px;">
                                             <!-- 保留：常规标准 -->
                                             <div class="option-item metal-item pad-thick selected" onclick="selectPadAttr('thickness', '常规标准 (5-8mm)', this)">
@@ -969,7 +969,7 @@
 
                                     <!-- C. 颜色 -->
                                     <div class="attr-section" style="margin-bottom: 30px;">
-                                        <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 胸垫颜色</h4>
+                                        <h4 class="section-heading">C. 胸垫颜色</h4>
                                         <div style="margin-left: 13px; background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px; padding: 25px;">
                                             <div style="display:flex; align-items:center; gap:15px;">
                                                 <div class="string-color-swatch pad-color selected" style="background:#e5cda8;" title="海绵裸色" onclick="selectPadAttr('color', '海绵裸色', this)"></div>
@@ -993,7 +993,7 @@
 
                                     <!-- D. 其他需求描述 -->
                                     <div class="attr-section" style="margin-bottom: 20px;">
-                                        <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">D. 材质或特殊要求描述</h4>
+                                        <h4 class="section-heading">D. 材质或特殊要求描述</h4>
                                         <div style="margin-left: 13px;">
                                             <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px;">
                                                 <div>
@@ -1071,7 +1071,7 @@
                             <div id="content-bag" class="hidden" style="animation: fadeIn 0.4s ease;">
                                 <!-- A. 材质选择 -->
                                 <div class="attr-section" style="margin-bottom: 25px;">
-                                    <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 材质与袋型</h4>
+                                    <h4 class="section-heading" style="margin-bottom: 12px;">A. 材质与袋型</h4>
                                     <div id="bag-list-container" class="option-grid"><p style="color:#999; font-size:12px; padding:20px;">正在加载包装袋库...</p></div>
 
                                     <!-- B. 行内动态展开面板 (仅包含尺寸) -->
@@ -1105,7 +1105,7 @@
                                     <!-- B. 印刷与附加工艺 -->
                                     <div class="attr-section" style="margin-bottom: 35px;">
                                         <div style="display: flex; align-items: baseline; gap: 15px; margin-bottom: 15px;">
-                                            <h4 style="font-size: 14px; border-left: 3px solid var(--primary-color); padding-left: 10px; margin: 0;">B. 印刷内容与排版设计</h4>
+                                            <h4 class="section-heading" style="margin: 0;">B. 印刷内容与排版设计</h4>
                                         </div>
                                         
                                         <div class="option-grid" id="bag-print-grid" style="grid-template-columns: repeat(3, 1fr); gap: 20px; margin-left: 13px; margin-bottom: 20px;">
@@ -1212,7 +1212,7 @@
                                 
                                 <!-- 1. 配置模式选择 -->
                                 <div class="attr-section" style="margin-bottom: 25px;">
-                                    <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">1. 吊牌配置模式</h4>
+                                    <h4 class="section-heading">1. 吊牌配置模式</h4>
                                     <div style="margin-left: 13px;">
                                         <div class="mode-switcher" style="margin-bottom: 12px;">
                                             <div class="mode-option active" id="hangtag-mode-auto" onclick="switchHangtagMode('auto')">红绣智能代配 (推荐)</div>
@@ -1230,7 +1230,7 @@
                                     
                                     <!-- A. 材质选择 -->
                                     <div class="attr-section" style="margin-bottom: 30px;">
-                                        <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 核心纸张材质</h4>
+                                        <h4 class="section-heading" style="margin-bottom: 12px;">A. 核心纸张材质</h4>
                                         
                                         <!-- 材质卡片网格 -->
                                         <div class="option-grid" id="hangtag-material-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-left:13px; position: relative;">
@@ -1287,7 +1287,7 @@
                                 
                                     <!-- B. 形状与规格 -->
                                     <div class="attr-section" style="margin-bottom: 30px;">
-                                        <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 形状与规格</h4>
+                                        <h4 class="section-heading" style="margin-bottom: 12px;">B. 形状与规格</h4>
                                         
                                         <div class="option-grid" id="hangtag-shape-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-left: 13px; position: relative;">
                                             
@@ -1348,7 +1348,7 @@
                                 
                                     <!-- C. 印刷工艺选择 -->
                                     <div class="attr-section" style="margin-bottom: 30px;">
-                                        <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 印刷工艺附加</h4>
+                                        <h4 class="section-heading" style="margin-bottom: 12px;">C. 印刷工艺附加</h4>
                                         
                                         <div class="option-grid" id="hangtag-craft-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-left: 13px; position: relative;">
                                             <div class="option-item metal-item" onclick="toggleHangtagCraft('无附加工艺', this)">
@@ -1399,7 +1399,7 @@
                                 
                                     <!-- D. 吊粒挂绳 -->
                                     <div class="attr-section" style="margin-bottom: 30px;">
-                                        <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">D. 吊粒挂绳</h4>
+                                        <h4 class="section-heading" style="margin-bottom: 12px;">D. 吊粒挂绳</h4>
                                         <div style="background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px; padding: 25px; margin-left: 13px;">
                                             
                                             <div style="display: flex; flex-direction: column; gap: 30px;">
@@ -1500,7 +1500,7 @@
                             
                                 <!-- 3. 核心设计上传与备注 (无论哪种模式均全局保留) -->
                                 <div class="attr-section" style="margin-top: 20px; border-top: 1px dashed #e2e8f0; padding-top: 25px;">
-                                    <h4 style="font-size: 14px; border-left: 3px solid var(--primary-color); padding-left: 10px; margin-bottom: 15px;">2. 设计稿与排版要求</h4>
+                                    <h4 class="section-heading">2. 设计稿与排版要求</h4>
                                     <div style="margin-left: 13px;">
                                         <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px; align-items: stretch;">
                                             <div style="display: flex; flex-direction: column;">
@@ -1571,7 +1571,7 @@
                                 
                                 <!-- 1. 配置模式选择 -->
                                 <div class="attr-section" style="margin-bottom: 25px;">
-                                    <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">1. 标签配置模式</h4>
+                                    <h4 class="section-heading">1. 标签配置模式</h4>
                                     <div style="margin-left: 13px;">
                                         <div class="mode-switcher" style="margin-bottom: 12px;">
                                             <div class="mode-option active" id="label-mode-auto" onclick="switchLabelMode('auto')">红绣智能代配 (推荐)</div>
@@ -1589,7 +1589,7 @@
                                     
                                     <!-- A. 材质选择 -->
                                     <div class="attr-section" style="margin-bottom: 25px;">
-                                        <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 标签材质</h4>
+                                        <h4 class="section-heading">A. 标签材质</h4>
                                         
                                         <!-- 材质卡片网格：调整为 minmax(200px) 对齐吊牌 -->
                                         <div class="option-grid" id="label-material-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-left: 13px; position: relative;">
@@ -1669,7 +1669,7 @@
 
                                     <!-- C. 安装位置定位 -->
                                     <div class="attr-section" style="margin-bottom: 25px;">
-                                        <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 标签安装部位与位置</h4>
+                                        <h4 class="section-heading">B. 标签安装部位与位置</h4>
                                         
                                         <div style="margin-left: 13px; background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px; padding: 25px;">
                                             
@@ -1827,7 +1827,7 @@
                             
                                 <!-- 2. 核心设计上传与备注 (全局保留) -->
                                 <div class="attr-section" style="margin-top: 20px; border-top: 1px dashed #e2e8f0; padding-top: 25px;">
-                                    <h4 style="font-size: 14px; border-left: 3px solid var(--primary-color); padding-left: 10px; margin-bottom: 15px;">2. 设计稿与排版要求</h4>
+                                    <h4 class="section-heading">2. 设计稿与排版要求</h4>
                                     <!-- 新增：合规性与法规提醒横幅 -->
                                     <div style="margin-left: 13px; margin-bottom: 20px; padding: 12px 15px; background: #fffbeb; border: 1px dashed #fcd34d; border-radius: 8px; display: flex; flex-direction: column; gap: 10px;">
                                         <div style="display: flex; align-items: flex-start; gap: 8px;">
@@ -1913,7 +1913,7 @@
                                 
                                 <!-- 1. 配置模式选择 -->
                                 <div class="attr-section" style="margin-bottom: 25px;">
-                                    <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">1. 卫生贴配置模式</h4>
+                                    <h4 class="section-heading">1. 卫生贴配置模式</h4>
                                     <div style="margin-left: 13px;">
                                         <div class="mode-switcher" style="margin-bottom: 12px;">
                                             <div class="mode-option active" id="hygiene-mode-auto" onclick="switchHygieneMode('auto')">红绣智能代配 (推荐)</div>
@@ -1932,7 +1932,7 @@
                                     
                                     <!-- A. 材质、形状与尺寸 -->
                                     <div class="attr-section" style="margin-bottom: 30px;">
-                                        <h4 style="font-size: 14px; margin-bottom: 20px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 材质、形状与尺寸 (Material, Shape & Size)</h4>
+                                        <h4 class="section-heading" style="margin-bottom: 20px;">A. 材质、形状与尺寸 (Material, Shape & Size)</h4>
                                         <div style="margin-left: 13px; display: flex; flex-direction: column; gap: 25px;">
                                             
                                             <!-- 1. 材质 -->
@@ -2031,7 +2031,7 @@
                                 
                                     <!-- B. 印刷内容与设计 (精简为纯设计稿上传) -->
                                     <div class="attr-section" style="margin-bottom: 30px;">
-                                        <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 印刷内容与设计</h4>
+                                        <h4 class="section-heading">B. 印刷内容与设计</h4>
                                         <div style="margin-left: 13px;">
                                             <div class="metal-notice" style="margin-bottom: 15px; color: #f59e0b;">
                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
@@ -2060,7 +2060,7 @@
                                 
                                     <!-- C. 粘贴规则 -->
                                     <div class="attr-section" style="margin-bottom: 20px;">
-                                        <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 粘贴与交付规则</h4>
+                                        <h4 class="section-heading">C. 粘贴与交付规则</h4>
                                         <div style="margin-left: 13px;">
                                             <label class="oem-checkbox-label" style="margin: 0 0 15px 0; font-weight: 600;">
                                                 <input type="checkbox" id="hygiene-no-apply" onchange="toggleHygieneApply(this.checked)"> 我不需要工厂代贴标，请随大货卷装发出自行贴标。
@@ -2142,7 +2142,7 @@
                         
                             <div id="content-other" class="hidden" style="animation: fadeIn 0.4s ease;">
                                 <div class="attr-section" style="margin-bottom: 25px;">
-                                    <h4 style="font-size: 14px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">特殊辅料需求描述</h4>
+                                    <h4 class="section-heading">特殊辅料需求描述</h4>
                                     <div style="margin-left: 13px;">
                                         
                                         <div class="metal-notice" style="margin-bottom: 20px;">
@@ -2199,7 +2199,7 @@
                         <div id="pane-delivery-sample" style="animation: fadeIn 0.4s ease;">
                             <!-- 1. 顶部统计与 OEM 输入 -->
                             <div class="attr-section" style="margin-bottom: 25px;">
-                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 开发规模确认</h4>
+                                <h4 class="section-heading" style="margin-bottom: 18px;">A. 开发规模确认</h4>
                                 <div style="margin-left: 13px; display: flex; gap: 40px; align-items: center; background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #f1f5f9;">
                                     <!-- ODM 自动识别显示 -->
                                     <div style="display: flex; align-items: center; gap: 12px;">
@@ -2220,7 +2220,7 @@
                                 <!-- B. 详细打样清单 标题行 -->
                                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;">
                                     <!-- 左侧标题 -->
-                                    <h4 style="font-size: 14px; margin: 0; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 详细打样清单</h4>
+                                    <h4 class="section-heading" style="margin: 0;">B. 详细打样清单</h4>
                                     
                                     <!-- 右侧按钮组 -->
                                     <div style="display: flex; gap: 10px;">
@@ -2360,7 +2360,7 @@
 
                             <!-- C. 样品接收配置 -->
                             <div class="attr-section" style="margin-bottom: 35px;">
-                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 样品接收配置</h4>
+                                <h4 class="section-heading" style="margin-bottom: 18px;">C. 样品接收配置</h4>
                                 <div style="margin-left: 13px;">
                                     <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 40px; align-items: start; margin-bottom: 15px;">
                                         <div>
@@ -2396,7 +2396,7 @@
 
                             <!-- D. 大货意向 (原 B，保持之前的垂直布局不变) -->
                             <div class="attr-section">
-                                <h4 style="font-size: 14px; margin-bottom: 12px; border-left: 3px solid var(--primary-color); padding-left: 10px;">D. 评估大货预估价</h4>
+                                <h4 class="section-heading" style="margin-bottom: 12px;">D. 评估大货预估价</h4>
                                 <div style="margin-left: 13px;">
                                     <label class="oem-checkbox-label" style="margin-bottom: 20px;">
                                         <input type="checkbox" id="sample-need-bulk-quote" onchange="toggleSampleBulkIntent(this.checked)"> 是的，请基于我的大货意向核算单价
@@ -2495,7 +2495,7 @@
                             
                             <!-- 1. 顶部统计与 OEM 输入 (与打样部分保持同步) -->
                             <div class="attr-section" style="margin-bottom: 25px;">
-                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 生产规模确认</h4>
+                                <h4 class="section-heading" style="margin-bottom: 18px;">A. 生产规模确认</h4>
                                 <div style="margin-left: 13px; display: flex; gap: 40px; align-items: center; background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #f1f5f9;">
                                     <!-- ODM 自动识别显示 -->
                                     <div style="display: flex; align-items: center; gap: 12px;">
@@ -2515,7 +2515,7 @@
                             <div class="attr-section" style="margin-bottom: 35px;">
                                 <!-- 【修改点】包裹标题和右侧按钮 -->
                                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;">
-                                    <h4 style="font-size: 14px; margin: 0; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 详细生产清单</h4>
+                                    <h4 class="section-heading" style="margin: 0;">B. 详细生产清单</h4>
                                     
                                     <!-- 【新增】起订量标准按钮 -->
                                     <button type="button" class="btn-outline" style="padding: 4px 12px; font-size: 11px; display: flex; align-items: center; gap: 5px; border-color: #cbd5e1; color: var(--primary-color); background: #fffcfc;" onclick="openMoqStandardModal()">
@@ -2581,7 +2581,7 @@
 
                                 <!-- C. 目的地与交货条款 (拆分为 4 个术语) -->
                             <div class="attr-section" style="margin-bottom: 35px;">
-                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 目的地与交货条款</h4>
+                                <h4 class="section-heading" style="margin-bottom: 18px;">C. 目的地与交货条款</h4>
                                 <div style="margin-left: 13px;">
                                     <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 15px;">
                                         <label style="font-size:12px; font-weight:600; color:#475569;">大货目的地：</label>
@@ -2617,7 +2617,7 @@
                             
                             <!-- D. 运输与装箱规则 (增加描述与上传) -->
                             <div class="attr-section">
-                                <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">D. 运输、装箱与特殊合规需求</h4>
+                                <h4 class="section-heading" style="margin-bottom: 18px;">D. 运输、装箱与特殊合规需求</h4>
                                 <div style="margin-left: 13px;">
                                     <!-- 第一行：物流选择 -->
                                     <div class="option-grid" style="grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px;">
@@ -2733,7 +2733,7 @@
                     
                         <!-- 1. 商业身份档案 -->
                         <div class="attr-section" style="margin-bottom: 35px;">
-                            <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">A. 商业身份档案</h4>
+                            <h4 class="section-heading" style="margin-bottom: 18px;">A. 商业身份档案</h4>
                             <div style="margin-left: 13px;">
                                 <!-- 修复：确保这里使用了 gap: 25px 并且正确生效 -->
                                 <div id="step5-grid-a1" style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 20px;">
@@ -2761,7 +2761,7 @@
                     
                         <!-- 2. 团队服务指派 (老客户忠诚度模块 - 改为文本输入框) -->
                         <div class="attr-section" style="margin-bottom: 35px;">
-                            <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">B. 团队服务指派</h4>
+                            <h4 class="section-heading" style="margin-bottom: 18px;">B. 团队服务指派</h4>
                             <div style="margin-left: 13px; background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px; padding: 25px;">
                                 <p style="font-size: 12px; color: #64748b; margin-top: 0; margin-bottom: 20px; line-height: 1.5;">
                                     <strong style="color:var(--primary-color);">如果您是红绣的老朋友：</strong> 您可以输入曾为您提供过优质服务的业务经理、打版师或样衣组的姓名/编号。新客户请留空，系统将为您智能匹配最合适的专业团队。
@@ -2785,7 +2785,7 @@
                     
                         <!-- 3. 最终备注、附件与确认 (增加附件上传) -->
                         <div class="attr-section" style="margin-bottom: 20px;">
-                            <h4 style="font-size: 14px; margin-bottom: 18px; border-left: 3px solid var(--primary-color); padding-left: 10px;">C. 最终补充与条款确认</h4>
+                            <h4 class="section-heading" style="margin-bottom: 18px;">C. 最终补充与条款确认</h4>
                             <div style="margin-left: 13px;">
                                 
                                 <!-- 1. 第一层 Grid：确保左右两边只有 Label 和 输入/上传框，没有任何其他杂质干扰对齐 -->

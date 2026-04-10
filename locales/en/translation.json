@@ -19,6 +19,8 @@
     "activateInvalid": "Activation link is invalid or expired. Please contact support.",
     "serverError": "Server error, please try later",
     "registerDuplicate": "This username or email is already registered. Please use a different one.",
-    "registerSuccess": "Registration successful! Please check your email to activate your account."
+    "registerSuccess": "Registration successful! Please check your email to activate your account.",
+    "registerCheckEmail": "Please check your email to activate your account.",
+    "forgotResetSent": "If the email exists, a reset link has been sent."
   }
 }

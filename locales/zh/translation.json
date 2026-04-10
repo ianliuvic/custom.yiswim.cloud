@@ -19,6 +19,8 @@
     "activateInvalid": "激活链接无效或已过期，请联系客服。",
     "serverError": "服务器错误，请稍后再试",
     "registerDuplicate": "该Username or Email已被注册，请更换！",
-    "registerSuccess": "注册成功！请前往邮箱激活您的账号。"
+    "registerSuccess": "注册成功！请前往邮箱激活您的账号。",
+    "registerCheckEmail": "请检查Email链接，激活您的账户",
+    "forgotResetSent": "如果Email存在，则Reset链接已发送"
   }
 }

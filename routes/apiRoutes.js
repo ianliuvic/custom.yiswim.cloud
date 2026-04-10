@@ -291,6 +291,8 @@ router.post('/register', registerLimiter, async (req, res) => {
                 data.message = req.t('api.registerDuplicate');
             } else if (data.success && data.message.includes('注册成功')) {
                 data.message = req.t('api.registerSuccess');
+            } else if (data.message.includes('检查') && data.message.includes('激活')) {
+                data.message = req.t('api.registerCheckEmail');
             }
         }
 
@@ -417,6 +419,11 @@ router.post('/forgot-password', loginLimiter, async (req, res) => {
         });
         
         const data = await n8nResponse.json();
+
+        if (data.message && data.message.includes('Reset') && data.message.includes('已发送')) {
+            data.message = req.t('api.forgotResetSent');
+        }
+
         res.json(data);
         
     } catch (error) {

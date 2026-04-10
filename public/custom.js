@@ -5969,7 +5969,7 @@
         
         function renderBags(bags) {
             const container = document.getElementById('bag-list-container'); container.innerHTML = ''; 
-            bags.forEach(bag => {
+            bags.forEach((bag, index) => {
                 const bagJson = JSON.stringify(bag).replace(/"/g, '&quot;');
                 const imgHtml = (bag.image_urls && bag.image_urls.length > 0) 
                     ? `<img src="${bag.image_urls[0]}" class="option-img" loading="lazy">`
@@ -5978,6 +5978,9 @@
                 // 简单的环保标识正则匹配
                 const isEco = /环保|降解|回收|eco|biodegradable|recycled/i.test(bag.name + bag.description);
                 const ecoBadge = isEco ? `<div class="eco-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM12 22C6.48 22 2 17.52 2 12S6.48 2 12 2s10 4.48 10 10-4.48 10-10 10z"/><path d="M16 8l-5.5 5.5L8 11"/></svg> ECO</div>` : '';
+
+                // 第一个包装袋加“常用”标签
+                const popularBadge = index === 0 ? `<div class="fabric-tags-wrapper" style="margin-top:6px;"><span class="fabric-tag-item highlight">${_t('常用')}</span></div>` : '';
 
                 container.insertAdjacentHTML('beforeend', `
                     <div class="option-item bag-material" onclick="onBagClick(${bagJson}, this)">
@@ -5988,6 +5991,7 @@
                         ${imgHtml}
                         <div class="option-info">
                             <h4>${(window.__lang === 'en' && bag.name_en) ? bag.name_en : bag.name}</h4>
+                            ${popularBadge}
                         </div>
                     </div>
                 `);

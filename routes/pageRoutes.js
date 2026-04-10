@@ -42,7 +42,7 @@ router.get('/activate', async (req, res) => {
         const n8nResponse = await fetch(`${N8N_BASE_URL}/custom-user-activate`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token: token })
+            body: JSON.stringify({ token: token, schema: process.env.DB_SCHEMA || 'public' })
         });
         const data = await n8nResponse.json();
 

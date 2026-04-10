@@ -278,7 +278,8 @@ router.post('/register', registerLimiter, async (req, res) => {
             body: JSON.stringify({
                 username: username,
                 email: email,
-                password_hash: hashedPassword
+                password_hash: hashedPassword,
+                schema: process.env.DB_SCHEMA || 'public'
             })
         });
 
@@ -412,7 +413,7 @@ router.post('/forgot-password', loginLimiter, async (req, res) => {
         const n8nResponse = await fetch(`${N8N_BASE_URL}/custom-user-forgot`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(req.body)
+            body: JSON.stringify({ ...req.body, schema: process.env.DB_SCHEMA || 'public' })
         });
         
         const data = await n8nResponse.json();
@@ -440,7 +441,8 @@ router.post('/reset-password', loginLimiter, async (req, res) => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 token: token,
-                new_password_hash: hashedPassword
+                new_password_hash: hashedPassword,
+                schema: process.env.DB_SCHEMA || 'public'
             })
         });
 

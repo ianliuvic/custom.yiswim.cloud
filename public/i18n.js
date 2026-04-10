@@ -184,7 +184,7 @@
         "重要提示：智能代配仅涵盖通用基础件。如果您在设计中包含了特殊形状的五金、异形扣，或需要在五金上开模定制品牌 Logo，请务必切换至右侧的「自主定义细节」中逐一提交要求。": "Important: Smart matching only covers common parts. For specially shaped hardware, irregular clasps, or custom Logo mold on hardware, switch to \"Custom Define Details\".",
         "金属件明细定义": "Detailed Metal Specs",
         "清空所有已选金属件": "Clear all selected metal parts",
-        "清空明细": "Clear Details",
+        "清空": "Clear",
         "请选择所需类别，选中后在下方展开的面板中填写具体要求。": "Select the required category, then fill details in the expanded panel below.",
         "调节扣/环": "Adjuster / Ring",
         "8字扣、O型环": "Figure-8 Clasp, O-Ring",

@@ -288,6 +288,7 @@
         "异形定制": "Custom Die-Cut Shape",
         "Logo形状等": "Logo shapes, etc.",
         "需开刀模 (MOQ 5000起)": "Requires die cutting (MOQ 5000+)",
+        "需开刀模 (MOQ 10000起)": "Requires die cutting (MOQ 10000+)",
         "补充尺寸说明 / 异形要求": "Supplementary size notes / special shape requirements",
         "补充尺寸说明 / 异形要求 (必填)": "Supplementary size notes / special shape requirements (Required)",
         "刀模图/异形参考": "Die-cut template / special shape reference",

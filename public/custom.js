@@ -5806,18 +5806,18 @@
         }
         
         // 新增：一键清空所有金属明细的函数
-        async function clearMetalCustomDetails() {
-            if (!(await showConfirm(_t('确定要清空下方已选择的所有金属明细吗？')))) return;
-            
+        function clearMetalCustomDetails() {
             // 1. 清空数据
             metalConfig.categories = [];
             metalConfig.details = {};
             metalConfig.activeCategory = '';
             
-            // 2. 隐藏面板与取消 UI 选中态
+            // 2. 隐藏面板与取消 UI 选中态（含 x 角标）
             document.getElementById('metal-config-panel').classList.add('hidden');
             document.querySelectorAll('#metal-category-grid .metal-item').forEach(item => {
                 item.classList.remove('selected');
+                const xBtn = item.querySelector('.file-remove');
+                if (xBtn) xBtn.style.display = 'none';
             });
             
             // 3. 更新右侧侧边栏汇总

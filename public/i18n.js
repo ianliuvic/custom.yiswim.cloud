@@ -924,6 +924,7 @@
         "尚未添加任何款式到打样清单...": "No styles added to sample list...",
         "现有款式(ODM)": "Existing style (ODM)",
         "自主设计(OEM)": "Custom design (OEM)",
+        "⚠️ 起订量提醒：": "⚠️ MOQ Reminder:",
         "初样 (Proto)": "Proto Sample",
         "正确样 (PP)": "PP Sample",
         "-- 请选择款式 --": "-- Select style --",

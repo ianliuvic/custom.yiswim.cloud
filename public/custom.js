@@ -27,7 +27,7 @@
             customShape: false,
             shapeRemark: '',
             thickness: '常规标准 (5-8mm)', // 更改这里的默认值
-            color: '海绵裸色',
+            color: '白色',
             otherColor: '',
             remark: '',
             shapeFiles: [],

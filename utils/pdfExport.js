@@ -102,7 +102,7 @@ const I18N = {
         colorBlock: 'Color Blocking Notes', refFiles: 'Reference Files',
         cmtFabric: 'Customer-Supplied Fabric (CMT)', detailDesc: 'Details', trackingNo: 'Tracking No.',
         cmtFabricFiles: 'CMT Fabric Files',
-        metalHardware: 'Metal Hardware', chestPad: 'Chest Pad', packBag: 'Packaging Bag', hangTag: 'Hang Tag',
+        metalHardware: 'Metal Hardware', chestPad: 'Padding', packBag: 'Packaging Bag', hangTag: 'Hang Tag',
         label: 'Label', hygieneSticker: 'Hygiene Sticker', other: 'Other',
         mode: 'Mode', autoMode: 'Hongxiu Standard', customMode: 'Customer Custom',
         surfaceFinish: 'Surface Finish', logoCustom: 'Logo Custom', needed: 'Needed', logoType: 'Logo Type',

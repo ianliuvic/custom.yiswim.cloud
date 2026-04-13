@@ -315,6 +315,9 @@
                     if (yesRadio) { yesRadio.checked = true; toggleTrim(cat, true); }
                     // 确保文件数组为空
                     fileArrayKeys.forEach(function(k) { if (!(k in cfg)) cfg[k] = []; });
+                    // 确保 details 对象存在 (金属饰品)
+                    if (cat === 'metal' && !cfg.details) cfg.details = {};
+                    if (cat === 'metal' && !cfg.activeCategory) cfg.activeCategory = '';
                     // 处理嵌套对象中的文件数组
                     if (cfg.details) {
                         for (var dk in cfg.details) {
@@ -5956,7 +5959,8 @@
                     st.innerHTML = `<div style="text-align:right;">${colorPart}<br><span style="font-size:10px; color:#94a3b8;">待选择饰品</span></div>`;
                 } else {
                     const detailText = selectedCats.map(c => {
-                        const hasCustom = metalConfig.details[c].logoNeeded || metalConfig.details[c].styleFiles.length > 0;
+                        const d = metalConfig.details[c];
+                        const hasCustom = d && (d.logoNeeded || (d.styleFiles && d.styleFiles.length > 0));
                         return `<span style="font-size:10px; display:block;">- ${c}${hasCustom ? ' (已定制)' : ''}</span>`;
                     }).join('');
                     st.innerHTML = `<div style="text-align:right;">${colorPart}<br>${detailText}</div>`;
@@ -7096,7 +7100,7 @@
             const bagDesignPreview = _el('bagDesignPreview'); if (bagDesignPreview) bagDesignPreview.innerHTML = '';
             const bagRemark = _el('bag-remark'); if (bagRemark) bagRemark.value = '';
             // 重置金属饰品
-            metalConfig = { finish: '亮銀色', categories: [], logoCustom: false, logoTypes: [], logoFiles: [], sourceFiles: [] };
+            metalConfig = { mode: 'auto', finish: '亮銀色', activeCategory: '', details: {}, categories: [], logoCustom: false, logoTypes: [], logoFiles: [], sourceFiles: [] };
             document.querySelectorAll('.finish-item').forEach(item => item.classList.remove('selected'));
             document.querySelectorAll('.finish-item')[0]?.classList.add('selected'); 
             document.querySelectorAll('.metal-item').forEach(item => item.classList.remove('selected'));

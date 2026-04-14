@@ -10,6 +10,7 @@
         // 全局 CMT 数据管理
         let currentDraftId = null; // Scheme C: 当前草稿询盘 ID
         let currentEditInquiryId = null; // 编辑模式：要覆盖更新的询盘 ID
+        let _formDirty = false; // 自动暂存：表单是否有未保存的变更
         let cmtFilesData = {
             fabric: [],
             pad: [],
@@ -151,6 +152,15 @@
                     }
                 }
             } catch (error) { console.warn('加载数据API未就绪，使用静态展示框架:', error); }
+
+            // ===== 自动暂存：每 20 分钟，仅在有变更时静默保存 =====
+            const _markDirty = () => { _formDirty = true; };
+            document.getElementById('customForm').addEventListener('change', _markDirty);
+            document.getElementById('customForm').addEventListener('input', _markDirty);
+            setInterval(async () => {
+                if (!_formDirty) return;
+                await saveDraft(true);
+            }, 20 * 60 * 1000);
         });
 
         // 自动填充 Step 5 联系信息（从用户上次询盘带入）
@@ -2555,33 +2565,43 @@
             return fd;
         }
 
-        async function saveDraft() {
+        async function saveDraft(silent) {
             const draftBtn = document.getElementById('draftBtn');
             try {
-                if (draftBtn) { draftBtn.disabled = true; draftBtn.style.opacity = '0.5'; }
+                if (!silent && draftBtn) { draftBtn.disabled = true; draftBtn.style.opacity = '0.5'; }
                 const fd = buildFormData();
                 if (currentDraftId) fd.append('draft_id', String(currentDraftId));
                 const res = await fetch('/api/save-draft', { method: 'POST', body: fd });
                 const json = await res.json();
                 if (json.success) {
                     currentDraftId = json.draft_id;
-                    const toast = document.createElement('div');
-                    toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:10px;background:#065f46;color:#fff;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.15);transition:opacity .5s;';
-                    toast.textContent = _t('暂存成功，可在用户中心恢复');
-                    document.body.appendChild(toast);
-                    setTimeout(() => { toast.style.opacity = '0'; }, 2500);
-                    setTimeout(() => { toast.remove(); }, 3000);
+                    _formDirty = false;
+                    if (!silent) {
+                        const toast = document.createElement('div');
+                        toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:10px;background:#065f46;color:#fff;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.15);transition:opacity .5s;';
+                        toast.textContent = _t('暂存成功，可在用户中心恢复');
+                        document.body.appendChild(toast);
+                        setTimeout(() => { toast.style.opacity = '0'; }, 2500);
+                        setTimeout(() => { toast.remove(); }, 3000);
+                    } else {
+                        console.log('[AutoSave] 自动暂存成功, draft_id:', currentDraftId);
+                    }
                 } else {
-                    showMsg(_t('暂存失败：') + (json.message || ''), 'error');
+                    if (!silent) showMsg(_t('暂存失败：') + (json.message || ''), 'error');
+                    else console.warn('[AutoSave] 自动暂存失败:', json.message);
                 }
             } catch (e) {
-                console.error('暂存失败:', e);
-                showMsg(_t('暂存失败，请检查网络'), 'error');
+                if (!silent) {
+                    console.error('暂存失败:', e);
+                    showMsg(_t('暂存失败，请检查网络'), 'error');
+                } else {
+                    console.warn('[AutoSave] 自动暂存异常:', e.message);
+                }
             } finally {
-                if (draftBtn) { draftBtn.disabled = false; draftBtn.style.opacity = ''; }
+                if (!silent && draftBtn) { draftBtn.disabled = false; draftBtn.style.opacity = ''; }
             }
         }
-        window.saveDraft = saveDraft;
+        window.saveDraft = function() { return saveDraft(false); };
 
         async function submitForm() {
             // 1. 全量验证

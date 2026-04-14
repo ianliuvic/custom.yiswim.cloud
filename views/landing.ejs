@@ -58,7 +58,7 @@
         .btn-cta-ghost:hover { border-color: #94a3b8; color: #1e293b; }
         .hero-img-wrap { position: relative; padding: 0 18px 18px 0; }
         .hero-img-wrap::after { content: ''; position: absolute; bottom: 0; right: 0; width: calc(100% - 18px); height: calc(100% - 18px); background: var(--primary-color); opacity: 0.12; border-radius: 10px; z-index: 0; }
-        .hero-img-wrap img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; border-radius: 10px; position: relative; z-index: 1; box-shadow: 0 8px 28px rgba(0,0,0,0.13); }
+        .hero-img-wrap img, .hero-img-wrap iframe { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; border-radius: 10px; position: relative; z-index: 1; box-shadow: 0 8px 28px rgba(0,0,0,0.13); border: none; }
 
         /* ===== Stats Strip ===== */
         .stats-strip { background: #0f172a; padding: 30px 48px; }
@@ -217,7 +217,7 @@
             </div>
             <div class="hero-visual">
                 <div class="hero-img-wrap">
-                    <img src="/hero.webp" alt="<%= lng === 'en' ? 'Premium swimwear customization' : '专业泳装定制' %>" onerror="this.parentElement.style.display='none'">
+                    <iframe src="https://www.youtube.com/embed/LFfM19L8blw" title="<%= lng === 'en' ? 'Premium swimwear customization' : '专业泳装定制' %>" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
             </div>
         </div>

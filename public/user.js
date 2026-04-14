@@ -1269,4 +1269,13 @@
     /* ---------- Init ---------- */
     loadInquiries(1);
     loadDraft();
+
+    // 支持 URL 参数直接打开指定询盘: /user?inquiry_id=xxx
+    var urlParams = new URLSearchParams(window.location.search);
+    var directInquiryId = urlParams.get('inquiry_id');
+    if (directInquiryId) {
+        openDetail(directInquiryId);
+        // 清除 URL 参数，避免刷新后重复打开
+        window.history.replaceState({}, '', window.location.pathname);
+    }
 })();

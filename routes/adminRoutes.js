@@ -3,6 +3,7 @@ const router = express.Router();
 const path = require('path');
 const fs = require('fs');
 const db = require('../config/db');
+const { N8N_BASE_URL } = require('../config/constants');
 const authenticateAdmin = require('../middleware/adminAuth');
 
 const UPLOAD_BASE = process.env.UPLOAD_PATH || path.join(__dirname, '..', 'uploads');
@@ -282,6 +283,33 @@ router.post('/api/inquiry/:id/update', authenticateAdmin, async (req, res) => {
 
         if (result.rows.length === 0) {
             return res.status(404).json({ success: false, message: '询盘不存在' });
+        }
+
+        // 当管理员发送了回复内容时，异步通知 n8n 发送邮件提醒
+        if (admin_reply) {
+            const inquiry = result.rows[0];
+            db.query('SELECT u.email, u.username FROM custom_users u JOIN custom_inquiries i ON i.user_id = u.id WHERE i.id = $1', [parseInt(req.params.id)])
+                .then(userResult => {
+                    if (userResult.rows.length > 0) {
+                        const user = userResult.rows[0];
+                        fetch(`${N8N_BASE_URL}/admin-reply-notify`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                inquiry_id: inquiry.id,
+                                inquiry_no: inquiry.inquiry_no,
+                                status: inquiry.status,
+                                admin_reply,
+                                project_link: project_link || null,
+                                project_token: project_token || null,
+                                user_email: user.email,
+                                user_name: user.username,
+                                replied_at: new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })
+                            })
+                        }).catch(err => console.error('n8n admin-reply-notify 通知失败:', err));
+                    }
+                })
+                .catch(err => console.error('查询用户邮箱失败:', err));
         }
 
         res.json({ success: true, message: '更新成功', data: result.rows[0] });

@@ -599,6 +599,23 @@ router.get('/my-inquiries', authenticateToken, async (req, res) => {
     }
 });
 
+// 7.5 根据询盘号查找询盘 ID
+router.get('/inquiry-by-no/:no', authenticateToken, async (req, res) => {
+    try {
+        const result = await db.query(
+            'SELECT id FROM custom_inquiries WHERE inquiry_no = $1 AND user_id = $2 AND deleted_at IS NULL',
+            [req.params.no, req.user.id]
+        );
+        if (result.rows.length === 0) {
+            return res.status(404).json({ success: false, message: '询盘不存在' });
+        }
+        res.json({ success: true, id: result.rows[0].id });
+    } catch (error) {
+        console.error('查找询盘号失败:', error);
+        res.status(500).json({ success: false, message: '服务器错误' });
+    }
+});
+
 // 8. 获取单条询盘详情
 router.get('/inquiry/:id', authenticateToken, async (req, res) => {
     try {

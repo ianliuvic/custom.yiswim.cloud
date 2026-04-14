@@ -1270,12 +1270,16 @@
     loadInquiries(1);
     loadDraft();
 
-    // 支持 URL 参数直接打开指定询盘: /user?inquiry_id=xxx
+    // 支持 URL 参数直接打开指定询盘: /user?inquiry_no=HX-XXXXXX
     var urlParams = new URLSearchParams(window.location.search);
-    var directInquiryId = urlParams.get('inquiry_id');
-    if (directInquiryId) {
-        openDetail(directInquiryId);
-        // 清除 URL 参数，避免刷新后重复打开
+    var directInquiryNo = urlParams.get('inquiry_no');
+    if (directInquiryNo) {
+        fetch('/api/inquiry-by-no/' + encodeURIComponent(directInquiryNo))
+            .then(function(r) { return r.json(); })
+            .then(function(json) {
+                if (json.success && json.id) openDetail(json.id);
+            })
+            .catch(function() {});
         window.history.replaceState({}, '', window.location.pathname);
     }
 })();

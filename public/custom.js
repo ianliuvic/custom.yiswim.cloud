@@ -1209,7 +1209,7 @@
             categories.forEach((cat, index) => {
                 const isActive = index === 0 ? 'active' : '';
                 const catId = `cat-${cat.replace(/\s+/g, '-')}`;
-                navContainer.insertAdjacentHTML('beforeend', `<div class="cat-item ${isActive}" onclick="switchCategory('${catId}', this)">${cat}</div>`);
+                navContainer.insertAdjacentHTML('beforeend', `<div class="cat-item ${isActive}" onclick="switchCategory('${catId}', this)">${_rt(cat)}</div>`);
                 contentContainer.insertAdjacentHTML('beforeend', `<div id="${catId}" class="cat-pane ${isActive}"><div class="option-grid" id="grid-${catId}"></div></div>`);
                 
                 const catStyles = styles.filter(s => s.category === cat);
@@ -1900,11 +1900,12 @@
                     const sel = fabricSelection[catId];
                     if (!sel || !sel.activeName) continue;
                     const catName = sel.originalCatName || '';
+                    const _rtCN = _rt(catName);
                     const config = sel.configs[sel.activeName];
                     if (!config) continue;
 
-                    const isLining = catName.includes('Lining');
-                    const isMesh = catName.includes('Mesh');
+                    const isLining = _rtCN.includes('Lining');
+                    const isMesh = _rtCN.includes('Mesh');
                     const isMain = !isLining && !isMesh;
 
                     if (isMain) mainFabricOk = true;
@@ -2813,7 +2814,7 @@
                 fabricSelection[catId] = { activeName: '', originalCatName: cat, configs: {} };
 
                 // 插入 Tab (改用 mode-option 样式)
-                tabsContainer.insertAdjacentHTML('beforeend', `<div class="mode-option ${isActive}" onclick="switchFabricCat('${catId}', this)">${cat}</div>`);
+                tabsContainer.insertAdjacentHTML('beforeend', `<div class="mode-option ${isActive}" onclick="switchFabricCat('${catId}', this)">${_rt(cat)}</div>`);
 
                 // 插入 Pane 和 Grid
                 panesContainer.insertAdjacentHTML('beforeend', `<div id="${catId}" class="fabric-pane ${isActive}"><div class="option-grid" id="grid-${catId}"></div></div>`);
@@ -2937,7 +2938,7 @@
                     
                     panel.classList.remove('hidden');
                     
-                    document.getElementById('config-type-tag').innerText = selection.originalCatName;
+                    document.getElementById('config-type-tag').innerText = _rt(selection.originalCatName);
                     
                     const isCustomSourcing = (selection.activeName === 'CUSTOM_SOURCING');
                     const modeSwitcher = document.getElementById('fabric-mode-switcher');
@@ -2945,8 +2946,9 @@
                     const printArea = document.getElementById('fabric-print-area');
                     const customForm = document.getElementById('fabric-custom-sourcing-form');
                     const notesArea = document.querySelector('.fabric-notes-area');
-                    const isSimplified = ['Lining', 'Mesh'].includes(selection.originalCatName);
-                    const isLining = selection.originalCatName.includes('Lining') || selection.originalCatName.includes('Lining');
+                    const _rtCatName = _rt(selection.originalCatName);
+                    const isSimplified = ['Lining', 'Mesh'].includes(_rtCatName);
+                    const isLining = _rtCatName.includes('Lining');
 
                     // --- 统一控制里料样式 ---
                     if (notesArea) notesArea.style.display = isSimplified  ? 'none' : 'block';
@@ -2974,8 +2976,8 @@
 
                     if (isCustomSourcing) {
                         // 定制找样逻辑
-                        const _csLabel = window.__lang === 'zh' ? '定制开发/全球找样' : 'Custom Sourcing / Global Development';
-                        document.getElementById('selected-fabric-display').innerText = window.__lang === 'en' ? `${selection.originalCatName}: ${_csLabel}` : `${selection.originalCatName}：${_csLabel}`;
+                        const _csLabel = 'Custom Sourcing / Global Development';
+                        document.getElementById('selected-fabric-display').innerText = `${_rt(selection.originalCatName)}: ${_csLabel}`;
                         [modeSwitcher, solidArea, printArea].forEach(area => area?.classList.add('hidden'));
                         if(customForm) customForm.classList.remove('hidden');
                         
@@ -2990,8 +2992,8 @@
                         renderCustomFabricPreview(config.customFiles || []);
                     } else {
                         // 标准面料逻辑
-                        const _activeEnName = (window.__lang === 'en' && window.globalFabricsMap && window.globalFabricsMap[selection.activeName] && window.globalFabricsMap[selection.activeName].name_en) ? window.globalFabricsMap[selection.activeName].name_en : selection.activeName;
-                        document.getElementById('selected-fabric-display').innerText = window.__lang === 'en' ? `${selection.originalCatName}: ${_activeEnName}` : `${selection.originalCatName}：${selection.activeName}`;
+                        const _activeEnName = (window.globalFabricsMap && window.globalFabricsMap[selection.activeName] && window.globalFabricsMap[selection.activeName].name_en) ? window.globalFabricsMap[selection.activeName].name_en : selection.activeName;
+                        document.getElementById('selected-fabric-display').innerText = `${_rt(selection.originalCatName)}: ${_activeEnName}`;
                         [solidArea, printArea].forEach(area => area?.classList.remove('hidden'));
                         if(customForm) customForm.classList.add('hidden');
                         
@@ -3229,8 +3231,9 @@
             const notesArea = document.querySelector('.fabric-notes-area'); 
             
             // 判断当前大类是否为“Lining”相关的词汇
-            const isLining = selection.originalCatName.includes('Lining') || selection.originalCatName.includes('Lining');
-            const isSimplified = ['Lining', 'Mesh'].includes(selection.originalCatName);
+            const _rtCatName2 = _rt(selection.originalCatName);
+            const isLining = _rtCatName2.includes('Lining');
+            const isSimplified = ['Lining', 'Mesh'].includes(_rtCatName2);
         
             // 控制里料简化样式
             if (notesArea) notesArea.style.display = isSimplified ? 'none' : 'block';
@@ -3249,8 +3252,8 @@
                 // A. 定制找样模式 UI
                 [modeSwitcher, solidArea, printArea].forEach(area => area?.classList.add('hidden'));
                 customForm.classList.remove('hidden');
-                const _csLabelB = window.__lang === 'zh' ? '定制开发/全球找样' : 'Custom Sourcing / Global Development';
-                document.getElementById('selected-fabric-display').innerText = window.__lang === 'en' ? `${selection.originalCatName}: ${_csLabelB}` : `${selection.originalCatName}：${_csLabelB}`;
+                const _csLabelB = 'Custom Sourcing / Global Development';
+                document.getElementById('selected-fabric-display').innerText = `${_rt(selection.originalCatName)}: ${_csLabelB}`;
                 
                 // 恢复定制表单数据
                 document.getElementById('custom-fabric-desc').value = config.customDesc || '';
@@ -3268,8 +3271,8 @@
                 // B. 标准面料模式 UI
                 [modeSwitcher, solidArea, printArea].forEach(area => area?.classList.remove('hidden'));
                 if(customForm) customForm.classList.add('hidden');
-                const _fabricEnName = (window.__lang === 'en' && window.globalFabricsMap && window.globalFabricsMap[name] && window.globalFabricsMap[name].name_en) ? window.globalFabricsMap[name].name_en : name;
-                document.getElementById('selected-fabric-display').innerText = window.__lang === 'en' ? `${selection.originalCatName}: ${_fabricEnName}` : `${selection.originalCatName}：${name}`;
+                const _fabricEnName = (window.globalFabricsMap && window.globalFabricsMap[name] && window.globalFabricsMap[name].name_en) ? window.globalFabricsMap[name].name_en : name;
+                document.getElementById('selected-fabric-display').innerText = `${_rt(selection.originalCatName)}: ${_fabricEnName}`;
                 
                 if (isSimplified) config.mode = 'solid'; // 里料强制纯色数据
                 switchFabricMode(config.mode); 
@@ -3316,7 +3319,7 @@
             }
         
             // 5. 恢复通用项
-            document.getElementById('config-type-tag').innerText = selection.originalCatName;
+            document.getElementById('config-type-tag').innerText = _rt(selection.originalCatName);
             document.getElementById('fabric-remark').value = config.remark || '';
             renderFabricFileList(config.files || []);
             renderPrintPreview(config.prints || []);
@@ -3765,7 +3768,7 @@
             for (const key in fabricSelection) {
                 const selection = fabricSelection[key];
                 const catName = selection.originalCatName;
-                const catDisplayName = _t(catName);
+                const catDisplayName = _rt(catName);
                 let statusText = '<span style="color:#cbd5e1;">' + _t('Not selected') + '</span>';
                 
                 if (selection.activeName) {
@@ -3789,7 +3792,7 @@
                     }
         
                     // --- 新增：里料的覆盖范围追加显示 ---
-                    if (catName.includes('Lining') || catName.includes('Lining')) {
+                    if (_rt(catName).includes('Lining')) {
                         if (config.fullLining === false) {
                             const placementText = config.liningPlacement ? config.liningPlacement.substring(0, 10) + '...' : _t('Pending description');
                             statusText += `<br><span style="font-size:10px; color:#d97706; font-weight:600;">${_t('Partial Lining:')} ${placementText}</span>`;
@@ -5650,7 +5653,7 @@
         // ==========================================
         let metalConfig = {
             mode: 'auto', // 新增：默认智能代配
-            finish: '亮銀色',
+            finish: 'Shiny Silver',
             activeCategory: '', // 当前正在编辑的分类名
             details: {},
             categories: [],
@@ -6639,11 +6642,11 @@
                                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                     </td>
                     <td data-label="${_isEn ? 'Size Details' : 'Size & Quantity Details'}">
-                        <textarea class="bulk-table-input" placeholder="例：&#10;S: 20&#10;M: 50&#10;L: 30" 
+                        <textarea class="bulk-table-input" placeholder="E.g.:&#10;S: 20&#10;M: 50&#10;L: 30" 
                                   oninput="updateBulkRowData(${index}, 'sizeDetail', this.value)">${row.sizeDetail}</textarea>
                     </td>
                     <td data-label="${_isEn ? 'Notes' : 'Notes / Description'}">
-                        <textarea class="bulk-table-input" placeholder="例：&#10;主体黑色，撞色滚边&#10;注意防水拉链" 
+                        <textarea class="bulk-table-input" placeholder="E.g.:&#10;Main body black, contrast piping&#10;Note: waterproof zipper" 
                                   oninput="updateBulkRowData(${index}, 'desc', this.value)">${row.desc}</textarea>
                     </td>
                     <td class="bulk-card-remove" style="text-align:center;">
@@ -7130,7 +7133,7 @@
             const bagDesignPreview = _el('bagDesignPreview'); if (bagDesignPreview) bagDesignPreview.innerHTML = '';
             const bagRemark = _el('bag-remark'); if (bagRemark) bagRemark.value = '';
             // 重置金属饰品
-            metalConfig = { mode: 'auto', finish: '亮銀色', activeCategory: '', details: {}, categories: [], logoCustom: false, logoTypes: [], logoFiles: [], sourceFiles: [] };
+            metalConfig = { mode: 'auto', finish: 'Shiny Silver', activeCategory: '', details: {}, categories: [], logoCustom: false, logoTypes: [], logoFiles: [], sourceFiles: [] };
             document.querySelectorAll('.finish-item').forEach(item => item.classList.remove('selected'));
             document.querySelectorAll('.finish-item')[0]?.classList.add('selected'); 
             document.querySelectorAll('.metal-item').forEach(item => item.classList.remove('selected'));

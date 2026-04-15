@@ -1454,9 +1454,38 @@
         return _t(full);
     }
 
+    // ==================== Reverse translate (Chinese DB value → English) ====================
+    var _reverseDict = null;
+    function _buildReverseDict() {
+        if (_reverseDict) return _reverseDict;
+        _reverseDict = {};
+        for (var key in dict) {
+            if (dict.hasOwnProperty(key)) {
+                _reverseDict[dict[key]] = key;
+            }
+        }
+        return _reverseDict;
+    }
+
+    /**
+     * Reverse-translate a Chinese DB value to English.
+     * Use this for values that come from the database in Chinese.
+     * In zh mode, returns the Chinese text as-is.
+     * In en mode, looks up the Chinese value and returns the English key.
+     */
+    function _rt(text) {
+        if (!text) return text;
+        if (LANG === 'zh') return text;
+        var rd = _buildReverseDict();
+        var trimmed = text.trim();
+        if (rd[trimmed]) return rd[trimmed];
+        return text;
+    }
+
     // Expose globals
     window._t = _t;
     window._tf = _tf;
+    window._rt = _rt;
     window.translateDOM = translateDOM;
     window.setLanguage = setLanguage;
     window.__i18nDict = dict;

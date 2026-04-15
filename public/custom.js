@@ -120,6 +120,26 @@
             else updateTrimSummaryTrigger(category);
         }
 
+        // ==========================================
+        // Login Guard: intercept uploads & step 4/5
+        // ==========================================
+        function requireLogin() {
+            if (window.__isLoggedIn) return false; // not blocked
+            if (typeof openAuth === 'function') openAuth('login');
+            return true; // blocked
+        }
+
+        // Intercept file upload clicks when not logged in (capturing phase)
+        document.addEventListener('click', function(e) {
+            if (window.__isLoggedIn) return;
+            var uploadEl = e.target.closest('.oem-dropzone, .premium-upload-box, .premium-upload-row');
+            if (uploadEl) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                if (typeof openAuth === 'function') openAuth('login');
+            }
+        }, true);
+
 
         document.addEventListener('DOMContentLoaded', async () => {
             try {
@@ -1177,6 +1197,8 @@
             if (currentStep === totalSteps) {
                 submitForm(); // 触发最终提交
             } else {
+                // 拦截: 未登录不允许进入 Step 4/5
+                if (currentStep >= 3 && requireLogin()) return;
                 changeStep(1);
             }
         });
@@ -1821,6 +1843,8 @@
         // 点击顶部 step tab 直接跳转
         window.goToStep = function (target) {
             if (target !== currentStep && target >= 1 && target <= totalSteps) {
+                // 拦截: 未登录不允许进入 Step 4/5
+                if (target >= 4 && requireLogin()) return;
                 changeStep(target - currentStep);
             }
         };

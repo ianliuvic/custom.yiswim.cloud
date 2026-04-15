@@ -353,7 +353,7 @@ router.post('/google-auth', async (req, res) => {
             maxAge: 24 * 60 * 60 * 1000 
         });
 
-        res.json({ success: true });
+        res.json({ success: true, username: user.username });
 
     } catch (err) {
         console.error('Google Auth Error:', err);
@@ -404,7 +404,7 @@ router.post('/login', loginLimiter, async (req, res) => {
             maxAge: 24 * 60 * 60 * 1000
         });
 
-        res.json({ success: true, message: req.t('api.loginSuccess') });
+        res.json({ success: true, message: req.t('api.loginSuccess'), username: user.username });
 
     } catch (error) {
         console.error('登录错误:', error.message);

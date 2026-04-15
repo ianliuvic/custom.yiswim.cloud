@@ -3520,6 +3520,68 @@
 </script>
 <% } %>
 
+<!-- ===== Video Guide Modal ===== -->
+<style>
+    .video-guide-overlay { display: none; position: fixed; inset: 0; z-index: 99998; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; backdrop-filter: blur(4px); animation: vgFadeIn 0.25s ease; }
+    .video-guide-overlay.active { display: flex; }
+    @keyframes vgFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .video-guide-modal { position: relative; width: 90%; max-width: 720px; background: #fff; padding: 28px 28px 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); animation: vgSlideIn 0.3s ease; }
+    @keyframes vgSlideIn { from { opacity: 0; transform: translateY(20px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .video-guide-modal::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--primary-color); }
+    .video-guide-close { position: absolute; top: 10px; right: 14px; background: none; border: none; font-size: 22px; color: #94a3b8; cursor: pointer; padding: 4px 8px; transition: all 0.2s; line-height: 1; }
+    .video-guide-close:hover { color: #1e293b; background: #f1f5f9; }
+    .video-guide-title { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 600; color: #1e293b; margin-bottom: 6px; }
+    .video-guide-title svg { color: var(--primary-color); flex-shrink: 0; }
+    .video-guide-hint { font-size: 13px; color: #64748b; margin-bottom: 16px; }
+    .video-guide-iframe-wrap { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; }
+    .video-guide-iframe-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+    .video-guide-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
+    .video-guide-footer label { font-size: 12px; color: #94a3b8; cursor: pointer; display: flex; align-items: center; gap: 5px; user-select: none; }
+    .video-guide-footer label input { accent-color: var(--primary-color); }
+    .video-guide-footer button { background: var(--primary-color); color: #fff; border: none; padding: 8px 24px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .video-guide-footer button:hover { background: var(--primary-hover, #880000); }
+</style>
+
+<div class="video-guide-overlay" id="videoGuideOverlay">
+    <div class="video-guide-modal">
+        <button class="video-guide-close" onclick="closeVideoGuide()">&times;</button>
+        <div class="video-guide-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span><%= lng === 'zh' ? '操作指南视频' : 'Quick Video Guide' %></span>
+        </div>
+        <p class="video-guide-hint"><%= lng === 'zh' ? '这是一段简短的操作指导视频，有时间的话可以看一下，帮助您快速上手。' : 'A short tutorial video to help you get started. Watch it when you have a moment.' %></p>
+        <div class="video-guide-iframe-wrap">
+            <iframe id="videoGuideIframe" src="" title="Guide Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div class="video-guide-footer">
+            <label><input type="checkbox" id="videoGuideDontShow"> <%= lng === 'zh' ? '不再显示' : "Don't show again" %></label>
+            <button onclick="closeVideoGuide()"><%= lng === 'zh' ? '知道了' : 'Got it' %></button>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    var STORAGE_KEY = 'videoGuideHidden';
+    if (localStorage.getItem(STORAGE_KEY)) return;
+
+    var overlay = document.getElementById('videoGuideOverlay');
+    var iframe = document.getElementById('videoGuideIframe');
+    iframe.src = 'https://www.youtube.com/embed/YP5dcAD5ZUM';
+    overlay.classList.add('active');
+
+    overlay.addEventListener('click', function(e) { if (e.target === overlay) closeVideoGuide(); });
+
+    window.closeVideoGuide = function() {
+        if (document.getElementById('videoGuideDontShow').checked) {
+            localStorage.setItem(STORAGE_KEY, '1');
+        }
+        overlay.classList.remove('active');
+        iframe.src = '';
+    };
+})();
+</script>
+
 </body>
 
 </html>

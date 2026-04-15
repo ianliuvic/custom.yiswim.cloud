@@ -2811,7 +2811,7 @@
                 if (index === 0) activeFabricCat = catId; 
 
                 // 初始化该分类的缓存数据结构：包含当前活跃名字 activeName 和各面料的独立配置 configs
-                fabricSelection[catId] = { activeName: '', originalCatName: cat, configs: {} };
+                fabricSelection[catId] = { activeName: '', originalCatName: cat, originalCatNameEn: _rt(cat), configs: {} };
 
                 // 插入 Tab (改用 mode-option 样式)
                 tabsContainer.insertAdjacentHTML('beforeend', `<div class="mode-option ${isActive}" onclick="switchFabricCat('${catId}', this)">${_rt(cat)}</div>`);
@@ -3208,11 +3208,13 @@
                     colors: [], colorText: '', printType: 'seamless', printRefColor: '',
                     remark: '', files: [], prints: [], customDesc: '', comp: '', printScale: '',
                     gsm: '', colorReq: '', physical: false, trackingNo: '', customFiles: [],
-                    fullLining: true, liningPlacement: '' // <--- 新增字段
+                    fullLining: true, liningPlacement: '', // <--- 新增字段
+                    nameEn: '' // English fabric name for display in user center
                 };
                 // 标准面料：从面料目录自动填充成分和克重
                 if (!isCustomSourcing && window.globalFabricsMap && window.globalFabricsMap[name]) {
                     const catFabric = window.globalFabricsMap[name];
+                    selection.configs[name].nameEn = catFabric.name_en || '';
                     let rawComp = catFabric.composition || catFabric['Composition'];
                     let rawGsm = catFabric.gsm || catFabric.weight || catFabric['Weight (GSM)'];
                     if (Array.isArray(rawComp) && rawComp.length > 0) selection.configs[name].comp = String(rawComp[0]).trim();

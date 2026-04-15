@@ -549,7 +549,7 @@
         Object.keys(fab).forEach(catKey => {
             const cat = fab[catKey];
             if (!cat || !cat.configs) return;
-            const originalCat = cat.originalCatName || catKey;
+            const originalCat = cat.originalCatNameEn || cat.originalCatName || catKey;
             const configs = cat.configs;
 
             Object.keys(configs).forEach(fabricName => {
@@ -558,7 +558,8 @@
                 const isCS = fabricName === 'CUSTOM_SOURCING';
                 const mode = isCS ? 'custom' : (cfg.mode || 'solid');
                 const modeLabel = { solid: 'Solid', print: 'Print', custom: 'Dev / Sourcing' }[mode] || mode;
-                const cardTitle = isCS ? originalCat : fabricName;
+                const fabricDisplayName = cfg.nameEn || fabricName;
+                const cardTitle = isCS ? originalCat : fabricDisplayName;
 
                 h += '<div class="adm-fabric-card">';
                 h += '<div class="adm-fabric-head"><strong>' + esc(cardTitle) + '</strong>';

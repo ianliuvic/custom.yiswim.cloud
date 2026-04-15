@@ -332,9 +332,10 @@
             var cat = fab[catKey];
             if (!cat || !cat.configs) return;
             var originalCat = cat.originalCatName || catKey;
+            var originalCatEn = cat.originalCatNameEn || ((typeof _rt === 'function') ? _rt(originalCat) : originalCat);
             var isCustomSourcing = cat.activeName === 'CUSTOM_SOURCING';
-            var displayName = isCustomSourcing ? originalCat : (cat.activeName || originalCat);
-            var isLining = originalCat.indexOf('Lining') !== -1 || originalCat.indexOf('Lining') !== -1 || originalCat.indexOf('lining') !== -1;
+            var displayName = isCustomSourcing ? originalCatEn : (cat.activeName || originalCatEn);
+            var isLining = originalCatEn.indexOf('Lining') !== -1 || originalCatEn.indexOf('lining') !== -1;
             var configs = cat.configs;
 
             Object.keys(configs).forEach(function (fabricName) {
@@ -343,11 +344,12 @@
                 var isCS = fabricName === 'CUSTOM_SOURCING';
                 var mode = isCS ? 'custom' : (cfg.mode || 'solid');
                 var modeLabel = { solid: 'Solid', print: 'Print', custom: 'Dev / Sourcing' }[mode] || mode;
-                var cardTitle = isCS ? originalCat : fabricName;
+                var fabricDisplayName = cfg.nameEn || ((typeof _rt === 'function') ? _rt(fabricName) : fabricName);
+                var cardTitle = isCS ? originalCatEn : fabricDisplayName;
 
                 h += '<div class="u-fabric-card">';
                 h += '<div class="u-fabric-card-head"><strong>' + esc(cardTitle) + '</strong>';
-                if (!isCS && displayName) h += '<span class="u-fabric-cat-tag">' + esc(originalCat) + '</span>';
+                if (!isCS && displayName) h += '<span class="u-fabric-cat-tag">' + esc(originalCatEn) + '</span>';
                 h += '<span class="u-fabric-mode ' + mode + '">' + modeLabel + '</span></div>';
 
                 // 通用：成分和克重（所有模式可用）

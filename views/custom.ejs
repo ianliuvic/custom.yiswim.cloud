@@ -3408,12 +3408,18 @@
     /* ===== Auth Modal Logic ===== */
     (function() {
         var gClientId = '<%= typeof googleClientId !== "undefined" ? googleClientId : "" %>';
-        if (gClientId && typeof google !== 'undefined') {
+
+        function initGoogleBtn() {
+            if (!gClientId || typeof google === 'undefined') return;
             google.accounts.id.initialize({ client_id: gClientId, callback: handleGoogleResponse });
             document.querySelectorAll('.google-btn-container').forEach(function(c) {
                 google.accounts.id.renderButton(c, { theme: 'outline', size: 'large', width: '100%', locale: window.__lang || 'en' });
             });
         }
+
+        // gsi/client loads async — try now, fallback to window.onload
+        if (typeof google !== 'undefined') { initGoogleBtn(); }
+        else { window.addEventListener('load', initGoogleBtn); }
 
         async function handleGoogleResponse(response) {
             hideAuthMsg();

@@ -965,6 +965,7 @@
         "Project Link": "项目链接",
         "Project Name": "项目名称",
         "Project Token": "项目 Token",
+        "Ref Color:": "对色:",
         "Proto Sample": "初样 (Proto)",
         "Qty": "数量",
         "Quantity pending": "数量待定",

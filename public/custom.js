@@ -2783,8 +2783,8 @@
             // --- 新增：强制分类排序逻辑 ---
             const targetOrder = ['Shell', 'Lining', 'Mesh']; // 您可以随时在这里增减或调整顺序
             categories.sort((a, b) => {
-                const indexA = targetOrder.indexOf(a);
-                const indexB = targetOrder.indexOf(b);
+                const indexA = targetOrder.indexOf(_rt(a));
+                const indexB = targetOrder.indexOf(_rt(b));
                 
                 // 如果两个都在预设里，按预设的数组索引排序 (0, 1, 2...)
                 if (indexA !== -1 && indexB !== -1) return indexA - indexB; 
@@ -3782,7 +3782,7 @@
                     } else {
                         if (config.mode === 'print') {
                             const typeName = config.printType === 'placement' ? _t('Placement Print') : _t('Seamless print');
-                            const refText = config.printRefColor ? ` | ${_t('对色:')} ${config.printRefColor}` : '';
+                            const refText = config.printRefColor ? ` | ${_t('Ref Color:')} ${config.printRefColor}` : '';
                             const scaleText = config.printScale ? ` | ${_t('Size:')} ${config.printScale}` : '';
                             statusText = `${displayName}<br><span style="font-size:10px; color:var(--primary-color);">${typeName}${refText}${scaleText}</span>`;
                         } else {
@@ -5983,6 +5983,8 @@
         
             const colorPart = metalConfig.finish.split(' ')[0];
             
+            st.style.color = 'var(--primary-color)';
+            st.style.fontWeight = 'bold';
             if (metalConfig.mode === 'auto') {
                 // 代配模式下的精简汇总
                 st.innerHTML = `<div style="text-align:right;">${colorPart}<br><span style="font-size:10px; color:#10b981; font-weight:600;">Hongxiu smart matching</span></div>`;

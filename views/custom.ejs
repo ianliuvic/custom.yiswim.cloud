@@ -120,6 +120,22 @@
                 <button onclick="openAuth('login')" style="background: none; border: 1.5px solid var(--primary-color); color: var(--primary-color); padding: 6px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='var(--primary-color)';this.style.color='#fff'" onmouseout="this.style.background='none';this.style.color='var(--primary-color)'"><%= lng === 'en' ? 'Login' : '登录' %></button>
                 <button onclick="openAuth('register')" style="background: var(--primary-color); border: 1.5px solid var(--primary-color); color: #fff; padding: 6px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='var(--primary-hover)'" onmouseout="this.style.background='var(--primary-color)'"><%= lng === 'en' ? 'Register' : '注册' %></button>
             </span>
+            <!-- 移动端：未登录用户的登录按钮 -->
+            <div class="header-avatar-wrap">
+                <button class="header-avatar-btn" onclick="toggleGuestMenu(event)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </button>
+                <div class="header-user-menu" id="headerGuestMenu">
+                    <a href="javascript:void(0)" onclick="openAuth('login')" class="header-user-menu-item">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                        <%= lng === 'en' ? 'Login' : '登录' %>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openAuth('register')" class="header-user-menu-item">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+                        <%= lng === 'en' ? 'Register' : '注册' %>
+                    </a>
+                </div>
+            </div>
             <% } %>
         </div>
     </header>
@@ -3185,10 +3201,21 @@
         e.stopPropagation();
         var menu = document.getElementById('headerUserMenu');
         menu.classList.toggle('open');
+        var guestMenu = document.getElementById('headerGuestMenu');
+        if (guestMenu) guestMenu.classList.remove('open');
+    }
+    function toggleGuestMenu(e) {
+        e.stopPropagation();
+        var menu = document.getElementById('headerGuestMenu');
+        menu.classList.toggle('open');
+        var userMenu = document.getElementById('headerUserMenu');
+        if (userMenu) userMenu.classList.remove('open');
     }
     document.addEventListener('click', function() {
         var menu = document.getElementById('headerUserMenu');
         if (menu) menu.classList.remove('open');
+        var guestMenu = document.getElementById('headerGuestMenu');
+        if (guestMenu) guestMenu.classList.remove('open');
     });
     </script>
 

@@ -3,6 +3,7 @@
            ========================================================= */
         :root {
             --primary-color: #aa0000;
+            --primary-hover: #8a0000;
             --text-main: #2c3e50;
             --text-light: #94a3b8; 
             --border-color: #f1f5f9; 

@@ -1194,7 +1194,7 @@
             const categories = [...new Set(styles.map(s => s.category).filter(Boolean))];
 
             // --- 新增：强制分类排序逻辑 ---
-            const targetOrder = ['Bikini', 'Two-piece', 'One-piece', 'Plus Size', 'Children', 'Board Shorts', 'Men's Shorts'];
+            const targetOrder = ['Bikini', 'Two-piece', 'One-piece', 'Plus Size', 'Children', 'Board Shorts', "Men's Shorts"];
             categories.sort((a, b) => {
                 const indexA = targetOrder.indexOf(a);
                 const indexB = targetOrder.indexOf(b);

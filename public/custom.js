@@ -155,8 +155,8 @@
 
             // ===== 自动暂存：每 20 分钟，仅在有变更且已登录时静默保存 =====
             const _markDirty = () => { _formDirty = true; };
-            document.getElementById('customForm').addEventListener('change', _markDirty);
-            document.getElementById('customForm').addEventListener('input', _markDirty);
+            document.addEventListener('change', _markDirty);
+            document.addEventListener('input', _markDirty);
             setInterval(async () => {
                 if (!_formDirty || !window.__isLoggedIn) return;
                 await saveDraft(true);

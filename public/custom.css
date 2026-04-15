@@ -33,7 +33,7 @@
         /* 滚动条美化 */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 0; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     
         /* 顶部导航 */
@@ -60,7 +60,7 @@
         .header-avatar-btn:active { border-color: var(--primary-color); color: var(--primary-color); }
         .header-user-menu {
             display: none; position: absolute; top: calc(100% + 8px); right: 0;
-            background: #fff; border-radius: 12px;
+            background: #fff; border-radius: 0;
             box-shadow: 0 8px 30px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04);
             min-width: 180px; padding: 8px 0; z-index: 9999;
             animation: fadeIn 0.15s ease;
@@ -100,7 +100,7 @@
         /* =========================================================
            3. ODM 款式网格与卡片 (电商大气风格)
            ========================================================= */
-        .step-desc { font-size: 13px; color: #64748b; background: #f8fafc; padding: 14px 20px; border-left: 3px solid var(--primary-color); border-radius: 4px; margin-bottom: 30px; line-height: 1.6; }
+        .step-desc { font-size: 13px; color: #64748b; background: #f8fafc; padding: 14px 20px; border-left: 3px solid var(--primary-color); border-radius: 0; margin-bottom: 30px; line-height: 1.6; }
         .section-heading { font-size: 14px; border-left: 3px solid var(--primary-color); padding-left: 10px; margin-bottom: 15px; }
         
         .option-grid { 
@@ -148,7 +148,7 @@
             background: #fff; 
             cursor: pointer; 
             position: relative; 
-            border-radius: 8px; 
+            border-radius: 0; 
             overflow: hidden; 
             transition: all 0.3s ease;
         }
@@ -198,7 +198,7 @@
         .fabric-tags-wrapper { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
         .fabric-tag-item { 
             font-size: 10px; background: #f1f5f9; color: #64748b; 
-            padding: 1px 6px; border-radius: 4px; font-weight: 500;
+            padding: 1px 6px; border-radius: 0; font-weight: 500;
             border: 1px solid #e2e8f0; white-space: nowrap;
         }
         /* 特殊标签高亮 (可选：如识别到 '常用' 或 '推荐') */
@@ -208,12 +208,12 @@
         /* QA 标签交互样式 */
         .qa-badge-container {
             position: relative; cursor: help; display: flex; align-items: center; gap: 10px;
-            padding: 8px 12px; border-radius: 6px; transition: all 0.3s;
+            padding: 8px 12px; border-radius: 0; transition: all 0.3s;
         }
         .qa-badge-container:hover { background: #f8fafc; color: var(--primary-color) !important; }
         .qa-tooltip {
             position: absolute; bottom: 130%; left: 0; width: 240px; background: #1e293b; color: #fff;
-            padding: 15px; border-radius: 10px; font-size: 11px; line-height: 1.6;
+            padding: 15px; border-radius: 0; font-size: 11px; line-height: 1.6;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2); opacity: 0; visibility: hidden;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); transform: translateY(10px); z-index: 100;
         }
@@ -249,7 +249,7 @@
         .modal-overlay.active { opacity: 1; visibility: visible; }
         
         .modal-content { 
-            background: #fff; border-radius: 20px; 
+            background: #fff; border-radius: 0; 
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4); 
             transform: scale(0.95) translateY(10px); 
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
@@ -297,7 +297,7 @@
         .modal-close-abs:hover { background: #fee2e2; color: #ef4444; transform: rotate(90deg); box-shadow: 0 4px 8px rgba(239, 68, 68, 0.15); }
         
         .modal-desc { font-size: 14px; color: #475569; line-height: 1.7; flex: 1; }
-        .modal-desc div[style*="background:#f9f9f9"] { background: #f8fafc !important; border-radius: 12px !important; padding: 20px !important; border: 1px solid #f1f5f9; }
+        .modal-desc div[style*="background:#f9f9f9"] { background: #f8fafc !important; border-radius: 0 !important; padding: 20px !important; border: 1px solid #f1f5f9; }
     
         .modal-content.modal-md { width: 100%; max-width: 640px; padding: 0; }
         .custom-modal-header { padding: 30px 35px 20px; border-bottom: 1px solid #f1f5f9; }
@@ -305,7 +305,7 @@
         .custom-modal-body { padding: 30px 35px 35px; }
     
         #customRemark {
-            width: 100%; height: 140px; padding: 16px; background: #fbfcfd; border: 1px solid #e2e8f0; border-radius: 12px;
+            width: 100%; height: 140px; padding: 16px; background: #fbfcfd; border: 1px solid #e2e8f0; border-radius: 0;
             font-family: inherit; font-size: 14px; color: #334155; line-height: 1.6; box-sizing: border-box; resize: none; margin-bottom: 25px;
             transition: all 0.3s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
         }
@@ -314,7 +314,7 @@
     
         .premium-upload-row {
             display: flex; align-items: center; justify-content: space-between; padding: 20px; background: #fff; border: 1px dashed #cbd5e1;
-            border-radius: 12px; transition: all 0.3s; cursor: pointer;
+            border-radius: 0; transition: all 0.3s; cursor: pointer;
         }
         .premium-upload-row:hover, .premium-upload-row.dragover { border-color: var(--primary-color); background: #fffafb; }
         .premium-upload-row.dragover { transform: scale(1.01); }
@@ -323,7 +323,7 @@
         .upload-label-sub { font-size: 12px; color: #94a3b8; margin-top: 4px; }
     
         .modal-footer { margin-top: 30px; display: flex; justify-content: flex-end; gap: 15px; padding-top: 20px; border-top: 1px solid #f8fafc; }
-        .modal-footer button { padding: 12px 28px; font-size: 14px; border-radius: 8px; }
+        .modal-footer button { padding: 12px 28px; font-size: 14px; border-radius: 0; }
     
         @media (max-width: 768px) {
             .modal-content.modal-lg { flex-direction: column; height: auto; max-height: 85vh; overflow-y: auto; }
@@ -336,12 +336,12 @@
         .file-list-container { margin-top: 15px; display: flex; flex-direction: column; gap: 10px; max-height: 200px; overflow-y: auto; }
         .file-item {
             display: flex; align-items: center; justify-content: space-between; padding: 10px 15px;
-            background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; transition: all 0.2s;
+            background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0; transition: all 0.2s;
         }
         .file-item:hover { background: #f1f5f9; border-color: #cbd5e1; }
         .file-info { display: flex; align-items: center; gap: 12px; overflow: hidden; }
         .file-icon {
-            width: 32px; height: 32px; min-width: 32px; border-radius: 6px; background: #e2e8f0; color: #64748b;
+            width: 32px; height: 32px; min-width: 32px; border-radius: 0; background: #e2e8f0; color: #64748b;
             display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; text-transform: uppercase;
         }
         .file-icon.img { background: #e0e7ff; color: #4f46e5; }
@@ -351,7 +351,7 @@
         .file-name { font-size: 13px; color: #334155; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 300px; }
         .file-size { font-size: 11px; color: #94a3b8; margin-top: 2px; }
         .file-remove {
-            background: none; border: none; color: #94a3b8; cursor: pointer; padding: 5px; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+            background: none; border: none; color: #94a3b8; cursor: pointer; padding: 5px; border-radius: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s;
         }
         .file-remove:hover { background: #fee2e2; color: #ef4444; }
 
@@ -370,7 +370,7 @@
             padding: 30px; 
             background: #fffcfc; /* 显眼的微红暖色背景 */
             border: 1px solid #fecaca; /* 红色系边框 */
-            border-radius: 12px; 
+            border-radius: 0; 
             position: relative; 
             box-shadow: 0 10px 25px rgba(170, 0, 0, 0.06); /* 带有主色调的阴影 */
             animation: panelSlideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -412,7 +412,7 @@
             font-size: 9px;
             font-weight: 700;
             padding: 2px 5px;
-            border-radius: 8px;
+            border-radius: 0;
             box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
             z-index: 2;
             pointer-events: none;
@@ -421,7 +421,7 @@
         }
         .color-swatch-wrapper:hover { transform: translateY(-4px); }
         .color-swatch { 
-            width: 100%; aspect-ratio: 4 / 3; border-radius: 6px; 
+            width: 100%; aspect-ratio: 4 / 3; border-radius: 0; 
             box-shadow: 0 2px 5px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; transition: all 0.2s; 
         }
         .color-swatch-wrapper.selected .color-swatch { 
@@ -435,32 +435,32 @@
         .color-swatch-code { font-weight: 700; color: #334155; }
         .color-swatch-wrapper.selected .color-swatch-code { color: var(--primary-color); }
         .fabric-notes-area { margin-top: 25px; padding-top: 20px; border-top: 1px solid #f1f5f9; }
-        #fabric-remark { width: 100%; height: 80px; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-family: inherit; font-size: 13px; box-sizing: border-box; resize: none; transition: border 0.3s; }
+        #fabric-remark { width: 100%; height: 80px; padding: 12px; border: 1px solid #e2e8f0; border-radius: 0; font-family: inherit; font-size: 13px; box-sizing: border-box; resize: none; transition: border 0.3s; }
         #fabric-remark:focus { outline: none; border-color: var(--primary-color); }
     
         /* =========================================================
            6. 切换器与导航
            ========================================================= */
-        .mode-switcher { display: inline-flex; background: #f1f5f9; padding: 4px; border-radius: 8px; }
-        .mode-option { padding: 8px 24px; font-size: 13px; font-weight: 500; color: #64748b; cursor: pointer; border-radius: 6px; transition: all 0.25s ease; }
+        .mode-switcher { display: inline-flex; background: #f1f5f9; padding: 4px; border-radius: 0; }
+        .mode-option { padding: 8px 24px; font-size: 13px; font-weight: 500; color: #64748b; cursor: pointer; border-radius: 0; transition: all 0.25s ease; }
         .mode-option.active { background: #fff; color: var(--primary-color); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .category-nav { display: flex; gap: 35px; margin-bottom: 30px; border-bottom: 1px solid #f1f5f9; padding-bottom: 2px; overflow-x: auto; }
         .cat-item { font-size: 14px; color: #94a3b8; cursor: pointer; padding-bottom: 10px; position: relative; transition: all 0.3s; white-space: nowrap; }
         .cat-item.active { color: var(--primary-color); font-weight: 600; }
-        .cat-item.active::after { content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 2px; background: var(--primary-color); border-radius: 2px; }
-        .toggle-section { display: flex; align-items: center; gap: 20px; margin-bottom: 25px; padding: 16px 20px; background: #f8fafc; border-radius: 8px; border: 1px solid #f1f5f9; }
+        .cat-item.active::after { content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 2px; background: var(--primary-color); border-radius: 0; }
+        .toggle-section { display: flex; align-items: center; gap: 20px; margin-bottom: 25px; padding: 16px 20px; background: #f8fafc; border-radius: 0; border: 1px solid #f1f5f9; }
         .toggle-title { font-weight: 600; font-size: 14px; color: #475569; }
         .toggle-options label { cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #64748b; margin-right: 15px; }
     
         /* =========================================================
            7. 上传框与通用按钮
            ========================================================= */
-        .premium-upload-box { border: 2px dashed #e2e8f0; background-color: #f8fafc; border-radius: 12px; padding: 40px 20px; text-align: center; transition: all 0.3s; cursor: pointer; }
+        .premium-upload-box { border: 2px dashed #e2e8f0; background-color: #f8fafc; border-radius: 0; padding: 40px 20px; text-align: center; transition: all 0.3s; cursor: pointer; }
         .premium-upload-box:hover { border-color: var(--primary-color); background-color: #fffafb; }
 
         button {
             padding: 12px 36px;
-            border-radius: 8px;
+            border-radius: 0;
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
@@ -509,7 +509,7 @@
             font-size: 12px;
             font-weight: 500;
             padding: 6px 10px;
-            border-radius: 6px;
+            border-radius: 0;
             gap: 4px;
             transition: all 0.2s;
         }
@@ -563,11 +563,11 @@
         .summary-row .value { color: var(--text-main); font-weight: 700; text-align: right; }
         .summary-sub-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 12px; padding-left: 12px; color: #94a3b8; }
         .summary-sub-row .value { font-weight: 500; color: #475569; }
-        .placeholder-box { padding: 60px 20px; border: 1px dashed #e2e8f0; text-align: center; color: #94a3b8; font-size: 13px; background: #fff; border-radius: 8px; }
+        .placeholder-box { padding: 60px 20px; border: 1px dashed #e2e8f0; text-align: center; color: #94a3b8; font-size: 13px; background: #fff; border-radius: 0; }
 
         .clear-all-btn {
             background: none; border: none; color: #94a3b8; font-size: 12px; font-weight: 500; cursor: pointer; 
-            display: inline-flex; align-items: center; padding: 6px 10px; border-radius: 6px; transition: all 0.2s ease; gap: 4px;
+            display: inline-flex; align-items: center; padding: 6px 10px; border-radius: 0; transition: all 0.2s ease; gap: 4px;
         }
         .clear-all-btn:hover { background: #fee2e2; color: #ef4444; }
 
@@ -602,7 +602,7 @@
         
         .custom-badge {
             display: none; font-size: 10px; font-weight: 600; color: var(--primary-color);
-            background: #fff0f0; padding: 2px 6px; border-radius: 12px; margin-left: 6px; vertical-align: middle; letter-spacing: 0.5px;
+            background: #fff0f0; padding: 2px 6px; border-radius: 0; margin-left: 6px; vertical-align: middle; letter-spacing: 0.5px;
         }
         .custom-badge.active { display: inline-block; animation: fadeIn 0.3s ease; }
         .btn-outline { background: #fff; color: #64748b; border: 1px solid #e2e8f0; }
@@ -632,12 +632,12 @@
         .bg-black { background: #1a1a1a; }
         
         .brand-custom-box {
-            background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px; padding: 25px;
+            background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 0; padding: 25px;
             margin-top: 15px; animation: fadeIn 0.4s ease;
         }
         /* 标签定位选择器样式 */
-        .placement-container { display: flex; gap: 40px; background: #f8fafc; padding: 25px; border-radius: 12px; align-items: center; margin-left: 13px; }
-        .swimwear-map { position: relative; width: 180px; height: 220px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; }
+        .placement-container { display: flex; gap: 40px; background: #f8fafc; padding: 25px; border-radius: 0; align-items: center; margin-left: 13px; }
+        .swimwear-map { position: relative; width: 180px; height: 220px; background: #fff; border-radius: 0; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; }
         .map-svg { width: 140px; height: auto; opacity: 0.15; }
         .hotspot { 
             position: absolute; width: 14px; height: 14px; background: #cbd5e1; border: 2px solid #fff; border-radius: 50%; 
@@ -652,7 +652,7 @@
         /* 缝制方式卡片样式 */
         .sewing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-top: 8px; }
         .sewing-card {
-            padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; cursor: pointer;
+            padding: 10px; border: 1px solid #e2e8f0; border-radius: 0; background: #fff; cursor: pointer;
             text-align: center; transition: all 0.2s;
         }
         .sewing-card:hover { border-color: var(--primary-color); background: #fffafb; }
@@ -663,7 +663,7 @@
         /* 优化后的高级复选框容器 (圆角、动态边框、选中底色) */
         .premium-checkbox-box {
             display: inline-flex; align-items: center; gap: 10px;
-            padding: 10px 16px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px;
+            padding: 10px 16px; background: #fff; border: 1px solid #e2e8f0; border-radius: 0;
             cursor: pointer; transition: all 0.3s ease; user-select: none;
         }
         .premium-checkbox-box:hover {
@@ -681,7 +681,7 @@
         /* 吊牌专属高级样式 */
         .hangtag-shape-card {
             display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 15px;
-            border: 1px solid #e2e8f0; border-radius: 10px; background: #fff; cursor: pointer;
+            border: 1px solid #e2e8f0; border-radius: 0; background: #fff; cursor: pointer;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); position: relative;
         }
         .hangtag-shape-card:hover { border-color: var(--primary-color); transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
@@ -713,14 +713,14 @@
         /* 包装袋专属高级样式 */
         .eco-badge {
             position: absolute; top: 10px; right: 10px; background: #10b981; color: #fff;
-            font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px;
+            font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 0;
             z-index: 10; display: flex; align-items: center; gap: 3px; box-shadow: 0 2px 5px rgba(16, 185, 129, 0.3);
         }
         
         /* 确保包装袋尺寸卡片样式与其他模块对齐 */
         .bag-size-card {
             display: flex; flex-direction: column; justify-content: center; padding: 20px 15px;
-            border: 1px solid #e2e8f0; border-radius: 10px; background: #fff; cursor: pointer;
+            border: 1px solid #e2e8f0; border-radius: 0; background: #fff; cursor: pointer;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); text-align: center; position: relative;
         }
         
@@ -762,7 +762,7 @@
         
         /* 针对 Logo 上传行的微调 - 强制高度与下拉框对齐 */
         .upload-row-sm {
-            padding: 0 12px !important; height: 38px; border-radius: 8px !important; 
+            padding: 0 12px !important; height: 38px; border-radius: 0; 
             background: #fff !important; display: flex; align-items: center; justify-content: space-between;
             border: 1px solid #e2e8f0; box-sizing: border-box;
         }
@@ -775,7 +775,7 @@
         /* 多选标签样式 */
         .chip-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; }
         .chip { 
-            padding: 6px 12px; background: #fff; border: 1px solid #e2e8f0; border-radius: 6px; 
+            padding: 6px 12px; background: #fff; border: 1px solid #e2e8f0; border-radius: 0; 
             font-size: 12px; color: #64748b; cursor: pointer; transition: all 0.2s; 
         }
         .chip:hover { border-color: var(--primary-color); color: var(--primary-color); }
@@ -790,7 +790,7 @@
             height: 120px !important; /* 固定高度，确保对齐 */
             padding: 10px 12px;
             border: 1px solid #e2e8f0;
-            border-radius: 6px;
+            border-radius: 0;
             font-family: inherit;
             font-size: 13px;
             box-sizing: border-box;
@@ -843,7 +843,7 @@
             margin: 0 !important;
         }
 
-        .oem-input-mini { padding: 6px 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 13px; color: var(--text-main); transition: all 0.3s; }
+        .oem-input-mini { padding: 6px 12px; border: 1px solid #e2e8f0; border-radius: 0; font-size: 13px; color: var(--text-main); transition: all 0.3s; }
         .oem-input-mini:focus { outline: none; border-color: var(--primary-color); }
         .oem-input-mini::placeholder {
             color: #cbd5e1;
@@ -855,14 +855,14 @@
         .oem-subtitle { font-size: 12px; color: #94a3b8; }
     
         .oem-dropzone {
-            border: 2px dashed #e2e8f0; border-radius: 12px; padding: 30px; display: flex; align-items: center; justify-content: center;
+            border: 2px dashed #e2e8f0; border-radius: 0; padding: 30px; display: flex; align-items: center; justify-content: center;
             cursor: pointer; transition: all 0.3s; background: #fafbfc;
         }
         .oem-dropzone:hover, .oem-dropzone.dragover { border-color: var(--primary-color); background: #fffafb; }
         .oem-dropzone.dragover { transform: scale(1.01); }
     
         .oem-image-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; margin-top: 12px; }
-        .oem-preview-item { position: relative; aspect-ratio: 1 / 1; border-radius: 8px; overflow: hidden; border: 1px solid #f1f5f9; background: #f8fafc; }
+        .oem-preview-item { position: relative; aspect-ratio: 1 / 1; border-radius: 0; overflow: hidden; border: 1px solid #f1f5f9; background: #f8fafc; }
         .oem-preview-item img { width: 100%; height: 100%; object-fit: cover; }
         .oem-preview-remove {
             position: absolute; top: 4px; right: 4px; width: 20px; height: 20px; min-width: 20px; min-height: 20px; padding: 0; margin: 0; border-radius: 50%; border: none;
@@ -871,7 +871,7 @@
         .oem-preview-remove:hover { background: #ef4444; transform: scale(1.1); }
     
         .oem-textarea {
-            width: 100%; height: 100px; padding: 15px; border: 1px solid #e2e8f0; border-radius: 10px; font-family: inherit; font-size: 13px; resize: none; box-sizing: border-box; transition: all 0.3s;
+            width: 100%; height: 100px; padding: 15px; border: 1px solid #e2e8f0; border-radius: 0; font-family: inherit; font-size: 13px; resize: none; box-sizing: border-box; transition: all 0.3s;
         }
         .oem-textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 3px 10px rgba(0,0,0,0.03); }
         .oem-checkbox-label { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #475569; font-weight: 600; cursor: pointer; padding: 8px 0; }
@@ -886,7 +886,7 @@
         .radio-card-grid.grid-4 { grid-template-columns: repeat(4, 1fr); }
         .radio-card { display: block; cursor: pointer; height: 100%; }
         .radio-card input { display: none; }
-        .radio-card .card-content { border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px 16px; background: #fff; transition: all 0.25s ease; height: 100%; box-sizing: border-box; position: relative; overflow: hidden; }
+        .radio-card .card-content { border: 1px solid #e2e8f0; border-radius: 0; padding: 18px 16px; background: #fff; transition: all 0.25s ease; height: 100%; box-sizing: border-box; position: relative; overflow: hidden; }
         .radio-card:hover .card-content { border-color: #cbd5e1; background: #f8fafc; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
         .radio-card input:checked + .card-content { border-color: var(--primary-color); background: #fffafb; box-shadow: 0 0 0 1px var(--primary-color), 0 4px 12px rgba(170, 0, 0, 0.08); transform: translateY(-2px); }
         .radio-card input:checked + .card-content::after { content: '✓'; position: absolute; top: 10px; right: 12px; color: var(--primary-color); font-size: 14px; font-weight: bold; }
@@ -898,7 +898,7 @@
         .flex-half { flex: 1; }
         .input-group { display: flex; flex-direction: column; gap: 15px; }
         .input-group input, .input-group select, #final_remark {
-            width: 100%; padding: 12px 14px; border: 1px solid #e2e8f0; border-radius: 8px; font-family: inherit; font-size: 13px; color: var(--text-main); box-sizing: border-box; transition: all 0.3s ease; background: #fdfdfd;
+            width: 100%; padding: 12px 14px; border: 1px solid #e2e8f0; border-radius: 0; font-family: inherit; font-size: 13px; color: var(--text-main); box-sizing: border-box; transition: all 0.3s ease; background: #fdfdfd;
         }
         .input-group input:focus, .input-group select:focus, #final_remark:focus { outline: none; border-color: var(--primary-color); background: #fff; box-shadow: 0 0 0 3px rgba(170, 0, 0, 0.05); }
         #final_remark { height: 120px; resize: vertical; }
@@ -912,10 +912,10 @@
         @media (max-width: 600px) { .radio-card-grid, .radio-card-grid.grid-4 { grid-template-columns: 1fr; } }
 
 /* Sample table styles */
-                            .sample-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; font-size: 13px; }
+                            .sample-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 0; overflow: hidden; font-size: 13px; }
                             .sample-table th { background: #f1f5f9; color: #475569; text-align: left; padding: 12px 15px; font-weight: 600; border-bottom: 2px solid #e2e8f0; }
                             .sample-table td { padding: 10px 15px; border-bottom: 1px solid #f1f5f9; }
-                            .sample-table select, .sample-table input { width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 12px; outline: none; transition: border 0.2s; }
+                            .sample-table select, .sample-table input { width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 0; font-size: 12px; outline: none; transition: border 0.2s; }
                             .sample-table select:focus, .sample-table input:focus { border-color: var(--primary-color); }
                             .btn-remove-row { color: #94a3b8; cursor: pointer; transition: color 0.2s; background: none; border: none; font-size: 18px; }
                             .btn-remove-row:hover { color: #ef4444; }
@@ -927,7 +927,7 @@
                                     height: 65px; /* 稍微大一些的高度 */
                                     padding: 8px;
                                     border: 1px solid #e2e8f0;
-                                    border-radius: 4px;
+                                    border-radius: 0;
                                     font-family: inherit;
                                     font-size: 12px;
                                     resize: vertical;
@@ -1012,7 +1012,7 @@
                 gap: 0;
                 background: #f8fafc;
                 border: 1px solid #e2e8f0;
-                border-radius: 10px;
+                border-radius: 0;
                 padding: 14px;
                 margin-bottom: 12px;
                 position: relative;
@@ -1075,7 +1075,7 @@
                 gap: 0;
                 background: #f8fafc;
                 border: 1px solid #e2e8f0;
-                border-radius: 10px;
+                border-radius: 0;
                 padding: 14px;
                 margin-bottom: 12px;
                 position: relative;
@@ -1135,7 +1135,7 @@
                 width: 100%;
                 padding: 8px 10px;
                 font-size: 13px;
-                border-radius: 6px;
+                border-radius: 0;
                 box-sizing: border-box;
             }
 
@@ -1167,7 +1167,7 @@
                 width: 100%;
                 padding: 8px 10px;
                 font-size: 13px;
-                border-radius: 6px;
+                border-radius: 0;
                 box-sizing: border-box;
             }
 
@@ -1261,7 +1261,7 @@
             .premium-upload-box .upload-icon-container { display: none; }
 
             .modal-overlay { padding: 10px; }
-            .modal-content { border-radius: 14px; }
+            .modal-content { border-radius: 0; }
             .modal-gallery-side { height: 220px; }
             .modal-info-side { padding: 16px; }
             .modal-header-simple h2 { font-size: 18px; }

@@ -48,7 +48,7 @@
                 max-height: 75vh;
                 z-index: 9999;
                 background: #fff;
-                border-radius: 20px 20px 0 0;
+                border-radius: 0;
                 box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
                 padding: 24px 24px 32px;
                 transform: translateY(100%);
@@ -69,7 +69,7 @@
                 display: block !important;
                 width: 40px; height: 4px;
                 background: #cbd5e1;
-                border-radius: 4px;
+                border-radius: 0;
                 margin: 0 auto 16px;
             }
         }
@@ -117,8 +117,8 @@
             </div>
             <% } else { %>
             <span class="header-user-text" style="display: flex; align-items: center; gap: 12px;">
-                <button onclick="openAuth('login')" style="background: none; border: 1.5px solid var(--primary-color); color: var(--primary-color); padding: 6px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='var(--primary-color)';this.style.color='#fff'" onmouseout="this.style.background='none';this.style.color='var(--primary-color)'"><%= lng === 'en' ? 'Login' : '登录' %></button>
-                <button onclick="openAuth('register')" style="background: var(--primary-color); border: 1.5px solid var(--primary-color); color: #fff; padding: 6px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='var(--primary-hover)'" onmouseout="this.style.background='var(--primary-color)'"><%= lng === 'en' ? 'Register' : '注册' %></button>
+                <button onclick="openAuth('login')" style="background: none; border: 1.5px solid var(--primary-color); color: var(--primary-color); padding: 6px 18px; border-radius: 0; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='var(--primary-color)';this.style.color='#fff'" onmouseout="this.style.background='none';this.style.color='var(--primary-color)'"><%= lng === 'en' ? 'Login' : '登录' %></button>
+                <button onclick="openAuth('register')" style="background: var(--primary-color); border: 1.5px solid var(--primary-color); color: #fff; padding: 6px 18px; border-radius: 0; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='var(--primary-hover)'" onmouseout="this.style.background='var(--primary-color)'"><%= lng === 'en' ? 'Register' : '注册' %></button>
             </span>
             <!-- 移动端：未登录用户的登录按钮 -->
             <div class="header-avatar-wrap">
@@ -185,7 +185,7 @@
                             <div class="oem-section-header" style="margin-bottom: 18px;">
                                 <h4 class="section-heading" style="margin: 0;">A. 项目基本信息</h4>
                             </div>  
-                            <div class="oem-upload-section" style="margin-bottom: 25px; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; background: #fbfcfd;">
+                            <div class="oem-upload-section" style="margin-bottom: 25px; padding: 20px; border: 1px solid #e2e8f0; border-radius: 0; background: #fbfcfd;">
                                 <div style="display: flex; gap: 20px; align-items: flex-start; margin-bottom: 15px;">
                                     <div style="flex: 2;">
                                         <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">项目/系列名称 <span style="color:#ef4444;">*</span></label>
@@ -213,7 +213,7 @@
                                 </div>
                             </div>
                             <!-- 微调后的极简提示 (暖色调/细虚线/小字体) -->
-                            <div style="margin-bottom: 15px; padding: 8px 12px; background: #fffdf5; border: 1px dashed #fde68a; border-radius: 6px; display: flex; align-items: flex-start; gap: 8px;">
+                            <div style="margin-bottom: 15px; padding: 8px 12px; background: #fffdf5; border: 1px dashed #fde68a; border-radius: 0; display: flex; align-items: flex-start; gap: 8px;">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" style="margin-top: 2px; flex-shrink: 0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                                 <div style="font-size: 11px; color: #92400e; line-height: 1.5;">
                                     <strong>上传对应提示：</strong>若申报了多款设计，请确保下方上传的<strong>参考图文件名</strong>或<strong>工艺单页码</strong>能与 A 区域填写的“款 1、款 2...”描述清晰对应。
@@ -286,13 +286,13 @@
                                 <textarea id="oem-remark" class="oem-textarea" style="min-height: 150px; resize: vertical;" placeholder="请详细描述您的修改要求或特定工艺要求..." spellcheck="false" oninput="updateCombinedStyleSummary()"></textarea>
                             </div>
 
-                            <div style="background: #fff; border-radius: 12px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px;">
+                            <div style="background: #fff; border-radius: 0; display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px;">
                                 <div>
                                     <label class="oem-checkbox-label" style="margin: 0; padding: 0;">
                                         <input type="checkbox" id="oem-physical" onchange="togglePhysicalInfo(this.checked)"> 寄送实体样衣进行打版参考
                                     </label>
                                 </div>
-                                <div id="oem-address-info" class="hidden" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed #cbd5e1; display: flex; flex-direction: column; gap: 10px; font-size: 12.5px; color: #475569; transition: all 0.3s;">
+                                <div id="oem-address-info" class="hidden" style="background: #f8fafc; padding: 15px; border-radius: 0; border: 1px dashed #cbd5e1; display: flex; flex-direction: column; gap: 10px; font-size: 12.5px; color: #475569; transition: all 0.3s;">
                                     <div style="display: flex; align-items: flex-start; gap: 6px; line-height: 1.5;">
                                         <span style="font-size: 14px;">📍</span>
                                         <span><strong>收件地址：</strong>中国辽宁省兴城市铁西路10-8A红绣服饰有限公司 (收件人：刘先生 +86 177-1101-4152)</span>
@@ -305,7 +305,7 @@
                             </div>
 
                             <!-- 新增：F. 易漏设计细节核对单 -->
-                            <div class="oem-upload-section" id="oem-checklist-section" style="margin-bottom: 25px; background: #fffdf5; border: 1px solid #fde68a; padding: 20px; border-radius: 12px; transition: all 0.3s;">
+                            <div class="oem-upload-section" id="oem-checklist-section" style="margin-bottom: 25px; background: #fffdf5; border: 1px solid #fde68a; padding: 20px; border-radius: 0; transition: all 0.3s;">
                                 <!-- 标题与全选按钮的左右布局 -->
                                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
                                     <div style="display: flex; align-items: flex-start; gap: 10px; padding-right: 20px;">
@@ -373,13 +373,13 @@
                             <div id="config-arrow" class="config-arrow"></div>
                             <div class="config-header">
                                 <h4 id="selected-fabric-display">配置选项</h4>
-                                <span id="config-type-tag" style="font-size: 11px; padding: 2px 8px; border-radius: 10px; background: #eee; color: #666;">面料</span>
+                                <span id="config-type-tag" style="font-size: 11px; padding: 2px 8px; border-radius: 0; background: #eee; color: #666;">面料</span>
                             </div>
                             
                             <!-- 新增：定制找样专属表单 (默认隐藏) -->
                             <div id="fabric-custom-sourcing-form" class="hidden" style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px dashed #e2e8f0;">
                                 <!-- 新增：找样服务重要提示 -->
-                                <div style="margin-bottom: 20px; padding: 12px 18px; background: #fffbeb; border: 1px dashed #fcd34d; border-radius: 8px; display: flex; align-items: flex-start; gap: 12px;">
+                                <div style="margin-bottom: 20px; padding: 12px 18px; background: #fffbeb; border: 1px dashed #fcd34d; border-radius: 0; display: flex; align-items: flex-start; gap: 12px;">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5" style="margin-top: 2px; flex-shrink: 0;">
                                         <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
                                     </svg>
@@ -414,7 +414,7 @@
                                 <!-- 新增：定制找样附件上传 -->
                                 <div style="margin-bottom: 20px;">
                                     <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">上传面料描述文件或参考图</label>
-                                    <div class="premium-upload-row" onclick="document.getElementById('customFabricFile').click()" style="padding: 12px 15px; background: #fff; border-color: #e2e8f0; border-radius: 8px;">
+                                    <div class="premium-upload-row" onclick="document.getElementById('customFabricFile').click()" style="padding: 12px 15px; background: #fff; border-color: #e2e8f0; border-radius: 0;">
                                         <div class="upload-label-group">
                                             <span id="customFabricFileName" class="upload-label-main" style="font-size: 12px; color: #94a3b8;">选择图片或 PDF 说明文档</span>
                                         </div>
@@ -432,7 +432,7 @@
                                             <input type="checkbox" id="custom-fabric-physical" onchange="updateCustomFabricData()"> 我将寄送实物面料/样衣供开发对色与质检
                                         </label>
                                     </div>
-                                    <div id="custom-fabric-address-info" class="hidden" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed #cbd5e1; display: flex; flex-direction: column; gap: 10px; font-size: 12.5px; color: #475569; transition: all 0.3s;">
+                                    <div id="custom-fabric-address-info" class="hidden" style="background: #f8fafc; padding: 15px; border-radius: 0; border: 1px dashed #cbd5e1; display: flex; flex-direction: column; gap: 10px; font-size: 12.5px; color: #475569; transition: all 0.3s;">
                                         <div style="display: flex; align-items: flex-start; gap: 6px; line-height: 1.5;">
                                             <span style="font-size: 14px;">📍</span>
                                             <span><strong>收件地址：</strong>中国辽宁省兴城市铁西路10-8A红绣服饰有限公司 (收件人：刘先生 +86 177-1101-4152)</span>
@@ -452,7 +452,7 @@
                             </div>
                             <div id="fabric-solid-area">
                                 <!-- 新增：里料专属颜色成本提示框 (默认隐藏) -->
-                                <div id="lining-color-hint" class="hidden" style="margin-bottom: 15px; padding: 10px 12px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 6px; display: flex; align-items: flex-start; gap: 8px;">
+                                <div id="lining-color-hint" class="hidden" style="margin-bottom: 15px; padding: 10px 12px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 0; display: flex; align-items: flex-start; gap: 8px;">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5" style="margin-top: 2px; flex-shrink: 0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                                     <div style="font-size: 11.5px; color: #475569; line-height: 1.5;">
                                         <strong>常规工艺提醒：</strong>作为贴身且不外露的内衬，行业默认使用 <strong>黑色或白色</strong>。若您指定定染特殊颜色（如撞色里布），大货起订量 (MOQ) 将大幅提升，且可能产生额外费用。
@@ -462,18 +462,18 @@
                                 <div id="lining-quick-pick" class="hidden" style="margin-bottom: 18px; animation: fadeIn 0.3s ease;">
                                     <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:10px;">快速选色</label>
                                     <div style="display:flex; gap:12px;">
-                                        <div class="lining-quick-btn" data-color="黑色" onclick="pickLiningQuickColor(this, '黑色')" style="flex:1; display:flex; align-items:center; gap:10px; padding:10px 14px; border:2px solid #e2e8f0; border-radius:8px; cursor:pointer; transition:all 0.2s; background:#fff;">
+                                        <div class="lining-quick-btn" data-color="黑色" onclick="pickLiningQuickColor(this, '黑色')" style="flex:1; display:flex; align-items:center; gap:10px; padding:10px 14px; border:2px solid #e2e8f0; border-radius: 0; cursor:pointer; transition:all 0.2s; background:#fff;">
                                             <span style="width:28px; height:28px; border-radius:50%; background:#1a1a1a; border:2px solid #cbd5e1; flex-shrink:0;"></span>
                                             <span style="font-size:13px; font-weight:600; color:#334155;">黑色</span>
                                         </div>
-                                        <div class="lining-quick-btn" data-color="白色" onclick="pickLiningQuickColor(this, '白色')" style="flex:1; display:flex; align-items:center; gap:10px; padding:10px 14px; border:2px solid #e2e8f0; border-radius:8px; cursor:pointer; transition:all 0.2s; background:#fff;">
+                                        <div class="lining-quick-btn" data-color="白色" onclick="pickLiningQuickColor(this, '白色')" style="flex:1; display:flex; align-items:center; gap:10px; padding:10px 14px; border:2px solid #e2e8f0; border-radius: 0; cursor:pointer; transition:all 0.2s; background:#fff;">
                                             <span style="width:28px; height:28px; border-radius:50%; background:#fff; border:2px solid #cbd5e1; flex-shrink:0;"></span>
                                             <span style="font-size:13px; font-weight:600; color:#334155;">白色</span>
                                         </div>
                                     </div>
                                 </div>
                                 <!-- 档案卡式包装色卡图 -->
-                                <div style="margin-bottom: 20px; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background: #f8fafc; cursor: zoom-in; transition: border-color 0.3s;" onclick="openFabricColorModal()" onmouseover="this.style.borderColor='var(--primary-color)'" onmouseout="this.style.borderColor='#e2e8f0'">
+                                <div style="margin-bottom: 20px; border: 1px solid #e2e8f0; border-radius: 0; overflow: hidden; background: #f8fafc; cursor: zoom-in; transition: border-color 0.3s;" onclick="openFabricColorModal()" onmouseover="this.style.borderColor='var(--primary-color)'" onmouseout="this.style.borderColor='#e2e8f0'">
                                     <div style="padding: 10px 15px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #fff;">
                                         <span style="font-size: 12px; font-weight: 600; color: var(--text-main);">实物色卡档案</span>
                                         <span style="font-size: 11px; color: var(--primary-color); display: flex; align-items: center; gap: 4px;">
@@ -483,7 +483,7 @@
                                     </div>
                                     <!-- 图片占位，你可以稍后将 url 替换为真实的色卡图链接 -->
                                     <div id="fabric-swatch-img-preview" data-bg="https://files.yiswim.cloud/uploads/swatch-1.jpg"
-                                         style="height: 140px; width: 100%; border-radius: 4px; background-color: #f8fafc; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center;">
+                                         style="height: 140px; width: 100%; border-radius: 0; background-color: #f8fafc; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center;">
                                         <!-- 移除了之前的占位文字，保持背景图纯净 -->
                                     </div>
                                 </div>
@@ -522,7 +522,7 @@
                                 <!-- 2. 文件上传区域 (强化高清要求) -->
                                 <div class="premium-upload-box" id="printDropzone" onclick="document.getElementById('printFile').click()" style="padding: 30px 20px; border-color: #cbd5e1;">
                                     <div style="margin-bottom: 12px;">
-                                        <span style="display:inline-block; padding:2px 8px; background:#fee2e2; color:#ef4444; font-size:10px; font-weight:800; border-radius:4px; margin-bottom:10px; text-transform: uppercase; letter-spacing: 0.5px;">Required: High Definition</span>
+                                        <span style="display:inline-block; padding:2px 8px; background:#fee2e2; color:#ef4444; font-size:10px; font-weight:800; border-radius: 0; margin-bottom:10px; text-transform: uppercase; letter-spacing: 0.5px;">Required: High Definition</span>
                                         <br>
                                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
                                     </div>
@@ -533,12 +533,12 @@
                                 <div id="printPreviewGrid" class="oem-image-preview-grid" style="margin-top: 15px;"></div>
 
                                 <!-- 新增：印花尺寸比例说明 -->
-                                <div style="margin-top: 20px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+                                <div style="margin-top: 20px; padding: 15px; background: #f8fafc; border-radius: 0; border: 1px solid #e2e8f0;">
                                     <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">印花尺寸比例</label>
                                     <input type="text" id="fabric-print-scale" class="oem-input-mini" style="width: 100%; box-sizing: border-box; background: #fff;" placeholder="例: 循环单元 20cm 或 Logo 宽 10cm" oninput="updatePrintScale()">
                                     
                                     <div style="margin-top: 10px; display: flex; align-items: flex-start; gap: 8px;">
-                                        <div style="background: var(--primary-color); color: #fff; font-size: 9px; font-weight: 800; padding: 2px 5px; border-radius: 4px; margin-top: 2px;">TIP</div>
+                                        <div style="background: var(--primary-color); color: #fff; font-size: 9px; font-weight: 800; padding: 2px 5px; border-radius: 0; margin-top: 2px;">TIP</div>
                                         <p style="margin: 0; font-size: 11px; color: #64748b; line-height: 1.5;">
                                             如果您对尺寸没有概念，请在上方区域上传一张<strong>成衣效果图 (Mockup)</strong>。通过图片展示印花在泳装上的比例位置，版师将据此为您精准还原。
                                         </p>
@@ -556,7 +556,7 @@
                                 <h4 style="font-size: 13px; margin: 0 0 10px; color: var(--text-main);">拼色说明与参考附件 (可选)</h4>
                                 
                                 <!-- 1. 文本输入区域 (移到了上方) -->
-                                <textarea id="fabric-remark" placeholder="请详细描述您的拼色方案、色彩分布部位或特殊修改要求..." style="width:100%; height:80px; padding:10px; border:1px solid #ddd; border-radius:4px; font-family:inherit; font-size:13px; box-sizing:border-box; resize:vertical; margin-bottom:15px;" spellcheck="false" oninput="if(activeFabricCat && fabricSelection[activeFabricCat] && fabricSelection[activeFabricCat].activeName) fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName].remark = this.value;"></textarea>
+                                <textarea id="fabric-remark" placeholder="请详细描述您的拼色方案、色彩分布部位或特殊修改要求..." style="width:100%; height:80px; padding:10px; border:1px solid #ddd; border-radius: 0; font-family:inherit; font-size:13px; box-sizing:border-box; resize:vertical; margin-bottom:15px;" spellcheck="false" oninput="if(activeFabricCat && fabricSelection[activeFabricCat] && fabricSelection[activeFabricCat].activeName) fabricSelection[activeFabricCat].configs[fabricSelection[activeFabricCat].activeName].remark = this.value;"></textarea>
                                 
                                 <!-- 2. 附件上传区域 (移到了下方) -->
                                 <div class="premium-upload-row" id="fabricDropzone" onclick="document.getElementById('fabricFile').click()" style="padding: 12px 18px; background: #fff;">
@@ -580,7 +580,7 @@
                                     <div class="mode-option" id="lining-mode-partial" onclick="toggleFullLining(false)">局部衬里</div>
                                 </div>
                                 
-                                <div id="lining-partial-area" class="hidden" style="animation: fadeIn 0.3s ease; background: #fffdf5; padding: 15px; border: 1px dashed #fcd34d; border-radius: 8px;">
+                                <div id="lining-partial-area" class="hidden" style="animation: fadeIn 0.3s ease; background: #fffdf5; padding: 15px; border: 1px dashed #fcd34d; border-radius: 0;">
                                     <label style="display:block; font-size:11px; font-weight:700; color:#92400e; margin-bottom:8px;">局部里料位置说明 <span style="color:#ef4444;">*</span></label>
                                     <textarea id="lining-placement-remark" class="oem-textarea" style="height: 60px; font-size: 12px; resize: none; border-color: #fde68a;" placeholder="例如：仅前幅加里料，后幅单层；或仅裆部加里料..." oninput="updateLiningPlacement()"></textarea>
                                 </div>
@@ -596,7 +596,7 @@
                             </label>
                             
                             <!-- Step 2: 面料 CMT 展开区 -->
-                            <div id="fabric-cmt-address-info" class="hidden" style="margin-top: 15px; background: #fffbeb; padding: 20px; border-radius: 8px; border: 1px solid #fcd34d; display: flex; flex-direction: column; gap: 15px; font-size: 12.5px; color: #92400e; transition: all 0.3s;">
+                            <div id="fabric-cmt-address-info" class="hidden" style="margin-top: 15px; background: #fffbeb; padding: 20px; border-radius: 0; border: 1px solid #fcd34d; display: flex; flex-direction: column; gap: 15px; font-size: 12.5px; color: #92400e; transition: all 0.3s;">
                                 <!-- 原有地址信息保持不变 -->
                                 <div style="display: flex; align-items: flex-start; gap: 8px; line-height: 1.6;">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
@@ -633,7 +633,7 @@
                         <div class="step-desc">请在下方标签页中分别配置您需要的品牌辅料。如果不需要某项辅料，保持默认“否”即可。</div>
 
                         <!-- 新增：开发阶段与大货辅料差异提示 -->
-                        <div style="margin: -15px 0 25px; padding: 12px 18px; background: #f8fafc; border-left: 3px solid #cbd5e1; border-radius: 4px; display: flex; align-items: flex-start; gap: 10px;">
+                        <div style="margin: -15px 0 25px; padding: 12px 18px; background: #f8fafc; border-left: 3px solid #cbd5e1; border-radius: 0; display: flex; align-items: flex-start; gap: 10px;">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5" style="margin-top: 2px; flex-shrink: 0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                             <div style="font-size: 11.5px; color: #64748b; line-height: 1.6;">
                                 <strong style="color: #475569;">开发阶段说明：</strong><br>
@@ -666,7 +666,7 @@
                                     <input type="checkbox" id="cmt-check-metal" onchange="toggleTrimCmt('metal', this.checked)"> 
                                     <span style="font-size: 12px; font-weight: 600; color: #475569;">我将自行采购并寄送该辅料 (CMT 模式)</span>
                                 </label>
-                                <div id="cmt-info-metal" class="hidden" style="margin-top: 10px; background: #fffbeb; padding: 12px 15px; border-radius: 8px; border: 1px solid #fcd34d; display: flex; flex-direction: column; gap: 10px; font-size: 11.5px; color: #92400e;">
+                                <div id="cmt-info-metal" class="hidden" style="margin-top: 10px; background: #fffbeb; padding: 12px 15px; border-radius: 0; border: 1px solid #fcd34d; display: flex; flex-direction: column; gap: 10px; font-size: 11.5px; color: #92400e;">
                                     <div style="display: flex; align-items: flex-start; gap: 6px;">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="10" r="3"/><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>
                                         <span><strong>收件仓：</strong>辽宁省兴城市铁西路10-8A红绣服饰有限公司 物料仓<br><strong>收件人：</strong>辅料核发部 +86 191-6891-9352</span>
@@ -720,7 +720,7 @@
                                             <div class="mode-option active" id="metal-mode-auto" onclick="switchMetalMode('auto')">红绣智能代配 (推荐)</div>
                                             <div class="mode-option" id="metal-mode-custom" onclick="switchMetalMode('custom')">自主定义细节</div>
                                         </div>
-                                        <div id="metal-auto-hint" style="font-size: 11.5px; color: #475569; line-height: 1.5; background: #f8fafc; padding: 12px 15px; border-radius: 8px; border: 1px dashed #cbd5e1;">
+                                        <div id="metal-auto-hint" style="font-size: 11.5px; color: #475569; line-height: 1.5; background: #f8fafc; padding: 12px 15px; border-radius: 0; border: 1px dashed #cbd5e1;">
                                             <div style="margin-bottom: 8px;">
                                                 <strong style="color:var(--primary-color);">智能代配说明：</strong>您无需逐一挑选基础五金。版师将根据您的款式结构，自动匹配防锈防氯的高品质标准件（如常规 8 字扣、O 环、背扣等），确保颜色与上方所选完全一致。
                                             </div>
@@ -844,13 +844,13 @@
                                                 </label>
                                                 
                                                 <!-- 新增：开模费与 MOQ 提示 -->
-                                                <div style="font-size: 10px; color: #b45309; background: #fffbeb; border: 1px solid #fde68a; padding: 3px 8px; border-radius: 4px; display: flex; align-items: center; gap: 4px; font-weight: 500;">
+                                                <div style="font-size: 10px; color: #b45309; background: #fffbeb; border: 1px solid #fde68a; padding: 3px 8px; border-radius: 0; display: flex; align-items: center; gap: 4px; font-weight: 500;">
                                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                                                     <span>注：定制专属 Logo 模具需支付开模费，且大货起订量 (MOQ) 通常为 500-1000 件/款。</span>
                                                 </div>
                                             </div>
                                             
-                                            <div id="metal-item-logo-box" class="hidden" style="margin-top: 12px; padding: 20px; background: #fff; border: 1px dashed #fecaca; border-radius: 8px;">
+                                            <div id="metal-item-logo-box" class="hidden" style="margin-top: 12px; padding: 20px; background: #fff; border: 1px dashed #fecaca; border-radius: 0;">
                                                 <!-- 移除之前的 1fr 1fr Grid，改为垂直 Flex 布局 -->
                                                 <div style="display: flex; flex-direction: column; gap: 15px;">
                                                     
@@ -898,7 +898,7 @@
                                     <input type="checkbox" id="cmt-check-pad" onchange="toggleTrimCmt('pad', this.checked)"> 
                                     <span style="font-size: 12px; font-weight: 600; color: #475569;">我将自行采购并寄送该辅料 (CMT 模式)</span>
                                 </label>
-                                <div id="cmt-info-pad" class="hidden" style="margin-top: 10px; background: #fffbeb; padding: 12px 15px; border-radius: 8px; border: 1px solid #fcd34d; display: flex; flex-direction: column; gap: 10px; font-size: 11.5px; color: #92400e;">
+                                <div id="cmt-info-pad" class="hidden" style="margin-top: 10px; background: #fffbeb; padding: 12px 15px; border-radius: 0; border: 1px solid #fcd34d; display: flex; flex-direction: column; gap: 10px; font-size: 11.5px; color: #92400e;">
                                     <div style="display: flex; align-items: flex-start; gap: 6px;">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="10" r="3"/><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>
                                         <span><strong>收件仓：</strong>辽宁省兴城市铁西路10-8A红绣服饰有限公司 物料仓<br><strong>收件人：</strong>辅料核发部 +86 191-6891-9352</span>
@@ -930,7 +930,7 @@
                                             <div class="mode-option active" id="pad-mode-auto" onclick="switchPadMode('auto')">红绣智能代配 (推荐)</div>
                                             <div class="mode-option" id="pad-mode-custom" onclick="switchPadMode('custom')">自主定义细节</div>
                                         </div>
-                                        <div id="pad-auto-hint" style="font-size: 11.5px; color: #475569; line-height: 1.5; background: #f8fafc; padding: 12px 15px; border-radius: 8px; border: 1px dashed #cbd5e1;">
+                                        <div id="pad-auto-hint" style="font-size: 11.5px; color: #475569; line-height: 1.5; background: #f8fafc; padding: 12px 15px; border-radius: 0; border: 1px dashed #cbd5e1;">
                                             <strong style="color:var(--primary-color);">智能代配说明：</strong>我们将根据您在 Step 1 中确定的款式轮廓，为您自动匹配**最契合的胸垫形状、厚度（默认轻薄自然）及颜色（默认肤色/黑色）**。确保穿着体验与成衣版型完美融合，您无需进行任何额外设置。
                                         </div>
                                     </div>
@@ -943,7 +943,7 @@
                                     <div class="attr-section" style="margin-bottom: 30px;">
                                         <h4 class="section-heading" style="margin-bottom: 12px;">A. 罩杯形状与尺码</h4>
                                         <div style="margin-left: 13px;">
-                                            <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #f1f5f9; margin-bottom: 15px; font-size: 12px; color: #475569; display: flex; gap: 10px; align-items: flex-start;">
+                                            <div style="background: #f8fafc; padding: 15px; border-radius: 0; border: 1px solid #f1f5f9; margin-bottom: 15px; font-size: 12px; color: #475569; display: flex; gap: 10px; align-items: flex-start;">
                                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2" style="margin-top: 2px; flex-shrink: 0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                                                 <div>
                                                     <strong>红绣专业建议：</strong><br>
@@ -957,8 +957,8 @@
                                             </label>
                                             
                                             <!-- 开模自定义面板 -->
-                                            <div id="pad-shape-custom-area" class="hidden" style="margin-top: 15px; padding: 25px; background: #fffcfc; border: 1px dashed #fecaca; border-radius: 12px; animation: fadeIn 0.3s ease;">
-                                                <div style="margin-bottom: 15px; padding: 10px 12px; background: #fffbeb; border: 1px dashed #fcd34d; border-radius: 6px; display: flex; align-items: center; gap: 8px;">
+                                            <div id="pad-shape-custom-area" class="hidden" style="margin-top: 15px; padding: 25px; background: #fffcfc; border: 1px dashed #fecaca; border-radius: 0; animation: fadeIn 0.3s ease;">
+                                                <div style="margin-bottom: 15px; padding: 10px 12px; background: #fffbeb; border: 1px dashed #fcd34d; border-radius: 0; display: flex; align-items: center; gap: 8px;">
                                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                                                     <span style="font-size: 11.5px; color: #92400e;">
                                                         <strong style="color: #b45309;">商业提示：</strong>重新开发特殊形状的模杯/胸垫需支付开模费，且大货起订量 (MOQ) 通常为 <strong>3000 副/码</strong> 起。
@@ -1004,7 +1004,7 @@
                                     <!-- C. 颜色 -->
                                     <div class="attr-section" style="margin-bottom: 30px;">
                                         <h4 class="section-heading">C. 胸垫颜色</h4>
-                                        <div style="margin-left: 13px; background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px; padding: 25px;">
+                                        <div style="margin-left: 13px; background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 0; padding: 25px;">
                                             <div style="display:flex; align-items:center; gap:15px;">
                                                 <div class="string-color-swatch pad-color selected" style="background:#fff;" title="白色" onclick="selectPadAttr('color', '白色', this)"></div>
                                                 <div class="string-color-swatch pad-color" style="background:#000;" title="黑色" onclick="selectPadAttr('color', '黑色', this)"></div>
@@ -1016,7 +1016,7 @@
                                             </div>
 
                                             <div id="pad-color-other-area" class="hidden" style="margin-top: 18px; max-width: 300px;">
-                                                <div style="font-size: 10.5px; color: #b45309; display: flex; align-items: center; gap: 5px; margin-bottom: 8px; background: #fffbeb; padding: 4px 8px; border-radius: 4px; border: 1px solid #fde68a;">
+                                                <div style="font-size: 10.5px; color: #b45309; display: flex; align-items: center; gap: 5px; margin-bottom: 8px; background: #fffbeb; padding: 4px 8px; border-radius: 0; border: 1px solid #fde68a;">
                                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                                                     <span><strong>提醒：</strong>特殊染色需送染厂，MOQ <strong>3000 副起</strong></span>
                                                 </div>
@@ -1065,7 +1065,7 @@
                                 </div>
                             </div>
                             <!-- 新增：默认包装提示 -->
-                            <div id="bag-default-hint" style="margin: -10px 0 20px 0; padding: 12px 15px; background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 8px; font-size: 12px; color: #64748b; display: flex; align-items: center; gap: 10px;">
+                            <div id="bag-default-hint" style="margin: -10px 0 20px 0; padding: 12px 15px; background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 0; font-size: 12px; color: #64748b; display: flex; align-items: center; gap: 10px;">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
                                 <span><strong>默认包装方案：</strong>由于您未选择定制包装，我们将统一使用<strong>红绣标准无印磨砂拉链袋</strong>。</span>
                             </div>
@@ -1076,7 +1076,7 @@
                                     <input type="checkbox" id="cmt-check-bag" onchange="toggleTrimCmt('bag', this.checked)"> 
                                     <span style="font-size: 12px; font-weight: 600; color: #475569;">我将自行采购并寄送该辅料 (CMT 模式)</span>
                                 </label>
-                                <div id="cmt-info-bag" class="hidden" style="margin-top: 10px; background: #fffbeb; padding: 12px 15px; border-radius: 8px; border: 1px solid #fcd34d; display: flex; flex-direction: column; gap: 10px; font-size: 11.5px; color: #92400e;">
+                                <div id="cmt-info-bag" class="hidden" style="margin-top: 10px; background: #fffbeb; padding: 12px 15px; border-radius: 0; border: 1px solid #fcd34d; display: flex; flex-direction: column; gap: 10px; font-size: 11.5px; color: #92400e;">
                                     <div style="display: flex; align-items: flex-start; gap: 6px;">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="10" r="3"/><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>
                                         <span><strong>收件仓：</strong>辽宁省兴城市铁西路10-8A红绣服饰有限公司 物料仓<br><strong>收件人：</strong>辅料核发部 +86 191-6891-9352</span>
@@ -1162,7 +1162,7 @@
                                             <div class="config-arrow" style="border-top-color: #fecaca; border-left-color: #fecaca;"></div>
                                             
                                             <!-- 1. 新增：印刷款 MOQ 提醒横幅 -->
-                                            <div style="margin-bottom: 20px; padding: 10px 15px; background: #fff9f0; border: 1px dashed #fcd34d; border-radius: 8px; display: flex; align-items: center; gap: 10px;">
+                                            <div style="margin-bottom: 20px; padding: 10px 15px; background: #fff9f0; border: 1px dashed #fcd34d; border-radius: 0; display: flex; align-items: center; gap: 10px;">
                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                                                 <span style="font-size: 11px; color: #b45309; font-weight: 600;">商业提示：定制印刷包装袋单色 MOQ 1000 个起，彩色 MOQ 5000 个起。</span>
                                             </div>
@@ -1217,7 +1217,7 @@
                                     <input type="checkbox" id="cmt-check-hangtag" onchange="toggleTrimCmt('hangtag', this.checked)"> 
                                     <span style="font-size: 12px; font-weight: 600; color: #475569;">我将自行采购并寄送该辅料 (CMT 模式)</span>
                                 </label>
-                                <div id="cmt-info-hangtag" class="hidden" style="margin-top: 10px; background: #fffbeb; padding: 12px 15px; border-radius: 8px; border: 1px solid #fcd34d; display: flex; flex-direction: column; gap: 10px; font-size: 11.5px; color: #92400e;">
+                                <div id="cmt-info-hangtag" class="hidden" style="margin-top: 10px; background: #fffbeb; padding: 12px 15px; border-radius: 0; border: 1px solid #fcd34d; display: flex; flex-direction: column; gap: 10px; font-size: 11.5px; color: #92400e;">
                                     <div style="display: flex; align-items: flex-start; gap: 6px;">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="10" r="3"/><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>
                                         <span><strong>收件仓：</strong>辽宁省兴城市铁西路10-8A红绣服饰有限公司 物料仓<br><strong>收件人：</strong>辅料核发部 +86 191-6891-9352</span>
@@ -1253,7 +1253,7 @@
                                             <div class="mode-option" id="hangtag-mode-custom" onclick="switchHangtagMode('custom')">自主定义细节</div>
                                         </div>
                                         <!-- 智能代配提示 -->
-                                        <div id="hangtag-auto-hint" style="font-size: 11.5px; color: #475569; line-height: 1.5; background: #f8fafc; padding: 12px 15px; border-radius: 8px; border: 1px dashed #cbd5e1;">
+                                        <div id="hangtag-auto-hint" style="font-size: 11.5px; color: #475569; line-height: 1.5; background: #f8fafc; padding: 12px 15px; border-radius: 0; border: 1px dashed #cbd5e1;">
                                             <strong style="color:var(--primary-color);">智能代配说明：</strong>我们将为您匹配最畅销的<strong>经典白卡纸+标准矩形尺寸+白色/黑色通用吊粒</strong>。您只需在下方上传 Logo 或设计稿，剩下的材质选择与工艺匹配将由红绣视觉团队为您代劳。
                                         </div>
                                     </div>
@@ -1434,7 +1434,7 @@
                                     <!-- D. 吊粒挂绳 -->
                                     <div class="attr-section" style="margin-bottom: 30px;">
                                         <h4 class="section-heading" style="margin-bottom: 12px;">D. 吊粒挂绳</h4>
-                                        <div style="background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px; padding: 25px; margin-left: 13px;">
+                                        <div style="background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 0; padding: 25px; margin-left: 13px;">
                                             
                                             <div style="display: flex; flex-direction: column; gap: 30px;">
                                                 
@@ -1463,7 +1463,7 @@
                                                         <div id="hangtag-string-custom-area" class="fabric-config-panel hidden" style="padding: 25px 30px; background: #fffcfc; border-color: #fecaca; width: 100%; box-sizing: border-box; grid-column: 1 / -1; margin-top: 10px;">
                                                             <div class="config-arrow" style="border-top-color: #fecaca; border-left-color: #fecaca;"></div>
                                                             
-                                                            <div style="margin-bottom: 18px; padding: 10px 12px; background: #fffbeb; border: 1px dashed #fcd34d; border-radius: 6px; display: flex; align-items: center; gap: 8px;">
+                                                            <div style="margin-bottom: 18px; padding: 10px 12px; background: #fffbeb; border: 1px dashed #fcd34d; border-radius: 0; display: flex; align-items: center; gap: 8px;">
                                                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                                                                 <span style="font-size: 11.5px; color: #92400e;">
                                                                     <strong style="color: #b45309;">商业提示：</strong>定制特殊形状（如开模 Logo 吊粒）或特殊材质，起订量 (MOQ) 通常为 <strong>5000 套起</strong>。
@@ -1503,7 +1503,7 @@
                                                     </div>
                                     
                                                     <div id="hangtag-string-color-other-area" class="hidden" style="margin-top: 15px; max-width: 300px;">
-                                                        <div style="font-size: 10.5px; color: #b45309; display: flex; align-items: center; gap: 5px; margin-bottom: 8px; background: #fffbeb; padding: 4px 8px; border-radius: 4px; border: 1px solid #fde68a;">
+                                                        <div style="font-size: 10.5px; color: #b45309; display: flex; align-items: center; gap: 5px; margin-bottom: 8px; background: #fffbeb; padding: 4px 8px; border-radius: 0; border: 1px solid #fde68a;">
                                                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                                                             <span><strong>提醒：</strong>指定特殊颜色染色，MOQ 为 <strong>5000 根起</strong></span>
                                                         </div>
@@ -1576,7 +1576,7 @@
                                     <input type="checkbox" id="cmt-check-label" onchange="toggleTrimCmt('label', this.checked)"> 
                                     <span style="font-size: 12px; font-weight: 600; color: #475569;">我将自行采购并寄送该辅料 (CMT 模式)</span>
                                 </label>
-                                <div id="cmt-info-label" class="hidden" style="margin-top: 10px; background: #fffbeb; padding: 12px 15px; border-radius: 8px; border: 1px solid #fcd34d; display: flex; flex-direction: column; gap: 10px; font-size: 11.5px; color: #92400e;">
+                                <div id="cmt-info-label" class="hidden" style="margin-top: 10px; background: #fffbeb; padding: 12px 15px; border-radius: 0; border: 1px solid #fcd34d; display: flex; flex-direction: column; gap: 10px; font-size: 11.5px; color: #92400e;">
                                     <div style="display: flex; align-items: flex-start; gap: 6px;">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="10" r="3"/><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>
                                         <span><strong>收件仓：</strong>辽宁省兴城市铁西路10-8A红绣服饰有限公司 物料仓<br><strong>收件人：</strong>辅料核发部 +86 191-6891-9352</span>
@@ -1612,7 +1612,7 @@
                                             <div class="mode-option" id="label-mode-custom" onclick="switchLabelMode('custom')">自主定义细节</div>
                                         </div>
                                         <!-- 智能代配提示 -->
-                                        <div id="label-auto-hint" style="font-size: 11.5px; color: #475569; line-height: 1.5; background: #f8fafc; padding: 12px 15px; border-radius: 8px; border: 1px dashed #cbd5e1;">
+                                        <div id="label-auto-hint" style="font-size: 11.5px; color: #475569; line-height: 1.5; background: #f8fafc; padding: 12px 15px; border-radius: 0; border: 1px dashed #cbd5e1;">
                                             <strong style="color:var(--primary-color);">智能代配说明：</strong>我们将为您默认匹配最舒适的<strong>无感烫印标</strong>，并印制于<strong>领后中</strong>位置。您只需在下方提供需印制的文字内容或设计稿，其余合规排版由红绣视觉团队代劳。
                                         </div>
                                     </div>
@@ -1657,7 +1657,7 @@
                                             <div id="label-dynamic-size-sewing" class="hidden">
 
                                                 <!-- 新增：材质颜色成本动态提示框 -->
-                                                <div id="label-material-color-warning" class="hidden" style="margin-bottom: 18px; padding: 10px 12px; background: #fffdf5; border: 1px dashed #fcd34d; border-radius: 6px; display: flex; align-items: center; gap: 8px;">
+                                                <div id="label-material-color-warning" class="hidden" style="margin-bottom: 18px; padding: 10px 12px; background: #fffdf5; border: 1px dashed #fcd34d; border-radius: 0; display: flex; align-items: center; gap: 8px;">
                                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                                                     <span id="label-color-warning-text" style="font-size: 11.5px; color: #92400e; line-height: 1.4;"></span>
                                                 </div>
@@ -1705,7 +1705,7 @@
                                     <div class="attr-section" style="margin-bottom: 25px;">
                                         <h4 class="section-heading">B. 标签安装部位与位置</h4>
                                         
-                                        <div style="margin-left: 13px; background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px; padding: 25px;">
+                                        <div style="margin-left: 13px; background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 0; padding: 25px;">
                                             
                                             <!-- 第一层：选择安装的服装部件 (多选) -->
                                             <div style="margin-bottom: 25px;">
@@ -1863,7 +1863,7 @@
                                 <div class="attr-section" style="margin-top: 20px; border-top: 1px dashed #e2e8f0; padding-top: 25px;">
                                     <h4 class="section-heading">2. 设计稿与排版要求</h4>
                                     <!-- 新增：合规性与法规提醒横幅 -->
-                                    <div style="margin-left: 13px; margin-bottom: 20px; padding: 12px 15px; background: #fffbeb; border: 1px dashed #fcd34d; border-radius: 8px; display: flex; flex-direction: column; gap: 10px;">
+                                    <div style="margin-left: 13px; margin-bottom: 20px; padding: 12px 15px; background: #fffbeb; border: 1px dashed #fcd34d; border-radius: 0; display: flex; flex-direction: column; gap: 10px;">
                                         <div style="display: flex; align-items: flex-start; gap: 8px;">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" style="margin-top:2px; flex-shrink:0;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                                             <div style="font-size: 12px; color: #92400e; line-height: 1.6;">
@@ -1918,7 +1918,7 @@
                                     <input type="checkbox" id="cmt-check-hygiene" onchange="toggleTrimCmt('hygiene', this.checked)"> 
                                     <span style="font-size: 12px; font-weight: 600; color: #475569;">我将自行采购并寄送该辅料 (CMT 模式)</span>
                                 </label>
-                                <div id="cmt-info-hygiene" class="hidden" style="margin-top: 10px; background: #fffbeb; padding: 12px 15px; border-radius: 8px; border: 1px solid #fcd34d; display: flex; flex-direction: column; gap: 10px; font-size: 11.5px; color: #92400e;">
+                                <div id="cmt-info-hygiene" class="hidden" style="margin-top: 10px; background: #fffbeb; padding: 12px 15px; border-radius: 0; border: 1px solid #fcd34d; display: flex; flex-direction: column; gap: 10px; font-size: 11.5px; color: #92400e;">
                                     <div style="display: flex; align-items: flex-start; gap: 6px;">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="10" r="3"/><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>
                                         <span><strong>收件仓：</strong>辽宁省兴城市铁西路10-8A红绣服饰有限公司 物料仓<br><strong>收件人：</strong>辅料核发部 +86 191-6891-9352</span>
@@ -1955,7 +1955,7 @@
                                         </div>
                                         
                                         <!-- 智能代配提示 -->
-                                        <div id="hygiene-auto-hint" style="font-size: 11.5px; color: #475569; line-height: 1.5; background: #f8fafc; padding: 12px 15px; border-radius: 8px; border: 1px dashed #cbd5e1;">
+                                        <div id="hygiene-auto-hint" style="font-size: 11.5px; color: #475569; line-height: 1.5; background: #f8fafc; padding: 12px 15px; border-radius: 0; border: 1px dashed #cbd5e1;">
                                             <strong style="color:var(--primary-color);">智能代配说明：</strong>我们将为您默认配置最畅销的 <strong>“透明 PET 材质 + 通用葫芦形”</strong> 卫生贴，并印制国际标准的英文安全提示语。出货前，我们会<strong>免费为您贴于底裤裆部</strong>。您无需进行任何额外配置。
                                         </div>
                                     </div>
@@ -2101,7 +2101,7 @@
                                             </label>
                                 
                                             <!-- 粘贴规则细节区域 (默认显示，勾选上方不代贴后隐藏) -->
-                                            <div id="hygiene-apply-rule-area" style="background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px; padding: 25px; animation: fadeIn 0.3s ease;">
+                                            <div id="hygiene-apply-rule-area" style="background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 0; padding: 25px; animation: fadeIn 0.3s ease;">
                                                 <div class="metal-notice" style="margin-bottom: 15px;">
                                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
                                                     红绣默认将使用低粘医用级背胶，贴于泳衣裆部正中偏前 2cm 处。如有特殊要求（如多件套的粘贴分配），请在此说明。
@@ -2151,7 +2151,7 @@
                                     <input type="checkbox" id="cmt-check-other" onchange="toggleTrimCmt('other', this.checked)"> 
                                     <span style="font-size: 12px; font-weight: 600; color: #475569;">我将自行采购并寄送该辅料 (CMT 模式)</span>
                                 </label>
-                                <div id="cmt-info-other" class="hidden" style="margin-top: 10px; background: #fffbeb; padding: 12px 15px; border-radius: 8px; border: 1px solid #fcd34d; display: flex; flex-direction: column; gap: 10px; font-size: 11.5px; color: #92400e;">
+                                <div id="cmt-info-other" class="hidden" style="margin-top: 10px; background: #fffbeb; padding: 12px 15px; border-radius: 0; border: 1px solid #fcd34d; display: flex; flex-direction: column; gap: 10px; font-size: 11.5px; color: #92400e;">
                                     <div style="display: flex; align-items: flex-start; gap: 6px;">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="10" r="3"/><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>
                                         <span><strong>收件仓：</strong>辽宁省兴城市铁西路10-8A红绣服饰有限公司 物料仓<br><strong>收件人：</strong>辅料核发部 +86 191-6891-9352</span>
@@ -2234,16 +2234,16 @@
                             <!-- 1. 顶部统计与 OEM 输入 -->
                             <div class="attr-section" style="margin-bottom: 25px;">
                                 <h4 class="section-heading" style="margin-bottom: 18px;">A. 开发规模确认</h4>
-                                <div style="margin-left: 13px; display: flex; gap: 40px; align-items: center; background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #f1f5f9;">
+                                <div style="margin-left: 13px; display: flex; gap: 40px; align-items: center; background: #f8fafc; padding: 20px; border-radius: 0; border: 1px solid #f1f5f9;">
                                     <!-- ODM 自动识别显示 -->
                                     <div style="display: flex; align-items: center; gap: 12px;">
                                         <span style="font-size: 13px; color: #64748b;">已选 ODM 款式:</span>
-                                        <span id="odm-count-badge" style="background: var(--primary-color); color: #fff; padding: 2px 10px; border-radius: 20px; font-weight: 700; font-size: 14px;">0</span>
+                                        <span id="odm-count-badge" style="background: var(--primary-color); color: #fff; padding: 2px 10px; border-radius: 0; font-weight: 700; font-size: 14px;">0</span>
                                     </div>
                                     <!-- OEM 数量输入 -->
                                     <div style="display: flex; align-items: center; gap: 12px;">
                                         <span style="font-size: 13px; color: #64748b;">自主设计 (OEM) 款式数:</span>
-                                        <span id="oem-count-badge" style="background: #1e293b; color: #fff; padding: 2px 10px; border-radius: 20px; font-weight: 700; font-size: 14px;">0</span>
+                                        <span id="oem-count-badge" style="background: #1e293b; color: #fff; padding: 2px 10px; border-radius: 0; font-weight: 700; font-size: 14px;">0</span>
                                     </div>
                                     <div style="font-size: 12px; color: #94a3b8;">* 系统将根据以上总数生成打样清单</div>
                                 </div>
@@ -2269,7 +2269,7 @@
                                     </div>
                                 </div>
                             
-                                <div style="margin-left: 13px; border: 1px solid #f1f5f9; border-radius: 12px; overflow: hidden; background: #fff;">
+                                <div style="margin-left: 13px; border: 1px solid #f1f5f9; border-radius: 0; overflow: hidden; background: #fff;">
                                     <!-- 1. 表格区域 -->
                                     <div style="overflow-x: auto;">
                                         <table class="sample-table" id="sample-logic-table" style="border: none; border-bottom: 1px solid #f1f5f9;">
@@ -2304,7 +2304,7 @@
                                                 <div style="font-size: 10px; color: #27ae60; font-weight: 600;">同款同色大货 >300件 基础打样费全额退还</div>
                                             </div>
                                         </div>
-                                        <div id="sample-extra-warning" class="hidden" style="margin-top: 12px; background: #fef3c7; color: #92400e; padding: 8px 12px; border-radius: 6px; font-size: 11px; display: flex; align-items: center; gap: 8px;">
+                                        <div id="sample-extra-warning" class="hidden" style="margin-top: 12px; background: #fef3c7; color: #92400e; padding: 8px 12px; border-radius: 0; font-size: 11px; display: flex; align-items: center; gap: 8px;">
                                             <strong>⚠️ 提示：</strong>部分款式打样数量超过 2 件，超出部分将加收缝制费。
                                         </div>
                                         <div style="margin-top: 10px; font-size: 11px; color: #94a3b8; line-height: 1.5;">
@@ -2322,21 +2322,21 @@
                                         <button class="modal-close-abs" onclick="closeSampleGuide()">&times;</button>
                                     </div>
                                     <div class="custom-modal-body sample-guide-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
-                                        <div style="background: #f8fafc; padding: 15px; border-radius: 8px;">
+                                        <div style="background: #f8fafc; padding: 15px; border-radius: 0;">
                                             <h5 style="color:var(--primary-color); margin-top:0;">样衣类型</h5>
                                             <p style="font-size:12px; color:#64748b; line-height:1.6;">
                                                 <strong>初样 (Proto):</strong> $40/款。使用替代面辅料，仅供检查版型、尺寸及整体效果。<br><br>
                                                 <strong>正确样 (PP):</strong> $50/款。使用正确面辅料，完整还原大货效果。
                                             </p>
                                         </div>
-                                        <div style="background: #f8fafc; padding: 15px; border-radius: 8px;">
+                                        <div style="background: #f8fafc; padding: 15px; border-radius: 0;">
                                             <h5 style="color:var(--primary-color); margin-top:0;">尺码建议</h5>
                                             <p style="font-size:12px; color:#64748b; line-height:1.6;">
                                                 建议选择 <strong>M 码 (US 6-8)</strong> 作为打样基准码。<br><br>
                                                 如果您需要核对放码比例，建议在正确样阶段增加一个最大或最小码。
                                             </p>
                                         </div>
-                                        <div style="background: #f8fafc; padding: 15px; border-radius: 8px;">
+                                        <div style="background: #f8fafc; padding: 15px; border-radius: 0;">
                                             <h5 style="color:var(--primary-color); margin-top:0;">数量说明</h5>
                                             <p style="font-size:12px; color:#64748b; line-height:1.6;">
                                                 每款默认包含 <strong>1 件</strong>，可免费加做 1 件（最多 <strong style="color:var(--primary-color);">2 件免费</strong>）。<br><br>
@@ -2356,7 +2356,7 @@
                                     </div>
                                     <div class="custom-modal-body" style="max-height: 70vh; overflow-y: auto;">
                                         
-                                        <div style="margin-bottom: 20px; font-size: 12px; color: #64748b; line-height: 1.6; padding: 12px; background: #f8fafc; border-radius: 8px;">
+                                        <div style="margin-bottom: 20px; font-size: 12px; color: #64748b; line-height: 1.6; padding: 12px; background: #f8fafc; border-radius: 0;">
                                             打样分为初样和正确样两种，费用采用模块化透明计费。
                                         </div>
 
@@ -2384,7 +2384,7 @@
                                             <li>每款打样默认包含 <strong>1 件</strong>样衣，可额外免费制作 1 件（即每款最多免费 <strong style="color: var(--primary-color);">2 件</strong>）；超过 2 件的部分，每件加收相应缝制费</li>
                                             <li>如果款式特殊或需要在样衣上进行复杂工艺（如镶钻、印标等），视情况需要额外收费</li>
                                             <li style="color: #ef4444; font-weight: 600;">打样费一经收取概不退还</li>
-                                            <li style="margin-top: 10px; padding: 10px; background: #dcfce7; border-radius: 6px; color: #166534; list-style: none; margin-left: -20px;">
+                                            <li style="margin-top: 10px; padding: 10px; background: #dcfce7; border-radius: 0; color: #166534; list-style: none; margin-left: -20px;">
                                                 <strong>大货退还计划：</strong> 当同款同色大货数量超过 <strong>300 件</strong> 时，基础打样费将全额退还！
                                             </li>
                                         </ul>
@@ -2419,7 +2419,7 @@
                                     </div>
                             
                                     <!-- 【新增】费用与地址免责提示 -->
-                                    <div style="background: #fdfdfd; border: 1px solid #f1f5f9; padding: 12px 15px; border-radius: 8px; display: flex; align-items: flex-start; gap: 10px;">
+                                    <div style="background: #fdfdfd; border: 1px solid #f1f5f9; padding: 12px 15px; border-radius: 0; display: flex; align-items: flex-start; gap: 10px;">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" style="margin-top:2px;"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
                                         <div style="font-size: 12px; color: #64748b; line-height: 1.5;">
                                             <strong style="color: #475569;">费用说明：</strong> 样品国际运费需由客户自理。由于样品重量及包裹体积不确定，具体运费需待我们获取您的<strong style="color: var(--primary-color);">详细收货地址</strong>并完成打包核算后，方可为您提供最终物流报价。
@@ -2437,7 +2437,7 @@
                                     </label>
                                     
                                     <!-- 优化后的意向选择区域：垂直布局 + 局部网格 -->
-                                    <div id="sample-bulk-intent-fields" class="hidden" style="animation: fadeIn 0.3s; padding: 25px; background: #fbfcfd; border-radius: 12px; border: 1px solid #f1f5f9; display: flex; flex-direction: column; gap: 25px;">
+                                    <div id="sample-bulk-intent-fields" class="hidden" style="animation: fadeIn 0.3s; padding: 25px; background: #fbfcfd; border-radius: 0; border: 1px solid #f1f5f9; display: flex; flex-direction: column; gap: 25px;">
                                         
                                         <!-- 第 1 行：数量 (左) + 期望单价 (右) -->
                                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 600px;">
@@ -2530,16 +2530,16 @@
                             <!-- 1. 顶部统计与 OEM 输入 (与打样部分保持同步) -->
                             <div class="attr-section" style="margin-bottom: 25px;">
                                 <h4 class="section-heading" style="margin-bottom: 18px;">A. 生产规模确认</h4>
-                                <div style="margin-left: 13px; display: flex; gap: 40px; align-items: center; background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #f1f5f9;">
+                                <div style="margin-left: 13px; display: flex; gap: 40px; align-items: center; background: #f8fafc; padding: 20px; border-radius: 0; border: 1px solid #f1f5f9;">
                                     <!-- ODM 自动识别显示 -->
                                     <div style="display: flex; align-items: center; gap: 12px;">
                                         <span style="font-size: 13px; color: #64748b;">已选 ODM 款式:</span>
-                                        <span id="bulk-odm-count-badge" style="background: var(--primary-color); color: #fff; padding: 2px 10px; border-radius: 20px; font-weight: 700; font-size: 14px;">0</span>
+                                        <span id="bulk-odm-count-badge" style="background: var(--primary-color); color: #fff; padding: 2px 10px; border-radius: 0; font-weight: 700; font-size: 14px;">0</span>
                                     </div>
                                     <!-- OEM 数量输入 -->
                                     <div style="display: flex; align-items: center; gap: 12px;">
                                         <span style="font-size: 13px; color: #64748b;">自主设计 (OEM) 款式数:</span>
-                                        <span id="bulk-oem-count-badge" style="background: #1e293b; color: #fff; padding: 2px 10px; border-radius: 20px; font-weight: 700; font-size: 14px;">0</span>
+                                        <span id="bulk-oem-count-badge" style="background: #1e293b; color: #fff; padding: 2px 10px; border-radius: 0; font-weight: 700; font-size: 14px;">0</span>
                                     </div>
                                     <div style="font-size: 12px; color: #94a3b8;">* 系统将基于此总数核算大货生产排期</div>
                                 </div>
@@ -2558,7 +2558,7 @@
                                     </button>
                                 </div>                                
                                 <div style="margin-left: 13px;">
-                                    <div style="border: 1px solid #f1f5f9; border-radius: 12px; overflow: hidden; background: #fff;">
+                                    <div style="border: 1px solid #f1f5f9; border-radius: 0; overflow: hidden; background: #fff;">
                                         <table class="sample-table" id="bulk-logic-table" style="border: none; border-bottom: 1px solid #f1f5f9;">
                                             <thead>
                                                 <tr>
@@ -2660,9 +2660,9 @@
                                         <div class="option-item bulk-method selected" onclick="selectBulkLogistics('method', 'Sea', this)"><div class="option-info"><h4>海运快船</h4><p>25-40天</p></div></div>
                                     </div>
                         
-                                    <div style="background:#f8fafc; padding:25px; border-radius:12px; border: 1px solid #f1f5f9;">
+                                    <div style="background:#f8fafc; padding:25px; border-radius: 0; border: 1px solid #f1f5f9;">
                                         <!-- 填写提示横幅 -->
-                                        <div style="margin-bottom: 20px; padding: 12px 15px; background: #fffdf5; border: 1px dashed #fcd34d; border-radius: 8px; display: flex; align-items: flex-start; gap: 10px;">
+                                        <div style="margin-bottom: 20px; padding: 12px 15px; background: #fffdf5; border: 1px dashed #fcd34d; border-radius: 0; display: flex; align-items: flex-start; gap: 10px;">
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" style="margin-top:2px; flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                                             <div style="font-size: 11.5px; color: #92400e; line-height: 1.6;">
                                                 <strong>装箱包装说明：</strong>请在下方描述您对单件包装、外箱装箱、唛头贴标等方面的要求。<br>
@@ -2706,7 +2706,7 @@
                             </div>
                             <div class="custom-modal-body" style="max-height: 70vh; overflow-y: auto;">
                                 
-                                <div style="margin-bottom: 20px; font-size: 12px; color: #64748b; line-height: 1.6; padding: 12px; background: #f8fafc; border-radius: 8px; border-left: 3px solid #f59e0b;">
+                                <div style="margin-bottom: 20px; font-size: 12px; color: #64748b; line-height: 1.6; padding: 12px; background: #f8fafc; border-radius: 0; border-left: 3px solid #f59e0b;">
                                     <strong style="color: #475569;">核心原则：</strong> 以下所有起订量（MOQ）均指 <strong>“单款单色 (Per Style, Per Color)”</strong>。同一颜色内，尺码可按您的需求配比混合装箱。
                                 </div>
                     
@@ -2714,7 +2714,7 @@
                                 <div style="display: flex; flex-direction: column; gap: 15px;">
                                     
                                     <!-- Level 1: ODM/OBM + 常规 -->
-                                    <div style="padding: 15px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff;">
+                                    <div style="padding: 15px; border: 1px solid #e2e8f0; border-radius: 0; background: #fff;">
                                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                             <span style="font-size: 13px; font-weight: 700; color: #1e293b;">ODM / OBM + 常规面辅料、颜色/印花</span>
                                             <span style="font-size: 14px; font-weight: 800; color: var(--primary-color);">MOQ 50件</span>
@@ -2725,7 +2725,7 @@
                                     </div>
                     
                                     <!-- Level 2: OEM + 常规 -->
-                                    <div style="padding: 15px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff;">
+                                    <div style="padding: 15px; border: 1px solid #e2e8f0; border-radius: 0; background: #fff;">
                                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                             <span style="font-size: 13px; font-weight: 700; color: #1e293b;">OEM + 常规面辅料、颜色/印花</span>
                                             <span style="font-size: 14px; font-weight: 800; color: var(--primary-color);">MOQ 100件</span>
@@ -2736,7 +2736,7 @@
                                     </div>
                     
                                     <!-- Level 3: 任何模式 + 特殊 -->
-                                    <div style="padding: 15px; border: 1px solid #fecaca; border-radius: 8px; background: #fffafb;">
+                                    <div style="padding: 15px; border: 1px solid #fecaca; border-radius: 0; background: #fffafb;">
                                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                             <span style="font-size: 13px; font-weight: 700; color: #ef4444;">任何模式 + 特殊面辅料、颜色/印花</span>
                                             <span style="font-size: 14px; font-weight: 800; color: #ef4444;">MOQ 300件起</span>
@@ -2749,7 +2749,7 @@
                                 </div>
 
                                 <!-- 补充说明 -->
-                                <div style="margin-top: 20px; font-size: 11px; color: #94a3b8; line-height: 1.6; padding: 10px 12px; background: #f8fafc; border-radius: 6px;">
+                                <div style="margin-top: 20px; font-size: 11px; color: #94a3b8; line-height: 1.6; padding: 10px 12px; background: #f8fafc; border-radius: 0;">
                                     ※ OEM 起订量可能会随款式难度等因素有所调整，具体以实际评估为准。
                                 </div>
 
@@ -2796,7 +2796,7 @@
                         <!-- 2. 团队服务指派 (老客户忠诚度模块 - 改为文本输入框) -->
                         <div class="attr-section" style="margin-bottom: 35px;">
                             <h4 class="section-heading" style="margin-bottom: 18px;">B. 团队服务指派</h4>
-                            <div style="margin-left: 13px; background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px; padding: 25px;">
+                            <div style="margin-left: 13px; background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 0; padding: 25px;">
                                 <p style="font-size: 12px; color: #64748b; margin-top: 0; margin-bottom: 20px; line-height: 1.5;">
                                     <strong style="color:var(--primary-color);">如果您是红绣的老朋友：</strong> 您可以输入曾为您提供过优质服务的业务经理、打版师或样衣组的姓名/编号。新客户请留空，系统将为您智能匹配最合适的专业团队。
                                 </p>
@@ -2834,7 +2834,7 @@
                                     <!-- 综合附件上传区 -->
                                     <div style="display: flex; flex-direction: column;">
                                         <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px;">综合参考附件</label>
-                                        <div class="premium-upload-row" style="margin: 0; padding: 15px; background: #fff; flex: 1; min-height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; border-color: #cbd5e1; border-radius: 10px; box-sizing: border-box;" onclick="document.getElementById('finalDocsFile').click()">
+                                        <div class="premium-upload-row" style="margin: 0; padding: 15px; background: #fff; flex: 1; min-height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; border-color: #cbd5e1; border-radius: 0; box-sizing: border-box;" onclick="document.getElementById('finalDocsFile').click()">
                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                                             <span id="finalDocsFileName" style="font-size:12px; color:#64748b; font-weight:500;">点击上传综合工艺单/企划书</span>
                                             <span style="font-size:10px; color:#94a3b8;">支持 PDF / ZIP / Excel (Max 50MB)</span>
@@ -2850,7 +2850,7 @@
                                 </div>
                                 
                                 <!-- NDA 确认 -->
-                                <div style="background: #fff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 10px;">
+                                <div style="background: #fff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 0;">
                                     <label class="oem-checkbox-label" style="align-items: flex-start; cursor: pointer; margin: 0;">
                                         <input type="checkbox" id="nda-agree" style="margin-top: 3px; transform: scale(1.1);">
                                         <span style="font-size: 13px; color: #334155; line-height: 1.6; margin-left: 5px;">
@@ -2977,7 +2977,7 @@
         <!-- 1. 将弹窗最大宽度加宽到 960px -->
         <div class="modal-content modal-md" style="max-width: 960px;">
             <div class="custom-modal-header">
-                <h3><span style="background:var(--primary-color); color:#fff; padding:4px 8px; border-radius:6px; font-size:12px;">PLUS</span> 款式轻定制 <span id="customModalTarget" style="font-size: 14px; font-weight: normal; color: #94a3b8; margin-left: 10px;"></span></h3>
+                <h3><span style="background:var(--primary-color); color:#fff; padding:4px 8px; border-radius: 0; font-size:12px;">PLUS</span> 款式轻定制 <span id="customModalTarget" style="font-size: 14px; font-weight: normal; color: #94a3b8; margin-left: 10px;"></span></h3>
                 <button class="modal-close-abs" onclick="closeCustomModal()" style="top:25px; right:25px;">&times;</button>
             </div>
             
@@ -2985,7 +2985,7 @@
             <div class="custom-modal-body" style="display: flex; gap: 35px; padding: 30px 35px 35px;">
                 
                 <!-- 2. 左侧图片区：加宽到 400px，并增加最小高度，让泳装图更显修长 -->
-                <div style="flex: 0 0 400px; min-height: 480px; position: relative; border-radius: 12px; overflow: hidden; background: #f8fafc; display: flex; align-items: center; justify-content: center; border: 1px solid #e2e8f0;">
+                <div style="flex: 0 0 400px; min-height: 480px; position: relative; border-radius: 0; overflow: hidden; background: #f8fafc; display: flex; align-items: center; justify-content: center; border: 1px solid #e2e8f0;">
                     
                     <!-- 3. 修复左箭头：严格锁定宽高 36px，加入 display:flex 强制内容居中，彻底告别椭圆 -->
                     <button class="carousel-btn left" id="custom-carousel-prev" onclick="customCarouselMove(-1)" 
@@ -3074,7 +3074,7 @@
                     <strong>第三条 数据销毁与违约责任</strong><br>
                     若双方合作终止，乙方有义务应甲方要求彻底销毁系统内的相关设计数据。如乙方违反上述保密约定，需全额赔偿由此给甲方造成的一切直接商业损失及法务成本。
                 </p>
-                <div style="background: #fbfcfd; padding: 15px; border-radius: 8px; border: 1px dashed #cbd5e1; font-size: 12px; color: #94a3b8; margin-top: 30px; line-height: 1.6;">
+                <div style="background: #fbfcfd; padding: 15px; border-radius: 0; border: 1px dashed #cbd5e1; font-size: 12px; color: #94a3b8; margin-top: 30px; line-height: 1.6;">
                     * 声明：在您点击“提交定制需求”时，即代表双方自动缔结并生效上述保密条款。<br>
                     * 后续进入大货生产环节前，可根据您的企业合规要求，另行签署具有实体法律效力的纸质版/电子签章版 NDA 协议。
                 </div>
@@ -3104,10 +3104,10 @@
         </button>
 
         <!-- 新增：图片指示器 (1 / 3) -->
-        <div id="swatch-counter" style="position: absolute; top: 25px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 13px; font-weight: 600; letter-spacing: 1px; background: rgba(0,0,0,0.6); padding: 6px 16px; border-radius: 20px; z-index: 10005; display: none;">1 / 1</div>
+        <div id="swatch-counter" style="position: absolute; top: 25px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 13px; font-weight: 600; letter-spacing: 1px; background: rgba(0,0,0,0.6); padding: 6px 16px; border-radius: 0; z-index: 10005; display: none;">1 / 1</div>
 
         <!-- 操作提示 -->
-        <div class="swatch-hint-desktop" style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.5); font-size: 12px; pointer-events: none; background: rgba(0,0,0,0.3); padding: 5px 15px; border-radius: 20px;">
+        <div class="swatch-hint-desktop" style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.5); font-size: 12px; pointer-events: none; background: rgba(0,0,0,0.3); padding: 5px 15px; border-radius: 0;">
             滚轮缩放 · 左键拖拽 · 双击重置
         </div>
     </div>
@@ -3125,7 +3125,7 @@
             <div class="custom-modal-body" style="max-height: 60vh; overflow-y: auto; font-size: 12px; color: #475569; line-height: 1.6;">
                 <p style="margin-top:0; margin-bottom:20px; color:#64748b;">* 以下信息仅供排版参考，不作为最终法律依据。强烈建议您在投产前向当地报关代理确认最新法规。</p>
                 
-                <div style="margin-bottom: 20px; padding: 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+                <div style="margin-bottom: 20px; padding: 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0;">
                     <h4 style="margin: 0 0 10px; color: #1e293b; font-size: 13px;">🇺🇸 美国 (USA - FTC 要求)</h4>
                     <ul style="margin: 0; padding-left: 20px;">
                         <li><strong>原产地声明</strong> (如: Made in China)，必须位于颈部标签的显著位置。</li>
@@ -3135,7 +3135,7 @@
                     </ul>
                 </div>
     
-                <div style="margin-bottom: 20px; padding: 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+                <div style="margin-bottom: 20px; padding: 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0;">
                     <h4 style="margin: 0 0 10px; color: #1e293b; font-size: 13px;">🇪🇺 欧盟 & 🇬🇧 英国</h4>
                     <ul style="margin: 0; padding-left: 20px;">
                         <li>使用目标国官方语言表述的纤维成分。</li>
@@ -3144,7 +3144,7 @@
                     </ul>
                 </div>
     
-                <div style="margin-bottom: 0; padding: 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+                <div style="margin-bottom: 0; padding: 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0;">
                     <h4 style="margin: 0 0 10px; color: #1e293b; font-size: 13px;">🇦🇺 澳大利亚 & 新西兰</h4>
                     <ul style="margin: 0; padding-left: 20px;">
                         <li>强制使用英文的详细护理说明。</li>
@@ -3158,7 +3158,7 @@
 
     <!-- 上传进度弹窗 -->
     <div id="uploadModal" style="display:none; position:fixed; inset:0; z-index:10000; background:rgba(0,0,0,0.45); backdrop-filter:blur(4px); align-items:center; justify-content:center;">
-        <div style="background:#fff; border-radius:16px; padding:40px 50px; min-width:380px; max-width:440px; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+        <div style="background:#fff; border-radius: 0; padding:40px 50px; min-width:380px; max-width:440px; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.2);">
             <div id="uploadSpinner" style="margin-bottom:20px;">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2.5" style="animation: rotate 1s linear infinite;">
                     <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
@@ -3166,8 +3166,8 @@
             </div>
             <div id="uploadTitle" style="font-size:16px; font-weight:700; color:#1e293b; margin-bottom:8px;">正在上传文件...</div>
             <div id="uploadSubtitle" style="font-size:12px; color:#94a3b8; margin-bottom:20px;">请勿关闭页面</div>
-            <div style="background:#f1f5f9; border-radius:8px; height:8px; overflow:hidden; margin-bottom:12px;">
-                <div id="uploadProgressBar" style="height:100%; width:0%; background:linear-gradient(90deg, var(--primary-color), #dc2626); border-radius:8px; transition:width 0.3s ease;"></div>
+            <div style="background:#f1f5f9; border-radius: 0; height:8px; overflow:hidden; margin-bottom:12px;">
+                <div id="uploadProgressBar" style="height:100%; width:0%; background:linear-gradient(90deg, var(--primary-color), #dc2626); border-radius: 0; transition:width 0.3s ease;"></div>
             </div>
             <div id="uploadPercent" style="font-size:13px; font-weight:600; color:var(--primary-color);">0%</div>
         </div>
@@ -3288,7 +3288,7 @@
                   color: #9ca3af;
                   text-decoration: none; 
                   cursor: pointer; 
-                  border-radius: 0 0 10px 10px;
+                  border-radius: 0;
               `;
               wootContainer.appendChild(shield);
            }
@@ -3303,17 +3303,17 @@
     .auth-overlay { display: none; position: fixed; inset: 0; z-index: 99999; background: rgba(0,0,0,0.45); justify-content: center; align-items: center; animation: authOverlayIn 0.2s ease; backdrop-filter: blur(4px); }
     .auth-overlay.active { display: flex; }
     @keyframes authOverlayIn { from { opacity: 0; } to { opacity: 1; } }
-    .auth-modal { position: relative; width: 100%; max-width: 420px; background: #fff; border-radius: 16px; padding: 40px 35px 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); animation: authModalIn 0.25s ease; overflow: hidden; }
+    .auth-modal { position: relative; width: 100%; max-width: 420px; background: #fff; border-radius: 0; padding: 40px 35px 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); animation: authModalIn 0.25s ease; overflow: hidden; }
     @keyframes authModalIn { from { opacity: 0; transform: translateY(24px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
     .auth-modal::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: var(--primary-color); }
-    .auth-close { position: absolute; top: 14px; right: 18px; background: none; border: none; font-size: 22px; color: #94a3b8; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: all 0.2s; line-height: 1; }
+    .auth-close { position: absolute; top: 14px; right: 18px; background: none; border: none; font-size: 22px; color: #94a3b8; cursor: pointer; padding: 4px 8px; border-radius: 0; transition: all 0.2s; line-height: 1; }
     .auth-close:hover { color: #1e293b; background: #f1f5f9; }
     .auth-modal h2 { text-align: center; font-size: 22px; font-weight: 700; color: #1e293b; margin-bottom: 24px; }
-    .auth-modal .auth-status-msg { padding: 10px 14px; border-radius: 8px; font-size: 13px; text-align: center; margin-bottom: 16px; }
+    .auth-modal .auth-status-msg { padding: 10px 14px; border-radius: 0; font-size: 13px; text-align: center; margin-bottom: 16px; }
     .auth-modal .status-error { background: #fde8e8; color: #c81e1e; border: 1px solid #f8b4b4; }
     .auth-modal .status-success { background: #defadb; color: #1e5e20; border: 1px solid #bcf0da; }
     .auth-modal form { display: flex; flex-direction: column; }
-    .auth-modal .auth-input { width: 100%; padding: 13px 14px; margin-bottom: 16px; border: 1px solid #e1e4e8; border-radius: 8px; font-size: 14px; outline: none; transition: all 0.25s; background: #fafbfc; font-family: inherit; box-sizing: border-box; }
+    .auth-modal .auth-input { width: 100%; padding: 13px 14px; margin-bottom: 16px; border: 1px solid #e1e4e8; border-radius: 0; font-size: 14px; outline: none; transition: all 0.25s; background: #fafbfc; font-family: inherit; box-sizing: border-box; }
     .auth-modal .auth-input::placeholder { color: #cbd5e1; }
     .auth-modal .auth-input:focus { background: #fff; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(170,0,0,0.1); }
     .auth-modal .password-wrapper { position: relative; width: 100%; margin-bottom: 16px; }
@@ -3321,7 +3321,7 @@
     .auth-modal .toggle-password { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; display: flex; align-items: center; color: #999; transition: color 0.3s; }
     .auth-modal .toggle-password:hover { color: var(--primary-color); }
     .auth-modal .eye-icon { width: 18px; height: 18px; }
-    .auth-modal .auth-submit-btn { background: var(--primary-color); color: #fff; border: none; padding: 13px; font-size: 15px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: background 0.25s; margin-top: 4px; }
+    .auth-modal .auth-submit-btn { background: var(--primary-color); color: #fff; border: none; padding: 13px; font-size: 15px; font-weight: 600; border-radius: 0; cursor: pointer; transition: background 0.25s; margin-top: 4px; }
     .auth-modal .auth-submit-btn:hover { background: var(--primary-hover, #880000); }
     .auth-modal .auth-submit-btn:disabled { background: #d48080; cursor: not-allowed; }
     .auth-modal .links { margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; font-size: 13px; color: #666; }

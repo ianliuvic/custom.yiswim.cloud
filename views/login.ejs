@@ -12,7 +12,7 @@
 <body>
     <div class="auth-container">
         <div style="position: absolute; top: 15px; right: 20px;">
-            <button onclick="setLanguage(window.__lang === 'en' ? 'zh' : 'en')" style="background: none; border: 1px solid #e0e0e0; border-radius: 20px; padding: 5px 14px; font-size: 12px; cursor: pointer; color: #64748b; transition: all 0.25s; display: inline-flex; align-items: center; gap: 5px; font-weight: 500; letter-spacing: 0.3px;" onmouseover="this.style.borderColor='#aa0000';this.style.color='#aa0000';this.querySelector('svg').style.stroke='#aa0000'" onmouseout="this.style.borderColor='#e0e0e0';this.style.color='#64748b';this.querySelector('svg').style.stroke='currentColor'">
+            <button onclick="setLanguage(window.__lang === 'en' ? 'zh' : 'en')" style="background: none; border: 1px solid #e0e0e0; border-radius: 0; padding: 5px 14px; font-size: 12px; cursor: pointer; color: #64748b; transition: all 0.25s; display: inline-flex; align-items: center; gap: 5px; font-weight: 500; letter-spacing: 0.3px;" onmouseover="this.style.borderColor='#aa0000';this.style.color='#aa0000';this.querySelector('svg').style.stroke='#aa0000'" onmouseout="this.style.borderColor='#e0e0e0';this.style.color='#64748b';this.querySelector('svg').style.stroke='currentColor'">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition: stroke 0.25s;"><path d="M5 8l6 0"/><path d="M4 12l7 0"/><path d="M8 8c0 2.5-1.5 5-4 6.5"/><path d="M6 8c0 1.5.8 3 2.5 4.5"/><path d="M14 12l3.5 8"/><path d="M14 12l-3.5 8"/><path d="M11.5 17h5"/></svg>
                 <%= typeof lng !== 'undefined' && lng === 'en' ? '中文' : 'EN' %>
             </button>

@@ -87,7 +87,7 @@
                     const src = remote ? remoteFileUrl(file) : URL.createObjectURL(file);
                     content = `<img src="${src}" onclick="openOemPreview(this.src, '${file.name}')" style="width:100%; height:100%; object-fit:cover;">`;
                 } else {
-                    content = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;border-radius:4px;">${ext}</div>`;
+                    content = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;border-radius: 0;">${ext}</div>`;
                 }
         
                 grid.insertAdjacentHTML('beforeend', `
@@ -1037,7 +1037,7 @@
             var isEditMode = !!currentEditInquiryId;
             setTimeout(function() {
                 var toast = document.createElement('div');
-                toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:10px;background:#065f46;color:#fff;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.15);transition:opacity .5s;';
+                toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius: 0;background:#065f46;color:#fff;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.15);transition:opacity .5s;';
                 toast.textContent = isDraftRestore
                     ? _t('已恢复暂存草稿')
                     : isEditMode
@@ -1069,7 +1069,7 @@
                 const lang = window.__lang || 'zh';
                 const displayText = (lang === 'en' && item.content_en) ? item.content_en : item.content;
                 return `
-                <label class="oem-checklist-item" style="display: flex; align-items: center; width: 100%; box-sizing: border-box; padding: 8px 12px; border-bottom: ${borderBottom}; cursor: pointer; transition: background 0.2s; border-radius: 6px;">
+                <label class="oem-checklist-item" style="display: flex; align-items: center; width: 100%; box-sizing: border-box; padding: 8px 12px; border-bottom: ${borderBottom}; cursor: pointer; transition: background 0.2s; border-radius: 0;">
                     <input type="checkbox" style="width: 16px; height: 16px; accent-color: var(--primary-color); margin: 0 12px 0 0; cursor: pointer; flex-shrink: 0;" onchange="this.parentElement.style.background = this.checked ? '#fff' : 'transparent'; syncOemCheckAllBtn(); validateStyle();">
                     <span style="font-size: 13px; font-weight: 500; color: #475569; line-height: 1.4;">${displayText}</span>
                 </label>
@@ -2582,7 +2582,7 @@
                     _formDirty = false;
                     if (!silent) {
                         const toast = document.createElement('div');
-                        toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:10px;background:#065f46;color:#fff;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.15);transition:opacity .5s;';
+                        toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius: 0;background:#065f46;color:#fff;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.15);transition:opacity .5s;';
                         toast.textContent = _t('暂存成功，可在用户中心恢复');
                         document.body.appendChild(toast);
                         setTimeout(() => { toast.style.opacity = '0'; }, 2500);
@@ -3361,7 +3361,7 @@
                 }
                     
                 grid.insertAdjacentHTML('beforeend', `
-                    <div class="oem-preview-item" style="width:60px; height:60px; border-radius:6px;">
+                    <div class="oem-preview-item" style="width:60px; height:60px; border-radius: 0;">
                         ${content}
                         <button type="button" class="oem-preview-remove" onclick="removeCustomFabricFile(${index})">&times;</button>
                     </div>`);
@@ -4206,7 +4206,7 @@
                 }
                     
                 grid.insertAdjacentHTML('beforeend', `
-                    <div class="oem-preview-item" style="border-radius:4px;">
+                    <div class="oem-preview-item" style="border-radius: 0;">
                         ${content}
                         <div style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.5); color:#fff; font-size:8px; padding:1px; text-align:center; white-space:nowrap; overflow:hidden;">${shortName}</div>
                         <button type="button" class="oem-preview-remove" onclick="removeHygieneFile(${index}, '${type}')" style="width:16px;height:16px;font-size:12px;">&times;</button>
@@ -4616,7 +4616,7 @@
                     : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;">${ext}</div>`;
         
                 grid.insertAdjacentHTML('beforeend', `
-                    <div class="oem-preview-item" style="border-radius:4px;">
+                    <div class="oem-preview-item" style="border-radius: 0;">
                         ${content}
                         <button type="button" class="oem-preview-remove" onclick="removeLabelMatFile(${index})" style="width:16px;height:16px;font-size:12px;">&times;</button>
                     </div>
@@ -4718,7 +4718,7 @@
                 }
         
                 grid.insertAdjacentHTML('beforeend', `
-                    <div class="oem-preview-item" style="border-radius:4px;">
+                    <div class="oem-preview-item" style="border-radius: 0;">
                         ${content}
                         <button type="button" class="oem-preview-remove" onclick="removeLabelSewingFile(${index})" style="width:16px;height:16px;font-size:12px;">&times;</button>
                     </div>
@@ -4768,10 +4768,10 @@
                 
                 let content = isImage 
                     ? `<img src="${src}" onclick="openOemPreview(this.src, '${file.name}')" style="width:100%;height:100%;object-fit:cover;">` 
-                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;border-radius:4px;">${ext}</div>`;
+                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;border-radius: 0;">${ext}</div>`;
         
                 grid.insertAdjacentHTML('beforeend', `
-                    <div class="oem-preview-item" style="border-radius:4px;">
+                    <div class="oem-preview-item" style="border-radius: 0;">
                         ${content}
                         <div style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.5); color:#fff; font-size:8px; padding:1px; text-align:center; white-space:nowrap; overflow:hidden;">${shortName}</div>
                         <button type="button" class="oem-preview-remove" onclick="removeLabelFile(${index})" style="width:16px;height:16px;font-size:12px;">&times;</button>
@@ -4828,10 +4828,10 @@
                 const src = remote ? remoteFileUrl(file) : URL.createObjectURL(file);
                 let content = isImage 
                     ? `<img src="${src}" onclick="openOemPreview(this.src, '${file.name}')" style="width:100%;height:100%;object-fit:cover;">` 
-                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;border-radius:4px;">${ext}</div>`;
+                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;border-radius: 0;">${ext}</div>`;
         
                 grid.insertAdjacentHTML('beforeend', `
-                    <div class="oem-preview-item" style="border-radius:4px;">
+                    <div class="oem-preview-item" style="border-radius: 0;">
                         ${content}
                         <button type="button" class="oem-preview-remove" onclick="removeLabelPlacementFile(${index}, '${posType}')" style="width:16px;height:16px;font-size:12px;">&times;</button>
                     </div>
@@ -4981,10 +4981,10 @@
                 
                 let content = isImage 
                     ? `<img src="${src}" onclick="openOemPreview(this.src, '${file.name}')">` 
-                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#e2e8f0;color:#475569;font-size:11px;font-weight:bold;border-radius:6px;">${ext}</div>`;
+                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#e2e8f0;color:#475569;font-size:11px;font-weight:bold;border-radius: 0;">${ext}</div>`;
                 
                 grid.insertAdjacentHTML('beforeend', `
-                    <div class="oem-preview-item" style="width:70px; height:70px; border-radius:6px;">
+                    <div class="oem-preview-item" style="width:70px; height:70px; border-radius: 0;">
                         ${content}
                         <button type="button" class="oem-preview-remove" onclick="removeOtherFile(${index})">&times;</button>
                     </div>
@@ -5368,7 +5368,7 @@
                 } else {
                     // 非图片文件显示图标
                     previewContent = `
-                        <div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#f1f5f9; color:#64748b; border-radius:6px;">
+                        <div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#f1f5f9; color:#64748b; border-radius: 0;">
                             <span style="font-size:10px; font-weight:800; margin-bottom:2px;">${ext}</span>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
                         </div>`;
@@ -5585,7 +5585,7 @@
                     : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;">${ext}</div>`;
                     
                 grid.insertAdjacentHTML('beforeend', `
-                    <div class="oem-preview-item" style="border-radius:4px;">
+                    <div class="oem-preview-item" style="border-radius: 0;">
                         ${content}
                         <button type="button" class="oem-preview-remove" onclick="removePadFile(${index}, '${type}')" style="width:16px;height:16px;font-size:12px;">&times;</button>
                     </div>
@@ -5952,7 +5952,7 @@
                 // 核心修复：如果是图片就渲染 img，否则渲染格式方块
                 const content = isImage 
                     ? `<img src="${src}" onclick="openOemPreview(this.src, '${file.name}')">` 
-                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;border-radius:4px;border:1px solid #e2e8f0;">${ext}</div>`;
+                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:bold;border-radius: 0;border:1px solid #e2e8f0;">${ext}</div>`;
         
                 grid.insertAdjacentHTML('beforeend', `
                     <div class="oem-preview-item">
@@ -6397,11 +6397,11 @@
                     const src = remote ? remoteFileUrl(file) : URL.createObjectURL(file);
                     content = `<img src="${src}" onclick="openOemPreview(this.src, '${file.name}')">`;
                 } else {
-                    content = `<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:11px;font-weight:800;border-radius:6px;border:1px solid #e2e8f0;"><span>${ext}</span></div>`;
+                    content = `<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#f1f5f9;color:#64748b;font-size:11px;font-weight:800;border-radius: 0;border:1px solid #e2e8f0;"><span>${ext}</span></div>`;
                 }
                 
                 grid.insertAdjacentHTML('beforeend', `
-                    <div class="oem-preview-item" style="width:60px; height:60px; border-radius:6px;">
+                    <div class="oem-preview-item" style="width:60px; height:60px; border-radius: 0;">
                         ${content}
                         <button type="button" class="oem-preview-remove" onclick="removeFinalDocsFile(${index})">&times;</button>
                     </div>

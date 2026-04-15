@@ -13,7 +13,7 @@ input, textarea, select, button { font-family: inherit; }
 body {
     height: 100vh; width: 100vw; overflow: hidden;
     display: flex; flex-direction: column;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: 'Crimson Text', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     background: #fff;
 }

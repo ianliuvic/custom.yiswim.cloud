@@ -1,0 +1,182 @@
+[
+  {
+    "m_en": "Upload Tip: If you submitted m",
+    "en_html": "<strong>Upload Tip:</strong> If you submitted multiple designs, please ensure the <strong>reference image filenames</strong> or <strong>tech pack page numbers</strong> uploaded below clearly correspond to the \"Style 1, Style 2…\" descriptions in Area A.",
+    "zh_html": "<strong>上传对应提示：</strong>若申报了多款设计，请确保下方上传的<strong>参考图文件名</strong>或<strong>工艺单页码</strong>能与 A 区域填写的“款 1、款 2...”描述清晰对应。"
+  },
+  {
+    "m_en": "Shipping Address: Hongxiu Clot",
+    "en_html": "<strong>Shipping Address:</strong> Hongxiu Clothing Co., Ltd., 10-8A Tiexi Rd, Xingcheng, Liaoning, China (Recipient: Mr. Liu +86 177-1101-4152)",
+    "zh_html": "<strong>收件地址：</strong>中国辽宁省兴城市铁西路10-8A红绣服饰有限公司 (收件人：刘先生 +86 177-1101-4152)"
+  },
+  {
+    "m_en": "To ensure ultimate precision i",
+    "en_html": "To ensure ultimate precision in bulk production, below are the <strong>most critical and easily overlooked process specifications</strong> in your custom design. Please verify that your uploaded design files or supplementary notes above cover all the following items, and <strong style=\"color: #ef4444;\">check each box to confirm</strong> before proceeding.",
+    "zh_html": "为确保大货落地的极致精准度，以下为您自主设计中<strong>最关键且极易被遗漏的工艺指标</strong>。请务必核对您在上方上传的设计稿或补充说明中已涵盖以下内容，并<strong style=\"color: #ef4444;\">逐一打勾确认</strong>方可进入下一步。"
+  },
+  {
+    "m_en": "Fabric Sourcing Note:• Lead ti",
+    "en_html": "<strong>Fabric Sourcing Note:</strong><br>• Lead time: Approx. <strong>3–7 business days</strong>, depending on material availability.<br>• Service fee: Special sourcing may incur additional procurement and shipping surcharges.<br>• <strong>Key Recommendation:</strong> To ensure 100% accuracy in texture, weight, and color matching, we strongly recommend sending <strong>physical fabric swatches / sample garments</strong> for reference.",
+    "zh_html": "<strong>找样特别说明：</strong><br>\r\n                                        • 服务周期：预计 <strong>3-7 个工作日</strong>，具体视物料稀缺程度而定。<br>\r\n                                        • 服务费用：特殊找样可能产生额外的采购服务费及物流溢价。<br>\r\n                                        • <strong>核心建议：</strong>为确保质感、克重及对色 100% 精准，强烈建议您寄送<strong>实物面料/样衣</strong>供我们对照匹配。"
+  },
+  {
+    "m_en": "Standard Process Reminder: As ",
+    "en_html": "<strong>Standard Process Reminder:</strong> As a body-contact, non-visible lining, the industry default is <strong>black or white</strong>. If you specify custom-dyed special colors (e.g., contrast lining), the bulk MOQ will increase significantly and additional fees may apply.",
+    "zh_html": "<strong>常规工艺提醒：</strong>作为贴身且不外露的内衬，行业默认使用 <strong>黑色或白色</strong>。若您指定定染特殊颜色（如撞色里布），大货起订量 (MOQ) 将大幅提升，且可能产生额外费用。"
+  },
+  {
+    "m_en": "If you have no concept of the ",
+    "en_html": "If you have no concept of the dimensions, please upload a <strong>garment mockup image</strong> in the area above. By showing the print's proportional placement on the swimwear, our pattern maker will accurately reproduce it for you.",
+    "zh_html": "如果您对尺寸没有概念，请在上方区域上传一张<strong>成衣效果图 (Mockup)</strong>。通过图片展示印花在泳装上的比例位置，版师将据此为您精准还原。"
+  },
+  {
+    "m_en": "Receiving Warehouse: Hongxiu C",
+    "en_html": "<strong>Receiving Warehouse:</strong> Hongxiu Clothing Co., Ltd. Material Warehouse, 10-8A Tiexi Rd, Xingcheng, Liaoning (Recipient: Material Dept. +86 191-6891-9352)",
+    "zh_html": "<strong>收件仓库：</strong>辽宁省兴城市铁西路10-8A红绣服饰有限公司 物料仓 (收件人：物料核发部 +86 191-6891-9352)"
+  },
+  {
+    "m_en": "Development Stage Note:All bra",
+    "en_html": "<strong style=\"color: #000001;\">Development Stage Note:</strong><br>All brand trims configured in this step are primarily for <strong>bulk production cost estimation and planning</strong>. During the sampling phase, factory standard trims will be used by default. Note that trims involving Logo molding or custom printing are subject to MOQ requirements and typically <strong>will not be fulfilled separately during sampling</strong>.",
+    "zh_html": "<strong style=\"color: #475569;\">开发阶段说明：</strong><br>\r\n                                本步骤配置的所有品牌辅料主要用于<strong>大货生产的成本核算与规划</strong>。打样阶段将优先使用工厂通用辅料，暂不受此配置影响。需注意，涉及 Logo 开模或定制印刷的辅料因受最低起订量 (MOQ) 限制，通常<strong>不会在打样环节单独落实</strong>。"
+  },
+  {
+    "m_en": "Receiving Warehouse: Hongxiu C",
+    "en_html": "<strong>Receiving Warehouse:</strong> Hongxiu Clothing Co., Ltd. Material Warehouse, 10-8A Tiexi Rd, Xingcheng, Liaoning<br><strong>Recipient:</strong> Trim Dept. +86 191-6891-9352",
+    "zh_html": "<strong>收件仓：</strong>辽宁省兴城市铁西路10-8A红绣服饰有限公司 物料仓<br><strong>收件人：</strong>辅料核发部 +86 191-6891-9352"
+  },
+  {
+    "m_en": "Smart Match Description: No ne",
+    "en_html": "<strong style=\"color:var(--primary-color);\">Smart Match Description:</strong> No need to individually select basic hardware. The pattern maker will auto-match high-quality, rust-proof and chlorine-resistant standard parts (e.g., figure-8 clasps, O-rings, back clasps) based on your style structure, ensuring colors perfectly match your selection above.",
+    "zh_html": "<strong style=\"color:var(--primary-color);\">智能代配说明：</strong>您无需逐一挑选基础五金。版师将根据您的款式结构，自动匹配防锈防氯的高品质标准件（如常规 8 字扣、O 环、背扣等），确保颜色与上方所选完全一致。"
+  },
+  {
+    "m_en": "Smart Match Description: Based",
+    "en_html": "<strong style=\"color:var(--primary-color);\">Smart Match Description:</strong> Based on the style silhouette(s) confirmed in Step 1, we will automatically match the best-fitting padding shape, thickness (default: light and natural), and color (default: Nude/Black). Ensuring perfect integration with the garment pattern for optimal wearing experience — no additional configuration needed.",
+    "zh_html": "<strong style=\"color:var(--primary-color);\">智能代配说明：</strong>我们将根据您在 Step 1 中确定的款式轮廓，为您自动匹配**最契合的胸垫形状、厚度（默认轻薄自然）及颜色（默认肤色/黑色）**。确保穿着体验与成衣版型完美融合，您无需进行任何额外设置。"
+  },
+  {
+    "m_en": "Hongxiu Expert Advice:1. Shape",
+    "en_html": "<strong>Hongxiu Expert Advice:</strong><br>1. <strong>Shape Matching:</strong> Since padding must precisely conform to the outer garment panels, the system has automatically linked the cup type to your style (e.g., triangle cups with triangle pads, bandeau with round pads, etc.).<br>2. <strong>Size Grading:</strong> During bulk production, we will <strong>automatically grade and match appropriately sized padding based on garment sizes (e.g., S, M, L, XL)</strong>, ensuring perfect proportions for each piece. Unless you have special molding requirements, we recommend leaving this to our automatic matching.",
+    "zh_html": "<strong>红绣专业建议：</strong><br>\r\n                                                    1. <strong>形状适配：</strong> 由于胸垫必须严格适配外部成衣裁片，系统已默认将杯型与您的款式绑定（如三角杯配三角垫，抹胸配圆垫等）。<br>\r\n                                                    2. <strong>尺码放缩：</strong> 我们将在大货生产中，<strong>根据成衣的不同尺码 (如 S, M, L, XL)，自动为您放缩并匹配对应大小的胸垫</strong>，确保每件衣物呈现完美的穿着比例。除非您有特殊的开模定制需求，否则建议交由我们自动匹配。"
+  },
+  {
+    "m_en": "Commercial Note: Developing cu",
+    "en_html": "<strong style=\"color: #b45309;\">Commercial Note:</strong> Developing custom-shaped molded cups/pads requires a mold fee, and the bulk MOQ is typically <strong>3,000 pairs/size</strong> minimum.",
+    "zh_html": "<strong style=\"color: #b45309;\">商业提示：</strong>重新开发特殊形状的模杯/胸垫需支付开模费，且大货起订量 (MOQ) 通常为 <strong>3000 副/码</strong> 起。"
+  },
+  {
+    "m_en": "Reminder: Special dyeing requi",
+    "en_html": "<strong>Reminder:</strong> Special dyeing requires factory processing, MOQ <strong>3,000 pairs min.</strong>",
+    "zh_html": "<strong>提醒：</strong>特殊染色需送染厂，MOQ <strong>3000 副起</strong>"
+  },
+  {
+    "m_en": "Default Packaging: Since you d",
+    "en_html": "<strong>Default Packaging:</strong> Since you did not select custom packaging, we will use the <strong>Hongxiu standard unprinted frosted zip bag</strong>.",
+    "zh_html": "<strong>默认包装方案：</strong>由于您未选择定制包装，我们将统一使用<strong>红绣标准无印磨砂拉链袋</strong>。"
+  },
+  {
+    "m_en": "Smart Auto-Match: We will matc",
+    "en_html": "<strong style=\"color:var(--primary-color);\">Smart Auto-Match:</strong> We will match you with the best-selling <strong>classic white cardboard + standard rectangular size + white/black universal string fastener</strong>. Simply upload your Logo or design below; the Hongxiu visual team will handle material selection and process matching.",
+    "zh_html": "<strong style=\"color:var(--primary-color);\">智能代配说明：</strong>我们将为您匹配最畅销的<strong>经典白卡纸+标准矩形尺寸+白色/黑色通用吊粒</strong>。您只需在下方上传 Logo 或设计稿，剩下的材质选择与工艺匹配将由红绣视觉团队为您代劳。"
+  },
+  {
+    "m_en": "Commercial Note: Custom shapes",
+    "en_html": "<strong style=\"color: #b45309;\">Commercial Note:</strong> Custom shapes (e.g., molded Logo string fasteners) or special materials typically require a MOQ of <strong>5,000 sets min.</strong>",
+    "zh_html": "<strong style=\"color: #b45309;\">商业提示：</strong>定制特殊形状（如开模 Logo 吊粒）或特殊材质，起订量 (MOQ) 通常为 <strong>5000 套起</strong>。"
+  },
+  {
+    "m_en": "Reminder: Custom color dyeing ",
+    "en_html": "<strong>Reminder:</strong> Custom color dyeing requires a MOQ of <strong>5,000 pieces min.</strong>",
+    "zh_html": "<strong>提醒：</strong>指定特殊颜色染色，MOQ 为 <strong>5000 根起</strong>"
+  },
+  {
+    "m_en": "Smart Auto-Match: We will defa",
+    "en_html": "<strong style=\"color:var(--primary-color);\">Smart Auto-Match:</strong> We will default to the most comfortable <strong>tagless heat-transfer label</strong>, printed at the <strong>center back neck</strong> position. Simply provide the text content or design below; the Hongxiu visual team will handle compliant layout.",
+    "zh_html": "<strong style=\"color:var(--primary-color);\">智能代配说明：</strong>我们将为您默认匹配最舒适的<strong>无感烫印标</strong>，并印制于<strong>领后中</strong>位置。您只需在下方提供需印制的文字内容或设计稿，其余合规排版由红绣视觉团队代劳。"
+  },
+  {
+    "m_en": "Regulatory Compliance Reminder",
+    "en_html": "<strong>Regulatory Compliance Reminder:</strong><br>Please ensure you understand your target market's mandatory care label regulations. Required information typically includes: <strong>country of origin</strong>, accurate <strong>fiber composition percentages</strong>, and applicable <strong>care instruction symbols</strong>. The factory cannot be held responsible for customs seizure or market penalties caused by missing mandatory label information.",
+    "zh_html": "<strong>法规与合规性提醒：</strong><br>\r\n                                                请务必了解您的目标销售国对服装水洗标的强制性法规要求。通常必须包含：<strong>原产地</strong>、准确的<strong>纤维成分百分比</strong>及适用的<strong>洗涤护理图标</strong>。若因标签缺失必填信息导致海关扣留或市场处罚，工厂无法承担相关责任。"
+  },
+  {
+    "m_en": "Smart Auto-Match: We will conf",
+    "en_html": "<strong style=\"color:var(--primary-color);\">Smart Auto-Match:</strong> We will configure the best-selling <strong>“Transparent PET + Universal Gourd Shape”</strong> hygiene sticker with international standard English safety text. Before shipment, we will <strong>apply them to the crotch area of bottoms at no extra charge</strong>. No additional configuration needed.",
+    "zh_html": "<strong style=\"color:var(--primary-color);\">智能代配说明：</strong>我们将为您默认配置最畅销的 <strong>“透明 PET 材质 + 通用葫芦形”</strong> 卫生贴，并印制国际标准的英文安全提示语。出货前，我们会<strong>免费为您贴于底裤裆部</strong>。您无需进行任何额外配置。"
+  },
+  {
+    "m_en": "We recommend selecting Size M ",
+    "en_html": "We recommend selecting <strong>Size M (US 6-8)</strong> as the sampling base size.<br><br>If you need to verify the grading ratio, consider adding the largest or smallest size during the PP sample stage.",
+    "zh_html": "建议选择 <strong>M 码 (US 6-8)</strong> 作为打样基准码。<br><br>\r\n                                                如果您需要核对放码比例，建议在正确样阶段增加一个最大或最小码。"
+  },
+  {
+    "m_en": "Fee Notice: International samp",
+    "en_html": "<strong style=\"color: #475569;\">Fee Notice:</strong> International sample shipping is at the customer’s expense. Due to uncertain sample weight and parcel size, exact shipping costs can only be quoted after we obtain your <strong style=\"color: var(--primary-color);\">detailed shipping address</strong> and complete packing calculations.",
+    "zh_html": "<strong style=\"color: #475569;\">费用说明：</strong> 样品国际运费需由客户自理。由于样品重量及包裹体积不确定，具体运费需待我们获取您的<strong style=\"color: var(--primary-color);\">详细收货地址</strong>并完成打包核算后，方可为您提供最终物流报价。"
+  },
+  {
+    "m_en": "Price Calculation Notice: This",
+    "en_html": "<strong style=\"color: #64748b;\">Price Calculation Notice:</strong> This field is for your expected bulk unit price. Since bulk pricing is affected by <strong style=\"color:#475569;\">total order quantity, real-time fabric/trim market prices, craft complexity, and exchange rates</strong>, the system cannot provide a real-time fixed price. The final accurate quotation will be confirmed by the sales manager after detailed cost analysis, based on the official <strong>Proforma Invoice (PI)</strong>.",
+    "zh_html": "<strong style=\"color: #64748b;\">价格核算说明：</strong> \r\n                                                        此处填写的为您对大货单价的预期。由于大货报价受<strong style=\"color:#475569;\">订单总数、面辅料实时市价、工艺复杂度及汇率</strong>等多种动态因素影响，系统目前无法给出实时一口价。最终准确的报价需经由业务经理完成详细成本核算后，以为您提供的正式 <strong>Proforma Invoice (PI)</strong> 账单为准。"
+  },
+  {
+    "m_en": "Core Principle: All MOQs below",
+    "en_html": "<strong style=\"color: #475569;\">Core Principle:</strong> All MOQs below refer to <strong>“Per Style, Per Color”</strong>. Within the same color, sizes can be mixed and packed according to your ratio requirements.",
+    "zh_html": "<strong style=\"color: #475569;\">核心原则：</strong> 以下所有起订量（MOQ）均指 <strong>“单款单色 (Per Style, Per Color)”</strong>。同一颜色内，尺码可按您的需求配比混合装箱。"
+  },
+  {
+    "m_en": "Must use ISO/GINETEX standard ",
+    "en_html": "Must use <strong>ISO/GINETEX standard care symbols</strong> (typically 5 basic symbols in order: washing, bleaching, drying, ironing, professional textile care).",
+    "zh_html": "必须使用 <strong>ISO/GINETEX 体系标准的洗水符号</strong> (通常5个基本符号按顺序排列：洗涤、漂白、干燥、熨烫、专业纺织品维护)。"
+  },
+  {
+    "m_en": "Including: custom Pantone dyei",
+    "en_html": "Including: custom Pantone dyeing, special texture sourcing, brand exclusive hardware mold, etc. <strong>(Subject to minimum production requirements of dyeing factories and trim supply chains)</strong>",
+    "zh_html": "包含且不限于：面料定染指定 Pantone 色、特殊肌理面料找样、品牌专属五金开模等。<strong>(受限于面料染厂及辅料供应链的最低开机起订要求)</strong>"
+  },
+  {
+    "m_en": "⚠️ Notice: Some styles exceed ",
+    "en_html": "<strong>⚠️ Notice:</strong> Some styles exceed 2 samples, extra pieces will incur sewing fees.",
+    "zh_html": "<strong>⚠️ 提示：</strong>部分款式打样数量超过 2 件，超出部分将加收缝制费。"
+  },
+  {
+    "m_en": "Packing Instructions: Please d",
+    "en_html": "<strong>Packing Instructions:</strong> Please describe your requirements for individual packing, outer carton, and shipping marks below.<br>Common requests: individual OPP bagging, Amazon FBA labels, carton weight limits, mixed color/size rules, etc. If no special requirements, the factory will use industry-standard packing.",
+    "zh_html": "<strong>装箱包装说明：</strong>请在下方描述您对单件包装、外箱装箱、唛头贴标等方面的要求。<br>\r\n                                                常见需求如：独立 OPP 袋封装、Amazon FBA 标签、每箱限重、混色混码规则等。如无特殊要求，工厂将使用行业标准方案。"
+  },
+  {
+    "m_en": "I. Proto Sample ($40 / style)",
+    "en_html": "I. Proto Sample (<span style=\"color: var(--primary-color); font-weight: 700;\">$40 / style</span>)",
+    "zh_html": "一、 初样（<span style=\"color: var(--primary-color); font-weight: 700;\">$40 / 款</span>）"
+  },
+  {
+    "m_en": "II. PP Sample ($50 / style)",
+    "en_html": "II. PP Sample (<span style=\"color: var(--primary-color); font-weight: 700;\">$50 / style</span>)",
+    "zh_html": "二、 正确样（<span style=\"color: var(--primary-color); font-weight: 700;\">$50 / 款</span>）"
+  },
+  {
+    "m_en": "Each style includes 1 sample b",
+    "en_html": "Each style includes <strong>1</strong> sample by default, with 1 additional piece free (max <strong style=\"color: var(--primary-color);\">2 pcs</strong> free per style); beyond 2, extra sewing fee charged per piece",
+    "zh_html": "每款打样默认包含 <strong>1 件</strong>样衣，可额外免费制作 1 件（即每款最多免费 <strong style=\"color: var(--primary-color);\">2 件</strong>）；超过 2 件的部分，每件加收相应缝制费"
+  },
+  {
+    "m_en": "Each style includes 1 sample, ",
+    "en_html": "Each style includes <strong>1</strong> sample, with 1 additional piece free (max <strong style=\"color:var(--primary-color);\">2 pcs free</strong>).<br><br>Beyond 2 pieces, extra sewing fee charged per piece.",
+    "zh_html": "每款默认包含 <strong>1 件</strong>，可免费加做 1 件（最多 <strong style=\"color:var(--primary-color);\">2 件免费</strong>）。<br><br>\r\n                                                超过 2 件的部分，每件加收相应缝制费。"
+  },
+  {
+    "m_en": "Bulk Refund Plan: When same st",
+    "en_html": "<strong>Bulk Refund Plan:</strong> When same style &amp; same color bulk quantity exceeds <strong>300 pcs</strong>, basic sample fees will be fully refunded!",
+    "zh_html": "<strong>大货退还计划：</strong> 当同款同色大货数量超过 <strong>300 件</strong> 时，基础打样费将全额退还！"
+  },
+  {
+    "m_en": "Fabric Sourcing Note:\\u2022 Le",
+    "en_html": "<strong>Fabric Sourcing Note:</strong><br>\\u2022 Lead time: Approx. <strong>3\\u20137 business days</strong>, depending on material availability.<br>\\u2022 Service fee: Special sourcing may incur additional procurement and shipping surcharges.<br>\\u2022 <strong>Key Recommendation:</strong> To ensure 100% accuracy in texture, weight, and color matching, we strongly recommend sending <strong>physical fabric swatches / sample garments</strong> for reference.",
+    "zh_html": "<strong>找样特别说明：</strong><br>\r\n                                        • 服务周期：预计 <strong>3-7 个工作日</strong>，具体视物料稀缺程度而定。<br>\r\n                                        • 服务费用：特殊找样可能产生额外的采购服务费及物流溢价。<br>\r\n                                        • <strong>核心建议：</strong>为确保质感、克重及对色 100% 精准，强烈建议您寄送<strong>实物面料/样衣</strong>供我们对照匹配。"
+  },
+  {
+    "m_en": "\\u26a0\\ufe0f Notice: Some styl",
+    "en_html": "<strong>\\u26a0\\ufe0f Notice:</strong> Some styles exceed 2 samples, extra pieces will incur sewing fees.",
+    "zh_html": "<strong>⚠️ 提示：</strong>部分款式打样数量超过 2 件，超出部分将加收缝制费。"
+  }
+]

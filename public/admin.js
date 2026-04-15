@@ -1,4 +1,4 @@
-/* ── 管理后台 JS ── */
+/* ── Admin Panel JS ── */
 (function () {
     let currentFilter = 'all';
     let currentPage = 1;
@@ -53,7 +53,7 @@
             const json = await resp.json();
 
             if (!json.success) {
-                alert(json.message || '加载失败');
+                alert(json.message || 'Load failed');
                 return;
             }
 
@@ -62,7 +62,7 @@
             renderPagination(json.pagination);
         } catch (err) {
             console.error(err);
-            alert('网络错误');
+            alert('Network error');
         }
     }
 
@@ -70,7 +70,7 @@
     function updateBatchBar() {
         const bar = document.getElementById('batchBar');
         const count = selectedIds.size;
-        document.getElementById('batchCount').textContent = `已选 ${count} 项`;
+        document.getElementById('batchCount').textContent = `Selected ${count} item(s)`;
         bar.classList.toggle('visible', count > 0);
 
         // 全选框同步
@@ -112,26 +112,26 @@
     function renderTable(rows) {
         const tbody = document.getElementById('inquiryBody');
         if (!rows.length) {
-            tbody.innerHTML = '<tr><td colspan="8" class="adm-empty">暂无数据</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8" class="adm-empty">No data</td></tr>';
             return;
         }
 
         tbody.innerHTML = rows.map(r => {
             const isDeleted = !!r.deleted_at;
             const statusBadge = isDeleted
-                ? '<span class="adm-badge adm-badge-deleted">已删除</span>'
-                : '<span class="adm-badge adm-badge-active">正常</span>';
+                ? '<span class="adm-badge adm-badge-deleted">Deleted</span>'
+                : '<span class="adm-badge adm-badge-active">Active</span>';
 
-            const deletedAt = isDeleted ? `<br><span style="font-size:11px;color:#94a3b8">删除于 ${fmtTime(r.deleted_at)}</span>` : '';
+            const deletedAt = isDeleted ? `<br><span style="font-size:11px;color:#94a3b8">Deleted at ${fmtTime(r.deleted_at)}</span>` : '';
 
             let actions = '';
             if (isDeleted) {
                 actions = `
-                    <button class="adm-btn adm-btn-restore" onclick="restoreInquiry(${r.id}, '${esc(r.inquiry_no)}')">恢复</button>
-                    <button class="adm-btn adm-btn-danger" onclick="hardDeleteInquiry(${r.id}, '${esc(r.inquiry_no)}', ${r.file_count})">彻底删除</button>
+                    <button class="adm-btn adm-btn-restore" onclick="restoreInquiry(${r.id}, '${esc(r.inquiry_no)}')">Restore</button>
+                    <button class="adm-btn adm-btn-danger" onclick="hardDeleteInquiry(${r.id}, '${esc(r.inquiry_no)}', ${r.file_count})">Hard Delete</button>
                 `;
             } else {
-                actions = `<button class="adm-btn adm-btn-danger" onclick="hardDeleteInquiry(${r.id}, '${esc(r.inquiry_no)}', ${r.file_count})">彻底删除</button>`;
+                actions = `<button class="adm-btn adm-btn-danger" onclick="hardDeleteInquiry(${r.id}, '${esc(r.inquiry_no)}', ${r.file_count})">Hard Delete</button>`;
             }
 
             const checked = selectedIds.has(r.id) ? 'checked' : '';
@@ -154,9 +154,9 @@
         const el = document.getElementById('pagination');
         if (pg.totalPages <= 1) { el.innerHTML = ''; return; }
 
-        let html = `<button class="adm-page-btn" ${pg.page <= 1 ? 'disabled' : ''} onclick="goPage(${pg.page - 1})">上一页</button>`;
-        html += `<span class="adm-page-info">第 ${pg.page} / ${pg.totalPages} 页 (共 ${pg.total} 条)</span>`;
-        html += `<button class="adm-page-btn" ${pg.page >= pg.totalPages ? 'disabled' : ''} onclick="goPage(${pg.page + 1})">下一页</button>`;
+        let html = `<button class="adm-page-btn" ${pg.page <= 1 ? 'disabled' : ''} onclick="goPage(${pg.page - 1})">Previous</button>`;
+        html += `<span class="adm-page-info">Page ${pg.page} / ${pg.totalPages} (Total ${pg.total})</span>`;
+        html += `<button class="adm-page-btn" ${pg.page >= pg.totalPages ? 'disabled' : ''} onclick="goPage(${pg.page + 1})">Next</button>`;
         el.innerHTML = html;
     }
 
@@ -167,7 +167,7 @@
     };
 
     window.restoreInquiry = function (id, no) {
-        showModal('恢复询盘', `确定要恢复询盘 <strong>${no}</strong> 吗？恢复后用户将能再次看到该询盘。`, async () => {
+        showModal('Restore Inquiry', `Are you sure you want to restore inquiry <strong>${no}</strong>? The user will be able to see it again after restoration.`, async () => {
             try {
                 const resp = await fetch(`/admin/api/inquiry/${id}/restore`, { method: 'POST' });
                 const json = await resp.json();
@@ -175,17 +175,17 @@
                     closeModal();
                     loadInquiries();
                 } else {
-                    alert(json.message || '操作失败');
+                    alert(json.message || 'Operation failed');
                 }
-            } catch { alert('网络错误'); }
+            } catch { alert('Network error'); }
         });
     };
 
     window.hardDeleteInquiry = function (id, no, fileCount) {
-        const fileHint = fileCount > 0 ? `<br>该询盘关联 <strong>${fileCount}</strong> 个文件，将一并从磁盘删除。` : '';
+        const fileHint = fileCount > 0 ? `<br>This inquiry has <strong>${fileCount}</strong> file(s) that will also be deleted from disk.` : '';
         showModal(
-            '⚠️ 彻底删除',
-            `确定要彻底删除询盘 <strong>${no}</strong> 吗？<br>此操作<strong>不可恢复</strong>，数据库记录和磁盘文件将被永久清除。${fileHint}`,
+            '⚠️ Hard Delete',
+            `Are you sure you want to permanently delete inquiry <strong>${no}</strong>?<br>This action is <strong>irreversible</strong>. Database records and disk files will be permanently removed.${fileHint}`,
             async () => {
                 try {
                     const resp = await fetch(`/admin/api/inquiry/${id}`, { method: 'DELETE' });
@@ -194,9 +194,9 @@
                         closeModal();
                         loadInquiries();
                     } else {
-                        alert(json.message || '操作失败');
+                        alert(json.message || 'Operation failed');
                     }
-                } catch { alert('网络错误'); }
+                } catch { alert('Network error'); }
             }
         );
     };
@@ -205,8 +205,8 @@
     window.batchRestore = function () {
         const ids = [...selectedIds];
         const deletedIds = currentRows.filter(r => ids.includes(r.id) && r.deleted_at).map(r => r.id);
-        if (!deletedIds.length) { alert('未选中已删除的询盘'); return; }
-        showModal('批量恢复', `确定要恢复选中的 <strong>${deletedIds.length}</strong> 条已删除询盘吗？`, async () => {
+        if (!deletedIds.length) { alert('No deleted inquiries selected'); return; }
+        showModal('Batch Restore', `Are you sure you want to restore the selected <strong>${deletedIds.length}</strong> deleted inquiry(ies)?`, async () => {
             try {
                 const resp = await fetch('/admin/api/inquiries/batch-restore', {
                     method: 'POST',
@@ -215,8 +215,8 @@
                 });
                 const json = await resp.json();
                 if (json.success) { closeModal(); loadInquiries(); }
-                else alert(json.message || '操作失败');
-            } catch { alert('网络错误'); }
+                else alert(json.message || 'Operation failed');
+            } catch { alert('Network error'); }
         });
     };
 
@@ -224,10 +224,10 @@
         const ids = [...selectedIds];
         if (!ids.length) return;
         const totalFiles = currentRows.filter(r => ids.includes(r.id)).reduce((s, r) => s + (parseInt(r.file_count) || 0), 0);
-        const fileHint = totalFiles > 0 ? `<br>共关联 <strong>${totalFiles}</strong> 个文件，将一并从磁盘删除。` : '';
+        const fileHint = totalFiles > 0 ? `<br>Total <strong>${totalFiles}</strong> associated file(s) will also be deleted from disk.` : '';
         showModal(
-            '⚠️ 批量彻底删除',
-            `确定要彻底删除选中的 <strong>${ids.length}</strong> 条询盘吗？<br>此操作<strong>不可恢复</strong>。${fileHint}`,
+            '⚠️ Batch Hard Delete',
+            `Are you sure you want to permanently delete the selected <strong>${ids.length}</strong> inquiry(ies)?<br>This action is <strong>irreversible</strong>.${fileHint}`,
             async () => {
                 try {
                     const resp = await fetch('/admin/api/inquiries/batch-delete', {
@@ -237,8 +237,8 @@
                     });
                     const json = await resp.json();
                     if (json.success) { closeModal(); loadInquiries(); }
-                    else alert(json.message || '操作失败');
-                } catch { alert('网络错误'); }
+                    else alert(json.message || 'Operation failed');
+                } catch { alert('Network error'); }
             }
         );
     };
@@ -285,7 +285,7 @@
 
         listMain.style.display = 'none';
         panel.style.display = 'block';
-        content.innerHTML = '<div class="adm-loading">加载中...</div>';
+        content.innerHTML = '<div class="adm-loading">Loading...</div>';
         statsEl.innerHTML = '';
 
         try {
@@ -299,18 +299,18 @@
             // Status
             const isDeleted = !!d.deleted_at;
             statusEl.className = 'adm-badge ' + (isDeleted ? 'adm-badge-deleted' : 'adm-badge-active');
-            statusEl.textContent = isDeleted ? '已删除' : (d.status === 'draft' ? '草稿' : '正常');
+            statusEl.textContent = isDeleted ? 'Deleted' : (d.status === 'draft' ? 'Draft' : 'Active');
 
             // Stats pills
             const stats = [];
             stats.push(dpill('user', d.username + ' (' + d.email + ')'));
-            if (d.delivery_mode) stats.push(dpill('truck', d.delivery_mode === 'bulk' ? '大货订单' : '样衣订单'));
+            if (d.delivery_mode) stats.push(dpill('truck', d.delivery_mode === 'bulk' ? 'Bulk Order' : 'Sample Order'));
             if (d.brand_name) stats.push(dpill('tag', d.brand_name));
             if (d.contact_name) stats.push(dpill('contact', d.contact_name));
             const odmArr = tryParse(d.odm_styles);
-            if (Array.isArray(odmArr) && odmArr.length) stats.push(dpill('style', 'ODM ' + odmArr.length + ' 款'));
-            if (d.oem_project) stats.push(dpill('style', 'OEM ' + (d.oem_style_count || 0) + ' 款'));
-            if (d.files && d.files.length) stats.push(dpill('file', d.files.length + ' 个附件'));
+            if (Array.isArray(odmArr) && odmArr.length) stats.push(dpill('style', 'ODM ' + odmArr.length + ' style(s)'));
+            if (d.oem_project) stats.push(dpill('style', 'OEM ' + (d.oem_style_count || 0) + ' style(s)'));
+            if (d.files && d.files.length) stats.push(dpill('file', d.files.length + ' attachment(s)'));
             statsEl.innerHTML = stats.join('');
 
             // Build file map
@@ -338,13 +338,13 @@
             Object.keys(fileMap).forEach(cat => {
                 if (!shownCats.includes(cat)) remainFiles = remainFiles.concat(fileMap[cat]);
             });
-            if (remainFiles.length) html += renderFilesSection(remainFiles, '其他附件');
+            if (remainFiles.length) html += renderFilesSection(remainFiles, 'Other Attachments');
 
             html += renderTimelineSection(d);
 
             content.innerHTML = html;
         } catch (e) {
-            content.innerHTML = '<div class="adm-loading" style="color:#dc2626">加载失败：' + esc(e.message) + '</div>';
+            content.innerHTML = '<div class="adm-loading" style="color:#dc2626">Load failed: ' + esc(e.message) + '</div>';
         }
     };
 
@@ -368,7 +368,7 @@
         if (!_currentDetailId) return;
         const btn = document.getElementById('adminSaveBtn');
         btn.disabled = true;
-        btn.textContent = '保存中...';
+        btn.textContent = 'Saving...';
 
         const status = document.getElementById('adminStatusSelect').value;
         const admin_reply = document.getElementById('adminReplyInput').value.trim();
@@ -383,20 +383,20 @@
             });
             const json = await resp.json();
             if (json.success) {
-                btn.textContent = '✓ 已更新';
+                btn.textContent = '✓ Updated';
                 btn.style.background = '#16a34a';
                 // Refresh detail page after a short delay so timeline shows latest update
                 setTimeout(() => {
                     window.openDetail(_currentDetailId);
                 }, 1000);
             } else {
-                alert(json.message || '保存失败');
-                btn.textContent = '保存';
+                alert(json.message || 'Save failed');
+                btn.textContent = 'Save';
                 btn.disabled = false;
             }
         } catch {
-            alert('网络错误');
-            btn.textContent = '保存';
+            alert('Network error');
+            btn.textContent = 'Save';
             btn.disabled = false;
         }
     };
@@ -481,10 +481,10 @@
         const hasOEM = d.oem_project;
         if (!hasODM && !hasOEM) return '';
 
-        let h = dsecStart('style', '款式信息');
+        let h = dsecStart('style', 'Style Information');
 
         if (hasODM) {
-            h += '<div class="adm-divider"><span class="adm-divider-tag odm">ODM</span> 已选款式</div>';
+            h += '<div class="adm-divider"><span class="adm-divider-tag odm">ODM</span> Selected Styles</div>';
             h += '<div class="adm-style-grid">';
             odmArr.forEach(name => {
                 const displayName = typeof name === 'object' ? (name.name || JSON.stringify(name)) : name;
@@ -509,28 +509,28 @@
         }
 
         if (hasOEM) {
-            h += '<div class="adm-divider"><span class="adm-divider-tag oem">OEM</span> 自主设计</div>';
-            h += dkv('项目名称', esc(d.oem_project));
-            h += dkv('款式数量', d.oem_style_count || '-');
-            if (d.oem_project_desc) h += dkv('项目描述', esc(d.oem_project_desc));
+            h += '<div class="adm-divider"><span class="adm-divider-tag oem">OEM</span> Custom Design</div>';
+            h += dkv('Project Name', esc(d.oem_project));
+            h += dkv('Style Count', d.oem_style_count || '-');
+            if (d.oem_project_desc) h += dkv('Project Description', esc(d.oem_project_desc));
             if (Array.isArray(oemDescs) && oemDescs.length) {
-                h += '<div class="adm-sub-label">款式描述</div>';
+                h += '<div class="adm-sub-label">Style Descriptions</div>';
                 oemDescs.forEach((desc, i) => {
-                    h += dkv('款 ' + (i + 1), esc(typeof desc === 'object' ? JSON.stringify(desc) : desc));
+                    h += dkv('style(s) ' + (i + 1), esc(typeof desc === 'object' ? JSON.stringify(desc) : desc));
                 });
             }
             const oemFiles = fileMap['oem'] || [];
             const oemDesignFiles = oemFiles.filter(f => f.sub_key !== 'size');
             const oemSizeFiles = oemFiles.filter(f => f.sub_key === 'size');
-            if (oemDesignFiles.length) h += renderInlineFiles(oemDesignFiles, '设计文件');
+            if (oemDesignFiles.length) h += renderInlineFiles(oemDesignFiles, 'Design Files');
             if (oemSizeFiles.length || d.oem_size_remark) {
-                if (d.oem_size_remark) h += dkv('尺寸说明', esc(d.oem_size_remark));
-                if (oemSizeFiles.length) h += renderInlineFiles(oemSizeFiles, '尺寸文件');
+                if (d.oem_size_remark) h += dkv('Size Description', esc(d.oem_size_remark));
+                if (oemSizeFiles.length) h += renderInlineFiles(oemSizeFiles, 'Size Files');
             }
-            if (d.oem_remark) h += dkv('备注', esc(d.oem_remark));
+            if (d.oem_remark) h += dkv('Remark', esc(d.oem_remark));
             if (d.oem_physical_sample) {
-                h += dkv('寄送样衣', '<span style="color:#16a34a;font-weight:600">● 已寄送</span>' +
-                    (d.oem_tracking_no ? ' 单号：' + esc(d.oem_tracking_no) : ''));
+                h += dkv('Sample Shipping', '<span style="color:#16a34a;font-weight:600">● Shipped</span>' +
+                    (d.oem_tracking_no ? ' Tracking #: ' + esc(d.oem_tracking_no) : ''));
             }
         }
 
@@ -544,7 +544,7 @@
 
         const fabricFiles = fileMap['fabric'] || [];
         const cmtFabricFiles = (fileMap['cmt'] || []).filter(f => f.sub_key === 'fabric');
-        let h = dsecStart('fabric', '面料信息');
+        let h = dsecStart('fabric', 'Fabric Information');
 
         Object.keys(fab).forEach(catKey => {
             const cat = fab[catKey];
@@ -557,7 +557,7 @@
                 if (!cfg) return;
                 const isCS = fabricName === 'CUSTOM_SOURCING';
                 const mode = isCS ? 'custom' : (cfg.mode || 'solid');
-                const modeLabel = { solid: '纯色', print: '印花', custom: '开发/找样' }[mode] || mode;
+                const modeLabel = { solid: 'Solid', print: 'Print', custom: 'Dev / Sourcing' }[mode] || mode;
                 const cardTitle = isCS ? originalCat : fabricName;
 
                 h += '<div class="adm-fabric-card">';
@@ -565,8 +565,8 @@
                 if (!isCS) h += '<span class="adm-chip">' + esc(originalCat) + '</span>';
                 h += '<span class="adm-chip accent">' + modeLabel + '</span></div>';
 
-                if (cfg.comp) h += dkv('成分', esc(cfg.comp));
-                if (cfg.gsm) h += dkv('克重', esc(cfg.gsm + (!/g/i.test(cfg.gsm) ? ' g/m²' : '')));
+                if (cfg.comp) h += dkv('Composition', esc(cfg.comp));
+                if (cfg.gsm) h += dkv('Weight (GSM)', esc(cfg.gsm + (!/g/i.test(cfg.gsm) ? ' g/m²' : '')));
 
                 if (mode === 'solid' && Array.isArray(cfg.colors) && cfg.colors.length) {
                     h += '<div class="adm-color-list">';
@@ -574,25 +574,25 @@
                         h += '<span class="adm-color-swatch"><span class="adm-color-dot" style="background:' + esc(c.hex || '#ccc') + '"></span>' + esc(c.name || '-') + '</span>';
                     });
                     h += '</div>';
-                    if (cfg.colorText) h += dkv('色彩描述', esc(cfg.colorText));
+                    if (cfg.colorText) h += dkv('Color Description', esc(cfg.colorText));
                 } else if (mode === 'print') {
-                    if (cfg.printType) h += dkv('印花类型', cfg.printType === 'seamless' ? '满版印花' : '定位印花');
+                    if (cfg.printType) h += dkv('Print Type', cfg.printType === 'seamless' ? 'All-over Print' : 'Placement Print');
                     const printKey = catKey + '__' + fabricName + '__print';
                     let printFiles = fabricFiles.filter(f => f.sub_key === printKey);
                     if (!printFiles.length) {
                         const baseKey = catKey + '__' + fabricName;
                         printFiles = fabricFiles.filter(f => f.sub_key === baseKey && f.mime_type && f.mime_type.indexOf('image/') === 0);
                     }
-                    if (printFiles.length) h += renderInlineFiles(printFiles, '印花图案');
-                    if (cfg.printRefColor) h += dkv('参考底色', esc(cfg.printRefColor));
-                    if (cfg.printScale) h += dkv('缩放比例', esc(cfg.printScale));
+                    if (printFiles.length) h += renderInlineFiles(printFiles, 'Print Pattern');
+                    if (cfg.printRefColor) h += dkv('Reference Base Color', esc(cfg.printRefColor));
+                    if (cfg.printScale) h += dkv('Scale Ratio', esc(cfg.printScale));
                 } else if (mode === 'custom') {
-                    if (cfg.customDesc) h += dkv('需求描述', esc(cfg.customDesc));
-                    if (cfg.colorReq) h += dkv('颜色要求', esc(cfg.colorReq));
-                    if (cfg.physical) h += dkv('实物邮寄', '是' + (cfg.trackingNo ? '（单号：' + esc(cfg.trackingNo) + '）' : ''));
+                    if (cfg.customDesc) h += dkv('Requirement Description', esc(cfg.customDesc));
+                    if (cfg.colorReq) h += dkv('Color Requirement', esc(cfg.colorReq));
+                    if (cfg.physical) h += dkv('Physical Mail', 'Yes' + (cfg.trackingNo ? ' (Tracking #: ' + esc(cfg.trackingNo) + '）' : ''));
                 }
 
-                if (cfg.remark) h += dkv('备注', esc(cfg.remark));
+                if (cfg.remark) h += dkv('Remark', esc(cfg.remark));
 
                 const subKey = catKey + '__' + fabricName;
                 let matched = fabricFiles.filter(f => f.sub_key === subKey);
@@ -602,7 +602,7 @@
                     fabricFiles.filter(f => f.sub_key === printKey2).forEach(f => { printIds[f.id] = true; });
                     matched = matched.filter(f => !printIds[f.id]);
                 }
-                if (matched.length) h += renderInlineFiles(matched, '参考文件');
+                if (matched.length) h += renderInlineFiles(matched, 'Reference Files');
                 h += '</div>';
             });
         });
@@ -612,10 +612,10 @@
         const fabricCmt = cmtData && cmtData.fabric;
         const fabricCmtEnabled = fabricCmt === true || (fabricCmt && fabricCmt.enabled);
         if (fabricCmtEnabled) {
-            h += '<div class="adm-cmt-block"><div class="adm-cmt-title">客户自行提供面料 (CMT)</div>';
-            if (fabricCmt && fabricCmt.desc) h += dkv('明细描述', esc(fabricCmt.desc));
-            if (fabricCmt && fabricCmt.trackingNo) h += dkv('寄件单号', esc(fabricCmt.trackingNo));
-            if (cmtFabricFiles.length) h += renderInlineFiles(cmtFabricFiles, '参考文件');
+            h += '<div class="adm-cmt-block"><div class="adm-cmt-title">Customer-supplied Fabric (CMT)</div>';
+            if (fabricCmt && fabricCmt.desc) h += dkv('Detail Description', esc(fabricCmt.desc));
+            if (fabricCmt && fabricCmt.trackingNo) h += dkv('Shipping Tracking #', esc(fabricCmt.trackingNo));
+            if (cmtFabricFiles.length) h += renderInlineFiles(cmtFabricFiles, 'Reference Files');
             h += '</div>';
         }
 
@@ -625,13 +625,13 @@
 
     function renderTrimsSection(d, fileMap) {
         const trimDefs = [
-            { key: 'metal_config', cat: 'metal', name: '五金配件' },
-            { key: 'pad_config', cat: 'pad', name: '胸垫' },
-            { key: 'bag_config', cat: 'bag', name: '包装袋' },
-            { key: 'hangtag_config', cat: 'hangtag', name: '吊牌' },
-            { key: 'label_config', cat: 'label', name: '标签' },
-            { key: 'hygiene_config', cat: 'hygiene', name: '卫生贴' },
-            { key: 'other_config', cat: 'other', name: '其他' }
+            { key: 'metal_config', cat: 'metal', name: 'Metal Hardware' },
+            { key: 'pad_config', cat: 'pad', name: 'Padding' },
+            { key: 'bag_config', cat: 'bag', name: 'Packaging Bag' },
+            { key: 'hangtag_config', cat: 'hangtag', name: 'Hang Tag' },
+            { key: 'label_config', cat: 'label', name: 'Label' },
+            { key: 'hygiene_config', cat: 'hygiene', name: 'Hygiene Sticker' },
+            { key: 'other_config', cat: 'other', name: 'Other' }
         ];
 
         const cmtData = tryParse(d.cmt_enabled) || {};
@@ -656,101 +656,101 @@
                 return renderInlineFiles(matched, label);
             }
 
-            if (v.mode) ch += dkv('模式', v.mode === 'auto' ? '红绣标配' : '客户自定义');
+            if (v.mode) ch += dkv('Mode', v.mode === 'auto' ? 'Hongxiu Standard' : 'Customer Customized');
 
             // Render config fields based on type
             if (td.key === 'metal_config') {
-                if (v.finish) ch += dkv('表面处理', esc(v.finish));
-                ch += inlineByKey('sourceFiles', '参考文件');
+                if (v.finish) ch += dkv('Surface Finish', esc(v.finish));
+                ch += inlineByKey('sourceFiles', 'Reference Files');
                 if (v.logoCustom) {
-                    ch += dkv('LOGO定制', '需要');
-                    if (Array.isArray(v.logoTypes) && v.logoTypes.length) ch += dkv('LOGO类型', v.logoTypes.map(esc).join(', '));
-                    ch += inlineByKey('logoFiles', 'LOGO文件');
+                    ch += dkv('Logo Customization', 'Required');
+                    if (Array.isArray(v.logoTypes) && v.logoTypes.length) ch += dkv('Logo Type', v.logoTypes.map(esc).join(', '));
+                    ch += inlineByKey('logoFiles', 'Logo Files');
                 }
                 if (v.details && v.categories && v.categories.length) {
                     v.categories.forEach(catName => {
                         const detail = v.details[catName];
                         if (!detail) return;
                         ch += '<div class="adm-sub-label" style="margin-top:8px;font-weight:600">' + esc(catName) + '</div>';
-                        if (detail.remark) ch += dkv('备注', esc(detail.remark));
-                        ch += inlineByKey('details__' + catName + '__styleFiles', '样式参考');
-                        if (detail.logoNeeded) ch += inlineByKey('details__' + catName + '__logoFiles', 'LOGO文件');
+                        if (detail.remark) ch += dkv('Remark', esc(detail.remark));
+                        ch += inlineByKey('details__' + catName + '__styleFiles', 'Style Reference');
+                        if (detail.logoNeeded) ch += inlineByKey('details__' + catName + '__logoFiles', 'Logo Files');
                     });
                 }
             } else if (td.key === 'pad_config') {
-                if (v.thickness) ch += dkv('厚度', esc(v.thickness));
-                if (v.color) ch += dkv('颜色', esc(v.color === '其他定制色' && v.otherColor ? v.otherColor + '（定制色）' : v.color));
-                if (v.customShape) ch += dkv('异形', '是' + (v.shapeRemark ? '（' + esc(v.shapeRemark) + '）' : ''));
-                ch += inlineByKey('shapeFiles', '形状参考');
-                ch += inlineByKey('otherFiles', '其他参考');
+                if (v.thickness) ch += dkv('Thickness', esc(v.thickness));
+                if (v.color) ch += dkv('Color', esc(v.color === 'Other Custom Color' && v.otherColor ? v.otherColor + ' (Custom)' : v.color));
+                if (v.customShape) ch += dkv('Custom Shape', 'Yes' + (v.shapeRemark ? '（' + esc(v.shapeRemark) + '）' : ''));
+                ch += inlineByKey('shapeFiles', 'Shape Reference');
+                ch += inlineByKey('otherFiles', 'Other Reference');
             } else if (td.key === 'bag_config') {
-                if (v.material) ch += dkv('材质', esc(v.material));
-                if (v.size) ch += dkv('尺寸', esc(v.size));
-                if (v.print) ch += dkv('印刷', esc(v.print));
-                if (Array.isArray(v.crafts) && v.crafts.length) ch += dkv('工艺', v.crafts.map(esc).join(', '));
-                ch += inlineByKey('designFiles', '设计文件');
+                if (v.material) ch += dkv('Material', esc(v.material));
+                if (v.size) ch += dkv('Size', esc(v.size));
+                if (v.print) ch += dkv('Print', esc(v.print));
+                if (Array.isArray(v.crafts) && v.crafts.length) ch += dkv('Craft', v.crafts.map(esc).join(', '));
+                ch += inlineByKey('designFiles', 'Design Files');
             } else if (td.key === 'hangtag_config') {
-                if (v.remark) ch += dkv('设计描述', esc(v.remark));
-                ch += inlineByKey('designFiles', '设计文件');
+                if (v.remark) ch += dkv('Design Description', esc(v.remark));
+                ch += inlineByKey('designFiles', 'Design Files');
                 if (v.mode !== 'auto') {
-                    if (v.material) ch += dkv('材质', esc(v.material === '其他' && v.materialRemark ? v.materialRemark + '（其他）' : v.material));
-                    if (v.weight) ch += dkv('克重', esc(v.weight));
-                    if (v.shape) ch += dkv('形状', esc(v.shape));
-                    if (Array.isArray(v.crafts) && v.crafts.length) ch += dkv('工艺', v.crafts.map(esc).join(', '));
-                    ch += inlineByKey('stringFiles', '吊绳参考');
+                    if (v.material) ch += dkv('Material', esc(v.material === 'Other' && v.materialRemark ? v.materialRemark + '（Other）' : v.material));
+                    if (v.weight) ch += dkv('Weight (GSM)', esc(v.weight));
+                    if (v.shape) ch += dkv('Shape', esc(v.shape));
+                    if (Array.isArray(v.crafts) && v.crafts.length) ch += dkv('Craft', v.crafts.map(esc).join(', '));
+                    ch += inlineByKey('stringFiles', 'String Reference');
                 }
             } else if (td.key === 'label_config') {
-                if (v.remark) ch += dkv('设计描述', esc(v.remark));
-                ch += inlineByKey('designFiles', '设计文件');
+                if (v.remark) ch += dkv('Design Description', esc(v.remark));
+                ch += inlineByKey('designFiles', 'Design Files');
                 if (v.mode !== 'auto') {
-                    if (v.material) ch += dkv('材质', esc(v.material));
-                    if (v.size) ch += dkv('尺寸', esc(v.size));
-                    if (v.method) ch += dkv('缝制方式', esc(v.method));
-                    if (Array.isArray(v.components) && v.components.length) ch += dkv('部件', v.components.map(esc).join(', '));
+                    if (v.material) ch += dkv('Material', esc(v.material));
+                    if (v.size) ch += dkv('Size', esc(v.size));
+                    if (v.method) ch += dkv('Sewing Method', esc(v.method));
+                    if (Array.isArray(v.components) && v.components.length) ch += dkv('Components', v.components.map(esc).join(', '));
                 }
             } else if (td.key === 'hygiene_config') {
-                if (v.material) ch += dkv('材质', esc(v.material));
-                if (v.shape) ch += dkv('形状', esc(v.shape));
-                if (v.size) ch += dkv('尺寸', esc(v.size));
-                ch += inlineByKey('designFiles', '印刷设计图');
+                if (v.material) ch += dkv('Material', esc(v.material));
+                if (v.shape) ch += dkv('Shape', esc(v.shape));
+                if (v.size) ch += dkv('Size', esc(v.size));
+                ch += inlineByKey('designFiles', 'Print Design');
             } else if (td.key === 'other_config') {
-                ch += inlineByKey('files', '参考附件');
+                ch += inlineByKey('files', 'Reference Attachments');
             }
 
-            if (v.remark && td.key !== 'hangtag_config' && td.key !== 'label_config') ch += dkv('备注', esc(v.remark));
+            if (v.remark && td.key !== 'hangtag_config' && td.key !== 'label_config') ch += dkv('Remark', esc(v.remark));
 
             // CMT
             if (cmtEnabled) {
-                ch += '<div class="adm-cmt-block"><div class="adm-cmt-title">客户自行提供 (CMT)</div>';
-                if (cmtInfo && cmtInfo.desc) ch += dkv('明细描述', esc(cmtInfo.desc));
-                if (cmtInfo && cmtInfo.trackingNo) ch += dkv('寄件单号', esc(cmtInfo.trackingNo));
-                if (cmtFiles.length) ch += renderInlineFiles(cmtFiles, '参考文件');
+                ch += '<div class="adm-cmt-block"><div class="adm-cmt-title">Customer-supplied (CMT)</div>';
+                if (cmtInfo && cmtInfo.desc) ch += dkv('Detail Description', esc(cmtInfo.desc));
+                if (cmtInfo && cmtInfo.trackingNo) ch += dkv('Shipping Tracking #', esc(cmtInfo.trackingNo));
+                if (cmtFiles.length) ch += renderInlineFiles(cmtFiles, 'Reference Files');
                 ch += '</div>';
             }
 
             // Remaining files
             const remainTrim = trimFiles.filter(f => !shownFileIds[f.id]);
-            if (remainTrim.length) ch += renderInlineFiles(remainTrim, '其他文件');
+            if (remainTrim.length) ch += renderInlineFiles(remainTrim, 'Other Files');
             ch += '</div>';
             cards.push(ch);
         });
 
         if (!cards.length) return '';
-        let h = dsecStart('trims', '辅料 / 包装', cards.length + ' 项');
+        let h = dsecStart('trims', 'Trims / Packaging', cards.length + ' item(s)');
         h += '<div class="adm-trim-grid">' + cards.join('') + '</div>';
         h += dsecEnd();
         return h;
     }
 
     function renderShippingSection(d, fileMap) {
-        let h = dsecStart('shipping', '交付信息');
-        h += dkv('交付模式', '<span class="adm-chip accent">' + (d.delivery_mode === 'bulk' ? '大货订单' : '样衣订单') + '</span>');
+        let h = dsecStart('shipping', 'Delivery Information');
+        h += dkv('Delivery Mode', '<span class="adm-chip accent">' + (d.delivery_mode === 'bulk' ? 'Bulk Order' : 'Sample Order') + '</span>');
 
         if (d.delivery_mode !== 'bulk') {
             const sampleRows = tryParse(d.sample_rows);
             if (Array.isArray(sampleRows) && sampleRows.length) {
-                h += '<div class="adm-sub-label" style="margin-top:12px">样衣明细</div>';
-                h += '<table class="adm-detail-table"><thead><tr><th>款式</th><th>类型</th><th>尺码</th><th>数量</th><th>备注</th></tr></thead><tbody>';
+                h += '<div class="adm-sub-label" style="margin-top:12px">Sample Details</div>';
+                h += '<table class="adm-detail-table"><thead><tr><th>Style</th><th>Type</th><th>Size</th><th>Qty</th><th>Remark</th></tr></thead><tbody>';
                 sampleRows.forEach(r => {
                     h += '<tr><td>' + esc(r.style) + '</td><td>' + esc(r.type) + '</td><td>' + esc(r.size) + '</td><td>' + esc(r.qty) + '</td><td>' + esc(r.desc || '-') + '</td></tr>';
                 });
@@ -758,19 +758,19 @@
             }
             const sc = tryParse(d.sample_config);
             if (sc && typeof sc === 'object') {
-                if (sc.carrier) h += dkv('物流方式', esc(sc.carrier));
+                if (sc.carrier) h += dkv('Shipping Method', esc(sc.carrier));
                 if (sc.needBulkQuote) {
-                    h += dkv('需大货报价', '是');
-                    if (sc.intentQty) h += dkv('预估数量', esc(sc.intentQty) + ' 件');
-                    if (sc.intentPrice) h += dkv('期望单价', '$' + esc(sc.intentPrice));
+                    h += dkv('Need Bulk Quote', 'Yes');
+                    if (sc.intentQty) h += dkv('Estimated Qty', esc(sc.intentQty) + ' pcs');
+                    if (sc.intentPrice) h += dkv('Target Unit Price', '$' + esc(sc.intentPrice));
                 }
             }
-            if (d.sample_dest) h += dkv('目的地', esc(d.sample_dest));
+            if (d.sample_dest) h += dkv('Destination', esc(d.sample_dest));
         } else {
             const bulkRows = tryParse(d.bulk_rows);
             if (Array.isArray(bulkRows) && bulkRows.length) {
-                h += '<div class="adm-sub-label" style="margin-top:12px">大货明细</div>';
-                h += '<table class="adm-detail-table"><thead><tr><th>款式</th><th>数量</th><th>尺码分配</th><th>备注</th></tr></thead><tbody>';
+                h += '<div class="adm-sub-label" style="margin-top:12px">Bulk Details</div>';
+                h += '<table class="adm-detail-table"><thead><tr><th>Style</th><th>Qty</th><th>Size Allocation</th><th>Remark</th></tr></thead><tbody>';
                 bulkRows.forEach(r => {
                     h += '<tr><td>' + esc(r.style) + '</td><td>' + esc(r.qty) + '</td><td>' + esc(r.sizeDetail || '-') + '</td><td>' + esc(r.desc || '-') + '</td></tr>';
                 });
@@ -778,18 +778,18 @@
             }
             const bl = tryParse(d.bulk_logistics);
             if (bl && typeof bl === 'object') {
-                if (bl.term) h += dkv('贸易术语', esc(bl.term));
-                if (bl.method) h += dkv('运输方式', esc(bl.method));
+                if (bl.term) h += dkv('Trade Terms', esc(bl.term));
+                if (bl.method) h += dkv('Transport Method', esc(bl.method));
             }
-            if (d.bulk_dest) h += dkv('目的地', esc(d.bulk_dest));
-            if (d.bulk_target_price) h += dkv('目标价格', esc(d.bulk_target_price));
-            if (d.bulk_packing_remark) h += dkv('包装备注', esc(d.bulk_packing_remark));
+            if (d.bulk_dest) h += dkv('Destination', esc(d.bulk_dest));
+            if (d.bulk_target_price) h += dkv('Target Price', esc(d.bulk_target_price));
+            if (d.bulk_packing_remark) h += dkv('Packaging Remark', esc(d.bulk_packing_remark));
             const bpFiles = fileMap['bulkPacking'] || [];
-            if (bpFiles.length) h += renderInlineFiles(bpFiles, '包装参考文件');
+            if (bpFiles.length) h += renderInlineFiles(bpFiles, 'Packaging Reference Files');
         }
 
         const fdFiles = fileMap['finalDocs'] || [];
-        if (fdFiles.length) h += renderInlineFiles(fdFiles, '综合工艺单 / 企划书');
+        if (fdFiles.length) h += renderInlineFiles(fdFiles, 'Comprehensive Tech Pack / Plan');
 
         h += dsecEnd();
         return h;
@@ -797,20 +797,20 @@
 
     function renderContactSection(d) {
         if (!d.contact_name && !d.brand_name) return '';
-        let h = dsecStart('contact', '联系信息');
-        if (d.contact_name) h += dkv('联系人', esc(d.contact_name));
-        if (d.contact_info) h += dkv('联系方式', esc(d.contact_info));
-        if (d.brand_name) h += dkv('品牌名称', esc(d.brand_name));
-        if (d.website) h += dkv('网站', '<a href="' + esc(d.website) + '" target="_blank" rel="noopener noreferrer">' + esc(d.website) + '</a>');
-        if (d.final_remark) h += dkv('整体备注', esc(d.final_remark));
-        if (d.nda_agreed_at) h += dkv('NDA 签署', '✓ 已签署 ' + fmtDate(d.nda_agreed_at));
+        let h = dsecStart('contact', 'Contact Information');
+        if (d.contact_name) h += dkv('Contact Name', esc(d.contact_name));
+        if (d.contact_info) h += dkv('Contact Info', esc(d.contact_info));
+        if (d.brand_name) h += dkv('Brand Name', esc(d.brand_name));
+        if (d.website) h += dkv('Website', '<a href="' + esc(d.website) + '" target="_blank" rel="noopener noreferrer">' + esc(d.website) + '</a>');
+        if (d.final_remark) h += dkv('General Remark', esc(d.final_remark));
+        if (d.nda_agreed_at) h += dkv('NDA Signed', '✓ Signed ' + fmtDate(d.nda_agreed_at));
         h += dsecEnd();
         return h;
     }
 
     function renderFilesSection(files, title) {
         if (!files || !files.length) return '';
-        let h = dsecStart('files', title || '附件', files.length + ' 个');
+        let h = dsecStart('files', title || 'file(s)', files.length + ' file(s)');
         h += '<div class="adm-file-grid">';
         files.forEach(f => { h += renderFileItem(f); });
         h += '</div>';
@@ -820,17 +820,17 @@
 
     function renderAdminActionForm(d) {
         const statusOpts = [
-            { val: 'pending', label: '待处理' },
-            { val: 'processing', label: '处理中' },
-            { val: 'quoted', label: '已报价' },
-            { val: 'closed', label: '已关闭' }
+            { val: 'pending', label: 'Pending' },
+            { val: 'processing', label: 'Processing' },
+            { val: 'quoted', label: 'Quoted' },
+            { val: 'closed', label: 'Closed' }
         ];
         const curStatus = d.status || 'pending';
 
-        let h = '<div class="adm-sec adm-action-sec"><div class="adm-sec-head"><h4>📋 管理员操作</h4></div><div class="adm-sec-body">';
+        let h = '<div class="adm-sec adm-action-sec"><div class="adm-sec-head"><h4>📋 Admin Actions</h4></div><div class="adm-sec-body">';
 
         // Status
-        h += '<div class="adm-form-row"><label class="adm-form-label">询盘状态</label>';
+        h += '<div class="adm-form-row"><label class="adm-form-label">Inquiry Status</label>';
         h += '<select id="adminStatusSelect" class="adm-form-select">';
         statusOpts.forEach(o => {
             h += '<option value="' + o.val + '"' + (curStatus === o.val ? ' selected' : '') + '>' + o.label + '</option>';
@@ -838,33 +838,33 @@
         h += '</select></div>';
 
         // Admin reply
-        h += '<div class="adm-form-row"><label class="adm-form-label">询盘回复</label>';
-        h += '<textarea id="adminReplyInput" class="adm-form-textarea" rows="4" placeholder="输入对客户的回复内容...">' + esc(d.admin_reply || '') + '</textarea></div>';
+        h += '<div class="adm-form-row"><label class="adm-form-label">Inquiry Response</label>';
+        h += '<textarea id="adminReplyInput" class="adm-form-textarea" rows="4" placeholder="Enter response to client...">' + esc(d.admin_reply || '') + '</textarea></div>';
 
         // Project link
-        h += '<div class="adm-form-row"><label class="adm-form-label">项目链接</label>';
-        h += '<input type="text" id="adminProjectLink" class="adm-form-input" placeholder="输入项目链接 URL" value="' + esc(d.project_link || '') + '"></div>';
+        h += '<div class="adm-form-row"><label class="adm-form-label">Project Link</label>';
+        h += '<input type="text" id="adminProjectLink" class="adm-form-input" placeholder="Enter project link URL" value="' + esc(d.project_link || '') + '"></div>';
 
         // Project token
-        h += '<div class="adm-form-row"><label class="adm-form-label">项目 Token</label>';
-        h += '<input type="text" id="adminProjectToken" class="adm-form-input" placeholder="输入项目访问 Token" value="' + esc(d.project_token || '') + '"></div>';
+        h += '<div class="adm-form-row"><label class="adm-form-label">Project Token</label>';
+        h += '<input type="text" id="adminProjectToken" class="adm-form-input" placeholder="Enter project access token" value="' + esc(d.project_token || '') + '"></div>';
 
         // Save button
-        h += '<div class="adm-form-row adm-form-actions"><button id="adminSaveBtn" class="adm-btn adm-btn-save" onclick="saveAdminAction()">保存</button></div>';
+        h += '<div class="adm-form-row adm-form-actions"><button id="adminSaveBtn" class="adm-btn adm-btn-save" onclick="saveAdminAction()">Save</button></div>';
 
         h += '</div></div>';
         return h;
     }
 
     function renderTimelineSection(d) {
-        let h = dsecStart('time', '时间线');
+        let h = dsecStart('time', 'Timeline');
         h += '<div class="adm-timeline">';
-        h += '<div class="adm-timeline-item"><span class="adm-timeline-dot"></span><strong>' + fmtDate(d.created_at) + '</strong> 创建询盘</div>';
+        h += '<div class="adm-timeline-item"><span class="adm-timeline-dot"></span><strong>' + fmtDate(d.created_at) + '</strong> Inquiry Created</div>';
         if (d.modified_at && d.modified_at !== d.created_at) {
-            h += '<div class="adm-timeline-item"><span class="adm-timeline-dot muted"></span><strong>' + fmtDate(d.modified_at) + '</strong> 最后更新</div>';
+            h += '<div class="adm-timeline-item"><span class="adm-timeline-dot muted"></span><strong>' + fmtDate(d.modified_at) + '</strong> Last Updated</div>';
         }
         if (d.deleted_at) {
-            h += '<div class="adm-timeline-item"><span class="adm-timeline-dot danger"></span><strong>' + fmtDate(d.deleted_at) + '</strong> 已删除</div>';
+            h += '<div class="adm-timeline-item"><span class="adm-timeline-dot danger"></span><strong>' + fmtDate(d.deleted_at) + '</strong> Deleted</div>';
         }
         h += '</div>';
         h += dsecEnd();

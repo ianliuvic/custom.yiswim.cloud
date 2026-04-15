@@ -43,7 +43,7 @@
     <div class="container">
         <a href="/" class="back-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-            <%= lng === 'zh' ? '返回首页' : 'Back to Home' %>
+            <%= typeof lng !== 'undefined' && lng === 'en' ? 'Back to Home' : '返回首页' %>
         </a>
 
         <% if (typeof lng !== 'undefined' && lng === 'en') { %>
@@ -77,16 +77,16 @@
             <p>If you have any questions regarding this privacy policy, you may contact us using the information available on our website.</p>
 
         <% } else { %>
-            <h1>Privacy Policy</h1>
+            <h1>隐私权政策</h1>
             <p><strong>生效日期：</strong> <%= typeof currentDate !== 'undefined' ? currentDate : '2026年4月8日' %></p>
             
-            <p>红绣定制系统（"我们"）非常重视您的隐私。本《Privacy Policy》解释了当您访问我们的网站并使用我们的服务时，我们如何收集、使用、披露和保护您的信息。</p>
+            <p>红绣定制系统（"我们"）非常重视您的隐私。本《隐私权政策》解释了当您访问我们的网站并使用我们的服务时，我们如何收集、使用、披露和保护您的信息。</p>
 
             <h2>1. 我们收集的信息</h2>
             <p>当您注册或登录账号时，我们可能会收集以下信息：</p>
             <ul>
                 <li><strong>个人数据：</strong> 姓名、电子邮件地址和用户名。</li>
-                <li><strong>第三方身份验证数据：</strong> 如果您选择使用第三方服务（如 Google）登录，我们将接收您授权的第三方平台提供的基本公开信息（如姓名、Email、唯一标识符）。</li>
+                <li><strong>第三方身份验证数据：</strong> 如果您选择使用第三方服务（如 Google）登录，我们将接收您授权的第三方平台提供的基本公开信息（如姓名、邮箱、唯一标识符）。</li>
             </ul>
 
             <h2>2. 我们如何使用您的信息</h2>

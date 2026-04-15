@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/admin.css">
+</head>
+<body>
+
+    <header class="adm-header">
+        <div class="adm-header-left">
+            <span class="adm-header-title">Hongxiu 管理后台</span>
+        </div>
+        <div class="adm-header-right">
+            <span class="adm-user-info">
+                <strong><%= user.username %></strong>
+                <a href="/" class="adm-nav-link">返回前台</a>
+                <a href="/logout" class="adm-nav-link adm-logout">退出</a>
+            </span>
+        </div>
+    </header>
+
+    <main class="adm-main">
+        <div class="adm-toolbar">
+            <div class="adm-filters">
+                <button class="adm-filter-btn active" data-filter="all">全部</button>
+                <button class="adm-filter-btn" data-filter="active">正常</button>
+                <button class="adm-filter-btn" data-filter="deleted">已删除</button>
+            </div>
+            <div class="adm-search">
+                <input type="text" id="searchInput" placeholder="搜索询盘号 / 用户名 / 邮箱" />
+                <button id="searchBtn">搜索</button>
+            </div>
+        </div>
+
+        <div class="adm-batch-bar" id="batchBar">
+            <span id="batchCount">已选 0 项</span>
+            <button class="adm-btn adm-btn-restore" id="batchRestoreBtn" onclick="batchRestore()">批量恢复</button>
+            <button class="adm-btn adm-btn-danger" id="batchDeleteBtn" onclick="batchHardDelete()">批量彻底删除</button>
+            <button class="adm-btn adm-btn-cancel" onclick="clearSelection()">取消选择</button>
+        </div>
+
+        <div class="adm-table-wrap">
+            <table class="adm-table">
+                <thead>
+                    <tr>
+                        <th style="width:36px"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this.checked)"></th>
+                        <th>询盘号</th>
+                        <th>用户</th>
+                        <th>邮箱</th>
+                        <th>文件数</th>
+                        <th>创建时间</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="inquiryBody"></tbody>
+            </table>
+        </div>
+
+        <div class="adm-pagination" id="pagination"></div>
+    </main>
+
+    <!-- 询盘详情面板 -->
+    <div id="detailPanel" class="adm-detail-panel" style="display:none;">
+        <div class="adm-detail-hero">
+            <div class="adm-detail-hero-top">
+                <button class="adm-back-btn" onclick="closeDetail()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                    返回列表
+                </button>
+                <span id="detailStatus" class="adm-badge"></span>
+            </div>
+            <div class="adm-detail-hero-title">
+                <h2 id="detailTitle"></h2>
+                <button class="adm-detail-action-btn" onclick="exportPDF()" title="导出PDF">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    导出 PDF
+                </button>
+                <button class="adm-detail-action-btn" onclick="exportZIP()" title="导出ZIP">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    导出 ZIP
+                </button>
+            </div>
+            <div id="detailStats" class="adm-detail-stats"></div>
+        </div>
+        <div id="detailContent" class="adm-detail-content"></div>
+    </div>
+
+    <!-- 确认弹窗 -->
+    <div class="adm-modal-mask" id="modalMask">
+        <div class="adm-modal">
+            <div class="adm-modal-title" id="modalTitle"></div>
+            <div class="adm-modal-body" id="modalBody"></div>
+            <div class="adm-modal-footer">
+                <button class="adm-btn adm-btn-cancel" onclick="closeModal()">取消</button>
+                <button class="adm-btn adm-btn-confirm" id="modalConfirm">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/admin.js"></script>
+</body>
+</html>

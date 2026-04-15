@@ -560,7 +560,7 @@ router.post('/submit-inquiry', authenticateToken, upload.any(), async (req, res)
     } catch (error) {
         await client.query('ROLLBACK');
         console.error('提交询盘失败:', error);
-        res.status(500).json({ success: false, message: req.t ? req.t('api.backendError') : '服务器错误' });
+        res.status(500).json({ success: false, message: req.t ? req.t('api.backendError') : 'Server error' });
     } finally {
         client.release();
     }
@@ -598,7 +598,7 @@ router.get('/my-inquiries', authenticateToken, async (req, res) => {
         });
     } catch (error) {
         console.error('获取询盘列表失败:', error);
-        res.status(500).json({ success: false, message: '服务器错误' });
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 
@@ -615,7 +615,7 @@ router.get('/inquiry-by-no/:no', authenticateToken, async (req, res) => {
         res.json({ success: true, id: result.rows[0].id });
     } catch (error) {
         console.error('查找询盘号失败:', error);
-        res.status(500).json({ success: false, message: '服务器错误' });
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 
@@ -696,7 +696,7 @@ router.get('/inquiry/:id', authenticateToken, async (req, res) => {
         });
     } catch (error) {
         console.error('获取询盘详情失败:', error);
-        res.status(500).json({ success: false, message: '服务器错误' });
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 
@@ -899,7 +899,7 @@ router.post('/change-password', authenticateToken, async (req, res) => {
         res.json({ success: true, message: '密码修改成功' });
     } catch (error) {
         console.error('修改密码失败:', error);
-        res.status(500).json({ success: false, message: '服务器错误' });
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 
@@ -944,7 +944,7 @@ router.post('/change-username', authenticateToken, async (req, res) => {
         res.json({ success: true, username: username });
     } catch (error) {
         console.error('修改用户名失败:', error);
-        res.status(500).json({ success: false, message: '服务器错误' });
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 
@@ -961,7 +961,7 @@ router.delete('/inquiry/:id', authenticateToken, async (req, res) => {
         res.json({ success: true, message: '删除成功' });
     } catch (error) {
         console.error('删除询盘失败:', error);
-        res.status(500).json({ success: false, message: '服务器错误' });
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 
@@ -987,7 +987,7 @@ router.get('/draft', authenticateToken, async (req, res) => {
         });
     } catch (error) {
         console.error('获取草稿失败:', error);
-        res.status(500).json({ success: false, message: '服务器错误' });
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 
@@ -1046,7 +1046,7 @@ router.post('/save-draft', authenticateToken, upload.any(), async (req, res) => 
     } catch (error) {
         await client.query('ROLLBACK');
         console.error('保存草稿失败:', error);
-        res.status(500).json({ success: false, message: req.t ? req.t('api.backendError') : '服务器错误' });
+        res.status(500).json({ success: false, message: req.t ? req.t('api.backendError') : 'Server error' });
     } finally {
         client.release();
     }
@@ -1061,7 +1061,7 @@ router.delete('/draft', authenticateToken, async (req, res) => {
         res.json({ success: true, message: '草稿已删除' });
     } catch (error) {
         console.error('删除草稿失败:', error);
-        res.status(500).json({ success: false, message: '服务器错误' });
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 

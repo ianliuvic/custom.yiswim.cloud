@@ -34,7 +34,7 @@
         currentPage = page;
         const listEl = document.getElementById('inquiry-list');
         const pagEl = document.getElementById('inquiry-pagination');
-        listEl.innerHTML = '<div class="u-loading">加载中...</div>';
+        listEl.innerHTML = '<div class="u-loading">Loading...</div>';
         pagEl.innerHTML = '';
 
         try {
@@ -49,8 +49,8 @@
                 listEl.innerHTML =
                     '<div class="u-empty">' +
                     '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' +
-                    '<p>暂无询盘记录</p>' +
-                    '<a href="/" class="u-btn-primary">+ 新建询盘</a>' +
+                    '<p>No inquiry records yet</p>' +
+                    '<a href="/" class="u-btn-primary">+ New Inquiry</a>' +
                     '</div>';
                 return;
             }
@@ -66,13 +66,13 @@
                     '<div class="u-inquiry-card-right">' +
                     '<span class="u-status-tag u-status-' + esc(r.status) + '">' + statusLabel(r.status) + '</span>' +
                     '<span style="font-size:12px;color:#94a3b8">' + fmtDate(r.created_at) + '</span>' +
-                    '<button class="u-copy-btn" onclick="event.stopPropagation();editInquiry(' + r.id + ')" title="' + (window.__lang === 'en' ? 'Edit' : '修改') + '">' +
+                    '<button class="u-copy-btn" onclick="event.stopPropagation();editInquiry(' + r.id + ')" title="' + (window.__lang === 'zh' ? '修改' : 'Edit') + '">' +
                     '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>' +
                     '</button>' +
-                    '<button class="u-copy-btn" onclick="event.stopPropagation();copyToNewInquiry(' + r.id + ')" title="' + (window.__lang === 'en' ? 'Copy as New' : '复制为新询盘') + '">' +
+                    '<button class="u-copy-btn" onclick="event.stopPropagation();copyToNewInquiry(' + r.id + ')" title="' + (window.__lang === 'zh' ? '复制为新询盘' : 'Copy as New') + '">' +
                     '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>' +
                     '</button>' +
-                    '<button class="u-del-btn" onclick="event.stopPropagation();deleteInquiry(' + r.id + ',\'' + esc(r.inquiry_no) + '\')" title="删除">' +
+                    '<button class="u-del-btn" onclick="event.stopPropagation();deleteInquiry(' + r.id + ',\'' + esc(r.inquiry_no) + '\')" title="Delete">' +
                     '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>' +
                     '</button>' +
                     '</div>' +
@@ -91,7 +91,7 @@
                 pagEl.innerHTML = btns;
             }
         } catch (e) {
-            listEl.innerHTML = '<div class="u-loading" style="color:#dc2626">加载失败：' + esc(e.message) + '</div>';
+            listEl.innerHTML = '<div class="u-loading" style="color:#dc2626">Load failed: ' + esc(e.message) + '</div>';
         }
     };
 
@@ -99,15 +99,15 @@
         var parts = [];
         // ODM styles count
         var odm = tryParse(r.odm_styles);
-        if (Array.isArray(odm) && odm.length) parts.push('ODM: ' + odm.length + '款');
+        if (Array.isArray(odm) && odm.length) parts.push('ODM: ' + odm.length + 'style(s)');
         // OEM
         if (r.oem_project) parts.push('OEM: ' + esc(r.oem_project));
-        if (r.oem_style_count) parts.push(r.oem_style_count + '款');
+        if (r.oem_style_count) parts.push(r.oem_style_count + 'style(s)');
         // contact / brand
         if (r.brand_name) parts.push(esc(r.brand_name));
         if (r.contact_name) parts.push(esc(r.contact_name));
         // delivery
-        if (r.delivery_mode) parts.push(r.delivery_mode === 'bulk' ? '大货' : '样衣');
+        if (r.delivery_mode) parts.push(r.delivery_mode === 'bulk' ? 'Bulk' : 'Sample');
         return parts.map(function (p) { return '<span>' + p + '</span>'; }).join('');
     }
 
@@ -126,7 +126,7 @@
         pagEl.style.display = 'none';
         titleEl.style.display = 'none';
         panel.style.display = 'block';
-        content.innerHTML = '<div class="u-loading">加载中...</div>';
+        content.innerHTML = '<div class="u-loading">Loading...</div>';
         statsEl.innerHTML = '';
         _lbRegistry = {}; _lbSeq = 0; _customPopData = {};
 
@@ -143,13 +143,13 @@
 
             // Summary stats bar
             var stats = [];
-            if (d.delivery_mode) stats.push(pill('truck', d.delivery_mode === 'bulk' ? '大货订单' : '样衣订单'));
+            if (d.delivery_mode) stats.push(pill('truck', d.delivery_mode === 'bulk' ? 'Bulk Order' : 'Sample Order'));
             if (d.brand_name) stats.push(pill('tag', d.brand_name));
             if (d.contact_name) stats.push(pill('user', d.contact_name));
             var odmArr = tryParse(d.odm_styles);
-            if (Array.isArray(odmArr) && odmArr.length) stats.push(pill('style', 'ODM ' + odmArr.length + ' 款'));
-            if (d.oem_project) stats.push(pill('style', 'OEM ' + (d.oem_style_count || 0) + ' 款'));
-            if (d.files && d.files.length) stats.push(pill('file', d.files.length + ' 个附件'));
+            if (Array.isArray(odmArr) && odmArr.length) stats.push(pill('style', 'ODM ' + odmArr.length + ' style(s)'));
+            if (d.oem_project) stats.push(pill('style', 'OEM ' + (d.oem_style_count || 0) + ' style(s)'));
+            if (d.files && d.files.length) stats.push(pill('file', d.files.length + ' attachment(s)'));
             statsEl.innerHTML = stats.join('');
 
             // Build file map by category
@@ -185,14 +185,14 @@
             Object.keys(fileMap).forEach(function (cat) {
                 if (shownCats.indexOf(cat) === -1) remainFiles = remainFiles.concat(fileMap[cat]);
             });
-            if (remainFiles.length) html += renderFilesSection(remainFiles, '其他附件');
+            if (remainFiles.length) html += renderFilesSection(remainFiles, 'Other Attachments');
 
             // ─── Timeline ───
             html += renderTimelineSection(d);
 
             content.innerHTML = html;
         } catch (e) {
-            content.innerHTML = '<div class="u-loading" style="color:#dc2626">加载失败：' + esc(e.message) + '</div>';
+            content.innerHTML = '<div class="u-loading" style="color:#dc2626">Load failed: ' + esc(e.message) + '</div>';
         }
     };
 
@@ -217,11 +217,11 @@
         var hasOEM = d.oem_project;
         if (!hasODM && !hasOEM) return '';
 
-        var h = secStart('style', '款式信息');
+        var h = secStart('style', 'Style Information');
 
         // ODM
         if (hasODM) {
-            h += '<div class="u-sec-divider"><span class="u-sec-divider-tag odm">ODM</span><span class="u-sec-divider-text">已选款式</span><span class="u-sec-divider-line"></span></div>';
+            h += '<div class="u-sec-divider"><span class="u-sec-divider-tag odm">ODM</span><span class="u-sec-divider-text">Selected Styles</span><span class="u-sec-divider-line"></span></div>';
             h += '<div class="u-style-grid">';
             odmArr.forEach(function (name) {
                 var displayName = typeof name === 'object' ? (name.name || name.id || JSON.stringify(name)) : name;
@@ -244,23 +244,23 @@
                     h += '<div class="u-style-card-img" style="cursor:pointer" onclick="openLightbox(\'' + lbKey + '\', 0)">';
                     h += '<img src="' + esc(coverImg) + '" alt="' + esc(displayName) + '" loading="lazy" onerror="this.parentElement.style.display=\'none\'">';
                     if (allImgs.length > 1) {
-                        h += '<span class="u-img-count">' + allImgs.length + ' 张</span>';
+                        h += '<span class="u-img-count">' + allImgs.length + ' photo(s)</span>';
                     }
                     h += '</div>';
                 }
                 h += '<div class="u-style-card-body">';
                 h += '<div class="u-style-card-name">' + esc(displayName) + '</div>';
-                // 轻定制 compact pill
+                // Light Customization compact pill
                 if (remark || customFiles.length) {
                     var summary = [];
-                    if (remark) summary.push('备注');
-                    if (customFiles.length) summary.push(customFiles.length + '个文件');
+                    if (remark) summary.push('Remark');
+                    if (customFiles.length) summary.push(customFiles.length + ' file(s)');
                     var popId = 'cpop' + (++_lbSeq);
                     // store data for popover
                     _customPopData[popId] = { remark: remark, files: customFiles };
                     h += '<div class="u-custom-pill" onclick="event.stopPropagation();toggleCustomPop(\'' + popId + '\', this)">';
                     h += '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>';
-                    h += '<span>轻定制</span><span class="u-custom-pill-sum">' + esc(summary.join(' · ')) + '</span>';
+                    h += '<span>Light Customization</span><span class="u-custom-pill-sum">' + esc(summary.join(' · ')) + '</span>';
                     h += '</div>';
                 }
                 h += '</div></div>';
@@ -271,17 +271,17 @@
         // OEM
         if (hasOEM) {
             if (hasODM) h += '<div class="u-sec-separator"></div>';
-            h += '<div class="u-sec-divider"><span class="u-sec-divider-tag oem">OEM</span><span class="u-sec-divider-text">自主设计</span><span class="u-sec-divider-line"></span></div>';
-            h += kv('项目名称', esc(d.oem_project));
-            h += kv('款式数量', d.oem_style_count || '-');
-            if (d.oem_project_desc) h += kv('项目描述', esc(d.oem_project_desc));
+            h += '<div class="u-sec-divider"><span class="u-sec-divider-tag oem">OEM</span><span class="u-sec-divider-text">Custom Design</span><span class="u-sec-divider-line"></span></div>';
+            h += kv('Project Name', esc(d.oem_project));
+            h += kv('Style Count', d.oem_style_count || '-');
+            if (d.oem_project_desc) h += kv('Project Description', esc(d.oem_project_desc));
             if (Array.isArray(oemDescs) && oemDescs.length) {
-                h += '<div class="u-sub-label" style="margin-top:12px">款式描述</div>';
+                h += '<div class="u-sub-label" style="margin-top:12px">Style Descriptions</div>';
                 h += '<div class="u-style-grid">';
                 oemDescs.forEach(function (desc, i) {
                     h += '<div class="u-style-card">' +
                         '<div class="u-style-card-body">' +
-                        '<div class="u-style-card-name">款 ' + (i + 1) + '</div>' +
+                        '<div class="u-style-card-name">style(s) ' + (i + 1) + '</div>' +
                         '<div class="u-style-card-remark">' + esc(typeof desc === 'object' ? JSON.stringify(desc) : desc) + '</div>' +
                         '</div></div>';
                 });
@@ -292,25 +292,25 @@
             var oemDesignFiles = oemFiles.filter(function (f) { return f.sub_key !== 'size'; });
             var oemSizeFiles = oemFiles.filter(function (f) { return f.sub_key === 'size'; });
             if (oemDesignFiles.length) {
-                h += '<div class="u-sub-label" style="margin-top:12px">设计文件</div>';
+                h += '<div class="u-sub-label" style="margin-top:12px">Design Files</div>';
                 h += '<div class="u-file-grid">';
                 oemDesignFiles.forEach(function (f) { h += renderFileItem(f); });
                 h += '</div>';
             }
             if (oemSizeFiles.length || d.oem_size_remark) {
-                h += '<div class="u-sub-label" style="margin-top:12px">尺寸信息</div>';
-                if (d.oem_size_remark) h += kv('尺寸说明', esc(d.oem_size_remark));
+                h += '<div class="u-sub-label" style="margin-top:12px">Size Information</div>';
+                if (d.oem_size_remark) h += kv('Size Description', esc(d.oem_size_remark));
                 if (oemSizeFiles.length) {
                     h += '<div class="u-file-grid">';
                     oemSizeFiles.forEach(function (f) { h += renderFileItem(f); });
                     h += '</div>';
                 }
             }
-            if (d.oem_remark) h += kv('备注', esc(d.oem_remark));
-            // 寄送实体样衣
+            if (d.oem_remark) h += kv('Remark', esc(d.oem_remark));
+            // Send physical sample
             if (d.oem_physical_sample) {
-                h += '<div class="u-kv"><div class="u-kv-label">寄送样衣</div><div class="u-kv-value"><span style="color:#16a34a;font-weight:600">● 已寄送实体样衣</span>'
-                    + (d.oem_tracking_no ? '<span style="margin-left:8px;color:var(--text-light);font-size:12px">单号：' + esc(d.oem_tracking_no) + '</span>' : '<span style="margin-left:8px;color:#f59e0b;font-size:12px">待更新物流单号</span>')
+                h += '<div class="u-kv"><div class="u-kv-label">Sample Shipping</div><div class="u-kv-value"><span style="color:#16a34a;font-weight:600">● Physical sample shipped</span>'
+                    + (d.oem_tracking_no ? '<span style="margin-left:8px;color:var(--text-light);font-size:12px">Tracking #: ' + esc(d.oem_tracking_no) + '</span>' : '<span style="margin-left:8px;color:#f59e0b;font-size:12px">Tracking # pending</span>')
                     + '</div></div>';
             }
         }
@@ -326,7 +326,7 @@
         var fabricFiles = fileMap['fabric'] || [];
         var cmtFabricFiles = (fileMap['cmt'] || []).filter(function (f) { return f.sub_key === 'fabric'; });
 
-        var h = secStart('fabric', '面料信息');
+        var h = secStart('fabric', 'Fabric Information');
 
         Object.keys(fab).forEach(function (catKey) {
             var cat = fab[catKey];
@@ -334,7 +334,7 @@
             var originalCat = cat.originalCatName || catKey;
             var isCustomSourcing = cat.activeName === 'CUSTOM_SOURCING';
             var displayName = isCustomSourcing ? originalCat : (cat.activeName || originalCat);
-            var isLining = originalCat.indexOf('里料') !== -1 || originalCat.indexOf('Lining') !== -1 || originalCat.indexOf('lining') !== -1;
+            var isLining = originalCat.indexOf('Lining') !== -1 || originalCat.indexOf('Lining') !== -1 || originalCat.indexOf('lining') !== -1;
             var configs = cat.configs;
 
             Object.keys(configs).forEach(function (fabricName) {
@@ -342,7 +342,7 @@
                 if (!cfg) return;
                 var isCS = fabricName === 'CUSTOM_SOURCING';
                 var mode = isCS ? 'custom' : (cfg.mode || 'solid');
-                var modeLabel = { solid: '纯色', print: '印花', custom: '开发/找样' }[mode] || mode;
+                var modeLabel = { solid: 'Solid', print: 'Print', custom: 'Dev / Sourcing' }[mode] || mode;
                 var cardTitle = isCS ? originalCat : fabricName;
 
                 h += '<div class="u-fabric-card">';
@@ -351,11 +351,11 @@
                 h += '<span class="u-fabric-mode ' + mode + '">' + modeLabel + '</span></div>';
 
                 // 通用：成分和克重（所有模式可用）
-                if (cfg.comp) h += kv('成分', esc(cfg.comp));
+                if (cfg.comp) h += kv('Composition', esc(cfg.comp));
                 if (cfg.gsm) {
                     var gsmVal = cfg.gsm;
                     if (!/g/i.test(gsmVal)) gsmVal += ' g/m²';
-                    h += kv('克重', esc(gsmVal));
+                    h += kv('Weight (GSM)', esc(gsmVal));
                 }
 
                 if (mode === 'solid') {
@@ -371,9 +371,9 @@
                         });
                         h += '</div>';
                     }
-                    if (cfg.colorText) h += kv('色彩描述', esc(cfg.colorText));
+                    if (cfg.colorText) h += kv('Color Description', esc(cfg.colorText));
                 } else if (mode === 'print') {
-                    if (cfg.printType) h += kv('印花类型', cfg.printType === 'seamless' ? '满版印花' : '定位印花');
+                    if (cfg.printType) h += kv('Print Type', cfg.printType === 'seamless' ? 'All-over Print' : 'Placement Print');
                     // 印花图片：新数据 sub_key 以 __print 结尾，旧数据从同 sub_key 中按 mime_type 分离图片
                     var printKey = catKey + '__' + fabricName + '__print';
                     var printFiles = fabricFiles.filter(function (f) { return f.sub_key === printKey; });
@@ -385,24 +385,24 @@
                         });
                     }
                     if (printFiles.length) {
-                        h += renderInlineFiles(printFiles, '印花图案');
+                        h += renderInlineFiles(printFiles, 'Print Pattern');
                     }
-                    if (cfg.printRefColor) h += kv('参考底色', esc(cfg.printRefColor));
-                    if (cfg.printScale) h += kv('缩放比例', esc(cfg.printScale));
+                    if (cfg.printRefColor) h += kv('Reference Base Color', esc(cfg.printRefColor));
+                    if (cfg.printScale) h += kv('Scale Ratio', esc(cfg.printScale));
                 } else if (mode === 'custom') {
-                    if (cfg.customDesc) h += kv('需求描述', esc(cfg.customDesc));
-                    if (cfg.colorReq) h += kv('颜色要求', esc(cfg.colorReq));
-                    if (cfg.physical) h += kv('实物邮寄', '是' + (cfg.trackingNo ? '（单号：' + esc(cfg.trackingNo) + '）' : ''));
+                    if (cfg.customDesc) h += kv('Requirement Description', esc(cfg.customDesc));
+                    if (cfg.colorReq) h += kv('Color Requirement', esc(cfg.colorReq));
+                    if (cfg.physical) h += kv('Physical Mail', 'Yes' + (cfg.trackingNo ? ' (Tracking #: ' + esc(cfg.trackingNo) + '）' : ''));
                 }
 
-                // 里料专属：全衬里/局部衬里
+                // 里料专属：Full Lining/Partial Lining
                 if (isLining) {
-                    if (cfg.fullLining != null) h += kv('全衬里', cfg.fullLining ? '是' : '否');
-                    if (cfg.liningPlacement) h += kv('衬里位置', esc(cfg.liningPlacement));
+                    if (cfg.fullLining != null) h += kv('Full Lining', cfg.fullLining ? 'Yes' : 'No');
+                    if (cfg.liningPlacement) h += kv('Lining Placement', esc(cfg.liningPlacement));
                 }
 
-                // 拼色说明（非里料）或 备注（里料）
-                if (cfg.remark) h += kv(isLining ? '备注' : '拼色说明', esc(cfg.remark));
+                // Color Blocking Notes（非里料）或 Remark（Lining）
+                if (cfg.remark) h += kv(isLining ? 'Remark' : 'Color Blocking Notes', esc(cfg.remark));
 
                 // Inline fabric files matching this fabric (use catKey for DB match)
                 var subKey = catKey + '__' + fabricName;
@@ -414,7 +414,7 @@
                     matched = matched.filter(function (f) { return !printIds[f.id]; });
                 }
                 if (matched.length) {
-                    h += renderInlineFiles(matched, '参考文件');
+                    h += renderInlineFiles(matched, 'Reference Files');
                 }
 
                 h += '</div>';
@@ -428,15 +428,15 @@
         var fabricCmtEnabled = fabricCmt === true || (fabricCmt && fabricCmt.enabled);
         if (fabricCmtEnabled) {
             h += '<div class="u-cmt-block">';
-            h += '<div class="u-cmt-title">客户自行提供面料 (CMT)</div>';
-            if (fabricCmt && fabricCmt.desc) h += kv('明细描述', esc(fabricCmt.desc));
-            if (fabricCmt && fabricCmt.trackingNo) h += kv('寄件单号', esc(fabricCmt.trackingNo));
+            h += '<div class="u-cmt-title">Customer-supplied Fabric (CMT)</div>';
+            if (fabricCmt && fabricCmt.desc) h += kv('Detail Description', esc(fabricCmt.desc));
+            if (fabricCmt && fabricCmt.trackingNo) h += kv('Shipping Tracking #', esc(fabricCmt.trackingNo));
             if (cmtFabricFiles.length) {
-                h += renderInlineFiles(cmtFabricFiles, '参考文件');
+                h += renderInlineFiles(cmtFabricFiles, 'Reference Files');
             }
             h += '</div>';
         } else if (cmtFabricFiles.length) {
-            h += '<div class="u-sub-label" style="margin-top:14px">客供面料文件</div>';
+            h += '<div class="u-sub-label" style="margin-top:14px">Customer-supplied Fabric Files</div>';
             h += '<div class="u-file-grid">';
             cmtFabricFiles.forEach(function (f) { h += renderFileItem(f); });
             h += '</div>';
@@ -448,13 +448,13 @@
 
     function renderTrimsSection(d, fileMap) {
         var trimDefs = [
-            { key: 'metal_config', cat: 'metal', name: '五金配件', icon: '⚙️' },
-            { key: 'pad_config', cat: 'pad', name: '胸垫', icon: '🧵' },
-            { key: 'bag_config', cat: 'bag', name: '包装袋', icon: '👜' },
-            { key: 'hangtag_config', cat: 'hangtag', name: '吊牌', icon: '🏷️' },
-            { key: 'label_config', cat: 'label', name: '标签', icon: '📋' },
-            { key: 'hygiene_config', cat: 'hygiene', name: '卫生贴', icon: '🩹' },
-            { key: 'other_config', cat: 'other', name: '其他', icon: '📦' }
+            { key: 'metal_config', cat: 'metal', name: 'Metal Hardware', icon: '⚙️' },
+            { key: 'pad_config', cat: 'pad', name: 'Padding', icon: '🧵' },
+            { key: 'bag_config', cat: 'bag', name: 'Packaging Bag', icon: '👜' },
+            { key: 'hangtag_config', cat: 'hangtag', name: 'Hang Tag', icon: '🏷️' },
+            { key: 'label_config', cat: 'label', name: 'Label', icon: '📋' },
+            { key: 'hygiene_config', cat: 'hygiene', name: 'Hygiene Sticker', icon: '🩹' },
+            { key: 'other_config', cat: 'other', name: 'Other', icon: '📦' }
         ];
 
         var cmtData = tryParse(d.cmt_enabled) || {};
@@ -472,7 +472,7 @@
         });
         if (cards.length === 0) return '';
 
-        var h = secStart('trims', '辅料 / 包装', cards.length + ' 项');
+        var h = secStart('trims', 'Trims / Packaging', cards.length + ' item(s)');
         h += '<div class="u-trim-grid">' + cards.join('') + '</div>';
         h += secEnd();
         return h;
@@ -492,17 +492,17 @@
         }
 
         var mode = val.mode;
-        if (mode) h += kv('模式', mode === 'auto' ? '红绣标配' : '客户自定义');
+        if (mode) h += kv('Mode', mode === 'auto' ? 'Hongxiu Standard' : 'Customer Customized');
 
         // Common fields handling by type
         switch (td.key) {
             case 'metal_config':
-                if (val.finish) h += kv('表面处理', esc(val.finish));
-                h += inlineByKey('sourceFiles', '通用参考文件');
+                if (val.finish) h += kv('Surface Finish', esc(val.finish));
+                h += inlineByKey('sourceFiles', 'General Reference Files');
                 if (val.logoCustom) {
-                    h += kv('LOGO定制', '需要');
-                    if (Array.isArray(val.logoTypes) && val.logoTypes.length) h += kv('LOGO类型', val.logoTypes.map(esc).join(', '));
-                    h += inlineByKey('logoFiles', '通用LOGO文件');
+                    h += kv('Logo Customization', 'Required');
+                    if (Array.isArray(val.logoTypes) && val.logoTypes.length) h += kv('Logo Type', val.logoTypes.map(esc).join(', '));
+                    h += inlineByKey('logoFiles', 'General Logo Files');
                 }
                 // 各品类明细
                 if (val.details && val.categories && val.categories.length) {
@@ -511,116 +511,116 @@
                         if (!detail) return;
                         h += '<div class="u-metal-cat-block">';
                         h += '<div class="u-metal-cat-name">' + esc(catName) + '</div>';
-                        if (detail.remark) h += kv('备注', esc(detail.remark));
-                        h += inlineByKey('details__' + catName + '__styleFiles', '样式参考');
+                        if (detail.remark) h += kv('Remark', esc(detail.remark));
+                        h += inlineByKey('details__' + catName + '__styleFiles', 'Style Reference');
                         if (detail.logoNeeded) {
-                            h += kv('独立LOGO', '需要');
-                            h += inlineByKey('details__' + catName + '__logoFiles', 'LOGO文件');
+                            h += kv('Dedicated Logo', 'Required');
+                            h += inlineByKey('details__' + catName + '__logoFiles', 'Logo Files');
                         }
                         h += '</div>';
                     });
                 }
                 break;
             case 'pad_config':
-                if (val.thickness) h += kv('厚度', esc(val.thickness));
+                if (val.thickness) h += kv('Thickness', esc(val.thickness));
                 if (val.color) {
                     var colorDisplay = val.color;
-                    if (val.color === '其他定制色' && val.otherColor) colorDisplay = val.otherColor + '（定制色）';
-                    h += kv('颜色', esc(colorDisplay));
+                    if (val.color === 'Other Custom Color' && val.otherColor) colorDisplay = val.otherColor + ' (Custom)';
+                    h += kv('Color', esc(colorDisplay));
                 }
                 if (val.customShape) {
-                    h += kv('异形', '是' + (val.shapeRemark ? '（' + esc(val.shapeRemark) + '）' : ''));
-                    h += inlineByKey('shapeFiles', '形状参考');
+                    h += kv('Custom Shape', 'Yes' + (val.shapeRemark ? '（' + esc(val.shapeRemark) + '）' : ''));
+                    h += inlineByKey('shapeFiles', 'Shape Reference');
                 }
-                h += inlineByKey('otherFiles', '其他参考');
+                h += inlineByKey('otherFiles', 'Other Reference');
                 break;
             case 'bag_config':
-                if (val.material) h += kv('材质', esc(val.material));
-                if (val.size) h += kv('尺寸', esc(val.size));
-                if (val.print) h += kv('印刷', esc(val.print));
-                if (Array.isArray(val.crafts) && val.crafts.length) h += kv('工艺', val.crafts.map(esc).join(', '));
-                h += inlineByKey('designFiles', '设计文件');
+                if (val.material) h += kv('Material', esc(val.material));
+                if (val.size) h += kv('Size', esc(val.size));
+                if (val.print) h += kv('Print', esc(val.print));
+                if (Array.isArray(val.crafts) && val.crafts.length) h += kv('Craft', val.crafts.map(esc).join(', '));
+                h += inlineByKey('designFiles', 'Design Files');
                 break;
             case 'hangtag_config':
-                if (val.remark) h += kv('设计描述', esc(val.remark));
-                h += inlineByKey('designFiles', '设计文件');
+                if (val.remark) h += kv('Design Description', esc(val.remark));
+                h += inlineByKey('designFiles', 'Design Files');
                 if (mode !== 'auto') {
                     var matText = val.material || '';
-                    if (matText === '其他' && val.materialRemark) matText = val.materialRemark + '（其他）';
-                    if (matText) h += kv('材质', esc(matText));
-                    h += inlineByKey('otherMatFiles', '材质参考');
-                    if (val.weight) h += kv('克重', esc(val.weight));
-                    if (val.shape) h += kv('形状', esc(val.shape));
-                    if (val.roundedCorner) h += kv('圆角', '是');
-                    if (val.shapeRemark) h += kv('形状说明', esc(val.shapeRemark));
-                    h += inlineByKey('shapeFiles', '刀模/异形参考');
-                    if (Array.isArray(val.crafts) && val.crafts.length) h += kv('工艺', val.crafts.map(esc).join(', '));
-                    if (val.craftRemark) h += kv('工艺说明', esc(val.craftRemark));
-                    h += inlineByKey('otherCraftFiles', '工艺参考');
+                    if (matText === 'Other' && val.materialRemark) matText = val.materialRemark + '（Other）';
+                    if (matText) h += kv('Material', esc(matText));
+                    h += inlineByKey('otherMatFiles', 'Material Reference');
+                    if (val.weight) h += kv('Weight (GSM)', esc(val.weight));
+                    if (val.shape) h += kv('Shape', esc(val.shape));
+                    if (val.roundedCorner) h += kv('Rounded Corners', 'Yes');
+                    if (val.shapeRemark) h += kv('Shape Description', esc(val.shapeRemark));
+                    h += inlineByKey('shapeFiles', 'Die-cut / Custom Shape Reference');
+                    if (Array.isArray(val.crafts) && val.crafts.length) h += kv('Craft', val.crafts.map(esc).join(', '));
+                    if (val.craftRemark) h += kv('Craft Description', esc(val.craftRemark));
+                    h += inlineByKey('otherCraftFiles', 'Craft Reference');
                     var strType = val.stringType || '';
-                    if (strType === '定制材质与形状' && val.stringRemark) strType = val.stringRemark + '（定制）';
-                    if (strType) h += kv('吊绳', esc(strType));
-                    h += inlineByKey('stringFiles', '吊绳参考');
+                    if (strType === 'Custom material and shape' && val.stringRemark) strType = val.stringRemark + '（Custom）';
+                    if (strType) h += kv('String', esc(strType));
+                    h += inlineByKey('stringFiles', 'String Reference');
                     var strColor = val.stringColor || '';
-                    if (strColor === '其他' && val.stringColorOther) strColor = val.stringColorOther + '（其他）';
-                    if (strColor) h += kv('绳色', esc(strColor));
-                    if (val.isSet) h += kv('副牌', '有' + (val.setRemark ? '（' + esc(val.setRemark) + '）' : ''));
+                    if (strColor === 'Other' && val.stringColorOther) strColor = val.stringColorOther + '（Other）';
+                    if (strColor) h += kv('String Color', esc(strColor));
+                    if (val.isSet) h += kv('Sub-tag', 'Yes' + (val.setRemark ? '（' + esc(val.setRemark) + '）' : ''));
                 }
                 break;
             case 'label_config':
-                if (val.remark) h += kv('设计描述', esc(val.remark));
-                h += inlineByKey('designFiles', '设计文件');
+                if (val.remark) h += kv('Design Description', esc(val.remark));
+                h += inlineByKey('designFiles', 'Design Files');
                 if (mode !== 'auto') {
-                    if (val.material) h += kv('材质', esc(val.material));
-                    h += inlineByKey('otherMatFiles', '材质参考');
-                    if (val.size) h += kv('尺寸', esc(val.size));
-                    if (val.method) h += kv('缝制方式', esc(val.method));
-                    if (val.sewingRemark) h += kv('缝制说明', esc(val.sewingRemark));
-                    h += inlineByKey('sewingFiles', '缝制方式参考');
-                    if (Array.isArray(val.components) && val.components.length) h += kv('部件', val.components.map(esc).join(', '));
+                    if (val.material) h += kv('Material', esc(val.material));
+                    h += inlineByKey('otherMatFiles', 'Material Reference');
+                    if (val.size) h += kv('Size', esc(val.size));
+                    if (val.method) h += kv('Sewing Method', esc(val.method));
+                    if (val.sewingRemark) h += kv('Sewing Description', esc(val.sewingRemark));
+                    h += inlineByKey('sewingFiles', 'Sewing Method Reference');
+                    if (Array.isArray(val.components) && val.components.length) h += kv('Components', val.components.map(esc).join(', '));
                     if (val.placements) {
                         Object.keys(val.placements).forEach(function (k) {
-                            h += kv('位置 (' + esc(k) + ')', esc(val.placements[k]));
+                            h += kv('Position (' + esc(k) + ')', esc(val.placements[k]));
                         });
                     }
-                    h += inlineByKey('placementFiles__top', '打标位置参考 (上)');
-                    h += inlineByKey('placementFiles__bottom', '打标位置参考 (下)');
+                    h += inlineByKey('placementFiles__top', 'Label Placement Reference (Top)');
+                    h += inlineByKey('placementFiles__bottom', 'Label Placement Reference (Bottom)');
                     // 兼容旧数据 isSet → isSplit
                     var isSplit = val.isSplit || val.isSet;
                     if (isSplit) {
-                        h += kv('主标与洗水标', '分开定制');
-                        if (val.splitRemark) h += kv('分开说明', esc(val.splitRemark));
+                        h += kv('Main Label & Care Label', 'Customized Separately');
+                        if (val.splitRemark) h += kv('Separation Description', esc(val.splitRemark));
                     }
                 }
                 break;
             case 'hygiene_config':
-                if (val.material) h += kv('材质', esc(val.material));
-                if (val.shape) h += kv('形状', esc(val.shape));
-                if (val.size) h += kv('尺寸', esc(val.size));
-                h += inlineByKey('shapeFiles', '异形刀模参考');
-                if (val.noApply) h += kv('免粘贴', '是');
-                if (val.shapeRemark) h += kv('异形要求', esc(val.shapeRemark));
-                if (val.applyRemark) h += kv('粘贴规则', esc(val.applyRemark));
-                h += inlineByKey('applyFiles', '粘贴位置参考');
-                h += inlineByKey('designFiles', '印刷设计图');
+                if (val.material) h += kv('Material', esc(val.material));
+                if (val.shape) h += kv('Shape', esc(val.shape));
+                if (val.size) h += kv('Size', esc(val.size));
+                h += inlineByKey('shapeFiles', 'Custom Die-cut Reference');
+                if (val.noApply) h += kv('Non-adhesive', 'Yes');
+                if (val.shapeRemark) h += kv('Custom Shape Requirement', esc(val.shapeRemark));
+                if (val.applyRemark) h += kv('Adhesive Rules', esc(val.applyRemark));
+                h += inlineByKey('applyFiles', 'Adhesive Position Reference');
+                h += inlineByKey('designFiles', 'Print Design');
                 break;
             case 'other_config':
-                h += inlineByKey('files', '参考附件');
+                h += inlineByKey('files', 'Reference Attachments');
                 break;
         }
 
-        // 吊牌/标签的 remark 已作为"设计描述"展示，不再重复
-        if (val.remark && td.key !== 'hangtag_config' && td.key !== 'label_config') h += kv('备注', esc(val.remark));
+        // Hang Tag/标签的 remark 已作为"Design Description"展示，不再重复
+        if (val.remark && td.key !== 'hangtag_config' && td.key !== 'label_config') h += kv('Remark', esc(val.remark));
 
         // CMT 客供物料信息
         var cmtEnabled = cmtInfo === true || (cmtInfo && cmtInfo.enabled);
         if (cmtEnabled) {
             h += '<div class="u-cmt-block">';
-            h += '<div class="u-cmt-title">客户自行提供 (CMT)</div>';
-            if (cmtInfo && cmtInfo.desc) h += kv('明细描述', esc(cmtInfo.desc));
-            if (cmtInfo && cmtInfo.trackingNo) h += kv('寄件单号', esc(cmtInfo.trackingNo));
+            h += '<div class="u-cmt-title">Customer-supplied (CMT)</div>';
+            if (cmtInfo && cmtInfo.desc) h += kv('Detail Description', esc(cmtInfo.desc));
+            if (cmtInfo && cmtInfo.trackingNo) h += kv('Shipping Tracking #', esc(cmtInfo.trackingNo));
             if (cmtFiles.length) {
-                h += renderInlineFiles(cmtFiles, '参考文件');
+                h += renderInlineFiles(cmtFiles, 'Reference Files');
             }
             h += '</div>';
         }
@@ -628,16 +628,16 @@
         // Inline files for this trim (non-CMT, not yet shown)
         var remainFiles = trimFiles.filter(function (f) { return !shownFileIds[f.id]; });
         if (remainFiles.length) {
-            h += renderInlineFiles(remainFiles, '其他文件');
+            h += renderInlineFiles(remainFiles, 'Other Files');
         }
         h += '</div>';
         return h;
     }
 
     function renderShippingSection(d, fileMap) {
-        var h = secStart('shipping', '交付信息');
+        var h = secStart('shipping', 'Delivery Information');
 
-        h += kv('交付模式', '<span class="u-chip accent">' + (d.delivery_mode === 'bulk' ? '大货订单' : '样衣订单') + '</span>');
+        h += kv('Delivery Mode', '<span class="u-chip accent">' + (d.delivery_mode === 'bulk' ? 'Bulk Order' : 'Sample Order') + '</span>');
 
         var isSample = d.delivery_mode !== 'bulk';
 
@@ -645,9 +645,9 @@
             // ── Sample only ──
             var sampleRows = tryParse(d.sample_rows);
             if (Array.isArray(sampleRows) && sampleRows.length) {
-                h += '<div class="u-sub-label" style="margin-top:16px">样衣明细</div>';
+                h += '<div class="u-sub-label" style="margin-top:16px">Sample Details</div>';
                 h += '<div class="u-table-wrap"><table class="u-table"><thead><tr>' +
-                    '<th>款式</th><th>类型</th><th>尺码</th><th>数量</th><th>备注</th>' +
+                    '<th>Style</th><th>Type</th><th>Size</th><th>Qty</th><th>Remark</th>' +
                     '</tr></thead><tbody>';
                 sampleRows.forEach(function (r) {
                     h += '<tr><td>' + esc(r.style) + '</td><td>' + esc(r.type) + '</td>' +
@@ -658,24 +658,24 @@
             }
             var sampleCfg = tryParse(d.sample_config);
             if (sampleCfg && typeof sampleCfg === 'object' && Object.keys(sampleCfg).length) {
-                h += '<div class="u-sub-label" style="margin-top:16px">样衣物流</div>';
-                if (sampleCfg.carrier) h += kv('物流方式', esc(sampleCfg.carrier));
+                h += '<div class="u-sub-label" style="margin-top:16px">Sample Logistics</div>';
+                if (sampleCfg.carrier) h += kv('Shipping Method', esc(sampleCfg.carrier));
                 if (sampleCfg.needBulkQuote) {
-                    h += kv('需大货报价', '是');
-                    if (sampleCfg.intentQty) h += kv('预估大货数量', esc(sampleCfg.intentQty) + ' 件');
-                    if (sampleCfg.intentPrice) h += kv('期望EXW单价', '$' + esc(sampleCfg.intentPrice));
-                    if (sampleCfg.intentTerm) h += kv('贸易术语', esc(sampleCfg.intentTerm));
-                    if (sampleCfg.intentMethod) h += kv('运输方式', esc(sampleCfg.intentMethod));
+                    h += kv('Need Bulk Quote', 'Yes');
+                    if (sampleCfg.intentQty) h += kv('Estimated Bulk Qty', esc(sampleCfg.intentQty) + ' pcs');
+                    if (sampleCfg.intentPrice) h += kv('Target EXW Unit Price', '$' + esc(sampleCfg.intentPrice));
+                    if (sampleCfg.intentTerm) h += kv('Trade Terms', esc(sampleCfg.intentTerm));
+                    if (sampleCfg.intentMethod) h += kv('Transport Method', esc(sampleCfg.intentMethod));
                 }
             }
-            if (d.sample_dest) h += kv('样衣目的地', esc(d.sample_dest));
+            if (d.sample_dest) h += kv('Sample Destination', esc(d.sample_dest));
         } else {
             // ── Bulk only ──
             var bulkRows = tryParse(d.bulk_rows);
             if (Array.isArray(bulkRows) && bulkRows.length) {
-                h += '<div class="u-sub-label" style="margin-top:16px">大货明细</div>';
+                h += '<div class="u-sub-label" style="margin-top:16px">Bulk Details</div>';
                 h += '<div class="u-table-wrap"><table class="u-table"><thead><tr>' +
-                    '<th>款式</th><th>数量</th><th>尺码分配</th><th>备注</th>' +
+                    '<th>Style</th><th>Qty</th><th>Size Allocation</th><th>Remark</th>' +
                     '</tr></thead><tbody>';
                 bulkRows.forEach(function (r) {
                     h += '<tr><td>' + esc(r.style) + '</td><td>' + esc(r.qty) + '</td>' +
@@ -686,21 +686,21 @@
             }
             var bulkLog = tryParse(d.bulk_logistics);
             if (bulkLog && typeof bulkLog === 'object' && Object.keys(bulkLog).length) {
-                h += '<div class="u-sub-label" style="margin-top:16px">大货物流</div>';
-                if (bulkLog.term) h += kv('贸易术语', esc(bulkLog.term));
-                if (bulkLog.method) h += kv('运输方式', esc(bulkLog.method));
+                h += '<div class="u-sub-label" style="margin-top:16px">Bulk Logistics</div>';
+                if (bulkLog.term) h += kv('Trade Terms', esc(bulkLog.term));
+                if (bulkLog.method) h += kv('Transport Method', esc(bulkLog.method));
             }
-            if (d.bulk_dest) h += kv('大货目的地', esc(d.bulk_dest));
-            if (d.bulk_target_price) h += kv('目标价格', esc(d.bulk_target_price));
-            if (d.bulk_packing_remark) h += kv('包装备注', esc(d.bulk_packing_remark));
+            if (d.bulk_dest) h += kv('Bulk Destination', esc(d.bulk_dest));
+            if (d.bulk_target_price) h += kv('Target Price', esc(d.bulk_target_price));
+            if (d.bulk_packing_remark) h += kv('Packaging Remark', esc(d.bulk_packing_remark));
             // Bulk packing files
             var bpFiles = fileMap['bulkPacking'] || [];
-            if (bpFiles.length) h += renderInlineFiles(bpFiles, '包装参考文件');
+            if (bpFiles.length) h += renderInlineFiles(bpFiles, 'Packaging Reference Files');
         }
 
         // Final docs files (relevant to both modes)
         var fdFiles = fileMap['finalDocs'] || [];
-        if (fdFiles.length) h += renderInlineFiles(fdFiles, '综合工艺单 / 企划书');
+        if (fdFiles.length) h += renderInlineFiles(fdFiles, 'Comprehensive Tech Pack / Plan');
 
         h += secEnd();
         return h;
@@ -709,13 +709,13 @@
     function renderContactSection(d) {
         if (!d.contact_name && !d.brand_name) return '';
 
-        var h = secStart('contact', '联系信息');
-        if (d.contact_name) h += kv('联系人', esc(d.contact_name));
-        if (d.contact_info) h += kv('联系方式', esc(d.contact_info));
-        if (d.brand_name) h += kv('品牌名称', esc(d.brand_name));
-        if (d.website) h += kv('网站', '<a href="' + esc(d.website) + '" target="_blank" rel="noopener noreferrer">' + esc(d.website) + '</a>');
-        if (d.final_remark) h += kv('整体备注', esc(d.final_remark));
-        if (d.nda_agreed_at) h += kv('NDA 签署', '<span class="u-check-item" style="display:inline-flex"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>已签署 ' + fmtDate(d.nda_agreed_at) + '</span>');
+        var h = secStart('contact', 'Contact Information');
+        if (d.contact_name) h += kv('Contact Name', esc(d.contact_name));
+        if (d.contact_info) h += kv('Contact Info', esc(d.contact_info));
+        if (d.brand_name) h += kv('Brand Name', esc(d.brand_name));
+        if (d.website) h += kv('Website', '<a href="' + esc(d.website) + '" target="_blank" rel="noopener noreferrer">' + esc(d.website) + '</a>');
+        if (d.final_remark) h += kv('General Remark', esc(d.final_remark));
+        if (d.nda_agreed_at) h += kv('NDA Signed', '<span class="u-check-item" style="display:inline-flex"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Signed ' + fmtDate(d.nda_agreed_at) + '</span>');
         h += secEnd();
         return h;
     }
@@ -726,26 +726,26 @@
 
         var h = '<div class="u-sec u-sec-response"><div class="u-sec-head"><div class="u-sec-icon response">' +
             '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
-            '</div><h4>询盘回复</h4>';
+            '</div><h4>Inquiry Response</h4>';
         if (d.admin_replied_at) h += '<span class="u-sec-count">' + fmtDate(d.admin_replied_at) + ' (UTC+8)</span>';
         h += '</div><div class="u-sec-body">';
 
-        if (d.admin_reply) h += kv('回复内容', '<div class="u-reply-text">' + esc(d.admin_reply) + '</div>');
+        if (d.admin_reply) h += kv('Response', '<div class="u-reply-text">' + esc(d.admin_reply) + '</div>');
         if (d.project_link) {
-            h += kv('项目链接', '<span class="u-copyable-row">' +
+            h += kv('Project Link', '<span class="u-copyable-row">' +
                 '<a href="' + esc(d.project_link) + '" target="_blank" rel="noopener noreferrer">' + esc(d.project_link) + '</a>' +
-                '<button class="u-copy-btn" onclick="copyText(\'' + esc(d.project_link).replace(/'/g, "\\'") + '\', this)" title="复制">' +
+                '<button class="u-copy-btn" onclick="copyText(\'' + esc(d.project_link).replace(/'/g, "\\'") + '\', this)" title="Copy">' +
                 '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>' +
                 '</button></span>');
         }
         if (d.project_token) {
             var masked = d.project_token.replace(/./g, '•');
-            h += kv('项目 Token', '<span class="u-copyable-row">' +
+            h += kv('Project Token', '<span class="u-copyable-row">' +
                 '<code class="u-token" id="tokenDisplay" data-real="' + esc(d.project_token) + '">' + masked + '</code>' +
-                '<button class="u-copy-btn u-reveal-btn" onclick="toggleToken(this)" title="查看">' +
+                '<button class="u-copy-btn u-reveal-btn" onclick="toggleToken(this)" title="View">' +
                 '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' +
                 '</button>' +
-                '<button class="u-copy-btn" onclick="copyText(\'' + esc(d.project_token).replace(/'/g, "\\'") + '\', this)" title="复制">' +
+                '<button class="u-copy-btn" onclick="copyText(\'' + esc(d.project_token).replace(/'/g, "\\'") + '\', this)" title="Copy">' +
                 '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>' +
                 '</button></span>');
         }
@@ -768,16 +768,16 @@
         var real = code.getAttribute('data-real');
         if (code.textContent === real) {
             code.textContent = real.replace(/./g, '•');
-            btn.title = '查看';
+            btn.title = 'View';
         } else {
             code.textContent = real;
-            btn.title = '隐藏';
+            btn.title = 'Hide';
         }
     };
 
     function renderFilesSection(files, title) {
         if (!files || !files.length) return '';
-        var h = secStart('files', title || '附件', files.length + ' 个');
+        var h = secStart('files', title || 'file(s)', files.length + ' file(s)');
         h += '<div class="u-file-grid">';
         files.forEach(function (f) { h += renderFileItem(f); });
         h += '</div>';
@@ -828,11 +828,11 @@
     function renderTimelineSection(d) {
         var h = '<div class="u-sec"><div class="u-sec-head">' +
             '<div class="u-sec-icon time"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>' +
-            '<h4>时间线</h4></div><div class="u-sec-body">';
+            '<h4>Timeline</h4></div><div class="u-sec-body">';
         h += '<div class="u-timeline">';
-        h += '<div class="u-timeline-item"><div class="u-timeline-dot"></div><div class="u-timeline-text"><strong>' + fmtDate(d.created_at) + '</strong>创建询盘</div></div>';
+        h += '<div class="u-timeline-item"><div class="u-timeline-dot"></div><div class="u-timeline-text"><strong>' + fmtDate(d.created_at) + '</strong>Inquiry Created</div></div>';
         if (d.modified_at && d.modified_at !== d.created_at) {
-            h += '<div class="u-timeline-item"><div class="u-timeline-dot muted"></div><div class="u-timeline-text"><strong>' + fmtDate(d.modified_at) + '</strong>最后更新</div></div>';
+            h += '<div class="u-timeline-item"><div class="u-timeline-dot muted"></div><div class="u-timeline-text"><strong>' + fmtDate(d.modified_at) + '</strong>Last Updated</div></div>';
         }
         h += '</div></div></div>';
         return h;
@@ -890,7 +890,7 @@
         pop.id = 'u-custom-popover';
         pop.className = 'u-custom-popover';
         pop.setAttribute('data-pop-id', popId);
-        var inner = '<div class="u-cpop-header"><span>轻定制详情</span><button onclick="document.getElementById(\'u-custom-popover\').remove()">&times;</button></div>';
+        var inner = '<div class="u-cpop-header"><span>Customization Details</span><button onclick="document.getElementById(\'u-custom-popover\').remove()">&times;</button></div>';
         inner += '<div class="u-cpop-body">';
         if (data.remark) inner += '<div class="u-cpop-remark">' + esc(data.remark) + '</div>';
         if (data.files && data.files.length) {
@@ -942,17 +942,17 @@
 
     /* ---------- Delete inquiry ---------- */
     window.deleteInquiry = async function (id, inquiryNo) {
-        if (!(await showConfirm('确定要删除询盘 ' + inquiryNo + ' 吗？'))) return;
+        if (!(await showConfirm('Are you sure you want to delete inquiry ' + inquiryNo + '?'))) return;
         try {
             var res = await fetch('/api/inquiry/' + id, { method: 'DELETE' });
             var json = await res.json();
             if (json.success) {
                 loadInquiries(currentPage);
             } else {
-                showMsg('删除失败：' + (json.message || '未知错误'), 'error');
+                showMsg('Delete failed: ' + (json.message || 'Unknown error'), 'error');
             }
         } catch (e) {
-            showMsg('网络错误，请重试', 'error');
+            showMsg('Network error, please retry', 'error');
         }
     };
 
@@ -1040,7 +1040,7 @@
         }
 
         msg.className = 'u-form-msg';
-        msg.textContent = isEn ? 'Submitting...' : '提交中...';
+        msg.textContent = isEn ? 'Submitting...' : 'Submitting...';
 
         try {
             var res = await fetch('/api/change-username', {
@@ -1058,11 +1058,11 @@
                 setTimeout(function () { window.toggleUsernameEdit(); }, 1000);
             } else {
                 msg.className = 'u-form-msg error';
-                msg.textContent = json.message || (isEn ? 'Update failed' : '修改失败');
+                msg.textContent = json.message || (isEn ? 'Update failed' : 'Change failed');
             }
         } catch (err) {
             msg.className = 'u-form-msg error';
-            msg.textContent = isEn ? 'Network error, please retry' : '网络错误，请重试';
+            msg.textContent = isEn ? 'Network error, please retry' : 'Network error, please retry';
         }
     };
 
@@ -1075,17 +1075,17 @@
 
         if (np !== cp) {
             msg.className = 'u-form-msg error';
-            msg.textContent = '两次输入的新密码不一致';
+            msg.textContent = 'New passwords do not match';
             return false;
         }
         if (np.length < 8) {
             msg.className = 'u-form-msg error';
-            msg.textContent = '新密码至少需要8位';
+            msg.textContent = 'New password must be at least 8 characters';
             return false;
         }
 
         msg.className = 'u-form-msg';
-        msg.textContent = '提交中...';
+        msg.textContent = 'Submitting...';
 
         try {
             var res = await fetch('/api/change-password', {
@@ -1096,15 +1096,15 @@
             var json = await res.json();
             if (json.success) {
                 msg.className = 'u-form-msg success';
-                msg.textContent = '密码修改成功';
+                msg.textContent = 'Password changed successfully';
                 document.getElementById('changePwdForm').reset();
             } else {
                 msg.className = 'u-form-msg error';
-                msg.textContent = json.message || '修改失败';
+                msg.textContent = json.message || 'Change failed';
             }
         } catch (err) {
             msg.className = 'u-form-msg error';
-            msg.textContent = '网络错误，请重试';
+            msg.textContent = 'Network error, please retry';
         }
         return false;
     };
@@ -1112,18 +1112,18 @@
     /* ---------- Export ZIP ---------- */
     window.exportPDF = async function () {
         if (!_currentInquiryData || !_currentInquiryData.id) {
-            showMsg(window.__lang === 'en' ? 'Please open an inquiry first' : '请先打开询盘详情', 'error');
+            showMsg(window.__lang === 'zh' ? '请先打开询盘详情' : 'Please open an inquiry first', 'error');
             return;
         }
         var btn = document.getElementById('export-pdf-btn');
         var origText = btn.innerHTML;
         btn.disabled = true;
-        var genLabel = window.__lang === 'en' ? 'Packaging...' : '打包中...';
+        var genLabel = window.__lang === 'zh' ? '打包中...' : 'Packaging...';
         btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="u-spin"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> ' + genLabel;
         try {
             var res = await fetch('/api/inquiry/' + _currentInquiryData.id + '/export');
             if (!res.ok) {
-                var err = await res.json().catch(function () { return { message: window.__lang === 'en' ? 'Export failed' : '导出失败' }; });
+                var err = await res.json().catch(function () { return { message: window.__lang === 'zh' ? '导出失败' : 'Export failed' }; });
                 throw new Error(err.message || 'HTTP ' + res.status);
             }
             var blob = await res.blob();
@@ -1136,7 +1136,7 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         } catch (e) {
-            showMsg((window.__lang === 'en' ? 'Export failed: ' : '导出失败：') + e.message, 'error');
+            showMsg((window.__lang === 'zh' ? '导出失败：' : 'Export failed: ') + e.message, 'error');
         } finally {
             btn.disabled = false;
             btn.innerHTML = origText;
@@ -1151,7 +1151,7 @@
                 sessionStorage.setItem('editInquiryId', String(_currentInquiryData.id));
                 window.location.href = '/';
             } catch (e) {
-                showMsg(window.__lang === 'en' ? 'Failed: data too large' : '操作失败：数据过大或存储不可用', 'error');
+                showMsg(window.__lang === 'zh' ? '操作失败：数据过大或存储不可用' : 'Failed: data too large', 'error');
             }
             return;
         }
@@ -1164,7 +1164,7 @@
                 window.location.href = '/';
             })
             .catch(function (e) {
-                showMsg((window.__lang === 'en' ? 'Failed to load inquiry: ' : '获取询盘数据失败：') + e.message, 'error');
+                showMsg((window.__lang === 'zh' ? '获取询盘数据失败：' : 'Failed to load inquiry: ') + e.message, 'error');
             });
     };
 
@@ -1176,7 +1176,7 @@
                 sessionStorage.setItem('copyInquiryData', JSON.stringify(_currentInquiryData));
                 window.location.href = '/';
             } catch (e) {
-                showMsg('复制失败：数据过大或存储不可用', 'error');
+                showMsg('Copy failed: data too large or storage unavailable', 'error');
             }
             return;
         }
@@ -1189,7 +1189,7 @@
                 window.location.href = '/';
             })
             .catch(function (e) {
-                showMsg('获取询盘数据失败：' + e.message, 'error');
+                showMsg('Failed to fetch inquiry data: ' + e.message, 'error');
             });
     };
 
@@ -1215,11 +1215,11 @@
     function pad(n) { return n < 10 ? '0' + n : String(n); }
 
     function statusLabel(s) {
-        var m = { pending: '待处理', processing: '处理中', quoted: '已报价', closed: '已关闭' };
-        return m[s] || s || '待处理';
+        var m = { pending: 'Pending', processing: 'Processing', quoted: 'Quoted', closed: 'Closed' };
+        return m[s] || s || 'Pending';
     }
 
-    /* ---------- Draft (暂存草稿) ---------- */
+    /* ---------- Draft (Save Draft) ---------- */
     async function loadDraft() {
         try {
             var res = await fetch('/api/draft');
@@ -1227,7 +1227,7 @@
             var banner = document.getElementById('draft-banner');
             if (json.success && json.data) {
                 var timeEl = document.getElementById('draft-time');
-                timeEl.textContent = '保存于 ' + fmtDate(json.updated_at);
+                timeEl.textContent = 'Saved at ' + fmtDate(json.updated_at);
                 banner.style.display = 'flex';
             } else {
                 banner.style.display = 'none';
@@ -1244,25 +1244,25 @@
                 sessionStorage.setItem('restoreDraftId', String(json.data.id));
                 window.location.href = '/';
             } else {
-                showMsg('草稿不存在或已过期', 'warn');
+                showMsg('Draft does not exist or has expired', 'warn');
             }
         } catch (e) {
-            showMsg('获取草稿失败', 'error');
+            showMsg('Failed to get draft', 'error');
         }
     };
 
     window.deleteDraft = async function () {
-        if (!(await showConfirm('确定要删除草稿吗？'))) return;
+        if (!(await showConfirm('Are you sure you want to delete the draft?'))) return;
         try {
             var res = await fetch('/api/draft', { method: 'DELETE' });
             var json = await res.json();
             if (json.success) {
                 document.getElementById('draft-banner').style.display = 'none';
             } else {
-                showMsg('删除失败', 'error');
+                showMsg('Delete failed', 'error');
             }
         } catch (e) {
-            showMsg('网络错误', 'error');
+            showMsg('Network error', 'error');
         }
     };
 

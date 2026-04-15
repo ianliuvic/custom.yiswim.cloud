@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="<%= lng === 'zh' ? 'zh-CN' : 'en' %>">
+<html lang="<%= typeof lng !== 'undefined' && lng === 'en' ? 'en' : 'zh-CN' %>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,9 +12,9 @@
 <body>
     <div class="auth-container">
         <div style="position: absolute; top: 15px; right: 20px;">
-            <button onclick="setLanguage(window.__lang === 'zh' ? 'en' : 'zh')" style="background: none; border: 1px solid #e0e0e0; border-radius: 0; padding: 5px 14px; font-size: 12px; cursor: pointer; color: #64748b; transition: all 0.25s; display: inline-flex; align-items: center; gap: 5px; font-weight: 500; letter-spacing: 0.3px;" onmouseover="this.style.borderColor='#aa0000';this.style.color='#aa0000';this.querySelector('svg').style.stroke='#aa0000'" onmouseout="this.style.borderColor='#e0e0e0';this.style.color='#64748b';this.querySelector('svg').style.stroke='currentColor'">
+            <button onclick="setLanguage(window.__lang === 'en' ? 'zh' : 'en')" style="background: none; border: 1px solid #e0e0e0; border-radius: 0; padding: 5px 14px; font-size: 12px; cursor: pointer; color: #64748b; transition: all 0.25s; display: inline-flex; align-items: center; gap: 5px; font-weight: 500; letter-spacing: 0.3px;" onmouseover="this.style.borderColor='#aa0000';this.style.color='#aa0000';this.querySelector('svg').style.stroke='#aa0000'" onmouseout="this.style.borderColor='#e0e0e0';this.style.color='#64748b';this.querySelector('svg').style.stroke='currentColor'">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition: stroke 0.25s;"><path d="M5 8l6 0"/><path d="M4 12l7 0"/><path d="M8 8c0 2.5-1.5 5-4 6.5"/><path d="M6 8c0 1.5.8 3 2.5 4.5"/><path d="M14 12l3.5 8"/><path d="M14 12l-3.5 8"/><path d="M11.5 17h5"/></svg>
-                <%= lng === 'zh' ? 'EN' : '中文' %>
+                <%= typeof lng !== 'undefined' && lng === 'en' ? '中文' : 'EN' %>
             </button>
         </div>
         <!-- 新增：消息提示区域 -->
@@ -22,55 +22,55 @@
 
         <!-- 登录表单 (默认显示) -->
         <div id="login-box" class="form-box">
-            <h2>Login</h2>
+            <h2>用户登录</h2>
             <form id="loginForm">
-                <input type="text" id="loginUser" placeholder="Username or Email" required>
+                <input type="text" id="loginUser" placeholder="用户名或邮箱" required>
                 <!-- 登录表单中的密码框 -->
                 <div class="password-wrapper">
-                    <input type="password" id="loginPass" placeholder="Password" required>
+                    <input type="password" id="loginPass" placeholder="密码" required>
                     <span class="toggle-password" onclick="togglePassword('loginPass', this)">
                         <!-- 初始显示闭眼图标 -->
                         <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
                     </span>
                 </div>
-                <button type="submit">Log In</button>
+                <button type="submit">登 录</button>
             </form>
             <div class="links">
-                <span onclick="switchBox('register-box')">No account? Register</span>
-                <span onclick="switchBox('forgot-box')">Forgot password?</span>
+                <span onclick="switchBox('register-box')">没有账号？点击注册</span>
+                <span onclick="switchBox('forgot-box')">忘记密码？</span>
             </div>
         </div>
 
         <!-- 注册表单 (默认隐藏) -->
         <div id="register-box" class="form-box hidden">
-            <h2>Create Account</h2>
+            <h2>创建账号</h2>
             <form id="registerForm">
-                <input type="text" id="regUser" placeholder="Set Username" required>
-                <input type="email" id="regEmail" placeholder="Email" required>
+                <input type="text" id="regUser" placeholder="设置用户名" required>
+                <input type="email" id="regEmail" placeholder="常用邮箱" required>
                 <!-- 注册表单中的密码框 -->
                 <div class="password-wrapper">
-                    <input type="password" id="regPass" placeholder="Set Password (min 8 chars)" required minlength="8">
+                    <input type="password" id="regPass" placeholder="设置密码 (至少8位)" required minlength="8">
                     <span class="toggle-password" onclick="togglePassword('regPass', this)">
                         <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
                     </span>
                 </div>
-                <button type="submit">Register</button>
+                <button type="submit">注 册</button>
             </form>
             <div class="links">
-                <span onclick="switchBox('login-box')">Already have an account? Login</span>
+                <span onclick="switchBox('login-box')">已有账号？返回登录</span>
             </div>
         </div>
 
         <!-- 忘记密码表单 (默认隐藏) -->
         <div id="forgot-box" class="form-box hidden">
-            <h2>Recover Password</h2>
-            <p class="help-text">Enter the email used during registration,<br>and we'll send you a reset link.</p>
+            <h2>找回密码</h2>
+            <p class="help-text">请输入您注册时使用的邮箱，<br>我们将向您发送重置链接。</p>
             <form id="forgotForm">
-                <input type="email" id="forgotEmail" placeholder="Registered Email" required>
-                <button type="submit">Send Reset Email</button>
+                <input type="email" id="forgotEmail" placeholder="注册邮箱" required>
+                <button type="submit">发送重置邮件</button>
             </form>
             <div class="links">
-                <span onclick="switchBox('login-box')">Remember your password? Login</span>
+                <span onclick="switchBox('login-box')">记起密码了？返回登录</span>
             </div>
         </div>
 
@@ -140,7 +140,7 @@
             
             const btn = e.target.querySelector('button');
             const originalText = btn.innerText;
-            btn.innerText = 'Processing...';
+            btn.innerText = '处理中...';
             btn.disabled = true;
         
             try {
@@ -158,14 +158,14 @@
                         window.location.href = '/'; 
                     } else {
                         // 注册或重置邮件成功
-                        showMessage(result.message || 'Success!', 'success');
+                        showMessage(result.message || '操作成功！', 'success');
                     }
                 } else {
                     // 失败：显示后端传回的错误（可能是频率限制，也可能是密码错误）
-                    showMessage(result.message || 'Operation failed, please try again');
+                    showMessage(result.message || '操作失败，请重试');
                 }
             } catch (error) {
-                showMessage('Network error, please try later');
+                showMessage('网络连接失败，请稍后再试');
             } finally {
                 btn.innerText = originalText;
                 btn.disabled = false;
@@ -193,7 +193,7 @@
             // --- 新增：前端校验逻辑 ---
             if (password.length < 8) {
                 // 使用我们之前写的 showMessage 函数（如果没有该函数，请用 alert）
-                showMessage('Password must be at least 8 characters', 'error');
+                showMessage('密码长度至少需要 8 位', 'error');
                 e.preventDefault(); // 阻止表单提交
                 return;
             }

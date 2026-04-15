@@ -63,7 +63,7 @@ router.get('/api/inquiries', authenticateAdmin, async (req, res) => {
         });
     } catch (error) {
         console.error('管理员获取询盘列表失败:', error);
-        res.status(500).json({ success: false, message: '服务器错误' });
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 
@@ -80,7 +80,7 @@ router.post('/api/inquiry/:id/restore', authenticateAdmin, async (req, res) => {
         res.json({ success: true, message: '恢复成功', data: result.rows[0] });
     } catch (error) {
         console.error('恢复询盘失败:', error);
-        res.status(500).json({ success: false, message: '服务器错误' });
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 
@@ -130,7 +130,7 @@ router.delete('/api/inquiry/:id', authenticateAdmin, async (req, res) => {
     } catch (error) {
         await client.query('ROLLBACK');
         console.error('硬删除询盘失败:', error);
-        res.status(500).json({ success: false, message: '服务器错误' });
+        res.status(500).json({ success: false, message: 'Server error' });
     } finally {
         client.release();
     }
@@ -150,7 +150,7 @@ router.post('/api/inquiries/batch-restore', authenticateAdmin, async (req, res) 
         res.json({ success: true, message: `成功恢复 ${result.rowCount} 条询盘`, count: result.rowCount });
     } catch (error) {
         console.error('批量恢复失败:', error);
-        res.status(500).json({ success: false, message: '服务器错误' });
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 
@@ -193,7 +193,7 @@ router.post('/api/inquiries/batch-delete', authenticateAdmin, async (req, res) =
     } catch (error) {
         await client.query('ROLLBACK');
         console.error('批量硬删除失败:', error);
-        res.status(500).json({ success: false, message: '服务器错误' });
+        res.status(500).json({ success: false, message: 'Server error' });
     } finally {
         client.release();
     }
@@ -243,7 +243,7 @@ router.get('/api/inquiry/:id', authenticateAdmin, async (req, res) => {
         });
     } catch (error) {
         console.error('管理员获取询盘详情失败:', error);
-        res.status(500).json({ success: false, message: '服务器错误' });
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 
@@ -315,7 +315,7 @@ router.post('/api/inquiry/:id/update', authenticateAdmin, async (req, res) => {
         res.json({ success: true, message: '更新成功', data: result.rows[0] });
     } catch (error) {
         console.error('更新询盘失败:', error);
-        res.status(500).json({ success: false, message: '服务器错误' });
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 

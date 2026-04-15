@@ -172,14 +172,14 @@
     <nav class="landing-nav">
         <a class="logo-area" href="/" style="text-decoration:none;color:inherit;">
             <img src="/logo.png" alt="Logo" onerror="this.style.display='none'">
-            <span><%= lng === 'zh' ? '红绣定制系统' : 'Hongxiu Custom System' %></span>
+            <span><%= typeof lng !== 'undefined' && lng === 'en' ? 'Hongxiu Custom System' : '红绣定制系统' %></span>
         </a>
         <div class="nav-actions">
             <a class="btn-lang" href="https://wearhongxiu.com" target="_blank" rel="noopener">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                 <%= typeof lng !== 'undefined' && lng === 'zh' ? '企业官网' : 'Official Site' %>
             </a>
-            <button class="btn-lang" onclick="setLanguage(window.__lang === 'zh' ? 'en' : 'zh')">
+            <button class="btn-lang" onclick="setLanguage(window.__lang === 'en' ? 'zh' : 'en')">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                 <%= typeof lng !== 'undefined' && lng === 'zh' ? 'EN' : '中文' %>
             </button>
@@ -203,20 +203,22 @@
                         : '专为泳装品牌<br>打造的<em>一站式</em><br>数字化定制平台' %>
                 </h1>
                 <p class="hero-sub">
-                    <%= lng === 'zh' ? '从工厂现款中选品，或上传自主设计稿，全程在线管理，直达兴城源头工厂，24小时专属报价响应。' : 'ODM from our curated swimwear library, or OEM with your own designs — all online, direct from our factory in Xingcheng, China.' %>
+                    <%= lng === 'en'
+                        ? 'ODM from our curated swimwear library, or OEM with your own designs — all online, direct from our factory in Xingcheng, China.'
+                        : '从工厂现款中选品，或上传自主设计稿，全程在线管理，直达兴城源头工厂，24小时专属报价响应。' %>
                 </p>
                 <div class="hero-cta">
                     <button class="btn-cta btn-cta-primary" onclick="openAuth('register')">
-                        <%= lng === 'zh' ? '立即开始定制' : 'Start Your Inquiry' %>
+                        <%= lng === 'en' ? 'Start Your Inquiry' : '立即开始定制' %>
                     </button>
                     <button class="btn-cta btn-cta-ghost" onclick="openAuth('login')">
-                        <%= lng === 'zh' ? '已有账号登录' : 'Sign In' %>
+                        <%= lng === 'en' ? 'Sign In' : '已有账号登录' %>
                     </button>
                 </div>
             </div>
             <div class="hero-visual">
                 <div class="hero-img-wrap">
-                    <iframe src="https://www.youtube.com/embed/YP5dcAD5ZUM" title="<%= lng === 'zh' ? '专业泳装定制' : 'Premium swimwear customization' %>" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/YP5dcAD5ZUM" title="<%= lng === 'en' ? 'Premium swimwear customization' : '专业泳装定制' %>" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
             </div>
         </div>
@@ -227,53 +229,57 @@
         <div class="stats-inner">
             <div class="stat-item">
                 <div class="stat-num">10<b>+</b></div>
-                <div class="stat-lbl"><%= lng === 'zh' ? '年泳装制造经验' : 'Years Manufacturing' %></div>
+                <div class="stat-lbl"><%= lng === 'en' ? 'Years Manufacturing' : '年泳装制造经验' %></div>
             </div>
             <div class="stat-item">
                 <div class="stat-num">200,000<b>+</b></div>
-                <div class="stat-lbl"><%= lng === 'zh' ? '年产能（件）' : 'Units / Year' %></div>
+                <div class="stat-lbl"><%= lng === 'en' ? 'Units / Year' : '年产能（件）' %></div>
             </div>
             <div class="stat-item">
                 <div class="stat-num">30<b>+</b></div>
-                <div class="stat-lbl"><%= lng === 'zh' ? '全球品牌合作伙伴' : 'Global Brand Partners' %></div>
+                <div class="stat-lbl"><%= lng === 'en' ? 'Global Brand Partners' : '全球品牌合作伙伴' %></div>
             </div>
             <div class="stat-item">
                 <div class="stat-num">24<b>h</b></div>
-                <div class="stat-lbl"><%= lng === 'zh' ? '报价响应承诺' : 'Quote Response' %></div>
+                <div class="stat-lbl"><%= lng === 'en' ? 'Quote Response' : '报价响应承诺' %></div>
             </div>
         </div>
     </div>
 
     <!-- Value Props -->
     <div class="vp-section">
-        <div class="section-head"><%= lng === 'zh' ? '为什么选择我们' : 'Why Work With Us' %></div>
-        <p class="section-sub"><%= lng === 'zh' ? '泳装品牌所需的一切，来自同一个源头工厂。' : 'Everything a swimwear brand needs — from a single source factory.' %></p>
+        <div class="section-head"><%= lng === 'en' ? 'Why Work With Us' : '为什么选择我们' %></div>
+        <p class="section-sub"><%= lng === 'en' ? 'Everything a swimwear brand needs — from a single source factory.' : '泳装品牌所需的一切，来自同一个源头工厂。' %></p>
         <div class="vp-grid">
             <div class="vp-card">
                 <div class="vp-icon">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                 </div>
-                <h3><%= lng === 'zh' ? '源头工厂直营' : 'Direct Source Factory' %></h3>
+                <h3><%= lng === 'en' ? 'Direct Source Factory' : '源头工厂直营' %></h3>
                 <p><%= lng === 'en'
                     ? "Based in Xingcheng — China's designated swimwear manufacturing hub. No middlemen, transparent pricing, and quality control at every stage directly in our hands."
                     : '工厂坐落于中国泳装之都兴城市，自有生产线，无中间商，价格透明，每道工序品质直控。' %></p>
-                <span class="vp-tag"><%= lng === 'zh' ? '📍 辽宁省兴城市' : '📍 Xingcheng, Liaoning · China' %></span>
+                <span class="vp-tag"><%= lng === 'en' ? '📍 Xingcheng, Liaoning · China' : '📍 辽宁省兴城市' %></span>
             </div>
             <div class="vp-card">
                 <div class="vp-icon">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
                 </div>
-                <h3><%= lng === 'zh' ? '全流程深度定制' : 'Full-Service Customization' %></h3>
-                <p><%= lng === 'zh' ? '支持ODM现款定制与OEM自主设计，面料色彩、定制印花、金属扣件、胸垫、包装吊牌，每个细节均可在线配置。' : 'ODM from our curated library or OEM from your designs. Fabric, print, metal trims, padding, packaging — every detail configured in one platform.' %></p>
-                <span class="vp-tag"><%= lng === 'zh' ? 'ODM + OEM · NDA全程保密' : 'ODM + OEM · NDA Protected' %></span>
+                <h3><%= lng === 'en' ? 'Full-Service Customization' : '全流程深度定制' %></h3>
+                <p><%= lng === 'en'
+                    ? 'ODM from our curated library or OEM from your designs. Fabric, print, metal trims, padding, packaging — every detail configured in one platform.'
+                    : '支持ODM现款定制与OEM自主设计，面料色彩、定制印花、金属扣件、胸垫、包装吊牌，每个细节均可在线配置。' %></p>
+                <span class="vp-tag"><%= lng === 'en' ? 'ODM + OEM · NDA Protected' : 'ODM + OEM · NDA全程保密' %></span>
             </div>
             <div class="vp-card">
                 <div class="vp-icon">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                 </div>
-                <h3><%= lng === 'zh' ? '数字化 · 快速响应' : 'Digital & Fast' %></h3>
-                <p><%= lng === 'zh' ? '在线提交完整定制需求，专属业务经理全程跟进，24小时内提供正式报价，告别繁琐往来邮件。' : 'Submit your full brief online in minutes. A dedicated sales manager reviews it and responds with a formal quote within 24 hours — no endless email chains.' %></p>
-                <span class="vp-tag"><%= lng === 'zh' ? '24小时报价承诺' : '24h Quote Guarantee' %></span>
+                <h3><%= lng === 'en' ? 'Digital & Fast' : '数字化 · 快速响应' %></h3>
+                <p><%= lng === 'en'
+                    ? 'Submit your full brief online in minutes. A dedicated sales manager reviews it and responds with a formal quote within 24 hours — no endless email chains.'
+                    : '在线提交完整定制需求，专属业务经理全程跟进，24小时内提供正式报价，告别繁琐往来邮件。' %></p>
+                <span class="vp-tag"><%= lng === 'en' ? '24h Quote Guarantee' : '24小时报价承诺' %></span>
             </div>
         </div>
     </div>
@@ -281,29 +287,29 @@
     <!-- How It Works -->
     <div class="flow-section">
         <div class="flow-inner">
-            <div class="section-head"><%= lng === 'zh' ? '下单流程' : 'How It Works' %></div>
-            <p class="section-sub" style="margin-bottom:48px;"><%= lng === 'zh' ? '四步完成，从注册到收到专属报价。' : 'From first click to professional quote — four simple steps.' %></p>
+            <div class="section-head"><%= lng === 'en' ? 'How It Works' : '下单流程' %></div>
+            <p class="section-sub" style="margin-bottom:48px;"><%= lng === 'en' ? 'From first click to professional quote — four simple steps.' : '四步完成，从注册到收到专属报价。' %></p>
             <div class="flow-steps">
                 <div class="flow-connector"></div>
                 <div class="flow-step">
                     <div class="flow-num">01</div>
-                    <div class="flow-step-name"><%= lng === 'zh' ? '注册账号' : 'Register' %></div>
-                    <div class="flow-step-desc"><%= lng === 'zh' ? '免费注册，自动签署保密协议' : 'Free account, NDA auto-signed' %></div>
+                    <div class="flow-step-name"><%= lng === 'en' ? 'Register' : '注册账号' %></div>
+                    <div class="flow-step-desc"><%= lng === 'en' ? 'Free account, NDA auto-signed' : '免费注册，自动签署保密协议' %></div>
                 </div>
                 <div class="flow-step">
                     <div class="flow-num">02</div>
-                    <div class="flow-step-name"><%= lng === 'zh' ? '选款或上传设计' : 'Select or Design' %></div>
-                    <div class="flow-step-desc"><%= lng === 'zh' ? '从现款库选品或上传自主设计稿' : 'Browse ODM styles or upload your own' %></div>
+                    <div class="flow-step-name"><%= lng === 'en' ? 'Select or Design' : '选款或上传设计' %></div>
+                    <div class="flow-step-desc"><%= lng === 'en' ? 'Browse ODM styles or upload your own' : '从现款库选品或上传自主设计稿' %></div>
                 </div>
                 <div class="flow-step">
                     <div class="flow-num">03</div>
-                    <div class="flow-step-name"><%= lng === 'zh' ? '配置并提交' : 'Configure & Submit' %></div>
-                    <div class="flow-step-desc"><%= lng === 'zh' ? '选择面料辅料，填写交付要求' : 'Fabric, trims, delivery details' %></div>
+                    <div class="flow-step-name"><%= lng === 'en' ? 'Configure & Submit' : '配置并提交' %></div>
+                    <div class="flow-step-desc"><%= lng === 'en' ? 'Fabric, trims, delivery details' : '选择面料辅料，填写交付要求' %></div>
                 </div>
                 <div class="flow-step">
                     <div class="flow-num">04</div>
-                    <div class="flow-step-name"><%= lng === 'zh' ? '收到专属报价' : 'Receive Quote' %></div>
-                    <div class="flow-step-desc"><%= lng === 'zh' ? '专属业务经理24小时内回复' : 'Professional quote within 24 hours' %></div>
+                    <div class="flow-step-name"><%= lng === 'en' ? 'Receive Quote' : '收到专属报价' %></div>
+                    <div class="flow-step-desc"><%= lng === 'en' ? 'Professional quote within 24 hours' : '专属业务经理24小时内回复' %></div>
                 </div>
             </div>
         </div>
@@ -311,7 +317,7 @@
 
     <!-- Footer -->
     <footer class="landing-footer">
-        <p>&copy; <script>document.write(new Date().getFullYear())</script> Hongxiu Custom System. All rights reserved. <span style="color: #d1d5db; margin: 0 6px;">|</span><a href="/privacy" style="color: #64748b; text-decoration: none; font-size: 13px; transition: color 0.2s;" onmouseover="this.style.color='#1e293b'" onmouseout="this.style.color='#64748b'"><%= lng === 'zh' ? '隐私权政策' : 'Privacy Policy' %></a></p>
+        <p>&copy; <script>document.write(new Date().getFullYear())</script> Hongxiu Custom System. All rights reserved. <span style="color: #d1d5db; margin: 0 6px;">|</span><a href="/privacy" style="color: #64748b; text-decoration: none; font-size: 13px; transition: color 0.2s;" onmouseover="this.style.color='#1e293b'" onmouseout="this.style.color='#64748b'"><%= typeof lng !== 'undefined' && lng === 'en' ? 'Privacy Policy' : '隐私权政策' %></a></p>
     </footer>
 
     <!-- ===== Auth Modal ===== -->
@@ -322,16 +328,16 @@
 
             <!-- Login Form -->
             <div id="login-box" class="form-box">
-                <h2><%= lng === 'zh' ? '用户登录' : 'Login' %></h2>
+                <h2><%= typeof lng !== 'undefined' && lng === 'en' ? 'Login' : '用户登录' %></h2>
                 <form id="loginForm">
-                    <input type="text" id="loginUser" placeholder="<%= lng === 'zh' ? '用户名或邮箱' : 'Username or Email' %>" required>
+                    <input type="text" id="loginUser" placeholder="<%= typeof lng !== 'undefined' && lng === 'en' ? 'Username or Email' : '用户名或邮箱' %>" required>
                     <div class="password-wrapper">
-                        <input type="password" id="loginPass" placeholder="<%= lng === 'zh' ? '密码' : 'Password' %>" required>
+                        <input type="password" id="loginPass" placeholder="<%= typeof lng !== 'undefined' && lng === 'en' ? 'Password' : '密码' %>" required>
                         <span class="toggle-password" onclick="togglePassword('loginPass', this)">
                             <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
                         </span>
                     </div>
-                    <button type="submit"><%= lng === 'zh' ? '登 录' : 'Login' %></button>
+                    <button type="submit"><%= typeof lng !== 'undefined' && lng === 'en' ? 'Login' : '登 录' %></button>
                 </form>
                 <div style="text-align: center; margin: 16px 0; color: #94a3b8; font-size: 12px; position: relative;">
                     <span style="background: #fff; padding: 0 10px; position: relative; z-index: 1;">OR</span>
@@ -339,24 +345,24 @@
                 </div>
                 <div class="google-btn-container" style="display: flex; justify-content: center; margin-bottom: 16px;"></div>
                 <div class="links">
-                    <span onclick="switchAuthBox('register-box')"><%= lng === 'zh' ? '没有账号？点击注册' : 'Don't have an account? Register' %></span>
-                    <span onclick="switchAuthBox('forgot-box')"><%= lng === 'zh' ? '忘记密码？' : 'Forgot password?' %></span>
+                    <span onclick="switchAuthBox('register-box')"><%= typeof lng !== 'undefined' && lng === 'en' ? "Don't have an account? Register" : '没有账号？点击注册' %></span>
+                    <span onclick="switchAuthBox('forgot-box')"><%= typeof lng !== 'undefined' && lng === 'en' ? 'Forgot password?' : '忘记密码？' %></span>
                 </div>
             </div>
 
             <!-- Register Form -->
             <div id="register-box" class="form-box hidden">
-                <h2><%= lng === 'zh' ? '创建账号' : 'Create Account' %></h2>
+                <h2><%= typeof lng !== 'undefined' && lng === 'en' ? 'Create Account' : '创建账号' %></h2>
                 <form id="registerForm">
-                    <input type="text" id="regUser" placeholder="<%= lng === 'zh' ? '设置用户名' : 'Username' %>" required>
-                    <input type="email" id="regEmail" placeholder="<%= lng === 'zh' ? '常用邮箱' : 'Email' %>" required>
+                    <input type="text" id="regUser" placeholder="<%= typeof lng !== 'undefined' && lng === 'en' ? 'Username' : '设置用户名' %>" required>
+                    <input type="email" id="regEmail" placeholder="<%= typeof lng !== 'undefined' && lng === 'en' ? 'Email' : '常用邮箱' %>" required>
                     <div class="password-wrapper">
-                        <input type="password" id="regPass" placeholder="<%= lng === 'zh' ? '设置密码 (至少8位)' : 'Password (min 8 chars)' %>" required minlength="8">
+                        <input type="password" id="regPass" placeholder="<%= typeof lng !== 'undefined' && lng === 'en' ? 'Password (min 8 chars)' : '设置密码 (至少8位)' %>" required minlength="8">
                         <span class="toggle-password" onclick="togglePassword('regPass', this)">
                             <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
                         </span>
                     </div>
-                    <button type="submit"><%= lng === 'zh' ? '注 册' : 'Register' %></button>
+                    <button type="submit"><%= typeof lng !== 'undefined' && lng === 'en' ? 'Register' : '注 册' %></button>
                 </form>
                 <div style="text-align: center; margin: 16px 0; color: #94a3b8; font-size: 12px; position: relative;">
                     <span style="background: #fff; padding: 0 10px; position: relative; z-index: 1;">OR</span>
@@ -364,22 +370,24 @@
                 </div>
                 <div class="google-btn-container" style="display: flex; justify-content: center; margin-bottom: 16px;"></div>
                 <div class="links">
-                    <span onclick="switchAuthBox('login-box')"><%= lng === 'zh' ? '已有账号？返回登录' : 'Already have an account? Login' %></span>
+                    <span onclick="switchAuthBox('login-box')"><%= typeof lng !== 'undefined' && lng === 'en' ? 'Already have an account? Login' : '已有账号？返回登录' %></span>
                 </div>
             </div>
 
             <!-- Forgot Password Form -->
             <div id="forgot-box" class="form-box hidden">
-                <h2><%= lng === 'zh' ? '找回密码' : 'Reset Password' %></h2>
+                <h2><%= typeof lng !== 'undefined' && lng === 'en' ? 'Reset Password' : '找回密码' %></h2>
                 <p class="help-text">
-                    <%= lng === 'zh' ? '请输入您注册时使用的邮箱，<br>我们将向您发送重置链接。' : 'Enter the email you registered with and we will send you a reset link.' %>
+                    <%= typeof lng !== 'undefined' && lng === 'en'
+                        ? 'Enter the email you registered with and we will send you a reset link.'
+                        : '请输入您注册时使用的邮箱，<br>我们将向您发送重置链接。' %>
                 </p>
                 <form id="forgotForm">
-                    <input type="email" id="forgotEmail" placeholder="<%= lng === 'zh' ? '注册邮箱' : 'Registered email' %>" required>
-                    <button type="submit"><%= lng === 'zh' ? '发送重置邮件' : 'Send Reset Email' %></button>
+                    <input type="email" id="forgotEmail" placeholder="<%= typeof lng !== 'undefined' && lng === 'en' ? 'Registered email' : '注册邮箱' %>" required>
+                    <button type="submit"><%= typeof lng !== 'undefined' && lng === 'en' ? 'Send Reset Email' : '发送重置邮件' %></button>
                 </form>
                 <div class="links">
-                    <span onclick="switchAuthBox('login-box')"><%= lng === 'zh' ? '记起密码了？返回登录' : 'Remember your password? Login' %></span>
+                    <span onclick="switchAuthBox('login-box')"><%= typeof lng !== 'undefined' && lng === 'en' ? 'Remember your password? Login' : '记起密码了？返回登录' %></span>
                 </div>
             </div>
         </div>
@@ -417,10 +425,10 @@
                 if (result.success) {
                     window.location.href = '/';
                 } else {
-                    showMessage(result.message || (window.__lang === 'zh' ? 'Google 登录失败' : 'Google Login Failed'), 'error');
+                    showMessage(result.message || (window.__lang === 'en' ? 'Google Login Failed' : 'Google 登录失败'), 'error');
                 }
             } catch (err) {
-                showMessage(window.__lang === 'zh' ? '网络连接失败，请稍后再试' : 'Network error, try later', 'error');
+                showMessage(window.__lang === 'en' ? 'Network error, try later' : '网络连接失败，请稍后再试', 'error');
             }
         }
 
@@ -497,7 +505,7 @@
             hideMessage();
             var btn = e.target.querySelector('button[type="submit"]');
             var originalText = btn.innerText;
-            btn.innerText = window.__lang === 'zh' ? '处理中...' : 'Processing...';
+            btn.innerText = window.__lang === 'en' ? 'Processing...' : '处理中...';
             btn.disabled = true;
             try {
                 var response = await fetch(endpoint, {
@@ -510,13 +518,13 @@
                     if (endpoint === '/api/login') {
                         window.location.href = '/';
                     } else {
-                        showMessage(result.message || (window.__lang === 'zh' ? '操作成功！' : 'Success!'), 'success');
+                        showMessage(result.message || (window.__lang === 'en' ? 'Success!' : '操作成功！'), 'success');
                     }
                 } else {
-                    showMessage(result.message || (window.__lang === 'zh' ? '操作失败，请重试' : 'Operation failed, please retry'));
+                    showMessage(result.message || (window.__lang === 'en' ? 'Operation failed, please retry' : '操作失败，请重试'));
                 }
             } catch (error) {
-                showMessage(window.__lang === 'zh' ? '网络连接失败，请稍后再试' : 'Network error, please try later');
+                showMessage(window.__lang === 'en' ? 'Network error, please try later' : '网络连接失败，请稍后再试');
             } finally {
                 btn.innerText = originalText;
                 btn.disabled = false;
@@ -540,7 +548,7 @@
         document.getElementById('registerForm').addEventListener('submit', function(e) {
             var pw = document.getElementById('regPass').value;
             if (pw.length < 8) {
-                showMessage(window.__lang === 'zh' ? '密码长度至少需要 8 位' : 'Password must be at least 8 characters', 'error');
+                showMessage(window.__lang === 'en' ? 'Password must be at least 8 characters' : '密码长度至少需要 8 位', 'error');
                 e.preventDefault();
                 return;
             }
@@ -564,7 +572,7 @@
             if (params.get('activated') === 'true') {
                 openAuth('login');
                 setTimeout(function() {
-                    showMessage(window.__lang === 'zh' ? '账号已激活，请登录。' : 'Account activated! Please login.', 'success');
+                    showMessage(window.__lang === 'en' ? 'Account activated! Please login.' : '账号已激活，请登录。', 'success');
                 }, 100);
             }
             // Support /login redirect → open modal

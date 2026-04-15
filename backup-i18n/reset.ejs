@@ -12,35 +12,35 @@
 <body>
     <div class="auth-container">
         <div style="position: absolute; top: 15px; right: 20px;">
-            <button onclick="setLanguage(window.__lang === 'zh' ? 'en' : 'zh')" style="background: none; border: 1px solid #e0e0e0; border-radius: 0; padding: 4px 10px; font-size: 12px; cursor: pointer; color: #64748b;">🌐 <%= typeof lng !== 'undefined' && lng === 'zh' ? 'EN' : '中文' %></button>
+            <button onclick="setLanguage(window.__lang === 'en' ? 'zh' : 'en')" style="background: none; border: 1px solid #e0e0e0; border-radius: 0; padding: 4px 10px; font-size: 12px; cursor: pointer; color: #64748b;">🌐 <%= typeof lng !== 'undefined' && lng === 'zh' ? 'EN' : '中文' %></button>
         </div>
         
         <div id="status-msg" class="status-msg hidden"></div>
 
         <div class="form-box">
-            <h2>Set New Password</h2>
-            <p class="help-text">Enter and confirm your new password.<br>Password should be at least 8 characters.</p>
+            <h2>设置新密码</h2>
+            <p class="help-text">请输入您的新密码并确认。<br>密码长度建议不少于 8 位。</p>
             
             <form id="resetForm">
                 <div class="password-wrapper">
-                    <input type="password" id="newPass" placeholder="New Password" required minlength="8">
+                    <input type="password" id="newPass" placeholder="新密码" required minlength="8">
                     <span class="toggle-password" onclick="togglePassword('newPass', this)">
                         <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
                     </span>
                 </div>
 
                 <div class="password-wrapper">
-                    <input type="password" id="confirmPass" placeholder="Confirm New Password" required minlength="8">
+                    <input type="password" id="confirmPass" placeholder="确认新密码" required minlength="8">
                     <span class="toggle-password" onclick="togglePassword('confirmPass', this)">
                         <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
                     </span>
                 </div>
 
-                <button type="submit">Confirm</button>
+                <button type="submit">确认修改</button>
             </form>
             
             <div class="links">
-                <a href="/?auth=login" style="text-decoration: none;"><span>Back to Login</span></a>
+                <a href="/?auth=login" style="text-decoration: none;"><span>返回登录</span></a>
             </div>
         </div>
     </div>
@@ -91,13 +91,13 @@
 
             // 1. 前端校验两次密码是否一致
             if (newPass !== confirmPass) {
-                showMessage('Passwords do not match!');
+                showMessage('两次输入的密码不一致！');
                 return;
             }
 
             const btn = e.target.querySelector('button');
             const originalText = btn.innerText;
-            btn.innerText = 'Processing...';
+            btn.innerText = '处理中...';
             btn.disabled = true;
 
             try {
@@ -114,16 +114,16 @@
                 const result = await response.json();
                 
                 if(result.success) {
-                    showMessage('Password reset successful! Redirecting to login...', 'success');
+                    showMessage('密码重置成功！即将跳转到登录页...', 'success');
                     // 3秒后自动跳转回首页并打开登录弹窗
                     setTimeout(() => {
                         window.location.href = '/?auth=login';
                     }, 3000);
                 } else {
-                    showMessage(result.message || 'Operation failed, the link may be expired');
+                    showMessage(result.message || '操作失败，请检查链接是否过期');
                 }
             } catch (error) {
-                showMessage('Network error, please try later');
+                showMessage('网络连接失败，请稍后再试');
             } finally {
                 btn.innerText = originalText;
                 btn.disabled = false;

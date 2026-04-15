@@ -23,19 +23,19 @@
 <body>
 
     <header class="u-header">
-        <div class="u-header-left" onclick="window.location.href='/'" style="cursor:pointer" title="返回主页">
+        <div class="u-header-left" onclick="window.location.href='/'" style="cursor:pointer" title="Back to Home">
             <img src="/logo.png" alt="Hongxiu Logo" class="u-logo" onerror="this.style.display='none'">
-            <span class="u-header-title">红绣服饰定制系统</span>
+            <span class="u-header-title">Hongxiu Custom System</span>
         </div>
         <div class="u-header-right">
-            <button onclick="setLanguage('<%= lng === 'en' ? 'zh' : 'en' %>')" class="u-lang-btn">
+            <button onclick="setLanguage('<%= lng === 'zh' ? 'en' : 'zh' %>')" class="u-lang-btn">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                <%= lng === 'en' ? '中文' : 'EN' %>
+                <%= lng === 'zh' ? 'EN' : '中文' %>
             </button>
             <span class="u-user-info">
                 <strong><%= user.username %></strong>
-                <a href="/" class="u-nav-link"><%= lng === 'en' ? 'Back to Inquiries' : '返回询盘' %></a>
-                <a href="/logout" class="u-nav-link u-logout"><%= lng === 'en' ? 'Log Out' : '退出' %></a>
+                <a href="/" class="u-nav-link"><%= lng === 'zh' ? '返回询盘' : 'Back to Inquiries' %></a>
+                <a href="/logout" class="u-nav-link u-logout"><%= lng === 'zh' ? '退出' : 'Log Out' %></a>
             </span>
         </div>
     </header>
@@ -45,11 +45,11 @@
         <nav class="u-sidebar">
             <div class="u-menu-item active" data-tab="inquiries" onclick="switchTab('inquiries')">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                <span>询盘记录</span>
+                <span>Inquiry Records</span>
             </div>
             <div class="u-menu-item" data-tab="account" onclick="switchTab('account')">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                <span>账户设置</span>
+                <span>Account Settings</span>
             </div>
         </nav>
 
@@ -58,11 +58,11 @@
             <div class="u-mobile-tabs-inner">
                 <button class="u-mobile-tab active" data-tab="inquiries" onclick="switchTab('inquiries')">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                    <span>询盘记录</span>
+                    <span>Inquiry Records</span>
                 </button>
                 <button class="u-mobile-tab" data-tab="account" onclick="switchTab('account')">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    <span>账户设置</span>
+                    <span>Account Settings</span>
                 </button>
             </div>
         </nav>
@@ -72,8 +72,8 @@
             <!-- Tab 1: 询盘列表 -->
             <section id="tab-inquiries" class="u-tab active">
                 <div class="u-page-title">
-                    <h2>询盘记录</h2>
-                    <a href="/" class="u-btn-primary">+ 新建询盘</a>
+                    <h2>Inquiry Records</h2>
+                    <a href="/" class="u-btn-primary">+ New Inquiry</a>
                 </div>
 
                 <!-- 暂存草稿提示 -->
@@ -81,18 +81,18 @@
                     <div class="u-draft-banner-left">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                         <div>
-                            <strong>有一份未完成的询盘草稿</strong>
+                            <strong>You have an unfinished inquiry draft</strong>
                             <span id="draft-time" style="font-size:12px;color:#64748b;margin-left:8px;"></span>
                         </div>
                     </div>
                     <div class="u-draft-banner-actions">
-                        <button class="u-draft-restore-btn" onclick="restoreDraft()">继续填写</button>
-                        <button class="u-draft-delete-btn" onclick="deleteDraft()">删除草稿</button>
+                        <button class="u-draft-restore-btn" onclick="restoreDraft()">Continue Editing</button>
+                        <button class="u-draft-delete-btn" onclick="deleteDraft()">Delete Draft</button>
                     </div>
                 </div>
 
                 <div id="inquiry-list" class="u-inquiry-list">
-                    <div class="u-loading">加载中...</div>
+                    <div class="u-loading">Loading...</div>
                 </div>
                 <div id="inquiry-pagination" class="u-pagination"></div>
 
@@ -102,23 +102,23 @@
                         <div class="u-detail-hero-top">
                             <button class="u-back-btn" onclick="closeDetail()">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-                                返回列表
+                                Back to List
                             </button>
                             <span id="detail-status" class="u-status-tag"></span>
                         </div>
                         <div class="u-detail-hero-title">
                             <h2 id="detail-title"></h2>
-                            <button class="u-copy-detail-btn" onclick="editInquiry()" title="修改询盘">
+                            <button class="u-copy-detail-btn" onclick="editInquiry()" title="Edit Inquiry">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                                <%= lng === 'en' ? 'Edit' : '修改询盘' %>
+                                <%= lng === 'zh' ? '修改询盘' : 'Edit' %>
                             </button>
-                            <button class="u-copy-detail-btn" onclick="copyToNewInquiry()" title="复制为新询盘">
+                            <button class="u-copy-detail-btn" onclick="copyToNewInquiry()" title="Copy as New Inquiry">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                                复制为新询盘
+                                Copy as New Inquiry
                             </button>
-                            <button class="u-copy-detail-btn" onclick="exportPDF()" title="导出" id="export-pdf-btn">
+                            <button class="u-copy-detail-btn" onclick="exportPDF()" title="Export" id="export-pdf-btn">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                                导出
+                                Export
                             </button>
                         </div>
                         <div id="detail-stats" class="u-detail-stats"></div>
@@ -127,49 +127,49 @@
                 </div>
             </section>
 
-            <!-- Tab 2: 账户设置 -->
+            <!-- Tab 2: Account Settings -->
             <section id="tab-account" class="u-tab">
-                <div class="u-page-title"><h2><%= lng === 'en' ? 'Account Settings' : '账户设置' %></h2></div>
+                <div class="u-page-title"><h2><%= lng === 'zh' ? '账户设置' : 'Account Settings' %></h2></div>
 
                 <div class="u-card">
-                    <h3><%= lng === 'en' ? 'Basic Info' : '基本信息' %></h3>
+                    <h3><%= lng === 'zh' ? '基本信息' : 'Basic Info' %></h3>
                     <div class="u-info-row">
-                        <label><%= lng === 'en' ? 'Username' : '用户名' %></label>
+                        <label><%= lng === 'zh' ? '用户名' : 'Username' %></label>
                         <span id="usernameDisplay"><%= user.username %></span>
-                        <a href="javascript:void(0)" onclick="window.toggleUsernameEdit()" id="usernameEditLink" style="margin-left: 12px; font-size: 12px; color: #64748b; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='#64748b'"><%= lng === 'en' ? 'Edit' : '修改' %></a>
+                        <a href="javascript:void(0)" onclick="window.toggleUsernameEdit()" id="usernameEditLink" style="margin-left: 12px; font-size: 12px; color: #64748b; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='#64748b'"><%= lng === 'zh' ? '修改' : 'Edit' %></a>
                     </div>
                     <div id="usernameEditRow" class="u-info-row" style="display: none;">
-                        <label><%= lng === 'en' ? 'New Username' : '新用户名' %></label>
+                        <label><%= lng === 'zh' ? '新用户名' : 'New Username' %></label>
                         <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
-                            <input type="text" id="newUsername" value="<%= user.username %>" maxlength="30" minlength="2" placeholder="<%= lng === 'en' ? '2-30 characters' : '2-30字符' %>" style="flex: 1; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 0; font-size: 14px; font-family: inherit;">
-                            <button type="button" onclick="window.handleChangeUsername()" class="u-btn-primary" style="padding: 8px 16px; font-size: 13px; white-space: nowrap;"><%= lng === 'en' ? 'Save' : '保存' %></button>
-                            <button type="button" onclick="window.toggleUsernameEdit()" style="padding: 8px 16px; font-size: 13px; white-space: nowrap; background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; border-radius: 0; cursor: pointer;"><%= lng === 'en' ? 'Cancel' : '取消' %></button>
+                            <input type="text" id="newUsername" value="<%= user.username %>" maxlength="30" minlength="2" placeholder="<%= lng === 'zh' ? '2-30字符' : '2-30 characters' %>" style="flex: 1; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 0; font-size: 14px; font-family: inherit;">
+                            <button type="button" onclick="window.handleChangeUsername()" class="u-btn-primary" style="padding: 8px 16px; font-size: 13px; white-space: nowrap;"><%= lng === 'zh' ? '保存' : 'Save' %></button>
+                            <button type="button" onclick="window.toggleUsernameEdit()" style="padding: 8px 16px; font-size: 13px; white-space: nowrap; background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; border-radius: 0; cursor: pointer;"><%= lng === 'zh' ? '取消' : 'Cancel' %></button>
                         </div>
                         <div id="username-msg" class="u-form-msg" style="margin-top: 6px;"></div>
                     </div>
                     <div class="u-info-row">
-                        <label><%= lng === 'en' ? 'Email' : '邮箱' %></label>
+                        <label><%= lng === 'zh' ? '邮箱' : 'Email' %></label>
                         <span><%= user.email %></span>
                     </div>
                 </div>
 
                 <div class="u-card" style="margin-top:24px;">
-                    <h3><%= lng === 'en' ? 'Change Password' : '修改密码' %></h3>
+                    <h3><%= lng === 'zh' ? '修改密码' : 'Change Password' %></h3>
                     <form id="changePwdForm" class="u-form" onsubmit="return handleChangePwd(event)">
                         <div class="u-form-group">
-                            <label><%= lng === 'en' ? 'Current Password' : '当前密码' %></label>
-                            <input type="password" id="currentPwd" required placeholder="<%= lng === 'en' ? 'Enter current password' : '输入当前密码' %>">
+                            <label><%= lng === 'zh' ? '当前密码' : 'Current Password' %></label>
+                            <input type="password" id="currentPwd" required placeholder="<%= lng === 'zh' ? '输入当前密码' : 'Enter current password' %>">
                         </div>
                         <div class="u-form-group">
-                            <label><%= lng === 'en' ? 'New Password' : '新密码' %></label>
-                            <input type="password" id="newPwd" required minlength="8" placeholder="<%= lng === 'en' ? 'At least 8 characters' : '至少8位' %>">
+                            <label><%= lng === 'zh' ? '新密码' : 'New Password' %></label>
+                            <input type="password" id="newPwd" required minlength="8" placeholder="<%= lng === 'zh' ? '至少8位' : 'At least 8 characters' %>">
                         </div>
                         <div class="u-form-group">
-                            <label><%= lng === 'en' ? 'Confirm New Password' : '确认新密码' %></label>
-                            <input type="password" id="confirmPwd" required minlength="8" placeholder="<%= lng === 'en' ? 'Re-enter new password' : '再次输入新密码' %>">
+                            <label><%= lng === 'zh' ? '确认新密码' : 'Confirm New Password' %></label>
+                            <input type="password" id="confirmPwd" required minlength="8" placeholder="<%= lng === 'zh' ? '再次输入新密码' : 'Re-enter new password' %>">
                         </div>
                         <div id="pwd-msg" class="u-form-msg"></div>
-                        <button type="submit" class="u-btn-primary" style="margin-top:12px;"><%= lng === 'en' ? 'Save Changes' : '保存修改' %></button>
+                        <button type="submit" class="u-btn-primary" style="margin-top:12px;"><%= lng === 'zh' ? '保存修改' : 'Save Changes' %></button>
                     </form>
                 </div>
             </section>

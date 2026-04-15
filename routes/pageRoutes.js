@@ -22,7 +22,7 @@ router.get('/home', (req, res) => {
 // 1a. 隐私政策页面（公开访问）
 router.get('/privacy', (req, res) => {
     res.render('privacy', { 
-        title: req.t ? req.t('pageTitle.privacy') || 'Privacy Policy' : '隱私权政策',
+        title: req.t ? req.t('pageTitle.privacy') || 'Privacy Policy' : 'Privacy Policy',
         currentDate: '2026年4月8日'
     });
 });

@@ -2,35 +2,29 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const authenticateToken = require('../middleware/auth');
+const { optionalAuth } = require('../middleware/auth');
 const { N8N_BASE_URL, JWT_SECRET } = require('../config/constants');
 
-// 1. 根目录：推广着陆页（公开访问），已登录用户自动跳转到 /home
-router.get('/', (req, res) => {
-    const token = req.cookies.auth_token;
-    if (token) {
-        try {
-            jwt.verify(token, JWT_SECRET);
-            return res.redirect('/home');
-        } catch (_) { /* token 无效，继续显示推广页 */ }
-    }
-    res.render('landing', { 
-        title: req.t('pageTitle.landing'),
-        googleClientId: process.env.GOOGLE_CLIENT_ID || '' // 提供个安全的空字符串保底
+// 1. 根目录：定制主页（公开访问，可选登录）
+router.get('/', optionalAuth, (req, res) => {
+    res.render('custom', {
+        title: req.t('pageTitle.home'),
+        user: req.user,
+        googleClientId: process.env.GOOGLE_CLIENT_ID || ''
     });
+});
+
+// 向后兼容：/home 重定向到 /
+router.get('/home', (req, res) => {
+    res.redirect('/');
 });
 
 // 1a. 隐私政策页面（公开访问）
 router.get('/privacy', (req, res) => {
-    // 渲染新增加的 privacy.ejs
     res.render('privacy', { 
-        title: req.t ? req.t('pageTitle.privacy') || 'Privacy Policy' : '隐私权政策',
+        title: req.t ? req.t('pageTitle.privacy') || 'Privacy Policy' : '隱私权政策',
         currentDate: '2026年4月8日'
     });
-});
-
-// 1b. 定制主页：需登录
-router.get('/home', authenticateToken, (req, res) => {
-    res.render('custom', { title: req.t('pageTitle.home'), user: req.user });
 });
 
 // 2. 处理用户点击邮箱里的激活链接
@@ -56,10 +50,10 @@ router.get('/activate', async (req, res) => {
     }
 });
 
-// 3. 登录页面：重定向到着陆页弹窗
+// 3. 登录页面：重定向到根目录弹窗
 router.get('/login', (req, res) => {
     if (req.cookies.auth_token) {
-        return res.redirect('/home');
+        return res.redirect('/');
     }
     res.redirect('/?auth=login');
 });

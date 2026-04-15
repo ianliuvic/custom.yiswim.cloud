@@ -23,7 +23,7 @@
 <body>
 
     <header class="u-header">
-        <div class="u-header-left" onclick="window.location.href='/home'" style="cursor:pointer" title="返回主页">
+        <div class="u-header-left" onclick="window.location.href='/'" style="cursor:pointer" title="返回主页">
             <img src="/logo.png" alt="Hongxiu Logo" class="u-logo" onerror="this.style.display='none'">
             <span class="u-header-title">红绣服饰定制系统</span>
         </div>
@@ -34,7 +34,7 @@
             </button>
             <span class="u-user-info">
                 <strong><%= user.username %></strong>
-                <a href="/home" class="u-nav-link"><%= lng === 'en' ? 'Back to Inquiries' : '返回询盘' %></a>
+                <a href="/" class="u-nav-link"><%= lng === 'en' ? 'Back to Inquiries' : '返回询盘' %></a>
                 <a href="/logout" class="u-nav-link u-logout"><%= lng === 'en' ? 'Log Out' : '退出' %></a>
             </span>
         </div>
@@ -73,7 +73,7 @@
             <section id="tab-inquiries" class="u-tab active">
                 <div class="u-page-title">
                     <h2>询盘记录</h2>
-                    <a href="/home" class="u-btn-primary">+ 新建询盘</a>
+                    <a href="/" class="u-btn-primary">+ 新建询盘</a>
                 </div>
 
                 <!-- 暂存草稿提示 -->

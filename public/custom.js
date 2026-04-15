@@ -153,12 +153,12 @@
                 }
             } catch (error) { console.warn('加载数据API未就绪，使用静态展示框架:', error); }
 
-            // ===== 自动暂存：每 20 分钟，仅在有变更时静默保存 =====
+            // ===== 自动暂存：每 20 分钟，仅在有变更且已登录时静默保存 =====
             const _markDirty = () => { _formDirty = true; };
             document.getElementById('customForm').addEventListener('change', _markDirty);
             document.getElementById('customForm').addEventListener('input', _markDirty);
             setInterval(async () => {
-                if (!_formDirty) return;
+                if (!_formDirty || !window.__isLoggedIn) return;
                 await saveDraft(true);
             }, 20 * 60 * 1000);
         });
@@ -2566,6 +2566,10 @@
         }
 
         async function saveDraft(silent) {
+            if (!window.__isLoggedIn) {
+                if (!silent) openAuth('login');
+                return;
+            }
             const draftBtn = document.getElementById('draftBtn');
             try {
                 if (!silent && draftBtn) { draftBtn.disabled = true; draftBtn.style.opacity = '0.5'; }
@@ -2604,6 +2608,12 @@
         window.saveDraft = function() { return saveDraft(false); };
 
         async function submitForm() {
+            // 0. 检查登录状态
+            if (!window.__isLoggedIn) {
+                openAuth('login');
+                return;
+            }
+
             // 1. 全量验证
             const v = validateAll();
             

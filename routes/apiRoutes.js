@@ -10,6 +10,7 @@ const { OAuth2Client } = require('google-auth-library');
 const db = require('../config/db');
 const { JWT_SECRET, N8N_BASE_URL } = require('../config/constants');
 const authenticateToken = require('../middleware/auth');
+const { optionalAuth } = require('../middleware/auth');
 const { loginLimiter, registerLimiter } = require('../middleware/rateLimiters');
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -142,10 +143,10 @@ async function handleRemoteFiles(client, inquiryId, userId, remoteJson, allowedN
     } catch (e) { console.error('Failed to process remote files:', e); }
 }
 
-// 1. 获取业务数据 (直连 PostgreSQL 并发查询：款式、面料、包装袋)
-router.get('/get-data', authenticateToken, async (req, res) => {
+// 1. 获取业务数据（公开访问，登录用户额外返回联系信息）
+router.get('/get-data', optionalAuth, async (req, res) => {
     try {
-        console.log('当前请求数据的用户:', req.user.username);
+        if (req.user) console.log('当前请求数据的用户:', req.user.username);
 
         const stylesQuery = `
             SELECT 
@@ -222,13 +223,15 @@ router.get('/get-data', authenticateToken, async (req, res) => {
             ORDER BY created_at DESC LIMIT 1
         `;
 
-        const [stylesResult, fabricsResult, bagsResult, checklistResult, lastContactResult] = await Promise.all([
+        const queries = [
             db.query(stylesQuery),
             db.query(fabricsQuery),
             db.query(bagsQuery),
-            db.query(checklistQuery),
-            db.query(lastContactQuery, [req.user.id])
-        ]);
+            db.query(checklistQuery)
+        ];
+        if (req.user) queries.push(db.query(lastContactQuery, [req.user.id]));
+
+        const [stylesResult, fabricsResult, bagsResult, checklistResult, lastContactResult] = await Promise.all(queries);
 
         const formattedFabrics = fabricsResult.rows.map(fabric => {
             const props = fabric.properties || {};
@@ -247,7 +250,7 @@ router.get('/get-data', authenticateToken, async (req, res) => {
                 fabrics: formattedFabrics,
                 bags: formattedBags,
                 oem_checklists: checklistResult.rows,
-                last_contact: lastContactResult.rows.length ? lastContactResult.rows[0] : null
+                last_contact: (lastContactResult && lastContactResult.rows.length) ? lastContactResult.rows[0] : null
             }
         });
 

@@ -75,8 +75,10 @@
         }
     </style>
     <script>window.__lang = '<%= lng %>';</script>
+    <script>window.__isLoggedIn = <%= user ? 'true' : 'false' %>;</script>
     <script src="/i18n.js"></script>
     <script src="/modal.js"></script>
+    <% if (!user) { %><script src="https://accounts.google.com/gsi/client" async defer></script><% } %>
 </head>
 <body>
 
@@ -90,6 +92,7 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                 <%= lng === 'en' ? '中文' : 'EN' %>
             </button>
+            <% if (user) { %>
             <span class="header-user-text" style="display: flex; align-items: center; gap: 16px;">
                 <strong style="color: var(--text-main);"><%= user.username %></strong>
                 <a href="/user" style="color: var(--text-light); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='var(--text-light)'"><%= lng === 'en' ? 'User Center' : '用户中心' %></a>
@@ -112,6 +115,12 @@
                     </a>
                 </div>
             </div>
+            <% } else { %>
+            <span class="header-user-text" style="display: flex; align-items: center; gap: 12px;">
+                <button onclick="openAuth('login')" style="background: none; border: 1.5px solid var(--primary-color); color: var(--primary-color); padding: 6px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='var(--primary-color)';this.style.color='#fff'" onmouseout="this.style.background='none';this.style.color='var(--primary-color)'"><%= lng === 'en' ? 'Login' : '登录' %></button>
+                <button onclick="openAuth('register')" style="background: var(--primary-color); border: 1.5px solid var(--primary-color); color: #fff; padding: 6px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='var(--primary-hover)'" onmouseout="this.style.background='var(--primary-color)'"><%= lng === 'en' ? 'Register' : '注册' %></button>
+            </span>
+            <% } %>
         </div>
     </header>
 
@@ -3023,7 +3032,7 @@
                     <!-- 甲方 -->
                     <div style="flex: 1;">
                         <span style="font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; display: block;">甲方 (披露方 / Disclosing Party)</span>
-                        <div style="font-size: 14px; font-weight: 700; color: #1e293b;"><%= user.username %></div>
+                        <div style="font-size: 14px; font-weight: 700; color: #1e293b;"><%= user ? user.username : (lng === 'en' ? 'Guest' : '访客') %></div>
                     </div>
                     
                     <!-- VS 分隔符 -->
@@ -3260,6 +3269,218 @@
         setTimeout(() => clearInterval(radar), 5000);
       });
     </script>
+
+<% if (!user) { %>
+<!-- ===== Auth Modal (仅未登录时渲染) ===== -->
+<style>
+    .auth-overlay { display: none; position: fixed; inset: 0; z-index: 99999; background: rgba(0,0,0,0.45); justify-content: center; align-items: center; animation: authOverlayIn 0.2s ease; backdrop-filter: blur(4px); }
+    .auth-overlay.active { display: flex; }
+    @keyframes authOverlayIn { from { opacity: 0; } to { opacity: 1; } }
+    .auth-modal { position: relative; width: 100%; max-width: 420px; background: #fff; border-radius: 16px; padding: 40px 35px 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); animation: authModalIn 0.25s ease; overflow: hidden; }
+    @keyframes authModalIn { from { opacity: 0; transform: translateY(24px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .auth-modal::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: var(--primary-color); }
+    .auth-close { position: absolute; top: 14px; right: 18px; background: none; border: none; font-size: 22px; color: #94a3b8; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: all 0.2s; line-height: 1; }
+    .auth-close:hover { color: #1e293b; background: #f1f5f9; }
+    .auth-modal h2 { text-align: center; font-size: 22px; font-weight: 700; color: #1e293b; margin-bottom: 24px; }
+    .auth-modal .auth-status-msg { padding: 10px 14px; border-radius: 8px; font-size: 13px; text-align: center; margin-bottom: 16px; }
+    .auth-modal .status-error { background: #fde8e8; color: #c81e1e; border: 1px solid #f8b4b4; }
+    .auth-modal .status-success { background: #defadb; color: #1e5e20; border: 1px solid #bcf0da; }
+    .auth-modal form { display: flex; flex-direction: column; }
+    .auth-modal .auth-input { width: 100%; padding: 13px 14px; margin-bottom: 16px; border: 1px solid #e1e4e8; border-radius: 8px; font-size: 14px; outline: none; transition: all 0.25s; background: #fafbfc; font-family: inherit; box-sizing: border-box; }
+    .auth-modal .auth-input::placeholder { color: #cbd5e1; }
+    .auth-modal .auth-input:focus { background: #fff; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(170,0,0,0.1); }
+    .auth-modal .password-wrapper { position: relative; width: 100%; margin-bottom: 16px; }
+    .auth-modal .password-wrapper .auth-input { margin-bottom: 0; padding-right: 44px; }
+    .auth-modal .toggle-password { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; display: flex; align-items: center; color: #999; transition: color 0.3s; }
+    .auth-modal .toggle-password:hover { color: var(--primary-color); }
+    .auth-modal .eye-icon { width: 18px; height: 18px; }
+    .auth-modal .auth-submit-btn { background: var(--primary-color); color: #fff; border: none; padding: 13px; font-size: 15px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: background 0.25s; margin-top: 4px; }
+    .auth-modal .auth-submit-btn:hover { background: var(--primary-hover, #880000); }
+    .auth-modal .auth-submit-btn:disabled { background: #d48080; cursor: not-allowed; }
+    .auth-modal .links { margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; font-size: 13px; color: #666; }
+    .auth-modal .links span { color: var(--primary-color); cursor: pointer; font-weight: 500; }
+    .auth-modal .links span:hover { text-decoration: underline; }
+    .auth-modal .help-text { font-size: 13px; color: #666; text-align: center; margin-bottom: 16px; line-height: 1.5; }
+    .auth-hidden { display: none !important; }
+</style>
+
+<div class="auth-overlay" id="authOverlay">
+    <div class="auth-modal">
+        <button class="auth-close" onclick="closeAuth()">&times;</button>
+        <div id="auth-status-msg" class="auth-status-msg auth-hidden"></div>
+
+        <!-- Login -->
+        <div id="login-box" class="auth-form-box">
+            <h2><%= lng === 'en' ? 'Login' : '用户登录' %></h2>
+            <form id="authLoginForm">
+                <input class="auth-input" type="text" id="authLoginUser" placeholder="<%= lng === 'en' ? 'Username or Email' : '用户名或邮箱' %>" required>
+                <div class="password-wrapper">
+                    <input class="auth-input" type="password" id="authLoginPass" placeholder="<%= lng === 'en' ? 'Password' : '密码' %>" required>
+                    <span class="toggle-password" onclick="toggleAuthPassword('authLoginPass', this)">
+                        <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                    </span>
+                </div>
+                <button type="submit" class="auth-submit-btn"><%= lng === 'en' ? 'Login' : '登 录' %></button>
+            </form>
+            <div style="text-align: center; margin: 16px 0; color: #94a3b8; font-size: 12px; position: relative;">
+                <span style="background: #fff; padding: 0 10px; position: relative; z-index: 1;">OR</span>
+                <div style="position: absolute; top: 50%; left: 0; right: 0; border-top: 1px solid #e1e4e8; z-index: 0;"></div>
+            </div>
+            <div class="google-btn-container" style="display: flex; justify-content: center; margin-bottom: 16px;"></div>
+            <div class="links">
+                <span onclick="switchAuthBox('register-box')"><%= lng === 'en' ? "Don't have an account? Register" : '没有账号？点击注册' %></span>
+                <span onclick="switchAuthBox('forgot-box')"><%= lng === 'en' ? 'Forgot password?' : '忘记密码？' %></span>
+            </div>
+        </div>
+
+        <!-- Register -->
+        <div id="register-box" class="auth-form-box auth-hidden">
+            <h2><%= lng === 'en' ? 'Create Account' : '创建账号' %></h2>
+            <form id="authRegisterForm">
+                <input class="auth-input" type="text" id="authRegUser" placeholder="<%= lng === 'en' ? 'Username' : '设置用户名' %>" required>
+                <input class="auth-input" type="email" id="authRegEmail" placeholder="<%= lng === 'en' ? 'Email' : '常用邮箱' %>" required>
+                <div class="password-wrapper">
+                    <input class="auth-input" type="password" id="authRegPass" placeholder="<%= lng === 'en' ? 'Password (min 8 chars)' : '设置密码 (至少8位)' %>" required minlength="8">
+                    <span class="toggle-password" onclick="toggleAuthPassword('authRegPass', this)">
+                        <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                    </span>
+                </div>
+                <button type="submit" class="auth-submit-btn"><%= lng === 'en' ? 'Register' : '注 册' %></button>
+            </form>
+            <div style="text-align: center; margin: 16px 0; color: #94a3b8; font-size: 12px; position: relative;">
+                <span style="background: #fff; padding: 0 10px; position: relative; z-index: 1;">OR</span>
+                <div style="position: absolute; top: 50%; left: 0; right: 0; border-top: 1px solid #e1e4e8; z-index: 0;"></div>
+            </div>
+            <div class="google-btn-container" style="display: flex; justify-content: center; margin-bottom: 16px;"></div>
+            <div class="links">
+                <span onclick="switchAuthBox('login-box')"><%= lng === 'en' ? 'Already have an account? Login' : '已有账号？返回登录' %></span>
+            </div>
+        </div>
+
+        <!-- Forgot Password -->
+        <div id="forgot-box" class="auth-form-box auth-hidden">
+            <h2><%= lng === 'en' ? 'Reset Password' : '找回密码' %></h2>
+            <p class="help-text"><%= lng === 'en' ? 'Enter the email you registered with and we will send you a reset link.' : '请输入您注册时使用的邮箱，我们将向您发送重置链接。' %></p>
+            <form id="authForgotForm">
+                <input class="auth-input" type="email" id="authForgotEmail" placeholder="<%= lng === 'en' ? 'Registered email' : '注册邮箱' %>" required>
+                <button type="submit" class="auth-submit-btn"><%= lng === 'en' ? 'Send Reset Email' : '发送重置邮件' %></button>
+            </form>
+            <div class="links">
+                <span onclick="switchAuthBox('login-box')"><%= lng === 'en' ? 'Remember your password? Login' : '记起密码了？返回登录' %></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    /* ===== Auth Modal Logic ===== */
+    (function() {
+        var gClientId = '<%= typeof googleClientId !== "undefined" ? googleClientId : "" %>';
+        if (gClientId && typeof google !== 'undefined') {
+            google.accounts.id.initialize({ client_id: gClientId, callback: handleGoogleResponse });
+            document.querySelectorAll('.google-btn-container').forEach(function(c) {
+                google.accounts.id.renderButton(c, { theme: 'outline', size: 'large', width: '100%', locale: window.__lang || 'en' });
+            });
+        }
+
+        async function handleGoogleResponse(response) {
+            hideAuthMsg();
+            try {
+                var res = await fetch('/api/google-auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: response.credential }) });
+                var result = await res.json();
+                if (result.success) { window.location.reload(); } else { showAuthMsg(result.message || 'Google Login Failed', 'error'); }
+            } catch (err) { showAuthMsg(window.__lang === 'en' ? 'Network error' : '网络错误', 'error'); }
+        }
+
+        window.openAuth = function(type) {
+            var overlay = document.getElementById('authOverlay');
+            overlay.classList.add('active');
+            switchAuthBox(type === 'register' ? 'register-box' : 'login-box');
+        };
+
+        window.closeAuth = function() {
+            document.getElementById('authOverlay').classList.remove('active');
+            hideAuthMsg();
+        };
+
+        document.getElementById('authOverlay').addEventListener('click', function(e) { if (e.target === this) closeAuth(); });
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeAuth(); });
+
+        window.switchAuthBox = function(boxId) {
+            hideAuthMsg();
+            document.querySelectorAll('.auth-form-box').forEach(function(b) { b.classList.add('auth-hidden'); });
+            document.getElementById(boxId).classList.remove('auth-hidden');
+        };
+
+        function showAuthMsg(text, type) {
+            var box = document.getElementById('auth-status-msg');
+            box.innerText = text;
+            box.classList.remove('auth-hidden', 'status-error', 'status-success');
+            box.classList.add(type === 'success' ? 'status-success' : 'status-error');
+        }
+
+        function hideAuthMsg() {
+            var box = document.getElementById('auth-status-msg');
+            if (box) box.classList.add('auth-hidden');
+        }
+
+        window.toggleAuthPassword = function(inputId, el) {
+            var input = document.getElementById(inputId);
+            var eyeOpen = '<svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+            var eyeClose = '<svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
+            input.type = input.type === 'password' ? 'text' : 'password';
+            el.innerHTML = input.type === 'password' ? eyeClose : eyeOpen;
+        };
+
+        async function authSubmit(e, endpoint, payload) {
+            e.preventDefault();
+            hideAuthMsg();
+            var btn = e.target.querySelector('.auth-submit-btn');
+            var orig = btn.innerText;
+            btn.innerText = window.__lang === 'en' ? 'Processing...' : '处理中...';
+            btn.disabled = true;
+            try {
+                var res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                var result = await res.json();
+                if (result.success) {
+                    if (endpoint === '/api/login' || endpoint === '/api/google-auth') {
+                        window.location.reload();
+                    } else {
+                        showAuthMsg(result.message || (window.__lang === 'en' ? 'Success!' : '操作成功！'), 'success');
+                    }
+                } else {
+                    showAuthMsg(result.message || (window.__lang === 'en' ? 'Failed' : '操作失败'), 'error');
+                }
+            } catch (err) {
+                showAuthMsg(window.__lang === 'en' ? 'Network error' : '网络错误', 'error');
+            } finally { btn.innerText = orig; btn.disabled = false; }
+        }
+
+        document.getElementById('authLoginForm').addEventListener('submit', function(e) {
+            authSubmit(e, '/api/login', { username: document.getElementById('authLoginUser').value, password: document.getElementById('authLoginPass').value });
+        });
+
+        document.getElementById('authRegisterForm').addEventListener('submit', function(e) {
+            var pw = document.getElementById('authRegPass').value;
+            if (pw.length < 8) { showAuthMsg(window.__lang === 'en' ? 'Password must be at least 8 characters' : '密码长度至少需要 8 位', 'error'); e.preventDefault(); return; }
+            authSubmit(e, '/api/register', { username: document.getElementById('authRegUser').value, email: document.getElementById('authRegEmail').value, password: pw });
+        });
+
+        document.getElementById('authForgotForm').addEventListener('submit', function(e) {
+            authSubmit(e, '/api/forgot-password', { email: document.getElementById('authForgotEmail').value });
+        });
+
+        // Handle URL params
+        var params = new URLSearchParams(window.location.search);
+        if (params.get('activated') === 'true') {
+            openAuth('login');
+            setTimeout(function() { showAuthMsg(window.__lang === 'en' ? 'Account activated! Please login.' : '账号已激活，请登录。', 'success'); }, 100);
+        }
+        if (params.get('auth') === 'login') openAuth('login');
+        if (params.get('auth') === 'register') openAuth('register');
+    })();
+</script>
+<% } %>
 
 </body>
 

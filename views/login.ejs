@@ -155,7 +155,7 @@
                 if(result.success) {
                     // 如果是登录成功，直接跳转
                     if (endpoint === '/api/login') {
-                        window.location.href = '/home'; 
+                        window.location.href = '/'; 
                     } else {
                         // 注册或重置邮件成功
                         showMessage(result.message || '操作成功！', 'success');

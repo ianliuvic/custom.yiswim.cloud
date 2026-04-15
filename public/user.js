@@ -50,7 +50,7 @@
                     '<div class="u-empty">' +
                     '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' +
                     '<p>暂无询盘记录</p>' +
-                    '<a href="/home" class="u-btn-primary">+ 新建询盘</a>' +
+                    '<a href="/" class="u-btn-primary">+ 新建询盘</a>' +
                     '</div>';
                 return;
             }
@@ -1149,7 +1149,7 @@
             try {
                 sessionStorage.setItem('copyInquiryData', JSON.stringify(_currentInquiryData));
                 sessionStorage.setItem('editInquiryId', String(_currentInquiryData.id));
-                window.location.href = '/home';
+                window.location.href = '/';
             } catch (e) {
                 showMsg(window.__lang === 'en' ? 'Failed: data too large' : '操作失败：数据过大或存储不可用', 'error');
             }
@@ -1161,7 +1161,7 @@
                 if (!json.success) throw new Error(json.message);
                 sessionStorage.setItem('copyInquiryData', JSON.stringify(json.data));
                 sessionStorage.setItem('editInquiryId', String(json.data.id));
-                window.location.href = '/home';
+                window.location.href = '/';
             })
             .catch(function (e) {
                 showMsg((window.__lang === 'en' ? 'Failed to load inquiry: ' : '获取询盘数据失败：') + e.message, 'error');
@@ -1174,7 +1174,7 @@
             // 从详情页复制：直接使用已加载的数据
             try {
                 sessionStorage.setItem('copyInquiryData', JSON.stringify(_currentInquiryData));
-                window.location.href = '/home';
+                window.location.href = '/';
             } catch (e) {
                 showMsg('复制失败：数据过大或存储不可用', 'error');
             }
@@ -1186,7 +1186,7 @@
             .then(function (json) {
                 if (!json.success) throw new Error(json.message);
                 sessionStorage.setItem('copyInquiryData', JSON.stringify(json.data));
-                window.location.href = '/home';
+                window.location.href = '/';
             })
             .catch(function (e) {
                 showMsg('获取询盘数据失败：' + e.message, 'error');
@@ -1242,7 +1242,7 @@
             if (json.success && json.data) {
                 sessionStorage.setItem('copyInquiryData', JSON.stringify(json.data));
                 sessionStorage.setItem('restoreDraftId', String(json.data.id));
-                window.location.href = '/home';
+                window.location.href = '/';
             } else {
                 showMsg('草稿不存在或已过期', 'warn');
             }

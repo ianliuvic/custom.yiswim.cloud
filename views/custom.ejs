@@ -3567,6 +3567,37 @@
 </script>
 <% } %>
 
+<!-- ===== Intro Guide Popup ===== -->
+<div id="introPopupOverlay" style="display:none; position:fixed; inset:0; z-index:199999; background:rgba(0,0,0,0.6); backdrop-filter:blur(3px); justify-content:center; align-items:center;">
+    <div style="position:relative; max-width:900px; width:92%; margin:auto;">
+        <button onclick="closeIntroPopup()" style="position:absolute; top:-14px; right:-14px; z-index:1; width:32px; height:32px; border-radius:0; background:#fff; border:1px solid #e2e8f0; color:#64748b; font-size:18px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,0.12); transition:all 0.2s;" onmouseover="this.style.background='#aa0000';this.style.color='#fff';this.style.borderColor='#aa0000'" onmouseout="this.style.background='#fff';this.style.color='#64748b';this.style.borderColor='#e2e8f0'">&times;</button>
+        <img src="/intro.webp" alt="How it works" style="width:100%; display:block; border:1px solid #e2e8f0;">
+        <div style="background:#fff; padding:14px 20px; display:flex; justify-content:space-between; align-items:center; border:1px solid #e2e8f0; border-top:none;">
+            <span style="font-size:12px; color:#94a3b8;"><%= lng === 'zh' ? '本次浏览仅显示一次' : 'Shown once per session' %></span>
+            <button onclick="closeIntroPopup()" style="background:#aa0000; color:#fff; border:none; padding:8px 28px; font-size:13px; font-weight:600; cursor:pointer; border-radius:0; font-family:inherit; transition:background 0.2s;" onmouseover="this.style.background='#880000'" onmouseout="this.style.background='#aa0000'"><%= lng === 'zh' ? '开始定制 →' : 'Start Customizing →' %></button>
+        </div>
+    </div>
+</div>
+<script>
+    (function() {
+        var KEY = 'introShown';
+        if (!sessionStorage.getItem(KEY)) {
+            var overlay = document.getElementById('introPopupOverlay');
+            overlay.style.display = 'flex';
+            sessionStorage.setItem(KEY, '1');
+        }
+        window.closeIntroPopup = function() {
+            document.getElementById('introPopupOverlay').style.display = 'none';
+        };
+        document.getElementById('introPopupOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeIntroPopup();
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeIntroPopup();
+        });
+    })();
+</script>
+
 </body>
 
 </html>

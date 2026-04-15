@@ -165,7 +165,7 @@
             // Lazy-load fabric name map (Chinese→English) for display
             if (!_fabricNameMap) {
                 try {
-                    var fabRes = await fetch('/api/load-data');
+                    var fabRes = await fetch('/api/get-data');
                     var fabJson = await fabRes.json();
                     if (fabJson.success && fabJson.data && fabJson.data.fabrics) {
                         _fabricNameMap = {};

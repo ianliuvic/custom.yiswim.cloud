@@ -327,7 +327,7 @@
             // Lazy-load fabric name map
             if (!_fabricNameMap) {
                 try {
-                    const fabRes = await fetch('/api/load-data');
+                    const fabRes = await fetch('/api/get-data');
                     const fabJson = await fabRes.json();
                     if (fabJson.success && fabJson.data && fabJson.data.fabrics) {
                         _fabricNameMap = {};

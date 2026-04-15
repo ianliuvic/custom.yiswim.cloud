@@ -604,18 +604,19 @@ async function buildStyleSection(d, fileMap, odmStyleImages, t) {
     return content.filter(Boolean);
 }
 
-async function buildFabricSection(d, fileMap, t) {
+async function buildFabricSection(d, fileMap, t, fabricNameMap) {
     const fab = tryParse(d.fabric_selection);
     if (!fab || typeof fab !== 'object' || !Object.keys(fab).length) return [];
 
     const content = [sectionTitle(t('sec2'))];
     const fabricFiles = fileMap['fabric'] || [];
     const cmtFabricFiles = (fileMap['cmt'] || []).filter(f => f.sub_key === 'fabric');
+    const fnMap = fabricNameMap || {};
 
     for (const catKey of Object.keys(fab)) {
         const cat = fab[catKey];
         if (!cat || !cat.configs) continue;
-        const originalCat = cat.originalCatName || catKey;
+        const originalCat = cat.originalCatNameEn || fnMap[cat.originalCatName] || cat.originalCatName || catKey;
         const isLining = /里料|[Ll]ining/.test(originalCat);
         const configs = cat.configs;
 
@@ -625,7 +626,8 @@ async function buildFabricSection(d, fileMap, t) {
             const isCS = fabricName === 'CUSTOM_SOURCING';
             const mode = isCS ? 'custom' : (cfg.mode || 'solid');
             const modeLabel = { solid: t('solid'), print: t('print'), custom: t('customSourcing') }[mode] || mode;
-            const cardTitle = isCS ? originalCat : fabricName;
+            const fabricDisplayName = cfg.nameEn || fnMap[fabricName] || fabricName;
+            const cardTitle = isCS ? originalCat : fabricDisplayName;
 
             content.push({
                 text: [
@@ -1016,7 +1018,7 @@ async function buildFilesSection(files, t) {
 /* ═══════════════════════════════════════════════
    Main export function
    ═══════════════════════════════════════════════ */
-async function generateInquiryPDF(inquiry, files, odmStyleImages, lang) {
+async function generateInquiryPDF(inquiry, files, odmStyleImages, lang, fabricNameMap) {
     const t = getT(lang || 'en');
     const fontPaths = await ensureFonts();
 
@@ -1039,7 +1041,7 @@ async function generateInquiryPDF(inquiry, files, odmStyleImages, lang) {
 
     // Build sections
     const styleContent = await buildStyleSection(inquiry, fileMap, odmStyleImages, t);
-    const fabricContent = await buildFabricSection(inquiry, fileMap, t);
+    const fabricContent = await buildFabricSection(inquiry, fileMap, t, fabricNameMap);
     const trimsContent = await buildTrimsSection(inquiry, fileMap, t);
     const shippingContent = await buildShippingSection(inquiry, fileMap, t);
     const contactContent = buildContactSection(inquiry, t);

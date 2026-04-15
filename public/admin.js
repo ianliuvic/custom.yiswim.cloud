@@ -5,6 +5,7 @@
     let currentSearch = '';
     let currentRows = [];       // 当前页数据
     let selectedIds = new Set(); // 选中的 ID
+    let _fabricNameMap = null; // Chinese→English fabric name map (lazy loaded)
 
     // ── 初始化 ──
     document.addEventListener('DOMContentLoaded', () => {
@@ -323,6 +324,23 @@
 
             let html = '';
 
+            // Lazy-load fabric name map
+            if (!_fabricNameMap) {
+                try {
+                    const fabRes = await fetch('/api/load-data');
+                    const fabJson = await fabRes.json();
+                    if (fabJson.success && fabJson.data && fabJson.data.fabrics) {
+                        _fabricNameMap = {};
+                        fabJson.data.fabrics.forEach(f => {
+                            if (f.name && f.name_en) _fabricNameMap[f.name] = f.name_en;
+                        });
+                        _fabricNameMap['面料'] = 'Shell';
+                        _fabricNameMap['里料'] = 'Lining';
+                        _fabricNameMap['网纱'] = 'Mesh';
+                    }
+                } catch (e) { _fabricNameMap = {}; }
+            }
+
             // Admin action form (top)
             html += renderAdminActionForm(d);
 
@@ -545,11 +563,12 @@
         const fabricFiles = fileMap['fabric'] || [];
         const cmtFabricFiles = (fileMap['cmt'] || []).filter(f => f.sub_key === 'fabric');
         let h = dsecStart('fabric', 'Fabric Information');
+        const fnMap = _fabricNameMap || {};
 
         Object.keys(fab).forEach(catKey => {
             const cat = fab[catKey];
             if (!cat || !cat.configs) return;
-            const originalCat = cat.originalCatNameEn || cat.originalCatName || catKey;
+            const originalCat = cat.originalCatNameEn || fnMap[cat.originalCatName] || cat.originalCatName || catKey;
             const configs = cat.configs;
 
             Object.keys(configs).forEach(fabricName => {
@@ -558,7 +577,7 @@
                 const isCS = fabricName === 'CUSTOM_SOURCING';
                 const mode = isCS ? 'custom' : (cfg.mode || 'solid');
                 const modeLabel = { solid: 'Solid', print: 'Print', custom: 'Dev / Sourcing' }[mode] || mode;
-                const fabricDisplayName = cfg.nameEn || fabricName;
+                const fabricDisplayName = cfg.nameEn || fnMap[fabricName] || fabricName;
                 const cardTitle = isCS ? originalCat : fabricDisplayName;
 
                 h += '<div class="adm-fabric-card">';

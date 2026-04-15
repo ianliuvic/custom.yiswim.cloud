@@ -738,8 +738,18 @@ router.get('/inquiry/:id/pdf', authenticateToken, async (req, res) => {
             }
         } catch (e) { /* ignore */ }
 
+        // Build fabric Chinese→English name map
+        const fabricNameMap = {};
+        try {
+            const fnResult = await db.query('SELECT name, COALESCE(name_en, name) AS name_en, category FROM custom_fabrics');
+            fnResult.rows.forEach(r => { fabricNameMap[r.name] = r.name_en; if (r.category) fabricNameMap[r.category] = r.category; });
+            // Add category translations
+            const catMap = {'面料': 'Shell', '里料': 'Lining', '网纱': 'Mesh'};
+            Object.assign(fabricNameMap, catMap);
+        } catch (e) { /* ignore */ }
+
         const lang = req.cookies && req.cookies.lng || 'en';
-        const pdfBuffer = await generateInquiryPDF(inquiry, filesResult.rows, odmStyleImages, lang);
+        const pdfBuffer = await generateInquiryPDF(inquiry, filesResult.rows, odmStyleImages, lang, fabricNameMap);
         const filename = 'inquiry_' + (inquiry.inquiry_no || inquiry.id) + '.pdf';
 
         res.setHeader('Content-Type', 'application/pdf');
@@ -795,7 +805,14 @@ router.get('/inquiry/:id/export', authenticateToken, async (req, res) => {
         } catch (e) { /* ignore */ }
 
         const lang = req.cookies && req.cookies.lng || 'en';
-        const pdfBuffer = await generateInquiryPDF(inquiry, filesResult.rows, odmStyleImages, lang);
+        const fabricNameMap2 = {};
+        try {
+            const fnResult = await db.query('SELECT name, COALESCE(name_en, name) AS name_en, category FROM custom_fabrics');
+            fnResult.rows.forEach(r => { fabricNameMap2[r.name] = r.name_en; if (r.category) fabricNameMap2[r.category] = r.category; });
+            const catMap = {'面料': 'Shell', '里料': 'Lining', '网纱': 'Mesh'};
+            Object.assign(fabricNameMap2, catMap);
+        } catch (e) { /* ignore */ }
+        const pdfBuffer = await generateInquiryPDF(inquiry, filesResult.rows, odmStyleImages, lang, fabricNameMap2);
 
         const inquiryNo = inquiry.inquiry_no || String(inquiry.id);
         const zipFilename = inquiryNo + '.zip';

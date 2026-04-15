@@ -5,6 +5,7 @@
     const FILE_BASE = 'https://files.yiswim.cloud/uploads/inquiries/';
     let currentPage = 1;
     var _currentInquiryData = null; // 存储当前打开的询盘详情数据
+    var _fabricNameMap = null; // Chinese→English fabric name map (lazy loaded)
 
     /* ---------- Tab switching ---------- */
     window.switchTab = function (tab) {
@@ -160,6 +161,24 @@
                 fileMap[cat].push(f);
             });
             var html = '';
+
+            // Lazy-load fabric name map (Chinese→English) for display
+            if (!_fabricNameMap) {
+                try {
+                    var fabRes = await fetch('/api/load-data');
+                    var fabJson = await fabRes.json();
+                    if (fabJson.success && fabJson.data && fabJson.data.fabrics) {
+                        _fabricNameMap = {};
+                        fabJson.data.fabrics.forEach(function (f) {
+                            if (f.name && f.name_en) _fabricNameMap[f.name] = f.name_en;
+                        });
+                        // Category translations
+                        _fabricNameMap['面料'] = 'Shell';
+                        _fabricNameMap['里料'] = 'Lining';
+                        _fabricNameMap['网纱'] = 'Mesh';
+                    }
+                } catch (e) { _fabricNameMap = {}; }
+            }
 
             // ─── Admin Response (top) ───
             html += renderAdminResponseSection(d);
@@ -332,7 +351,8 @@
             var cat = fab[catKey];
             if (!cat || !cat.configs) return;
             var originalCat = cat.originalCatName || catKey;
-            var originalCatEn = cat.originalCatNameEn || ((typeof _rt === 'function') ? _rt(originalCat) : originalCat);
+            var fnMap = _fabricNameMap || {};
+            var originalCatEn = cat.originalCatNameEn || fnMap[originalCat] || ((typeof _rt === 'function') ? _rt(originalCat) : originalCat);
             var isCustomSourcing = cat.activeName === 'CUSTOM_SOURCING';
             var displayName = isCustomSourcing ? originalCatEn : (cat.activeName || originalCatEn);
             var isLining = originalCatEn.indexOf('Lining') !== -1 || originalCatEn.indexOf('lining') !== -1;
@@ -344,7 +364,7 @@
                 var isCS = fabricName === 'CUSTOM_SOURCING';
                 var mode = isCS ? 'custom' : (cfg.mode || 'solid');
                 var modeLabel = { solid: 'Solid', print: 'Print', custom: 'Dev / Sourcing' }[mode] || mode;
-                var fabricDisplayName = cfg.nameEn || ((typeof _rt === 'function') ? _rt(fabricName) : fabricName);
+                var fabricDisplayName = cfg.nameEn || fnMap[fabricName] || ((typeof _rt === 'function') ? _rt(fabricName) : fabricName);
                 var cardTitle = isCS ? originalCatEn : fabricDisplayName;
 
                 h += '<div class="u-fabric-card">';

@@ -3450,7 +3450,7 @@
             if (!gClientId || typeof google === 'undefined') return;
             google.accounts.id.initialize({ client_id: gClientId, callback: handleGoogleResponse });
             document.querySelectorAll('.google-btn-container').forEach(function(c) {
-                google.accounts.id.renderButton(c, { theme: 'outline', size: 'large', width: '100%', locale: window.__lang || 'en' });
+                google.accounts.id.renderButton(c, { theme: 'outline', size: 'large', width: 360, locale: window.__lang || 'en' });
             });
         }
 

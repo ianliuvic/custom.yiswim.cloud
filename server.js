@@ -1,4 +1,5 @@
 const express = require('express');
+const helmet = require('helmet');
 const compression = require('compression');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -40,6 +41,12 @@ const PORT = process.env.PORT || 3000;
 
 // 因为 VPS 使用了 Coolify (反向代理)，必须开启信任代理
 app.set('trust proxy', 1);
+
+// HTTP 安全头（CSP 因大量内联脚本暂禁，其余全部启用）
+app.use(helmet({
+    contentSecurityPolicy: false,       // 页面含大量内联脚本/事件属性，CSP 单独维护
+    crossOriginEmbedderPolicy: false,   // 防止 Chatwoot 等第三方 iframe 加载失败
+}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

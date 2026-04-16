@@ -2999,9 +2999,9 @@
     <div class="modal-overlay" id="customModal">
         <!-- 1. 将弹窗最大宽度加宽到 960px -->
         <div class="modal-content modal-md" style="max-width: 960px;">
-            <div class="custom-modal-header">
-                <h3><span style="background:var(--primary-color); color:#fff; padding:4px 8px; border-radius: 0; font-size:12px;">PLUS</span> Style Light Customization <span id="customModalTarget" style="font-size: 14px; font-weight: normal; color: #94a3b8; margin-left: 10px;"></span></h3>
-                <button class="modal-close-abs" onclick="closeCustomModal()" style="top:25px; right:25px;">&times;</button>
+            <div class="custom-modal-header" style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
+                <h3 style="flex:1; min-width:0;"><span style="background:var(--primary-color); color:#fff; padding:4px 8px; border-radius: 0; font-size:12px;">PLUS</span> Style Light Customization <span id="customModalTarget" style="font-size: 14px; font-weight: normal; color: #94a3b8; margin-left: 10px;"></span></h3>
+                <button class="modal-close-abs" onclick="closeCustomModal()" style="position:static; flex-shrink:0; margin-top:-4px;">&times;</button>
             </div>
             
             <!-- 采用左右 Flex 布局 -->

@@ -52,6 +52,14 @@
                 var t = typeMap[r.type] || { zh: r.type, en: r.type };
                 var statusLabel = isZh ? s.zh : s.en;
                 var typeLabel = isZh ? t.zh : t.en;
+                var noteLine = '';
+                if (r.admin_note) {
+                    if (r.status === 'rejected') {
+                        noteLine = '<div style="margin-top:6px; font-size:12px; color:#dc2626; background:#fef2f2; padding:6px 10px; border-left:3px solid #dc2626;"><strong>' + (isZh ? '原因：' : 'Reason: ') + '</strong>' + esc(r.admin_note) + '</div>';
+                    } else if (r.status === 'accepted' || r.status === 'rewarded') {
+                        noteLine = '<div style="margin-top:6px; font-size:12px; color:#64748b; background:#f8fafc; padding:6px 10px; border-left:3px solid #e2e8f0;"><strong>' + (isZh ? '回复：' : 'Reply: ') + '</strong>' + esc(r.admin_note) + '</div>';
+                    }
+                }
                 var couponLine = (r.status === 'rewarded' && r.coupon_code)
                     ? '<div style="margin-top:6px; font-size:12px; color:#7c3aed;"><strong>' + (isZh ? '优惠码：' : 'Coupon: ') + '</strong>' + esc(r.coupon_code) + ' — $' + r.coupon_amount + ' off</div>'
                     : (r.status === 'accepted'
@@ -76,6 +84,7 @@
                     + '</div>'
                     + '<div style="font-size:13px; color:#334155; line-height:1.6; white-space:pre-wrap; word-break:break-word;">' + esc(r.content) + '</div>'
                     + screenshotLine
+                    + noteLine
                     + couponLine
                     + '</div>'
                     + '</div>';

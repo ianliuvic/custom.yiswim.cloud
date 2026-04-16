@@ -548,7 +548,11 @@ router.post('/api/feedback/:id/update', authenticateAdmin, async (req, res) => {
             fields.push('admin_note = $' + idx++);
             values.push(admin_note);
         }
-        if (coupon_code !== undefined) {
+        if (status === 'rewarded') {
+            const code = (coupon_code && coupon_code.trim()) ? coupon_code.trim() : 'FB-' + require('crypto').randomBytes(4).toString('hex').toUpperCase();
+            fields.push('coupon_code = $' + idx++);
+            values.push(code);
+        } else if (coupon_code !== undefined) {
             fields.push('coupon_code = $' + idx++);
             values.push(coupon_code);
         }

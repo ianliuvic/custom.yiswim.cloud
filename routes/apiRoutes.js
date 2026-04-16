@@ -1164,7 +1164,7 @@ router.post('/feedback', authenticateToken, feedbackUpload.array('screenshots', 
 router.get('/my-feedbacks', authenticateToken, async (req, res) => {
     try {
         const result = await db.query(
-            `SELECT id, type, content, screenshot, status, coupon_code, coupon_amount, created_at
+            `SELECT id, type, content, screenshot, status, coupon_code, coupon_amount, admin_note, created_at
              FROM custom_user_feedback
              WHERE user_id = $1
              ORDER BY created_at DESC`,

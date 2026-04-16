@@ -1084,6 +1084,12 @@
         document.getElementById('fbDetailContent').innerHTML = html;
     }
 
+    function genCoupon() {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        const arr = crypto.getRandomValues(new Uint8Array(8));
+        return 'FB-' + Array.from(arr, b => chars[b % chars.length]).join('');
+    }
+
     function renderFbActionForm(d) {
         const statusOpts = [
             { val: 'pending', label: 'Pending' },
@@ -1097,19 +1103,19 @@
 
         // Status
         h += '<div class="adm-form-row"><label class="adm-form-label">Feedback Status</label>';
-        h += '<select id="fbStatusSelect" class="adm-form-select">';
+        h += '<select id="fbStatusSelect" class="adm-form-select" onchange="onFbStatusChange(this.value)">';
         statusOpts.forEach(o => {
             h += '<option value="' + o.val + '"' + (curStatus === o.val ? ' selected' : '') + '>' + o.label + '</option>';
         });
         h += '</select></div>';
 
         // Admin note
-        h += '<div class="adm-form-row"><label class="adm-form-label">Admin Note (visible to admin only)</label>';
-        h += '<textarea id="fbAdminNote" class="adm-form-textarea" rows="3" placeholder="Internal note...">' + esc(d.admin_note || '') + '</textarea></div>';
+        h += '<div class="adm-form-row"><label class="adm-form-label">Admin Note (visible to user for rejected / rewarded)</label>';
+        h += '<textarea id="fbAdminNote" class="adm-form-textarea" rows="3" placeholder="e.g. rejection reason or thank-you message...">' + esc(d.admin_note || '') + '</textarea></div>';
 
         // Coupon code
-        h += '<div class="adm-form-row"><label class="adm-form-label">Coupon Code (visible to user when rewarded)</label>';
-        h += '<input type="text" id="fbCouponCode" class="adm-form-input" placeholder="e.g. FB-XXXX-XXXX" value="' + esc(d.coupon_code || '') + '"></div>';
+        h += '<div class="adm-form-row"><label class="adm-form-label">Coupon Code (auto-generated, visible to user when rewarded)</label>';
+        h += '<input type="text" id="fbCouponCode" class="adm-form-input" placeholder="Auto-generated on Rewarded" value="' + esc(d.coupon_code || '') + '"></div>';
 
         // Coupon amount display
         h += '<div class="adm-form-row"><label class="adm-form-label">Coupon Amount</label>';
@@ -1121,6 +1127,13 @@
         h += '</div></div>';
         return h;
     }
+
+    window.onFbStatusChange = function (val) {
+        const codeInput = document.getElementById('fbCouponCode');
+        if (val === 'rewarded' && !codeInput.value.trim()) {
+            codeInput.value = genCoupon();
+        }
+    };
 
     window.saveFbAction = async function () {
         if (!_currentFbId) return;

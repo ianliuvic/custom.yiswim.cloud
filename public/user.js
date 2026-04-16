@@ -60,11 +60,16 @@
                         noteLine = '<div style="margin-top:6px; font-size:12px; color:#64748b; background:#f8fafc; padding:6px 10px; border-left:3px solid #e2e8f0;"><strong>' + (isZh ? '回复：' : 'Reply: ') + '</strong>' + esc(r.admin_note) + '</div>';
                     }
                 }
-                var couponLine = (r.status === 'rewarded' && r.coupon_code)
-                    ? '<div style="margin-top:6px; font-size:12px; color:#7c3aed;"><strong>' + (isZh ? '优惠码：' : 'Coupon: ') + '</strong>' + esc(r.coupon_code) + ' — $' + r.coupon_amount + ' off</div>'
-                    : (r.status === 'accepted'
-                        ? '<div style="margin-top:6px; font-size:12px; color:#16a34a;">' + (isZh ? '已通过，优惠券即将发起' : 'Approved — coupon will be issued shortly') + '</div>'
-                        : '');
+                var couponLine = '';
+                if (r.status === 'rewarded' && r.coupon_code) {
+                    if (r.coupon_used) {
+                        couponLine = '<div style="margin-top:6px; font-size:12px; color:#94a3b8;"><strong>' + (isZh ? '优惠码：' : 'Coupon: ') + '</strong><span style="text-decoration:line-through;">' + esc(r.coupon_code) + '</span> ' + (isZh ? '已使用' : 'Used') + '</div>';
+                    } else {
+                        couponLine = '<div style="margin-top:6px; font-size:12px; color:#7c3aed;"><strong>' + (isZh ? '优惠码：' : 'Coupon: ') + '</strong>' + esc(r.coupon_code) + ' — $' + r.coupon_amount + ' off</div>';
+                    }
+                } else if (r.status === 'accepted') {
+                    couponLine = '<div style="margin-top:6px; font-size:12px; color:#16a34a;">' + (isZh ? '已通过，优惠券即将发起' : 'Approved — coupon will be issued shortly') + '</div>';
+                }
                 var imgs = [];
                 try { imgs = JSON.parse(r.screenshot || '[]'); } catch(e) { imgs = []; }
                 var screenshotLine = imgs.length

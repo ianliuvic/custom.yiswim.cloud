@@ -7360,10 +7360,10 @@
                 var rewardEl = document.getElementById('feedbackModalReward');
                 if (_feedbackType === 'bug') {
                     titleEl.textContent = isZh ? '报告页面问题' : 'Report a Bug';
-                    rewardEl.textContent = isZh ? '审核通过后获得  优惠券奖励' : 'Get a  coupon upon approval';
+                    rewardEl.textContent = isZh ? '审核通过后获得 $10 优惠券奖励' : 'Get a $10 coupon upon approval';
                 } else {
                     titleEl.textContent = isZh ? '分享使用体验' : 'Share Your Experience';
-                    rewardEl.textContent = isZh ? '审核通过后获得  优惠券奖励' : 'Get a  coupon upon approval';
+                    rewardEl.textContent = isZh ? '审核通过后获得 $5 优惠券奖励' : 'Get a $5 coupon upon approval';
                 }
                 document.getElementById('feedbackContent').value = '';
                 document.getElementById('feedbackCharCount').textContent = '0';

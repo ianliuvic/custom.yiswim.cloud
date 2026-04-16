@@ -972,7 +972,7 @@
                 '<td><span style="font-size:11px;padding:2px 8px;background:' + (r.type === 'bug' ? '#fee2e2' : '#e0e7ff') + ';color:' + (r.type === 'bug' ? '#dc2626' : '#4f46e5') + ';">' + (typeLabel[r.type] || r.type) + '</span></td>' +
                 '<td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + contentShort + '</td>' +
                 '<td>' + (imgCount > 0 ? imgCount + ' img' : '-') + '</td>' +
-                '<td>' + (r.coupon_code ? esc(r.coupon_code) : '-') + '</td>' +
+                '<td>' + (r.coupon_code ? esc(r.coupon_code) + (r.coupon_used ? ' <span style="color:#16a34a;font-size:10px;">✓used</span>' : '') : '-') + '</td>' +
                 '<td>' + fmtDate(r.created_at) + '</td>' +
                 '<td><span class="adm-badge ' + sb.cls + '">' + sb.label + '</span></td>' +
                 '<td><button class="adm-btn" onclick="openFbDetail(' + r.id + ')">Review</button></td>' +
@@ -1124,9 +1124,49 @@
         // Save button
         h += '<div class="adm-form-row adm-form-actions"><button id="fbSaveBtn" class="adm-btn adm-btn-save" onclick="saveFbAction()">Save</button></div>';
 
+        // Coupon redeem section
+        if (d.status === 'rewarded' && d.coupon_code) {
+            h += '<div class="adm-form-row" style="margin-top:12px;padding-top:14px;border-top:1px solid #e2e8f0;">';
+            if (d.coupon_used) {
+                h += '<div style="font-size:13px;color:#16a34a;font-weight:600;">\u2705 Coupon redeemed' + (d.coupon_used_at ? ' on ' + fmtDate(d.coupon_used_at) : '') + '</div>';
+            } else {
+                h += '<label class="adm-form-label">Coupon Redemption</label>';
+                h += '<button id="fbRedeemBtn" class="adm-btn" style="background:#7c3aed;color:#fff;" onclick="redeemFbCoupon()">Mark Coupon as Used</button>';
+            }
+            h += '</div>';
+        }
+
         h += '</div></div>';
         return h;
     }
+
+    window.redeemFbCoupon = async function () {
+        if (!_currentFbId) return;
+        if (!confirm('Mark this coupon as used? This cannot be undone.')) return;
+        const btn = document.getElementById('fbRedeemBtn');
+        btn.disabled = true;
+        btn.textContent = 'Processing...';
+        try {
+            const resp = await fetch('/admin/api/feedback/' + _currentFbId + '/redeem', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const json = await resp.json();
+            if (json.success) {
+                btn.textContent = '\u2705 Redeemed';
+                btn.style.background = '#16a34a';
+                setTimeout(() => { window.openFbDetail(_currentFbId); }, 1000);
+            } else {
+                alert(json.message || 'Failed');
+                btn.textContent = 'Mark Coupon as Used';
+                btn.disabled = false;
+            }
+        } catch {
+            alert('Network error');
+            btn.textContent = 'Mark Coupon as Used';
+            btn.disabled = false;
+        }
+    };
 
     window.onFbStatusChange = function (val) {
         const codeInput = document.getElementById('fbCouponCode');

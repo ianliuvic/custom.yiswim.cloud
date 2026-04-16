@@ -578,4 +578,32 @@ router.post('/api/feedback/:id/update', authenticateAdmin, async (req, res) => {
     }
 });
 
+// Redeem (mark used) a feedback coupon
+router.post('/api/feedback/:id/redeem', authenticateAdmin, async (req, res) => {
+    try {
+        const result = await db.query(
+            'SELECT status, coupon_code, coupon_used FROM custom_user_feedback WHERE id = $1',
+            [req.params.id]
+        );
+        if (result.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Feedback not found' });
+        }
+        const fb = result.rows[0];
+        if (fb.status !== 'rewarded' || !fb.coupon_code) {
+            return res.status(400).json({ success: false, message: 'No coupon to redeem' });
+        }
+        if (fb.coupon_used) {
+            return res.status(400).json({ success: false, message: 'Coupon already redeemed' });
+        }
+        await db.query(
+            'UPDATE custom_user_feedback SET coupon_used = TRUE, coupon_used_at = $1 WHERE id = $2',
+            [new Date(), req.params.id]
+        );
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Admin redeem coupon error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
 module.exports = router;

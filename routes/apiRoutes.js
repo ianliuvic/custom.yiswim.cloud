@@ -423,7 +423,7 @@ router.post('/forgot-password', loginLimiter, async (req, res) => {
         
         const data = await n8nResponse.json();
 
-        if (data.message && data.message.includes('Reset') && data.message.includes('已发送')) {
+        if (data.message && data.message.includes('已发送')) {
             data.message = req.t('api.forgotResetSent');
         }
 

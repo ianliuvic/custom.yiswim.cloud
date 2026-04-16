@@ -7316,3 +7316,157 @@
             updateFabricSummary();
         }
 
+
+
+        // ==========================================
+        // Feedback Bar & Modal
+        // ==========================================
+        (function () {
+            var DISMISS_KEY = 'feedbackBarDismissed';
+            var DISMISS_DAYS = 7;
+
+            function shouldHideBar() {
+                try {
+                    var ts = localStorage.getItem(DISMISS_KEY);
+                    if (!ts) return false;
+                    return (Date.now() - parseInt(ts)) < DISMISS_DAYS * 24 * 60 * 60 * 1000;
+                } catch (e) { return false; }
+            }
+
+            if (shouldHideBar()) {
+                var bar = document.getElementById('feedbackBar');
+                if (bar) bar.classList.add('hidden');
+            }
+
+            window.dismissFeedbackBar = function () {
+                try { localStorage.setItem(DISMISS_KEY, String(Date.now())); } catch (e) {}
+                var bar = document.getElementById('feedbackBar');
+                if (bar) bar.classList.add('hidden');
+            };
+
+            var _feedbackType = 'bug';
+            var _feedbackFiles = [];
+
+            window.openFeedback = function (type) {
+                if (!window.__isLoggedIn) {
+                    if (typeof openAuth === 'function') openAuth('login');
+                    return;
+                }
+                _feedbackType = type || 'bug';
+                _feedbackFiles = [];
+                var isZh = window.__lang === 'zh';
+                var overlay = document.getElementById('feedbackModalOverlay');
+                var titleEl = document.getElementById('feedbackModalTitle');
+                var rewardEl = document.getElementById('feedbackModalReward');
+                if (_feedbackType === 'bug') {
+                    titleEl.textContent = isZh ? '报告页面问题' : 'Report a Bug';
+                    rewardEl.textContent = isZh ? '审核通过后获得  优惠券奖励' : 'Get a  coupon upon approval';
+                } else {
+                    titleEl.textContent = isZh ? '分享使用体验' : 'Share Your Experience';
+                    rewardEl.textContent = isZh ? '审核通过后获得  优惠券奖励' : 'Get a  coupon upon approval';
+                }
+                document.getElementById('feedbackContent').value = '';
+                document.getElementById('feedbackCharCount').textContent = '0';
+                document.getElementById('feedbackPreviewGrid').innerHTML = '';
+                document.getElementById('feedbackFileInput').value = '';
+                overlay.style.display = 'flex';
+                setTimeout(function () { document.getElementById('feedbackContent').focus(); }, 60);
+            };
+
+            window.closeFeedbackModal = function () {
+                document.getElementById('feedbackModalOverlay').style.display = 'none';
+                _feedbackFiles = [];
+            };
+
+            // Char counter + Esc key
+            document.addEventListener('DOMContentLoaded', function () {
+                var ta = document.getElementById('feedbackContent');
+                if (ta) {
+                    ta.addEventListener('input', function () {
+                        document.getElementById('feedbackCharCount').textContent = ta.value.length;
+                    });
+                }
+                var overlay = document.getElementById('feedbackModalOverlay');
+                if (overlay) {
+                    overlay.addEventListener('click', function (e) {
+                        if (e.target === overlay) closeFeedbackModal();
+                    });
+                }
+                document.addEventListener('keydown', function (e) {
+                    var overlay = document.getElementById('feedbackModalOverlay');
+                    if (e.key === 'Escape' && overlay && overlay.style.display !== 'none') {
+                        closeFeedbackModal();
+                    }
+                });
+            });
+
+            window.handleFeedbackFiles = function (input) {
+                var files = Array.from(input.files);
+                files.forEach(function (f) {
+                    if (_feedbackFiles.length >= 5) return;
+                    if (f.size > 10 * 1024 * 1024) {
+                        if (typeof showMsg === 'function') showMsg((window.__lang === 'zh' ? '文件过大（最大10MB）：' : 'File too large (max 10MB): ') + f.name, 'error');
+                        return;
+                    }
+                    _feedbackFiles.push(f);
+                });
+                input.value = '';
+                renderFeedbackPreviews();
+            };
+
+            function renderFeedbackPreviews() {
+                var grid = document.getElementById('feedbackPreviewGrid');
+                if (!grid) return;
+                grid.innerHTML = '';
+                _feedbackFiles.forEach(function (f, idx) {
+                    var item = document.createElement('div');
+                    item.className = 'feedback-preview-item';
+                    var img = document.createElement('img');
+                    img.src = URL.createObjectURL(f);
+                    img.alt = f.name;
+                    var removeBtn = document.createElement('button');
+                    removeBtn.className = 'feedback-preview-remove';
+                    removeBtn.innerHTML = '&times;';
+                    removeBtn.type = 'button';
+                    removeBtn.onclick = (function (i) {
+                        return function () { _feedbackFiles.splice(i, 1); renderFeedbackPreviews(); };
+                    })(idx);
+                    item.appendChild(img);
+                    item.appendChild(removeBtn);
+                    grid.appendChild(item);
+                });
+            }
+
+            window.submitFeedback = async function () {
+                var isZh = window.__lang === 'zh';
+                var content = document.getElementById('feedbackContent').value.trim();
+                if (content.length < 10) {
+                    if (typeof showMsg === 'function') await showMsg(isZh ? '描述内容至少10个字符' : 'Description must be at least 10 characters', 'warn');
+                    return;
+                }
+                var btn = document.getElementById('feedbackSubmitBtn');
+                var orig = btn.textContent;
+                btn.disabled = true;
+                btn.textContent = isZh ? '提交中...' : 'Submitting...';
+                try {
+                    var formData = new FormData();
+                    formData.append('type', _feedbackType);
+                    formData.append('content', content);
+                    formData.append('page_url', window.location.href);
+                    _feedbackFiles.forEach(function (f) { formData.append('screenshots', f); });
+                    var resp = await fetch('/api/feedback', { method: 'POST', body: formData });
+                    var result = await resp.json();
+                    if (result.success) {
+                        closeFeedbackModal();
+                        if (typeof showMsg === 'function') await showMsg(result.message, 'success');
+                    } else {
+                        if (typeof showMsg === 'function') await showMsg(result.message || (isZh ? '提交失败' : 'Failed to submit'), 'error');
+                    }
+                } catch (e) {
+                    if (typeof showMsg === 'function') await showMsg(isZh ? '网络错误，请重试' : 'Network error, please retry', 'error');
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = orig;
+                }
+            };
+        })();

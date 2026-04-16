@@ -1087,4 +1087,65 @@ router.delete('/draft', authenticateToken, async (req, res) => {
     }
 });
 
+// ===== 用户反馈 =====
+const feedbackUpload = multer({
+    storage: multer.diskStorage({
+        destination: (req, file, cb) => {
+            const dir = path.join(UPLOAD_BASE, 'feedback');
+            fs.mkdirSync(dir, { recursive: true });
+            cb(null, dir);
+        },
+        filename: (req, file, cb) => {
+            const ext = path.extname(file.originalname).toLowerCase();
+            cb(null, uuidv4() + ext);
+        }
+    }),
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB per image
+    fileFilter: (req, file, cb) => {
+        const allowed = /\.(jpg|jpeg|png|gif|webp)$/i;
+        if (allowed.test(path.extname(file.originalname))) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only image files are allowed'));
+        }
+    }
+});
+
+router.post('/feedback', authenticateToken, feedbackUpload.array('screenshots', 5), async (req, res) => {
+    try {
+        const { type, content, page_url } = req.body;
+        const isZh = (req.language || 'en') === 'zh';
+
+        if (!type || !['bug', 'experience'].includes(type)) {
+            return res.status(400).json({ success: false, message: isZh ? '反馈类型无效' : 'Invalid feedback type' });
+        }
+        const trimmed = (content || '').trim();
+        if (trimmed.length < 10) {
+            return res.status(400).json({ success: false, message: isZh ? '描述内容至少10个字符' : 'Description must be at least 10 characters' });
+        }
+        if (trimmed.length > 2000) {
+            return res.status(400).json({ success: false, message: isZh ? '内容不超过2000字符' : 'Content must not exceed 2000 characters' });
+        }
+
+        const couponAmount = type === 'bug' ? 10.00 : 5.00;
+        const browserInfo = req.headers['user-agent'] || null;
+        const screenshots = (req.files || []).map(f => f.filename);
+        const screenshotJson = screenshots.length ? JSON.stringify(screenshots) : null;
+
+        await db.query(
+            `INSERT INTO custom_user_feedback (user_id, type, content, page_url, browser_info, screenshot, coupon_amount)
+             VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+            [req.user.id, type, trimmed, page_url || null, browserInfo, screenshotJson, couponAmount]
+        );
+
+        const msg = isZh
+            ? (type === 'bug' ? '反馈已收到！审核通过后您将获得 $10 优惠券奖励。' : '反馈已收到！审核通过后您将获得 $5 优惠券奖励。')
+            : (type === 'bug' ? 'Feedback received! You\'ll earn a $10 coupon upon approval.' : 'Feedback received! You\'ll earn a $5 coupon upon approval.');
+        res.json({ success: true, message: msg });
+    } catch (error) {
+        console.error('提交反馈失败:', error);
+        res.status(500).json({ success: false, message: req.t ? req.t('api.backendError') : 'Server error' });
+    }
+});
+
 module.exports = router;

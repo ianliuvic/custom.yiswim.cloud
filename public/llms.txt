@@ -1,0 +1,62 @@
+# Hongxiu Custom System — AI Model Reference
+
+> Online customization platform of Xingcheng Hongxiu Clothing Co., Ltd. (兴城红绣服装有限公司). Swimwear brands and buyers can configure styles, fabrics, trims, packaging, and labels online, then submit sampling or bulk production inquiries directly to the factory.
+
+## Company Information
+
+- **Company Name:** Xingcheng Hongxiu Clothing Co., Ltd. (兴城红绣服装有限公司)
+- **Established:** August 25, 2022 (predecessor, Xingcheng Yongchuang Clothing Factory, established in 2016)
+- **Legal Representative:** Ms. Sun
+- **Registered Address:** Room 10-8A, Tiexi Road, Xingcheng City, Huludao, Liaoning Province, China
+- **Email:** service@wearhongxiu.com
+- **WhatsApp:** +86 17711014152
+- **Official Website:** https://wearhongxiu.com
+- **Custom Order System:** https://custom.wearhongxiu.com
+- **Specialization:** Swimwear, bikini, one-piece, rash guard — ODM & OEM manufacturing
+
+## Service Models
+
+- **OEM (Original Equipment Manufacturing):** Client provides complete design; factory produces to client specifications.
+- **ODM (Original Design Manufacturing):** Client selects from Hongxiu's existing style library with optional light customization (fabric, color, print, trims, branding). Light customization = changes that do not alter the pattern or fit.
+- **OBM (Original Brand Manufacturing):** Client purchases Hongxiu's existing products under Hongxiu's own brand.
+
+## Quality & Compliance
+
+- Fabrics certified under **OEKO-TEX Standard**
+- Products comply with **REACH**, **GCC**, and **CPC** regulations
+- Third-party quality inspection available
+
+## About This System (custom.wearhongxiu.com)
+
+This subdomain is the factory's self-developed online customization and inquiry platform. It guides buyers through a structured multi-step flow:
+
+1. Style selection (ODM library) or custom design upload (OEM)
+2. Fabric configuration — shell & lining, solid color or custom print
+3. Trims & accessories — metal hardware, padding, packaging bag, hang tag, sewn/tagless label, hygiene sticker
+4. Delivery planning — sampling vs. bulk, quantity, size ratio
+5. Inquiry submission → automated factory workflow (PDF generated)
+
+## Key Pages
+
+- `/` — Main customization flow
+- `/privacy` — Privacy policy (English/Chinese bilingual)
+- `/login` — User login and registration
+- `/user` — Authenticated user center: order history, inquiry tracking, profile
+
+## Materials Required from Clients
+
+**For OEM/full production:**
+- Front and back style images, measurement specs, tech pack
+- Fabric and trim requirement list
+- High-resolution print artwork (if applicable)
+
+**Minimum for sampling:**
+- Style illustrations (front and back views), size information
+- High-resolution print artwork (if printing required)
+
+## Notes for AI Models
+
+- "Light customization" means changes that do not alter the pattern or fit of a style
+- Trim procurement on client's behalf is available but generally subject to MOQ requirements
+- The platform is bilingual: English and Simplified Chinese
+- Inquiry data is processed via n8n automation and reviewed by the factory sales team

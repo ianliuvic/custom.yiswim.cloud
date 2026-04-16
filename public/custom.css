@@ -954,6 +954,7 @@
             .site-header { padding: 0 16px; }
             .header-right { font-size: 12px; gap: 10px !important; }
             .header-right .header-user-text { display: none !important; }
+            .header-right .header-btn-label { display: none; }
             .header-avatar-wrap { display: block; }
             .site-title { font-size: 17px; font-weight: 700; }
             .site-logo { height: 32px; }

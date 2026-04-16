@@ -7420,14 +7420,15 @@
                 grid.innerHTML = '';
                 _feedbackFiles.forEach(function (f, idx) {
                     var item = document.createElement('div');
-                    item.className = 'feedback-preview-item';
+                    item.style.cssText = 'width:72px; height:72px; position:relative; border:1px solid #e2e8f0; overflow:hidden; flex-shrink:0; display:inline-block;';
                     var img = document.createElement('img');
                     img.src = URL.createObjectURL(f);
                     img.alt = f.name;
+                    img.style.cssText = 'width:100%; height:100%; object-fit:cover; display:block;';
                     var removeBtn = document.createElement('button');
-                    removeBtn.className = 'feedback-preview-remove';
                     removeBtn.innerHTML = '&times;';
                     removeBtn.type = 'button';
+                    removeBtn.style.cssText = 'position:absolute; top:2px; right:2px; width:18px; height:18px; background:rgba(0,0,0,0.6); color:#fff; border:none; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; line-height:1; padding:0;';
                     removeBtn.onclick = (function (i) {
                         return function () { _feedbackFiles.splice(i, 1); renderFeedbackPreviews(); };
                     })(idx);

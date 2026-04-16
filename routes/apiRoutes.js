@@ -294,8 +294,11 @@ router.post('/register', registerLimiter, async (req, res) => {
                 data.message = req.t('api.registerDuplicate');
             } else if (data.success && data.message.includes('注册成功')) {
                 data.message = req.t('api.registerSuccess');
+                data.isNew = true;
             } else if (data.message.includes('检查') && data.message.includes('激活')) {
                 data.message = req.t('api.registerCheckEmail');
+                data.success = true;
+                data.isNew = true;
             }
         }
 

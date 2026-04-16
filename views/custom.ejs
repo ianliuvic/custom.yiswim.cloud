@@ -3550,7 +3550,7 @@
                         window.dataLayer.push({ event: 'user_login', method: endpoint === '/api/google-auth' ? 'google' : 'email' });
                         onLoginSuccess(result.username || 'User');
                     } else {
-                        if (endpoint === '/api/register') {
+                        if (endpoint === '/api/register' && result.isNew) {
                             window.dataLayer = window.dataLayer || [];
                             window.dataLayer.push({ event: 'user_register', method: 'email' });
                         }

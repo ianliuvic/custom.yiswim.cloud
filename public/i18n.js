@@ -11,8 +11,10 @@
     // Hide page when switching to Chinese to avoid English flash
     if (LANG !== 'en') {
         var _i18nStyle = document.createElement('style');
-        _i18nStyle.textContent = 'body{opacity:0!important;transition:opacity .15s}';
+        _i18nStyle.textContent = 'body{opacity:0!important;pointer-events:none;transition:none}';
         (document.head || document.documentElement).appendChild(_i18nStyle);
+        // Safety fallback: always reveal within 3s even if DOMContentLoaded revealPage fails
+        setTimeout(function() { _revealPage(); }, 3000);
     }
     function _revealPage() {
         if (_i18nStyle && _i18nStyle.parentNode) {
@@ -1398,13 +1400,14 @@
             }
             if (hasNew && !translateTimer) {
                 translateTimer = setTimeout(function () {
-                    var nodes = pendingNodes.slice();
                     pendingNodes = [];
                     translateTimer = null;
-                    for (var n = 0; n < nodes.length; n++) {
-                        translateDOM(nodes[n]);
-                    }
-                }, 50);
+                    // Single full-body pass instead of per-node calls.
+                    // Per-node calls cause redundant querySelectorAll over overlapping
+                    // subtrees when large batches of nodes are added (e.g. renderFabrics),
+                    // saturating the main thread and freezing the page in zh mode.
+                    translateDOM();
+                }, 100);
             }
         });
 

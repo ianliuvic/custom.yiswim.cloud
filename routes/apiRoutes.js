@@ -353,7 +353,7 @@ router.post('/google-auth', async (req, res) => {
             maxAge: 24 * 60 * 60 * 1000 
         });
 
-        res.json({ success: true, username: user.username });
+        res.json({ success: true, username: user.username, isNew: !result.rows[0] });
 
     } catch (err) {
         console.error('Google Auth Error:', err);

@@ -3490,7 +3490,7 @@
             try {
                 var res = await fetch('/api/google-auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: response.credential }) });
                 var result = await res.json();
-                if (result.success) { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'user_login', method: 'google' }); onLoginSuccess(result.username || 'User'); } else { showAuthMsg(result.message || 'Google Login Failed', 'error'); }
+                if (result.success) { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: result.isNew ? 'user_register' : 'user_login', method: 'google' }); onLoginSuccess(result.username || 'User'); } else { showAuthMsg(result.message || 'Google Login Failed', 'error'); }
             } catch (err) { showAuthMsg(window.__lang === 'zh' ? '网络错误' : 'Network error', 'error'); }
         }
 

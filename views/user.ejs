@@ -142,7 +142,7 @@
                     <div id="usernameEditRow" class="u-info-row" style="display: none;">
                         <label><%= lng === 'zh' ? '新用户名' : 'New Username' %></label>
                         <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
-                            <input type="text" id="newUsername" value="<%= user.username %>" maxlength="30" minlength="2" placeholder="<%= lng === 'zh' ? '2-30字符' : '2-30 characters' %>" style="flex: 1; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 0; font-size: 14px; font-family: inherit;">
+                            <input type="text" id="newUsername" value="<%= user.username %>" maxlength="30" placeholder="<%= lng === 'zh' ? '2-30字符' : '2-30 characters' %>" style="flex: 1; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 0; font-size: 14px; font-family: inherit;">
                             <button type="button" onclick="window.handleChangeUsername()" class="u-btn-primary" style="padding: 8px 16px; font-size: 13px; white-space: nowrap;"><%= lng === 'zh' ? '保存' : 'Save' %></button>
                             <button type="button" onclick="window.toggleUsernameEdit()" style="padding: 8px 16px; font-size: 13px; white-space: nowrap; background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; border-radius: 0; cursor: pointer;"><%= lng === 'zh' ? '取消' : 'Cancel' %></button>
                         </div>
@@ -163,11 +163,11 @@
                         </div>
                         <div class="u-form-group">
                             <label><%= lng === 'zh' ? '新密码' : 'New Password' %></label>
-                            <input type="password" id="newPwd" required minlength="8" placeholder="<%= lng === 'zh' ? '至少8位' : 'At least 8 characters' %>">
+                            <input type="password" id="newPwd" required placeholder="<%= lng === 'zh' ? '至少8位' : 'At least 8 characters' %>">
                         </div>
                         <div class="u-form-group">
                             <label><%= lng === 'zh' ? '确认新密码' : 'Confirm New Password' %></label>
-                            <input type="password" id="confirmPwd" required minlength="8" placeholder="<%= lng === 'zh' ? '再次输入新密码' : 'Re-enter new password' %>">
+                            <input type="password" id="confirmPwd" required placeholder="<%= lng === 'zh' ? '再次输入新密码' : 'Re-enter new password' %>">
                         </div>
                         <div id="pwd-msg" class="u-form-msg"></div>
                         <button type="submit" class="u-btn-primary" style="margin-top:12px;"><%= lng === 'zh' ? '保存修改' : 'Save Changes' %></button>

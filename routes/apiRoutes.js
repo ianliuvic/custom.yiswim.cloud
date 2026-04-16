@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -35,7 +35,7 @@ const upload = multer({
         if (allowed.test(path.extname(file.originalname))) {
             cb(null, true);
         } else {
-            cb(new Error('不支持的文件格式'));
+            cb(new Error((req.language || 'en') === 'zh' ? '不支持的文件格式' : 'Unsupported file format'));
         }
     }
 });
@@ -610,7 +610,7 @@ router.get('/inquiry-by-no/:no', authenticateToken, async (req, res) => {
             [req.params.no, req.user.id]
         );
         if (result.rows.length === 0) {
-            return res.status(404).json({ success: false, message: '询盘不存在' });
+            return res.status(404).json({ success: false, message: (req.language || 'en') === 'zh' ? '询盘不存在' : 'Inquiry not found' });
         }
         res.json({ success: true, id: result.rows[0].id });
     } catch (error) {
@@ -627,7 +627,7 @@ router.get('/inquiry/:id', authenticateToken, async (req, res) => {
             [req.params.id, req.user.id]
         );
         if (inquiryResult.rows.length === 0) {
-            return res.status(404).json({ success: false, message: '询盘不存在' });
+            return res.status(404).json({ success: false, message: (req.language || 'en') === 'zh' ? '询盘不存在' : 'Inquiry not found' });
         }
 
         const filesResult = await db.query(
@@ -709,7 +709,7 @@ router.get('/inquiry/:id/pdf', authenticateToken, async (req, res) => {
             [req.params.id, req.user.id]
         );
         if (inquiryResult.rows.length === 0) {
-            return res.status(404).json({ success: false, message: '询盘不存在' });
+            return res.status(404).json({ success: false, message: (req.language || 'en') === 'zh' ? '询盘不存在' : 'Inquiry not found' });
         }
         const inquiry = inquiryResult.rows[0];
 
@@ -775,7 +775,7 @@ router.get('/inquiry/:id/export', authenticateToken, async (req, res) => {
             [req.params.id, req.user.id]
         );
         if (inquiryResult.rows.length === 0) {
-            return res.status(404).json({ success: false, message: '询盘不存在' });
+            return res.status(404).json({ success: false, message: (req.language || 'en') === 'zh' ? '询盘不存在' : 'Inquiry not found' });
         }
         const inquiry = inquiryResult.rows[0];
 
@@ -886,11 +886,12 @@ router.get('/inquiry/:id/export', authenticateToken, async (req, res) => {
 router.post('/change-password', authenticateToken, async (req, res) => {
     try {
         const { currentPassword, newPassword } = req.body;
+        const isZh = (req.language || 'en') === 'zh';
         if (!currentPassword || !newPassword) {
-            return res.status(400).json({ success: false, message: '请填写完整' });
+            return res.status(400).json({ success: false, message: isZh ? '请填写完整' : 'Please fill in all fields' });
         }
         if (newPassword.length < 8) {
-            return res.status(400).json({ success: false, message: '新密码至少8位' });
+            return res.status(400).json({ success: false, message: isZh ? '新密码至少8位' : 'New password must be at least 8 characters' });
         }
 
         const userResult = await db.query(
@@ -898,12 +899,12 @@ router.post('/change-password', authenticateToken, async (req, res) => {
             [req.user.id]
         );
         if (userResult.rows.length === 0) {
-            return res.status(404).json({ success: false, message: '用户不存在' });
+            return res.status(404).json({ success: false, message: isZh ? '用户不存在' : 'User not found' });
         }
 
         const valid = await bcrypt.compare(currentPassword, userResult.rows[0].password_hash);
         if (!valid) {
-            return res.status(401).json({ success: false, message: '当前密码错误' });
+            return res.status(401).json({ success: false, message: isZh ? '当前密码错误' : 'Current password is incorrect' });
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -913,7 +914,7 @@ router.post('/change-password', authenticateToken, async (req, res) => {
             [hash, req.user.id]
         );
 
-        res.json({ success: true, message: '密码修改成功' });
+        res.json({ success: true, message: isZh ? '密码修改成功' : 'Password updated successfully' });
     } catch (error) {
         console.error('修改密码失败:', error);
         res.status(500).json({ success: false, message: 'Server error' });
@@ -924,12 +925,13 @@ router.post('/change-password', authenticateToken, async (req, res) => {
 router.post('/change-username', authenticateToken, async (req, res) => {
     try {
         const { newUsername } = req.body;
+        const isZhU = (req.language || 'en') === 'zh';
         if (!newUsername || !newUsername.trim()) {
-            return res.status(400).json({ success: false, message: '用户名不能为空' });
+            return res.status(400).json({ success: false, message: isZhU ? '用户名不能为空' : 'Username cannot be empty' });
         }
         const username = newUsername.trim();
         if (username.length < 2 || username.length > 30) {
-            return res.status(400).json({ success: false, message: '用户名长度需在2-30字符之间' });
+            return res.status(400).json({ success: false, message: isZhU ? '用户名长度需在2-30字符之间' : 'Username must be 2–30 characters' });
         }
 
         // 检查用户名是否已被占用
@@ -938,7 +940,7 @@ router.post('/change-username', authenticateToken, async (req, res) => {
             [username, req.user.id]
         );
         if (existing.rows.length > 0) {
-            return res.status(409).json({ success: false, message: '该用户名已被使用' });
+            return res.status(409).json({ success: false, message: isZhU ? '该用户名已被使用' : 'This username is already taken' });
         }
 
         await db.query(
@@ -973,9 +975,9 @@ router.delete('/inquiry/:id', authenticateToken, async (req, res) => {
             [req.params.id, req.user.id]
         );
         if (result.rows.length === 0) {
-            return res.status(404).json({ success: false, message: '询盘不存在' });
+            return res.status(404).json({ success: false, message: (req.language || 'en') === 'zh' ? '询盘不存在' : 'Inquiry not found' });
         }
-        res.json({ success: true, message: '删除成功' });
+        res.json({ success: true, message: (req.language || 'en') === 'zh' ? '删除成功' : 'Deleted successfully' });
     } catch (error) {
         console.error('删除询盘失败:', error);
         res.status(500).json({ success: false, message: 'Server error' });
@@ -1075,7 +1077,7 @@ router.delete('/draft', authenticateToken, async (req, res) => {
             "UPDATE custom_inquiries SET deleted_at = NOW() WHERE user_id = $1 AND status = 'draft' AND deleted_at IS NULL RETURNING id",
             [req.user.id]
         );
-        res.json({ success: true, message: '草稿已删除' });
+        res.json({ success: true, message: (req.language || 'en') === 'zh' ? '草稿已删除' : 'Draft deleted' });
     } catch (error) {
         console.error('删除草稿失败:', error);
         res.status(500).json({ success: false, message: 'Server error' });

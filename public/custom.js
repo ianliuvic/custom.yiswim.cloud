@@ -1173,7 +1173,9 @@
                     checklists.forEach(cb => { if (!cb.checked) allChecked = false; });
                     
                     if (!allChecked) {
-                        showMsg(_t("⚠️ 提交前置校验失败：\n\n您提交了自主设计 (OEM) 需求，为避免后期版型开发与大货生产出现工艺偏差，请务必逐一勾选确认「Critical Specifications Checklist」中的所有必填核对项。"), 'warn');
+                        showMsg(window.__lang === 'zh'
+                            ? "⚠️ 提交前置校验失败：\n\n您提交了自主设计 (OEM) 需求，为避免后期版型开发与大货生产出现工艺偏差，请务必逐一勾选确认「Critical Specifications Checklist」中的所有必填核对项。"
+                            : "⚠️ Submission Pre-check Failed:\n\nYou submitted an OEM (custom design) request. To avoid process deviations during pattern development and bulk production, please check all required items in the Critical Specifications Checklist.", 'warn');
                         
                         // 自动滚动到该区域，并做一次警示闪烁动画
                         const checklistArea = document.getElementById('oem-checklist-section');

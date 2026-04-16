@@ -10,7 +10,8 @@ router.get('/', optionalAuth, (req, res) => {
     res.render('custom', {
         title: req.t('pageTitle.home'),
         user: req.user,
-        googleClientId: process.env.GOOGLE_CLIENT_ID || ''
+        googleClientId: process.env.GOOGLE_CLIENT_ID || '',
+        baseUrl: `${req.protocol}://${req.get('host')}`
     });
 });
 

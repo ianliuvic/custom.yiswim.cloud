@@ -1146,9 +1146,24 @@ router.post('/feedback', authenticateToken, feedbackUpload.array('screenshots', 
 
         await db.query(
             `INSERT INTO custom_user_feedback (user_id, type, content, page_url, browser_info, screenshot, coupon_amount)
-             VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+             VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
             [req.user.id, type, trimmed, page_url || null, browserInfo, screenshotJson, couponAmount]
         );
+
+        // 异步通知 n8n（不阻塞响应）
+        fetch(`${N8N_BASE_URL}/get_new_feedback`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: req.user.id,
+                type,
+                content: trimmed,
+                page_url: page_url || null,
+                screenshot_count: screenshots.length,
+                coupon_amount: couponAmount,
+                submitted_at: new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })
+            })
+        }).catch(err => console.error('n8n feedback webhook 通知失败:', err));
 
         const msg = isZh
             ? (type === 'bug' ? '反馈已收到！审核通过后您将获得 $10 优惠券奖励，可在「用户中心 → 我的反馈」中查看状态。' : '反馈已收到！审核通过后您将获得 $5 优惠券奖励，可在「用户中心 → 我的反馈」中查看状态。')

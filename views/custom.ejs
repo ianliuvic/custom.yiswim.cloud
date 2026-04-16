@@ -3521,7 +3521,7 @@
             }
 
             // Mobile header avatar menu
-            var avatarWrap = document.querySelector('.header-avatar-wrap');
+            var avatarWrap = document.querySelector('.header-avatar-wrap:not(.header-feedback-mobile)');
             if (avatarWrap) {
                 avatarWrap.innerHTML =
                     '<button class="header-avatar-btn" onclick="toggleUserMenu(event)">' +
@@ -3537,6 +3537,10 @@
                         '</a>' +
                     '</div>';
             }
+
+            // Rename guest feedback menu ID so openFeedbackMenu finds it
+            var gfm = document.getElementById('headerFeedbackMenuGuest');
+            if (gfm) gfm.id = 'headerFeedbackMenu';
 
             // Close auth modal
             closeAuth();

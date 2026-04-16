@@ -2255,7 +2255,7 @@
             document.getElementById('uploadProgressBar').style.width = percent + '%';
             document.getElementById('uploadPercent').textContent = Math.round(percent) + '%';
             if (percent >= 100) {
-                document.getElementById('uploadTitle').textContent = _t('服务器处理中...');
+                document.getElementById('uploadTitle').textContent = window.__lang === 'zh' ? '服务器处理中...' : 'Processing on server...';
             }
         }
         function hideUploadModal() {

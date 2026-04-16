@@ -890,4 +890,269 @@
         h += dsecEnd();
         return h;
     }
+
+    // ══════════════════════════════════════════════
+    // Feedback Management
+    // ══════════════════════════════════════════════
+
+    let fbFilter = 'all';
+    let fbPage = 1;
+    let fbSearch = '';
+    let _currentFbId = null;
+
+    // Tab switching
+    window.switchAdminTab = function (tab) {
+        document.querySelectorAll('.adm-tab').forEach(t => t.classList.remove('active'));
+        document.querySelector('.adm-tab[data-tab="' + tab + '"]').classList.add('active');
+        document.querySelectorAll('.adm-tab-content').forEach(c => c.style.display = 'none');
+        document.getElementById('tab-' + tab).style.display = '';
+        // Hide detail panels when switching
+        document.getElementById('detailPanel').style.display = 'none';
+        document.getElementById('fbDetailPanel').style.display = 'none';
+        if (tab === 'feedbacks') loadFeedbacks();
+    };
+
+    // Bind feedback filter and search
+    function bindFbEvents() {
+        document.querySelectorAll('.adm-fb-filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelector('.adm-fb-filter-btn.active').classList.remove('active');
+                btn.classList.add('active');
+                fbFilter = btn.dataset.filter;
+                fbPage = 1;
+                loadFeedbacks();
+            });
+        });
+        document.getElementById('fbSearchBtn').addEventListener('click', () => {
+            fbSearch = document.getElementById('fbSearchInput').value;
+            fbPage = 1;
+            loadFeedbacks();
+        });
+        document.getElementById('fbSearchInput').addEventListener('keydown', e => {
+            if (e.key === 'Enter') { document.getElementById('fbSearchBtn').click(); }
+        });
+    }
+    document.addEventListener('DOMContentLoaded', bindFbEvents);
+
+    async function loadFeedbacks() {
+        const body = document.getElementById('feedbackBody');
+        body.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:40px;color:#94a3b8;">Loading...</td></tr>';
+        try {
+            const resp = await fetch('/admin/api/feedbacks?page=' + fbPage + '&limit=20&filter=' + fbFilter + '&search=' + encodeURIComponent(fbSearch));
+            const json = await resp.json();
+            if (!json.success) throw new Error(json.message);
+            renderFbTable(json.data);
+            renderFbPagination(json.pagination);
+        } catch (e) {
+            body.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:40px;color:#dc2626;">Failed to load</td></tr>';
+        }
+    }
+
+    function renderFbTable(rows) {
+        const body = document.getElementById('feedbackBody');
+        if (rows.length === 0) {
+            body.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:40px;color:#94a3b8;">No feedbacks found</td></tr>';
+            return;
+        }
+        const statusBadge = {
+            pending:  { cls: 'adm-badge-pending', label: 'Pending' },
+            accepted: { cls: 'adm-badge-active', label: 'Accepted' },
+            rejected: { cls: 'adm-badge-deleted', label: 'Rejected' },
+            rewarded: { cls: 'adm-badge-rewarded', label: 'Rewarded' }
+        };
+        const typeLabel = { bug: 'Bug Report', experience: 'Experience' };
+        body.innerHTML = rows.map(r => {
+            const sb = statusBadge[r.status] || statusBadge.pending;
+            const imgs = tryParseFb(r.screenshot);
+            const imgCount = imgs ? imgs.length : 0;
+            const contentShort = (r.content || '').length > 60 ? esc((r.content || '').substring(0, 60)) + '…' : esc(r.content || '');
+            return '<tr>' +
+                '<td>' + r.id + '</td>' +
+                '<td>' + esc(r.username || '-') + '</td>' +
+                '<td><span style="font-size:11px;padding:2px 8px;background:' + (r.type === 'bug' ? '#fee2e2' : '#e0e7ff') + ';color:' + (r.type === 'bug' ? '#dc2626' : '#4f46e5') + ';">' + (typeLabel[r.type] || r.type) + '</span></td>' +
+                '<td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + contentShort + '</td>' +
+                '<td>' + (imgCount > 0 ? imgCount + ' img' : '-') + '</td>' +
+                '<td>' + (r.coupon_code ? esc(r.coupon_code) : '-') + '</td>' +
+                '<td>' + fmtDate(r.created_at) + '</td>' +
+                '<td><span class="adm-badge ' + sb.cls + '">' + sb.label + '</span></td>' +
+                '<td><button class="adm-btn" onclick="openFbDetail(' + r.id + ')">Review</button></td>' +
+                '</tr>';
+        }).join('');
+    }
+
+    function renderFbPagination(p) {
+        const el = document.getElementById('fbPagination');
+        if (p.totalPages <= 1) { el.innerHTML = ''; return; }
+        el.innerHTML =
+            '<button class="adm-btn" ' + (p.page <= 1 ? 'disabled' : 'onclick="fbGoPage(' + (p.page - 1) + ')"') + '>Previous</button>' +
+            '<span style="font-size:13px;color:#64748b;">Page ' + p.page + ' / ' + p.totalPages + ' (' + p.total + ' total)</span>' +
+            '<button class="adm-btn" ' + (p.page >= p.totalPages ? 'disabled' : 'onclick="fbGoPage(' + (p.page + 1) + ')"') + '>Next</button>';
+    }
+
+    window.fbGoPage = function (p) { fbPage = p; loadFeedbacks(); };
+
+    function tryParseFb(v) {
+        if (!v) return null;
+        try { return JSON.parse(v); } catch (e) { return null; }
+    }
+
+    // Detail panel
+    window.openFbDetail = async function (id) {
+        _currentFbId = id;
+        const panel = document.getElementById('fbDetailPanel');
+        const main = document.querySelector('.adm-main');
+        main.style.display = 'none';
+        panel.style.display = '';
+
+        document.getElementById('fbDetailTitle').textContent = 'Feedback #' + id;
+        document.getElementById('fbDetailContent').innerHTML = '<div style="text-align:center;padding:60px;color:#94a3b8;">Loading...</div>';
+
+        try {
+            const resp = await fetch('/admin/api/feedback/' + id);
+            const json = await resp.json();
+            if (!json.success) throw new Error(json.message);
+            renderFbDetail(json.data);
+        } catch (e) {
+            document.getElementById('fbDetailContent').innerHTML = '<div style="text-align:center;padding:60px;color:#dc2626;">Failed to load feedback</div>';
+        }
+    };
+
+    window.closeFbDetail = function () {
+        document.getElementById('fbDetailPanel').style.display = 'none';
+        document.querySelector('.adm-main').style.display = '';
+        loadFeedbacks();
+    };
+
+    function renderFbDetail(d) {
+        const statusMap = {
+            pending:  { cls: 'adm-badge-pending', label: 'Pending' },
+            accepted: { cls: 'adm-badge-active', label: 'Accepted' },
+            rejected: { cls: 'adm-badge-deleted', label: 'Rejected' },
+            rewarded: { cls: 'adm-badge-rewarded', label: 'Rewarded' }
+        };
+        const sb = statusMap[d.status] || statusMap.pending;
+        document.getElementById('fbDetailStatus').className = 'adm-badge ' + sb.cls;
+        document.getElementById('fbDetailStatus').textContent = sb.label;
+
+        // Stats pills
+        const typeLabel = d.type === 'bug' ? 'Bug Report' : 'Experience Feedback';
+        const couponAmt = d.type === 'bug' ? '$10' : '$5';
+        let stats = '<span class="adm-stat-pill">👤 ' + esc(d.username || 'Unknown') + '</span>';
+        stats += '<span class="adm-stat-pill">📧 ' + esc(d.email || '-') + '</span>';
+        stats += '<span class="adm-stat-pill">📋 ' + typeLabel + '</span>';
+        stats += '<span class="adm-stat-pill">💰 Reward: ' + couponAmt + '</span>';
+        if (d.page_url) stats += '<span class="adm-stat-pill">🔗 ' + esc(d.page_url) + '</span>';
+        document.getElementById('fbDetailStats').innerHTML = stats;
+
+        let html = '';
+
+        // Content section
+        html += '<div class="adm-sec"><div class="adm-sec-head"><h4>📝 Feedback Content</h4></div><div class="adm-sec-body">';
+        html += '<div style="font-size:14px;line-height:1.8;white-space:pre-wrap;word-break:break-word;color:#334155;">' + esc(d.content || '') + '</div>';
+
+        // Screenshots
+        const imgs = tryParseFb(d.screenshot);
+        if (imgs && imgs.length > 0) {
+            html += '<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;">';
+            imgs.forEach(fn => {
+                const url = 'https://files.yiswim.cloud/uploads/feedback/' + encodeURIComponent(fn);
+                html += '<a href="' + url + '" target="_blank" rel="noopener" style="display:block;width:120px;height:120px;overflow:hidden;border:1px solid #e2e8f0;">';
+                html += '<img src="' + url + '" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy">';
+                html += '</a>';
+            });
+            html += '</div>';
+        }
+
+        // Browser info
+        if (d.browser_info) {
+            html += '<div style="margin-top:12px;font-size:12px;color:#94a3b8;">Browser: ' + esc(d.browser_info) + '</div>';
+        }
+        html += '</div></div>';
+
+        // Timeline
+        html += '<div class="adm-sec"><div class="adm-sec-head"><h4>🕐 Timeline</h4></div><div class="adm-sec-body">';
+        html += '<div class="adm-timeline">';
+        html += '<div class="adm-timeline-item"><span class="adm-timeline-dot"></span><strong>' + fmtDate(d.created_at) + '</strong> Feedback Submitted</div>';
+        if (d.reviewed_at) {
+            html += '<div class="adm-timeline-item"><span class="adm-timeline-dot"></span><strong>' + fmtDate(d.reviewed_at) + '</strong> Reviewed</div>';
+        }
+        html += '</div></div></div>';
+
+        // Admin action form
+        html += renderFbActionForm(d);
+
+        document.getElementById('fbDetailContent').innerHTML = html;
+    }
+
+    function renderFbActionForm(d) {
+        const statusOpts = [
+            { val: 'pending', label: 'Pending' },
+            { val: 'accepted', label: 'Accepted (approve, coupon pending)' },
+            { val: 'rejected', label: 'Rejected' },
+            { val: 'rewarded', label: 'Rewarded (coupon issued)' }
+        ];
+        const curStatus = d.status || 'pending';
+
+        let h = '<div class="adm-sec adm-action-sec"><div class="adm-sec-head"><h4>📋 Admin Actions</h4></div><div class="adm-sec-body">';
+
+        // Status
+        h += '<div class="adm-form-row"><label class="adm-form-label">Feedback Status</label>';
+        h += '<select id="fbStatusSelect" class="adm-form-select">';
+        statusOpts.forEach(o => {
+            h += '<option value="' + o.val + '"' + (curStatus === o.val ? ' selected' : '') + '>' + o.label + '</option>';
+        });
+        h += '</select></div>';
+
+        // Admin note
+        h += '<div class="adm-form-row"><label class="adm-form-label">Admin Note (visible to admin only)</label>';
+        h += '<textarea id="fbAdminNote" class="adm-form-textarea" rows="3" placeholder="Internal note...">' + esc(d.admin_note || '') + '</textarea></div>';
+
+        // Coupon code
+        h += '<div class="adm-form-row"><label class="adm-form-label">Coupon Code (visible to user when rewarded)</label>';
+        h += '<input type="text" id="fbCouponCode" class="adm-form-input" placeholder="e.g. FB-XXXX-XXXX" value="' + esc(d.coupon_code || '') + '"></div>';
+
+        // Coupon amount display
+        h += '<div class="adm-form-row"><label class="adm-form-label">Coupon Amount</label>';
+        h += '<div style="font-size:14px;font-weight:600;color:#16a34a;">$' + (d.coupon_amount || (d.type === 'bug' ? 10 : 5)) + '</div></div>';
+
+        // Save button
+        h += '<div class="adm-form-row adm-form-actions"><button id="fbSaveBtn" class="adm-btn adm-btn-save" onclick="saveFbAction()">Save</button></div>';
+
+        h += '</div></div>';
+        return h;
+    }
+
+    window.saveFbAction = async function () {
+        if (!_currentFbId) return;
+        const btn = document.getElementById('fbSaveBtn');
+        btn.disabled = true;
+        btn.textContent = 'Saving...';
+
+        const status = document.getElementById('fbStatusSelect').value;
+        const admin_note = document.getElementById('fbAdminNote').value.trim();
+        const coupon_code = document.getElementById('fbCouponCode').value.trim();
+
+        try {
+            const resp = await fetch('/admin/api/feedback/' + _currentFbId + '/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status, admin_note, coupon_code })
+            });
+            const json = await resp.json();
+            if (json.success) {
+                btn.textContent = '✓ Updated';
+                btn.style.background = '#16a34a';
+                setTimeout(() => { window.openFbDetail(_currentFbId); }, 1000);
+            } else {
+                alert(json.message || 'Save failed');
+                btn.textContent = 'Save';
+                btn.disabled = false;
+            }
+        } catch {
+            alert('Network error');
+            btn.textContent = 'Save';
+            btn.disabled = false;
+        }
+    };
+
 })();

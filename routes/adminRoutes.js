@@ -449,4 +449,129 @@ router.get('/api/inquiry/:id/export', authenticateAdmin, async (req, res) => {
     }
 });
 
+// ========== Feedback Management ==========
+
+// List feedbacks with pagination and filter
+router.get('/api/feedbacks', authenticateAdmin, async (req, res) => {
+    try {
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const limit = Math.min(50, Math.max(1, parseInt(req.query.limit) || 20));
+        const offset = (page - 1) * limit;
+        const filter = req.query.filter || 'all'; // all, pending, accepted, rejected, rewarded
+        const search = (req.query.search || '').trim();
+
+        let where = '';
+        const params = [];
+        if (filter !== 'all') {
+            params.push(filter);
+            where = 'WHERE f.status = $' + params.length;
+        }
+        if (search) {
+            params.push('%' + search + '%');
+            const sIdx = params.length;
+            const searchClause = `(u.username ILIKE $${sIdx} OR u.email ILIKE $${sIdx} OR f.content ILIKE $${sIdx})`;
+            where = where ? where + ' AND ' + searchClause : 'WHERE ' + searchClause;
+        }
+
+        const countResult = await db.query(
+            `SELECT COUNT(*) FROM custom_user_feedback f LEFT JOIN custom_users u ON f.user_id = u.id ${where}`,
+            params
+        );
+        const total = parseInt(countResult.rows[0].count);
+
+        params.push(limit, offset);
+        const dataResult = await db.query(
+            `SELECT f.*, u.username, u.email
+             FROM custom_user_feedback f
+             LEFT JOIN custom_users u ON f.user_id = u.id
+             ${where}
+             ORDER BY f.created_at DESC
+             LIMIT $${params.length - 1} OFFSET $${params.length}`,
+            params
+        );
+
+        res.json({
+            success: true,
+            data: dataResult.rows,
+            pagination: { page, limit, total, totalPages: Math.ceil(total / limit) }
+        });
+    } catch (error) {
+        console.error('Admin list feedbacks error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Get single feedback detail
+router.get('/api/feedback/:id', authenticateAdmin, async (req, res) => {
+    try {
+        const result = await db.query(
+            `SELECT f.*, u.username, u.email
+             FROM custom_user_feedback f
+             LEFT JOIN custom_users u ON f.user_id = u.id
+             WHERE f.id = $1`,
+            [req.params.id]
+        );
+        if (result.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Feedback not found' });
+        }
+        res.json({ success: true, data: result.rows[0] });
+    } catch (error) {
+        console.error('Admin get feedback error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Update feedback (review: accept/reject/reward + coupon + admin note)
+router.post('/api/feedback/:id/update', authenticateAdmin, async (req, res) => {
+    try {
+        const { status, admin_note, coupon_code } = req.body;
+        const allowedStatuses = ['pending', 'accepted', 'rejected', 'rewarded'];
+        if (status && !allowedStatuses.includes(status)) {
+            return res.status(400).json({ success: false, message: 'Invalid status' });
+        }
+
+        // Get current feedback to determine coupon_amount
+        const current = await db.query('SELECT * FROM custom_user_feedback WHERE id = $1', [req.params.id]);
+        if (current.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Feedback not found' });
+        }
+
+        const fields = [];
+        const values = [];
+        let idx = 1;
+
+        if (status) {
+            fields.push('status = $' + idx++);
+            values.push(status);
+        }
+        if (admin_note !== undefined) {
+            fields.push('admin_note = $' + idx++);
+            values.push(admin_note);
+        }
+        if (coupon_code !== undefined) {
+            fields.push('coupon_code = $' + idx++);
+            values.push(coupon_code);
+        }
+        if (status === 'accepted' || status === 'rejected' || status === 'rewarded') {
+            fields.push('reviewed_at = $' + idx++);
+            values.push(new Date());
+        }
+
+        if (fields.length === 0) {
+            return res.status(400).json({ success: false, message: 'No fields to update' });
+        }
+
+        values.push(req.params.id);
+        await db.query(
+            `UPDATE custom_user_feedback SET ${fields.join(', ')} WHERE id = $${idx}`,
+            values
+        );
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Admin update feedback error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
 module.exports = router;

@@ -6,7 +6,7 @@
     <title><%= title %></title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/admin.css">
+    <link rel="stylesheet" href="/admin.css?v=<%= Date.now() %>">
 </head>
 <body>
 
@@ -24,6 +24,14 @@
     </header>
 
     <main class="adm-main">
+        <!-- Tab Navigation -->
+        <div class="adm-tabs">
+            <button class="adm-tab active" data-tab="inquiries" onclick="switchAdminTab('inquiries')">Inquiries</button>
+            <button class="adm-tab" data-tab="feedbacks" onclick="switchAdminTab('feedbacks')">Feedbacks</button>
+        </div>
+
+        <!-- ===== Inquiries Tab ===== -->
+        <div id="tab-inquiries" class="adm-tab-content">
         <div class="adm-toolbar">
             <div class="adm-filters">
                 <button class="adm-filter-btn active" data-filter="all">All</button>
@@ -62,6 +70,47 @@
         </div>
 
         <div class="adm-pagination" id="pagination"></div>
+        </div>
+        <!-- End Inquiries Tab -->
+
+        <!-- ===== Feedbacks Tab ===== -->
+        <div id="tab-feedbacks" class="adm-tab-content" style="display:none;">
+        <div class="adm-toolbar">
+            <div class="adm-filters">
+                <button class="adm-fb-filter-btn active" data-filter="all">All</button>
+                <button class="adm-fb-filter-btn" data-filter="pending">Pending</button>
+                <button class="adm-fb-filter-btn" data-filter="accepted">Accepted</button>
+                <button class="adm-fb-filter-btn" data-filter="rejected">Rejected</button>
+                <button class="adm-fb-filter-btn" data-filter="rewarded">Rewarded</button>
+            </div>
+            <div class="adm-search">
+                <input type="text" id="fbSearchInput" placeholder="Search Username / Email / Content" />
+                <button id="fbSearchBtn">Search</button>
+            </div>
+        </div>
+
+        <div class="adm-table-wrap">
+            <table class="adm-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Type</th>
+                        <th>Content</th>
+                        <th>Screenshots</th>
+                        <th>Coupon</th>
+                        <th>Created At</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="feedbackBody"></tbody>
+            </table>
+        </div>
+
+        <div class="adm-pagination" id="fbPagination"></div>
+        </div>
+        <!-- End Feedbacks Tab -->
     </main>
 
     <!-- 询盘详情面板 -->
@@ -90,6 +139,24 @@
         <div id="detailContent" class="adm-detail-content"></div>
     </div>
 
+    <!-- Feedback Detail Panel -->
+    <div id="fbDetailPanel" class="adm-detail-panel" style="display:none;">
+        <div class="adm-detail-hero">
+            <div class="adm-detail-hero-top">
+                <button class="adm-back-btn" onclick="closeFbDetail()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                    Back to List
+                </button>
+                <span id="fbDetailStatus" class="adm-badge"></span>
+            </div>
+            <div class="adm-detail-hero-title">
+                <h2 id="fbDetailTitle"></h2>
+            </div>
+            <div id="fbDetailStats" class="adm-detail-stats"></div>
+        </div>
+        <div id="fbDetailContent" class="adm-detail-content"></div>
+    </div>
+
     <!-- Confirmation Dialog -->
     <div class="adm-modal-mask" id="modalMask">
         <div class="adm-modal">
@@ -102,6 +169,6 @@
         </div>
     </div>
 
-    <script src="/admin.js"></script>
+    <script src="/admin.js?v=<%= Date.now() %>"></script>
 </body>
 </html>

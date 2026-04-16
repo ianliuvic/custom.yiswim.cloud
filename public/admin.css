@@ -58,6 +58,45 @@ body {
     padding: 0 16px;
 }
 
+/* ── Admin Tabs ── */
+.adm-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 20px;
+}
+.adm-tab {
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+.adm-tab:hover { color: var(--text-main); }
+.adm-tab.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+.adm-fb-filter-btn {
+    padding: 5px 14px;
+    font-size: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.15s;
+    font-family: inherit;
+}
+.adm-fb-filter-btn:hover { border-color: #cbd5e1; color: var(--text-main); }
+.adm-fb-filter-btn.active { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+
 /* ── Toolbar ── */
 .adm-toolbar {
     display: flex;
@@ -143,6 +182,8 @@ body {
 }
 .adm-badge-active { background: #dcfce7; color: var(--success-color); }
 .adm-badge-deleted { background: #fee2e2; color: var(--danger-color); }
+.adm-badge-pending { background: #fef3c7; color: #d97706; }
+.adm-badge-rewarded { background: #f3e8ff; color: #7c3aed; }
 
 /* ── Buttons ── */
 .adm-btn {

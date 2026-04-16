@@ -46,6 +46,7 @@ app.set('trust proxy', 1);
 app.use(helmet({
     contentSecurityPolicy: false,       // 页面含大量内联脚本/事件属性，CSP 单独维护
     crossOriginEmbedderPolicy: false,   // 防止 Chatwoot 等第三方 iframe 加载失败
+    frameguard: false,                  // 允许 GTM Preview 通过 iframe 连接
 }));
 
 app.use(express.json());

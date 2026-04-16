@@ -50,7 +50,7 @@ router.get('/home', (req, res) => {
 router.get('/privacy', (req, res) => {
     res.render('privacy', { 
         title: req.t ? req.t('pageTitle.privacy') || 'Privacy Policy' : 'Privacy Policy',
-        currentDate: '2026年4月8日'
+        currentDate: 'April 8, 2026'
     });
 });
 

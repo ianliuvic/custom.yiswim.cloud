@@ -621,6 +621,9 @@ body {
     .u-sidebar { display: none; }
     .u-mobile-tabs { display: block; }
     .u-main { padding: 24px 24px 80px; }
+    /* Chatwoot 气泡避让底部导航栏 */
+    .woot-widget-bubble,
+    .woot--bubble-holder { bottom: 75px !important; }
 }
 
 /* ---- Tablet Portrait / Large Phone ---- */

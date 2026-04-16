@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
+    <title>500 – Server Error</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Crimson Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #fff;
+            color: #1e293b;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            text-align: center;
+            padding: 48px 24px;
+            max-width: 480px;
+        }
+        .code {
+            font-size: 96px;
+            font-weight: 700;
+            color: #aa0000;
+            line-height: 1;
+            letter-spacing: -4px;
+        }
+        .title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #0f172a;
+            margin: 16px 0 10px;
+        }
+        .desc {
+            font-size: 15px;
+            color: #64748b;
+            line-height: 1.7;
+            margin-bottom: 32px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 28px;
+            background: #aa0000;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            border: 2px solid #aa0000;
+            transition: all 0.2s;
+        }
+        .btn:hover { background: #880000; border-color: #880000; }
+        .divider {
+            width: 40px;
+            height: 3px;
+            background: #aa0000;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="code">500</div>
+        <div class="divider"></div>
+        <div class="title">Server Error</div>
+        <div class="desc">Something went wrong on our end. Please try again in a moment.</div>
+        <a href="/" class="btn">Back to Home</a>
+    </div>
+</body>
+</html>

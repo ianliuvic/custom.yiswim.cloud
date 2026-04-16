@@ -5,6 +5,32 @@ const authenticateToken = require('../middleware/auth');
 const { optionalAuth } = require('../middleware/auth');
 const { N8N_BASE_URL, JWT_SECRET } = require('../config/constants');
 
+// robots.txt
+router.get('/robots.txt', (req, res) => {
+    const base = `${req.protocol}://${req.get('host')}`;
+    res.type('text/plain');
+    res.send(`User-agent: *\nDisallow: /admin\nDisallow: /api/\nDisallow: /user\nDisallow: /login\nDisallow: /reset\n\nSitemap: ${base}/sitemap.xml`);
+});
+
+// sitemap.xml
+router.get('/sitemap.xml', (req, res) => {
+    const base = `${req.protocol}://${req.get('host')}`;
+    res.type('application/xml');
+    res.send(`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/0.9">
+  <url>
+    <loc>${base}/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>${base}/privacy</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+</urlset>`);
+});
+
 // 1. 根目录：定制主页（公开访问，可选登录）
 router.get('/', optionalAuth, (req, res) => {
     res.render('custom', {

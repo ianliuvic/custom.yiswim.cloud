@@ -57,6 +57,16 @@
                     : (r.status === 'accepted'
                         ? '<div style="margin-top:6px; font-size:12px; color:#16a34a;">' + (isZh ? '已通过，优惠券即将发起' : 'Approved — coupon will be issued shortly') + '</div>'
                         : '');
+                var imgs = [];
+                try { imgs = JSON.parse(r.screenshot || '[]'); } catch(e) { imgs = []; }
+                var screenshotLine = imgs.length
+                    ? '<div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;">'
+                        + imgs.map(function(fn) {
+                            return '<a href="/uploads/feedback/' + encodeURIComponent(fn) + '" target="_blank" rel="noopener" style="display:block; width:64px; height:64px; overflow:hidden; flex-shrink:0; border:1px solid #e2e8f0;">'
+                                + '<img src="/uploads/feedback/' + encodeURIComponent(fn) + '" style="width:100%; height:100%; object-fit:cover; display:block;" loading="lazy">'
+                                + '</a>';
+                        }).join('') + '</div>'
+                    : '';
                 return '<div class="u-inquiry-card" style="cursor:default;">'
                     + '<div class="u-inquiry-card-left" style="flex:1;">'
                     + '<div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">'
@@ -65,6 +75,7 @@
                     + '<span style="font-size:12px; color:#94a3b8; margin-left:auto;">' + fmtDate(r.created_at) + '</span>'
                     + '</div>'
                     + '<div style="font-size:13px; color:#334155; line-height:1.6; white-space:pre-wrap; word-break:break-word;">' + esc(r.content) + '</div>'
+                    + screenshotLine
                     + couponLine
                     + '</div>'
                     + '</div>';

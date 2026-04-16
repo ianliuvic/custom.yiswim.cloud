@@ -29,8 +29,8 @@
     <meta name="twitter:image" content="<%= baseUrl %>/serp-image.webp">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/custom.css">
-    <link rel="stylesheet" href="/modal.css">
+    <link rel="stylesheet" href="/custom.css?v=<%= Date.now() %>">
+    <link rel="stylesheet" href="/modal.css?v=<%= Date.now() %>">
     <style>
         /* 移动端抽屉（内联，防缓存） */
         .mobile-summary-fab { display: none !important; }
@@ -94,8 +94,8 @@
     </style>
     <script>window.__lang = '<%= lng %>';</script>
     <script>window.__isLoggedIn = <%= user ? 'true' : 'false' %>;</script>
-    <script src="/i18n.js"></script>
-    <script src="/modal.js"></script>
+    <script src="/i18n.js?v=<%= Date.now() %>"></script>
+    <script src="/modal.js?v=<%= Date.now() %>"></script>
     <% if (!user) { %><script src="https://accounts.google.com/gsi/client" async defer></script><% } %>
 </head>
 <body>
@@ -3218,7 +3218,7 @@
     <!-- =========================================================================
          核心 JavaScript 逻辑
          ========================================================================= -->
-    <script src="/custom.js"></script>
+    <script src="/custom.js?v=<%= Date.now() %>"></script>
 
     <!-- 移动端抽屉切换 -->
     <script>

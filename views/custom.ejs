@@ -43,22 +43,24 @@
         @media (max-width: 1024px) {
             .mobile-summary-fab {
                 display: flex !important;
-                position: fixed !important;
-                bottom: 70px !important; left: 20px !important;
-                z-index: 9990;
-                width: 52px !important; height: 52px !important;
-                min-width: 52px; max-width: 52px;
-                min-height: 52px; max-height: 52px;
-                border-radius: 50% !important;
-                background: var(--primary-color) !important;
-                color: #fff !important; border: none !important;
+                position: static !important;
+                width: 44px !important; height: auto !important;
+                min-width: 44px; max-width: 44px;
+                min-height: unset; max-height: unset;
+                border-radius: 6px !important;
+                background: #fff !important;
+                color: #64748b !important;
+                border: 1px solid #e2e8f0 !important;
                 padding: 0 !important;
                 align-items: center; justify-content: center;
-                box-shadow: none;
+                align-self: stretch; flex-shrink: 0;
                 cursor: pointer;
                 -webkit-appearance: none; appearance: none;
             }
-            .mobile-summary-fab:active { transform: scale(0.92); }
+            .mobile-summary-fab:active { transform: scale(0.95); }
+            /* Chatwoot 气泡避让底部按钮栏 */
+            .woot-widget-bubble,
+            .woot--bubble-holder { bottom: 75px !important; }
             .summary-sidebar {
                 display: block !important;
                 position: fixed !important;
@@ -2890,7 +2892,15 @@
             </div>
 
             <div class="button-group">
-                <!-- 优化：移除内联 onclick，改用下方 JS 绑定 -->
+                <!-- 移动端汇总快捷按钮，桌面端由 CSS 隐藏 -->
+                <button type="button" class="mobile-summary-fab" onclick="toggleMobileDrawer()" title="View Customization Details">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                    </svg>
+                </button>
                 <button type="button" id="prevBtn" disabled>Previous Step</button>
                 <button type="button" id="nextBtn">Next Step</button>
             </div>
@@ -2946,16 +2956,6 @@
         </aside>
     </div>
 
-    <!-- 移动端：定制详情浮动按钮 (左下角，避让 Chatwoot) -->
-    <button class="mobile-summary-fab" onclick="toggleMobileDrawer()" title="View Customization Details"
-        style="display:none; position:fixed; bottom:70px; left:20px; z-index:9990; width:52px; height:52px; min-width:52px; min-height:52px; max-width:52px; max-height:52px; border-radius:50%; background:#aa0000; color:#fff; border:none; padding:0; align-items:center; justify-content:center; box-shadow:none; cursor:pointer; -webkit-appearance:none; appearance:none;">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/>
-            <line x1="16" y1="17" x2="8" y2="17"/>
-        </svg>
-    </button>
     <!-- 移动端：抽屉遮罩 -->
     <div class="drawer-backdrop" id="drawerBackdrop" onclick="toggleMobileDrawer()"></div>
 

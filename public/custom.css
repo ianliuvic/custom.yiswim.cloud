@@ -975,8 +975,9 @@
             .category-nav::-webkit-scrollbar { display: none; }
 
             .config-scroll-area { padding: 16px 16px 28px; }
-            .button-group { padding: 12px 16px; flex-wrap: wrap; }
-            .button-group button { flex: 1; min-width: 0; font-size: 13px; }
+            .button-group { padding: 12px 16px; gap: 10px; }
+            .button-group #prevBtn,
+            .button-group #nextBtn { flex: 1; min-width: 0; font-size: 13px; }
 
             .step-desc { font-size: 12px; padding: 12px 14px; margin-bottom: 20px; }
 

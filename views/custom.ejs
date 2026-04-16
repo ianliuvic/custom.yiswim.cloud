@@ -3490,7 +3490,7 @@
             try {
                 var res = await fetch('/api/google-auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: response.credential }) });
                 var result = await res.json();
-                if (result.success) { onLoginSuccess(result.username || 'User'); } else { showAuthMsg(result.message || 'Google Login Failed', 'error'); }
+                if (result.success) { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'user_login', method: 'google' }); onLoginSuccess(result.username || 'User'); } else { showAuthMsg(result.message || 'Google Login Failed', 'error'); }
             } catch (err) { showAuthMsg(window.__lang === 'zh' ? '网络错误' : 'Network error', 'error'); }
         }
 
@@ -3546,8 +3546,14 @@
                 var result = await res.json();
                 if (result.success) {
                     if (endpoint === '/api/login' || endpoint === '/api/google-auth') {
+                        window.dataLayer = window.dataLayer || [];
+                        window.dataLayer.push({ event: 'user_login', method: endpoint === '/api/google-auth' ? 'google' : 'email' });
                         onLoginSuccess(result.username || 'User');
                     } else {
+                        if (endpoint === '/api/register') {
+                            window.dataLayer = window.dataLayer || [];
+                            window.dataLayer.push({ event: 'user_register', method: 'email' });
+                        }
                         showAuthMsg(result.message || (window.__lang === 'zh' ? '操作成功！' : 'Success!'), 'success');
                     }
                 } else {

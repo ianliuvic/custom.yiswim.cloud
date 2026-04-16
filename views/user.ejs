@@ -45,6 +45,10 @@
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                 <span>Inquiry Records</span>
             </div>
+            <div class="u-menu-item" data-tab="feedback" onclick="switchTab('feedback')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <span><%= lng === 'zh' ? '我的反馈' : 'My Feedback' %></span>
+            </div>
             <div class="u-menu-item" data-tab="account" onclick="switchTab('account')">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 <span>Account Settings</span>
@@ -57,6 +61,10 @@
                 <button class="u-mobile-tab active" data-tab="inquiries" onclick="switchTab('inquiries')">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                     <span>Inquiry Records</span>
+                </button>
+                <button class="u-mobile-tab" data-tab="feedback" onclick="switchTab('feedback')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    <span><%= lng === 'zh' ? '我的反馈' : 'My Feedback' %></span>
                 </button>
                 <button class="u-mobile-tab" data-tab="account" onclick="switchTab('account')">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -125,7 +133,15 @@
                 </div>
             </section>
 
-            <!-- Tab 2: Account Settings -->
+            <!-- Tab 2: My Feedback -->
+            <section id="tab-feedback" class="u-tab">
+                <div class="u-page-title"><h2><%= lng === 'zh' ? '我的反馈' : 'My Feedback' %></h2></div>
+                <div id="feedback-list" class="u-inquiry-list">
+                    <div class="u-loading">Loading...</div>
+                </div>
+            </section>
+
+            <!-- Tab 3: Account Settings -->
             <section id="tab-account" class="u-tab">
                 <div class="u-page-title"><h2><%= lng === 'zh' ? '账户设置' : 'Account Settings' %></h2></div>
 

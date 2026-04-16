@@ -20,6 +20,57 @@
         if (tab === 'inquiries') {
             closeDetail();
             loadInquiries(1);
+        } else if (tab === 'feedback') {
+            loadFeedbacks();
+        }
+    };
+
+    /* ---------- My Feedback list ---------- */
+    window.loadFeedbacks = async function () {
+        var listEl = document.getElementById('feedback-list');
+        if (!listEl) return;
+        var isZh = window.__lang === 'zh';
+        listEl.innerHTML = '<div class="u-loading">Loading...</div>';
+        try {
+            var res = await fetch('/api/my-feedbacks');
+            var json = await res.json();
+            if (!json.success) throw new Error(json.message);
+            var rows = json.data;
+            if (rows.length === 0) {
+                listEl.innerHTML = '<div class="u-empty"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><p>' + (isZh ? '还没有提交过反馈' : 'No feedback submitted yet') + '</p></div>';
+                return;
+            }
+            var statusMap = {
+                pending:  { zh: '待审核', en: 'Pending',  color: '#f59e0b', bg: '#fef9c3' },
+                accepted: { zh: '已通过', en: 'Accepted', color: '#16a34a', bg: '#dcfce7' },
+                rejected: { zh: '未通过', en: 'Rejected', color: '#dc2626', bg: '#fee2e2' },
+                rewarded: { zh: '已奖励', en: 'Rewarded', color: '#7c3aed', bg: '#ede9fe' }
+            };
+            var typeMap = { bug: { zh: '页面问题', en: 'Bug Report' }, experience: { zh: '使用体验', en: 'Experience' } };
+            listEl.innerHTML = rows.map(function (r) {
+                var s = statusMap[r.status] || statusMap.pending;
+                var t = typeMap[r.type] || { zh: r.type, en: r.type };
+                var statusLabel = isZh ? s.zh : s.en;
+                var typeLabel = isZh ? t.zh : t.en;
+                var couponLine = (r.status === 'rewarded' && r.coupon_code)
+                    ? '<div style="margin-top:6px; font-size:12px; color:#7c3aed;"><strong>' + (isZh ? '优惠码：' : 'Coupon: ') + '</strong>' + esc(r.coupon_code) + ' — $' + r.coupon_amount + ' off</div>'
+                    : (r.status === 'accepted'
+                        ? '<div style="margin-top:6px; font-size:12px; color:#16a34a;">' + (isZh ? '已通过，优惠券即将发起' : 'Approved — coupon will be issued shortly') + '</div>'
+                        : '');
+                return '<div class="u-inquiry-card" style="cursor:default;">'
+                    + '<div class="u-inquiry-card-left" style="flex:1;">'
+                    + '<div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">'
+                    + '<span style="font-size:11px; font-weight:600; padding:2px 8px; background:' + s.bg + '; color:' + s.color + ';">' + statusLabel + '</span>'
+                    + '<span style="font-size:11px; color:#94a3b8; padding:2px 8px; background:#f8fafc; border:1px solid #f1f5f9;">' + typeLabel + '</span>'
+                    + '<span style="font-size:12px; color:#94a3b8; margin-left:auto;">' + fmtDate(r.created_at) + '</span>'
+                    + '</div>'
+                    + '<div style="font-size:13px; color:#334155; line-height:1.6; white-space:pre-wrap; word-break:break-word;">' + esc(r.content) + '</div>'
+                    + couponLine
+                    + '</div>'
+                    + '</div>';
+            }).join('');
+        } catch (e) {
+            listEl.innerHTML = '<div class="u-empty"><p>' + (window.__lang === 'zh' ? '加载失败' : 'Failed to load') + '</p></div>';
         }
     };
 

@@ -1151,12 +1151,29 @@ router.post('/feedback', authenticateToken, feedbackUpload.array('screenshots', 
         );
 
         const msg = isZh
-            ? (type === 'bug' ? '反馈已收到！审核通过后您将获得 $10 优惠券奖励。' : '反馈已收到！审核通过后您将获得 $5 优惠券奖励。')
-            : (type === 'bug' ? 'Feedback received! You\'ll earn a $10 coupon upon approval.' : 'Feedback received! You\'ll earn a $5 coupon upon approval.');
+            ? (type === 'bug' ? '反馈已收到！审核通过后您将获得 $10 优惠券奖励，可在「用户中心 → 我的反馈」中查看状态。' : '反馈已收到！审核通过后您将获得 $5 优惠券奖励，可在「用户中心 → 我的反馈」中查看状态。')
+            : (type === 'bug' ? 'Feedback received! You\'ll earn a $10 coupon upon approval. Track status in User Center → My Feedback.' : 'Feedback received! You\'ll earn a $5 coupon upon approval. Track status in User Center → My Feedback.');
         res.json({ success: true, message: msg });
     } catch (error) {
         console.error('提交反馈失败:', error);
         res.status(500).json({ success: false, message: req.t ? req.t('api.backendError') : 'Server error' });
+    }
+});
+
+// ===== 获取当前用户的反馈列表 =====
+router.get('/my-feedbacks', authenticateToken, async (req, res) => {
+    try {
+        const result = await db.query(
+            `SELECT id, type, content, status, coupon_code, coupon_amount, created_at
+             FROM custom_user_feedback
+             WHERE user_id = $1
+             ORDER BY created_at DESC`,
+            [req.user.id]
+        );
+        res.json({ success: true, data: result.rows });
+    } catch (error) {
+        console.error('获取反馈列表失败:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 

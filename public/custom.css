@@ -1,5 +1,5 @@
-﻿        /* =========================================================
-           1. 鍩虹甯冨眬鍙橀噺涓庡叏灞€閲嶇疆
+        /* =========================================================
+           1. 基础布局变量与全局重置
            ========================================================= */
         :root {
             --primary-color: #aa0000;
@@ -12,7 +12,7 @@
             --bg-sidebar: #fafafa;
         }
     
-        /* 鍏ㄥ眬琛ㄥ崟鎺т欢涓婚鑹?*/
+        /* 全局表单控件主题色 */
         input, textarea, select, button { font-family: inherit; }
         input::placeholder, textarea::placeholder { color: #cbd5e1; }
         input[type="radio"],
@@ -20,7 +20,7 @@
             accent-color: var(--primary-color);
         }
 
-        /* 浼樺寲锛氱Щ闄や笉蹇呰鐨?!important锛岃鑼冨叏灞?Flex 甯冨眬 */
+        /* 优化：移除不必要的 !important，规范全屏 Flex 布局 */
         body {
             height: 100vh; height: 100dvh; width: 100vw; overflow: hidden; 
             display: flex; flex-direction: column;
@@ -30,13 +30,13 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* 婊氬姩鏉＄編鍖?*/
+        /* 滚动条美化 */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 0; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     
-        /* 椤堕儴瀵艰埅 */
+        /* 顶部导航 */
         .site-header {
             height: var(--header-height); min-height: var(--header-height); background: #fff;
             display: flex; justify-content: space-between; align-items: center;
@@ -47,7 +47,7 @@
         .site-logo { height: 26px; width: auto; } 
         .site-title { font-size: 15px; font-weight: 600; color: var(--text-main); letter-spacing: -0.3px; }
 
-        /* 绉诲姩绔ご鍍忚彍鍗?鈥?PC绔殣钘?*/
+        /* 移动端头像菜单 — PC端隐藏 */
         .header-avatar-wrap { display: none; position: relative; }
         .header-avatar-btn {
             background: none; color: var(--text-light);
@@ -82,7 +82,7 @@
         .main-container { flex: 1; display: flex; overflow: hidden; width: 100%; }
     
         /* =========================================================
-           2. 鏍稿績妗嗘灦甯冨眬 (Stepper, Scroll, Buttons)
+           2. 核心框架布局 (Stepper, Scroll, Buttons)
            ========================================================= */
         .config-main { flex: 1; display: flex; flex-direction: column; height: 100%; border-right: 1px solid #f1f5f9; position: relative; overflow: hidden; }
         
@@ -98,7 +98,7 @@
         .site-footer { height: var(--footer-height); min-height: var(--footer-height); background: #fff; border-top: 1px solid #f1f5f9; padding: 0 30px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #94a3b8; z-index: 100; box-sizing: border-box; letter-spacing: 0.5px; flex-shrink: 0; }
     
         /* =========================================================
-           3. ODM 娆惧紡缃戞牸涓庡崱鐗?(鐢靛晢澶ф皵椋庢牸)
+           3. ODM 款式网格与卡片 (电商大气风格)
            ========================================================= */
         .step-desc { font-size: 13px; color: #64748b; background: #f8fafc; padding: 14px 20px; border-left: 3px solid var(--primary-color); border-radius: 0; margin-bottom: 30px; line-height: 1.6; }
         .section-heading { font-size: 14px; border-left: 3px solid var(--primary-color); padding-left: 10px; margin-bottom: 15px; }
@@ -110,7 +110,7 @@
             margin-top: 20px; 
         }
 
-        /* 瀹氬埗闈㈡枡鍗＄墖鐗规畩鏍峰紡 */
+        /* 定制面料卡片特殊样式 */
         .fabric-item.custom-sourcing-card {
             border: 2px dashed #cbd5e1;
             background: #fff;
@@ -139,7 +139,7 @@
             color: var(--primary-color);
         }
 
-        /* 閰嶇疆闈㈡澘鍐呴儴鐨勭綉鏍煎竷灞€ */
+        /* 配置面板内部的网格布局 */
         .fabric-config-row { display: flex; gap: 20px; margin-bottom: 20px; }
         .fabric-config-col { flex: 1; }
 
@@ -165,7 +165,7 @@
         }
 
         .option-item.style-item.selected::before {
-            content: '鉁?;
+            content: '✓';
             position: absolute; top: 10px; left: 10px;
             width: 24px; height: 24px;
             background: var(--primary-color); color: #fff;
@@ -177,14 +177,14 @@
     
         .option-img { 
             width: 100%; 
-            aspect-ratio: 1 / 1; /* 榛樿涓烘鏂瑰舰 */
+            aspect-ratio: 1 / 1; /* 默认为正方形 */
             object-fit: cover; 
             object-position: top; 
             background: #fdfdfd; 
             display: block;
             transition: transform 0.6s ease;
         }
-        /* 浠?ODM 娆惧紡鍗＄墖淇濇寔 3:4 姣斾緥 */
+        /* 仅 ODM 款式卡片保持 3:4 比例 */
         .style-item .option-img { 
             aspect-ratio: 3 / 4; 
         }
@@ -194,18 +194,18 @@
         .option-info h4 { margin: 0 0 6px; font-size: 15px; color: var(--text-main); font-weight: 600; letter-spacing: 0.3px; }
         .option-info p { margin: 0; font-size: 12px; color: var(--text-light); line-height: 1.5; }
 
-        /* 闈㈡枡鍗＄墖鏍囩鏍峰紡 */
+        /* 面料卡片标签样式 */
         .fabric-tags-wrapper { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
         .fabric-tag-item { 
             font-size: 10px; background: #f1f5f9; color: #64748b; 
             padding: 1px 6px; border-radius: 0; font-weight: 500;
             border: 1px solid #e2e8f0; white-space: nowrap;
         }
-        /* 鐗规畩鏍囩楂樹寒 (鍙€夛細濡傝瘑鍒埌 '甯哥敤' 鎴?'鎺ㄨ崘') */
+        /* 特殊标签高亮 (可选：如识别到 '常用' 或 '推荐') */
         .fabric-tag-item.highlight { background: #fff0f0; color: var(--primary-color); border-color: #fecaca; }
 
 
-        /* QA 鏍囩浜や簰鏍峰紡 */
+        /* QA 标签交互样式 */
         .qa-badge-container {
             position: relative; cursor: help; display: flex; align-items: center; gap: 10px;
             padding: 8px 12px; border-radius: 0; transition: all 0.3s;
@@ -226,7 +226,7 @@
         .qa-item svg { color: #10b981; }
 
         /* =========================================================
-           4. 寮圭獥 (Modal) - 鐜颁唬澶ф皵椋庢牸
+           4. 弹窗 (Modal) - 现代大气风格
         ========================================================= */
         .details-btn { 
             position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; 
@@ -356,7 +356,7 @@
         .file-remove:hover { background: #fee2e2; color: #ef4444; }
 
         /* =========================================================
-           5. 闈㈡枡閰嶇疆鍙?
+           5. 面料配置台 
            ========================================================= */
         .sub-tabs { display: flex; gap: 30px; border-bottom: 2px solid #f1f5f9; margin-bottom: 30px; }
         .sub-tab { padding: 12px 0; cursor: pointer; font-size: 13px; color: #94a3b8; font-weight: 600; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.3s; white-space: nowrap; }
@@ -368,11 +368,11 @@
             margin-top: 10px; 
             margin-bottom: 10px; 
             padding: 30px; 
-            background: #fffcfc; /* 鏄剧溂鐨勫井绾㈡殩鑹茶儗鏅?*/
-            border: 1px solid #fecaca; /* 绾㈣壊绯昏竟妗?*/
+            background: #fffcfc; /* 显眼的微红暖色背景 */
+            border: 1px solid #fecaca; /* 红色系边框 */
             border-radius: 0; 
             position: relative; 
-            box-shadow: 0 10px 25px rgba(170, 0, 0, 0.06); /* 甯︽湁涓昏壊璋冪殑闃村奖 */
+            box-shadow: 0 10px 25px rgba(170, 0, 0, 0.06); /* 带有主色调的阴影 */
             animation: panelSlideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .config-arrow { 
@@ -381,7 +381,7 @@
             left: 40px; 
             width: 16px; 
             height: 16px; 
-            background: #fffcfc; /* 涓庨潰鏉胯儗鏅壊淇濇寔涓€鑷?*/
+            background: #fffcfc; /* 与面板背景色保持一致 */
             border-top: 1px solid #fecaca; 
             border-left: 1px solid #fecaca; 
             transform: rotate(45deg); 
@@ -400,7 +400,7 @@
             gap: 15px 12px; 
         }
         .color-swatch-wrapper { 
-            position: relative; /* 纭繚瀛愬厓绱犵粷瀵瑰畾浣嶇殑鍩哄噯 */
+            position: relative; /* 确保子元素绝对定位的基准 */
             display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: all 0.2s; 
         }
         .color-tag-badge {
@@ -439,7 +439,7 @@
         #fabric-remark:focus { outline: none; border-color: var(--primary-color); }
     
         /* =========================================================
-           6. 鍒囨崲鍣ㄤ笌瀵艰埅
+           6. 切换器与导航
            ========================================================= */
         .mode-switcher { display: inline-flex; background: #f1f5f9; padding: 4px; border-radius: 0; }
         .mode-option { padding: 8px 24px; font-size: 13px; font-weight: 500; color: #64748b; cursor: pointer; border-radius: 0; transition: all 0.25s ease; }
@@ -453,7 +453,7 @@
         .toggle-options label { cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #64748b; margin-right: 15px; }
     
         /* =========================================================
-           7. 涓婁紶妗嗕笌閫氱敤鎸夐挳
+           7. 上传框与通用按钮
            ========================================================= */
         .premium-upload-box { border: 2px dashed #e2e8f0; background-color: #f8fafc; border-radius: 0; padding: 40px 20px; text-align: center; transition: all 0.3s; cursor: pointer; }
         .premium-upload-box:hover { border-color: var(--primary-color); background-color: #fffafb; }
@@ -464,7 +464,7 @@
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            /* 鏍稿績浜や簰鍔ㄧ敾锛氬钩婊戙€佸揩閫?*/
+            /* 核心交互动画：平滑、快速 */
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid transparent;
             display: inline-flex;
@@ -474,7 +474,7 @@
             outline: none;
         }
         
-        /* 涓婁竴姝ユ寜閽細淇濇寔浣庤皟鐨勬瑕佹寜閽鏍?*/
+        /* 上一步按钮：保持低调的次要按钮风格 */
         #prevBtn {
             background: #fff;
             color: #64748b;
@@ -485,11 +485,11 @@
             background: #f8fafc;
             border-color: #cbd5e1;
             color: var(--text-main);
-            transform: translateY(-1px); /* 鏋佽交寰殑涓婃诞 */
+            transform: translateY(-1px); /* 极轻微的上浮 */
         }
         
         #prevBtn:active:not(:disabled) {
-            transform: translateY(0) scale(0.98); /* 鐐瑰嚮鏃舵寜涓嬬殑瑙︽劅 */
+            transform: translateY(0) scale(0.98); /* 点击时按下的触感 */
         }
         
         #prevBtn:disabled {
@@ -498,7 +498,7 @@
             border-color: #f1f5f9;
         }
         
-        /* 鏆傚瓨鎸夐挳锛堟眹鎬绘爮椤堕儴锛?*/
+        /* 暂存按钮（汇总栏顶部） */
         .draft-btn {
             background: none;
             color: #94a3b8;
@@ -521,17 +521,17 @@
             transform: scale(0.97);
         }
 
-        /* 涓嬩竴姝?鎻愪氦鎸夐挳锛氬己鍖栧搧鐗屾劅 */
+        /* 下一步/提交按钮：强化品牌感 */
         #nextBtn {
             background: var(--primary-color);
             color: #fff;
             border: 1px solid var(--primary-color);
-            box-shadow: 0 2px 4px rgba(170, 0, 0, 0.15); /* 娣℃贰鐨勬姇褰?*/
+            box-shadow: 0 2px 4px rgba(170, 0, 0, 0.15); /* 淡淡的投影 */
         }
         
         #nextBtn:hover:not(:disabled) {
-            background: #c00000; /* 鐣ュ井鍔犳繁 */
-            filter: brightness(1.1); /* 绋嶅井鎻愪寒涓€鐐圭偣 */
+            background: #c00000; /* 略微加深 */
+            filter: brightness(1.1); /* 稍微提亮一点点 */
             box-shadow: 0 4px 12px rgba(170, 0, 0, 0.25);
             transform: translateY(-1px);
         }
@@ -540,7 +540,7 @@
             transform: translateY(0) scale(0.98);
         }
         
-        /* 鐗规畩锛氱浜旀鎻愪氦鐘舵€佺殑鏍峰紡澧炲己锛堜笉鍐嶄娇鐢ㄧ豢鑹诧級 */
+        /* 特殊：第五步提交状态的样式增强（不再使用绿色） */
         #nextBtn.is-final {
             background: #1e293b;
             border-color: #1e293b;
@@ -555,7 +555,7 @@
         }
     
         /* =========================================================
-           8. 鍙充晶渚ц竟鏍忔眹鎬荤粏鑺?
+           8. 右侧侧边栏汇总细节
            ========================================================= */
         .summary-title { font-size: 14px; font-weight: 700; margin-bottom: 30px; display: block; color: #1e293b; }
         .summary-row { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 13px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 12px; align-items: center; }
@@ -584,7 +584,7 @@
         .summary-row .label, .summary-sub-row .label { display: inline-flex; align-items: center; }
 
         /* =========================================================
-           9. 鐘舵€佺被涓庡畾鍒舵爣绛?
+           9. 状态类与定制标签
            ========================================================= */
         .hidden { display: none !important; }
         .cat-pane { display: none; animation: fadeIn 0.4s; }
@@ -608,7 +608,7 @@
         .btn-outline { background: #fff; color: #64748b; border: 1px solid #e2e8f0; }
         .btn-outline:hover { background: #f8fafc; color: var(--text-main); }
 
-        /* 閲戝睘楗板搧涓撳睘鏍峰紡 */
+        /* 金属饰品专属样式 */
         .metal-finish-grid { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
         .finish-item { cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; transition: all 0.3s; }
         .finish-swatch { 
@@ -618,13 +618,13 @@
         .finish-item:hover .finish-swatch { transform: scale(1.1); box-shadow: 0 0 0 1px var(--primary-color); }
         .finish-item.selected .finish-swatch { box-shadow: 0 0 0 2px var(--primary-color); transform: scale(1.1); }
         .finish-item.selected .finish-swatch::after {
-            content: '鉁?; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+            content: '✓'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
             color: #fff; font-size: 18px; font-weight: bold; text-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
         .finish-label { font-size: 11px; color: #64748b; font-weight: 500; }
         .finish-item.selected .finish-label { color: var(--primary-color); font-weight: 700; }
 
-        /* 閲戝睘棰滆壊娓愬彉瀹氫箟 */
+        /* 金属颜色渐变定义 */
         .bg-gold { background: linear-gradient(135deg, #e6be8a 0%, #f7e1ad 50%, #ccac70 100%); }
         .bg-silver { background: linear-gradient(135deg, #cfd1d3 0%, #e2e4e5 50%, #a9abad 100%); }
         .bg-rose { background: linear-gradient(135deg, #e29a86 0%, #f4c2b3 50%, #d4836f 100%); }
@@ -635,7 +635,7 @@
             background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 0; padding: 25px;
             margin-top: 15px; animation: fadeIn 0.4s ease;
         }
-        /* 鏍囩瀹氫綅閫夋嫨鍣ㄦ牱寮?*/
+        /* 标签定位选择器样式 */
         .placement-container { display: flex; gap: 40px; background: #f8fafc; padding: 25px; border-radius: 0; align-items: center; margin-left: 13px; }
         .swimwear-map { position: relative; width: 180px; height: 220px; background: #fff; border-radius: 0; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; }
         .map-svg { width: 140px; height: auto; opacity: 0.15; }
@@ -648,8 +648,8 @@
         .hotspot-label { position: absolute; white-space: nowrap; font-size: 10px; color: #94a3b8; pointer-events: none; opacity: 0; transition: 0.3s; }
         .hotspot:hover .hotspot-label, .hotspot.selected .hotspot-label { opacity: 1; transform: translateY(-18px); color: var(--primary-color); font-weight: bold; }
 
-         /* 鏍囩鍐呭绀轰緥妗?*/
-        /* 缂濆埗鏂瑰紡鍗＄墖鏍峰紡 */
+         /* 标签内容示例框 */
+        /* 缝制方式卡片样式 */
         .sewing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-top: 8px; }
         .sewing-card {
             padding: 10px; border: 1px solid #e2e8f0; border-radius: 0; background: #fff; cursor: pointer;
@@ -660,7 +660,7 @@
         .sewing-card .sewing-name { font-size: 12px; display: block; }
         .sewing-card .sewing-desc { font-size: 10px; color: #94a3b8; font-weight: normal; }
         .sewing-card.selected .sewing-desc { color: var(--primary-color); opacity: 0.8; }   
-        /* 浼樺寲鍚庣殑楂樼骇澶嶉€夋瀹瑰櫒 (鍦嗚銆佸姩鎬佽竟妗嗐€侀€変腑搴曡壊) */
+        /* 优化后的高级复选框容器 (圆角、动态边框、选中底色) */
         .premium-checkbox-box {
             display: inline-flex; align-items: center; gap: 10px;
             padding: 10px 16px; background: #fff; border: 1px solid #e2e8f0; border-radius: 0;
@@ -678,7 +678,7 @@
             background: #fffafb;
         }
 
-        /* 鍚婄墝涓撳睘楂樼骇鏍峰紡 */
+        /* 吊牌专属高级样式 */
         .hangtag-shape-card {
             display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 15px;
             border: 1px solid #e2e8f0; border-radius: 0; background: #fff; cursor: pointer;
@@ -687,7 +687,7 @@
         .hangtag-shape-card:hover { border-color: var(--primary-color); transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
         .hangtag-shape-card.selected { border-color: var(--primary-color); background: #fffafb; box-shadow: 0 0 0 1px var(--primary-color); }
         .hangtag-shape-card.selected::after {
-            content: '鉁?; position: absolute; top: 8px; right: 10px; color: var(--primary-color); font-weight: bold; font-size: 14px;
+            content: '✓'; position: absolute; top: 8px; right: 10px; color: var(--primary-color); font-weight: bold; font-size: 14px;
         }
         .shape-icon { margin-bottom: 12px; color: #cbd5e1; transition: all 0.3s; }
         .hangtag-shape-card.selected .shape-icon { color: var(--primary-color); }
@@ -698,10 +698,10 @@
         .string-color-swatch { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px #e2e8f0; cursor: pointer; transition: all 0.2s; position: relative; }
         .string-color-swatch:hover { transform: scale(1.15); box-shadow: 0 0 0 1px var(--primary-color); }
         .string-color-swatch.selected { box-shadow: 0 0 0 2px var(--primary-color); transform: scale(1.15); }
-        .string-color-swatch.selected::after { content: '鉁?; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; font-weight: bold; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
-        /* 鍖呰琚嬮厤缃潰鏉夸笓灞炴牱寮?*/
+        .string-color-swatch.selected::after { content: '✓'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; font-weight: bold; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+        /* 包装袋配置面板专属样式 */
         #bag-config-panel {
-            background: #fbfcfd; /* 寰贰钃濆亸鐧斤紝鍖哄埆浜庨潰鏂欑殑寰孩 */
+            background: #fbfcfd; /* 微淡蓝偏白，区别于面料的微红 */
             border: 1px solid #e2e8f0;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
         }
@@ -710,21 +710,21 @@
             border-top: 1px solid #e2e8f0; 
             border-left: 1px solid #e2e8f0; 
         }
-        /* 鍖呰琚嬩笓灞為珮绾ф牱寮?*/
+        /* 包装袋专属高级样式 */
         .eco-badge {
             position: absolute; top: 10px; right: 10px; background: #10b981; color: #fff;
             font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 0;
             z-index: 10; display: flex; align-items: center; gap: 3px; box-shadow: 0 2px 5px rgba(16, 185, 129, 0.3);
         }
         
-        /* 纭繚鍖呰琚嬪昂瀵稿崱鐗囨牱寮忎笌鍏朵粬妯″潡瀵归綈 */
+        /* 确保包装袋尺寸卡片样式与其他模块对齐 */
         .bag-size-card {
             display: flex; flex-direction: column; justify-content: center; padding: 20px 15px;
             border: 1px solid #e2e8f0; border-radius: 0; background: #fff; cursor: pointer;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); text-align: center; position: relative;
         }
         
-        /* 鎮仠鏃剁殑杞诲井涓婃诞涓庨槾褰?*/
+        /* 悬停时的轻微上浮与阴影 */
         .bag-size-card:hover { 
             border-color: var(--primary-color); 
             transform: translateY(-3px); 
@@ -739,13 +739,13 @@
         }
 
         .bag-size-card.selected::after {
-            content: '鉁?; 
+            content: '✓'; 
             position: absolute; top: 8px; right: 10px; 
             color: var(--primary-color); 
             font-weight: bold; font-size: 14px;
         }
 
-        /* 鍗＄墖鍐呴儴鏂囧瓧棰滆壊鐨勭姸鎬佸垏鎹?*/
+        /* 卡片内部文字颜色的状态切换 */
         .size-val { font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; transition: color 0.2s; }
         .bag-size-card.selected .size-val { color: var(--primary-color); }
         .size-scene { font-size: 11px; color: #94a3b8; line-height: 1.4; }
@@ -753,14 +753,14 @@
         .print-icon-box { height: 90px; background: #f8fafc; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #f1f5f9; transition: all 0.3s; }
         .option-item.selected .print-icon-box { background: #fffafb; }
 
-        /* 缁熶竴鏍峰紡鐨勯噾灞炰欢鍗＄墖 */
+        /* 统一样式的金属件卡片 */
         .metal-item .option-img-alt {
             height: 100px; background: #f8fafc; display: flex; align-items: center; 
             justify-content: center; color: #cbd5e1; border-bottom: 1px solid #f1f5f9;
         }
         .metal-item.selected .option-img-alt { background: #fff; color: var(--primary-color); }
         
-        /* 閽堝 Logo 涓婁紶琛岀殑寰皟 - 寮哄埗楂樺害涓庝笅鎷夋瀵归綈 */
+        /* 针对 Logo 上传行的微调 - 强制高度与下拉框对齐 */
         .upload-row-sm {
             padding: 0 12px !important; height: 38px; border-radius: 0; 
             background: #fff !important; display: flex; align-items: center; justify-content: space-between;
@@ -768,11 +768,11 @@
         }
         .upload-row-sm:hover { border-color: var(--primary-color); }
         
-        /* 鎻愮ず鏂囨鏍峰紡 */
+        /* 提示文案样式 */
         .metal-notice { font-size: 11px; color: #94a3b8; display: flex; align-items: center; gap: 4px; margin-top: 8px; }
         .metal-notice svg { color: #f59e0b; }
 
-        /* 澶氶€夋爣绛炬牱寮?*/
+        /* 多选标签样式 */
         .chip-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; }
         .chip { 
             padding: 6px 12px; background: #fff; border: 1px solid #e2e8f0; border-radius: 0; 
@@ -784,10 +784,10 @@
             font-weight: 600; box-shadow: 0 2px 4px rgba(170, 0, 0, 0.05);
         }
 
-        /* 缁熶竴澶ц揣琛ㄦ牸鍐呮墍鏈夋帶浠剁殑楂樺害 */
+        /* 统一大货表格内所有控件的高度 */
         .bulk-table-input {
             width: 100%;
-            height: 120px !important; /* 鍥哄畾楂樺害锛岀‘淇濆榻?*/
+            height: 120px !important; /* 固定高度，确保对齐 */
             padding: 10px 12px;
             border: 1px solid #e2e8f0;
             border-radius: 0;
@@ -800,14 +800,14 @@
             display: block;
         }
         
-        /* 閽堝涓嬫媺妗嗗拰杈撳叆妗嗙殑鍨傜洿灞呬腑澶勭悊 */
+        /* 针对下拉框和输入框的垂直居中处理 */
         select.bulk-table-input {
             line-height: 1.5;
         }
         
-        /* 閽堝鏄庣粏鏂囨湰妗嗙殑鐗规畩澶勭悊 */
+        /* 针对明细文本框的特殊处理 */
         textarea.bulk-table-input {
-            resize: none; /* 绂佹鐢ㄦ埛鎵嬪姩鎷変几 */
+            resize: none; /* 禁止用户手动拉伸 */
             line-height: 1.2;
             padding-top: 8px;
         }
@@ -817,7 +817,7 @@
             box-shadow: 0 0 0 3px rgba(170, 0, 0, 0.05);
         }
         
-        /* 璋冩暣琛ㄦ牸鍗曞厓鏍煎榻愭柟寮?*/
+        /* 调整表格单元格对齐方式 */
         #bulk-logic-table td {
             vertical-align: middle;
             padding: 12px 15px;
@@ -825,18 +825,18 @@
 
 
         /* =========================================================
-           10. OEM 妯″潡涓庡晢涓氶渶姹傝瘎浼?
+           10. OEM 模块与商业需求评估
            ========================================================= */
-        /* 鏂板锛氱揣鍑戝瀷棰勮缃戞牸锛屾秷闄ゅぇ闂撮殭 */
+        /* 新增：紧凑型预览网格，消除大间隙 */
         .tight-preview-grid {
             display: grid !important;
-            /* 寮哄埗鍒楀涓?50px锛屼笉鍐嶈嚜鍔ㄦ拺寮€ */
+            /* 强制列宽为 50px，不再自动撑开 */
             grid-template-columns: repeat(auto-fill, 50px) !important;
             gap: 8px !important;
             margin-top: 10px;
         }
         
-        /* 纭繚鍐呴儴棰勮椤瑰畬鍏ㄩ€傞厤 50px */
+        /* 确保内部预览项完全适配 50px */
         .tight-preview-grid .oem-preview-item {
             width: 50px !important;
             height: 50px !important;
@@ -889,7 +889,7 @@
         .radio-card .card-content { border: 1px solid #e2e8f0; border-radius: 0; padding: 18px 16px; background: #fff; transition: all 0.25s ease; height: 100%; box-sizing: border-box; position: relative; overflow: hidden; }
         .radio-card:hover .card-content { border-color: #cbd5e1; background: #f8fafc; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
         .radio-card input:checked + .card-content { border-color: var(--primary-color); background: #fffafb; box-shadow: 0 0 0 1px var(--primary-color), 0 4px 12px rgba(170, 0, 0, 0.08); transform: translateY(-2px); }
-        .radio-card input:checked + .card-content::after { content: '鉁?; position: absolute; top: 10px; right: 12px; color: var(--primary-color); font-size: 14px; font-weight: bold; }
+        .radio-card input:checked + .card-content::after { content: '✓'; position: absolute; top: 10px; right: 12px; color: var(--primary-color); font-size: 14px; font-weight: bold; }
         .radio-card .card-content h5 { margin: 0 0 6px; font-size: 14px; color: var(--text-main); font-weight: 600; }
         .radio-card .card-content p { margin: 0; font-size: 12px; color: var(--text-light); line-height: 1.5; }
         .radio-card input:checked + .card-content h5 { color: var(--primary-color); }
@@ -921,10 +921,10 @@
                             .btn-remove-row:hover { color: #ef4444; }
 
 /* Bulk textarea styles */
-                                /* 閽堝澶ц揣琛ㄦ牸鏂囨湰妗嗙殑寰皟 */
+                                /* 针对大货表格文本框的微调 */
                                 .bulk-size-textarea {
                                     width: 100%;
-                                    height: 65px; /* 绋嶅井澶т竴浜涚殑楂樺害 */
+                                    height: 65px; /* 稍微大一些的高度 */
                                     padding: 8px;
                                     border: 1px solid #e2e8f0;
                                     border-radius: 0;
@@ -1004,7 +1004,7 @@
             .sample-table th, .sample-table td { padding: 8px 10px; font-size: 12px; }
             .sample-table select, .sample-table input { padding: 6px; font-size: 11px; }
 
-            /* step4 鎵撴牱琛ㄦ牸 鈫?绉诲姩绔崱鐗囧寲甯冨眬 */
+            /* step4 打样表格 → 移动端卡片化布局 */
             #sample-logic-table thead { display: none; }
             #sample-logic-table,
             #sample-logic-table tbody { display: block; width: 100%; }
@@ -1047,13 +1047,13 @@
                 letter-spacing: 0.3px;
                 margin-bottom: 4px;
             }
-            /* 娆惧紡涓嬫媺锛氱嫭鍗犱竴琛?*/
-            #sample-logic-table td[data-label="瀵瑰簲娆惧紡"],
+            /* 款式下拉：独占一行 */
+            #sample-logic-table td[data-label="对应款式"],
             #sample-logic-table td[data-label="Style"] { grid-column: 1 / -1; }
-            /* 澶囨敞锛氱嫭鍗犱竴琛?*/
-            #sample-logic-table td[data-label="澶囨敞"],
+            /* 备注：独占一行 */
+            #sample-logic-table td[data-label="备注"],
             #sample-logic-table td[data-label="Notes"] { grid-column: 1 / -1; }
-            /* 鍒犻櫎鎸夐挳锛氱粷瀵瑰畾浣嶅埌鍗＄墖鍙充笂瑙?*/
+            /* 删除按钮：绝对定位到卡片右上角 */
             #sample-logic-table td.sample-card-remove {
                 position: absolute;
                 top: 4px;
@@ -1067,7 +1067,7 @@
                 color: #cbd5e1;
             }
 
-            /* step4 澶ц揣琛ㄦ牸 鈫?绉诲姩绔崱鐗囧寲甯冨眬 */
+            /* step4 大货表格 → 移动端卡片化布局 */
             #bulk-logic-table thead { display: none; }
             #bulk-logic-table,
             #bulk-logic-table tbody { display: block; width: 100%; }
@@ -1110,15 +1110,15 @@
                 letter-spacing: 0.3px;
                 margin-bottom: 4px;
             }
-            /* 娆惧紡涓嬫媺锛氱嫭鍗犱竴琛?*/
-            #bulk-logic-table td[data-label="瀵瑰簲娆惧紡"],
+            /* 款式下拉：独占一行 */
+            #bulk-logic-table td[data-label="对应款式"],
             #bulk-logic-table td[data-label="Style"] { grid-column: 1 / -1; }
-            /* 灏虹爜鏄庣粏 & 澶囨敞锛氱嫭鍗犱竴琛?*/
-            #bulk-logic-table td[data-label="灏虹爜鍙婃暟閲忔槑缁?],
+            /* 尺码明细 & 备注：独占一行 */
+            #bulk-logic-table td[data-label="尺码及数量明细"],
             #bulk-logic-table td[data-label="Size Details"] { grid-column: 1 / -1; }
-            #bulk-logic-table td[data-label="澶囨敞 / 鎻忚堪"],
+            #bulk-logic-table td[data-label="备注 / 描述"],
             #bulk-logic-table td[data-label="Notes"] { grid-column: 1 / -1; }
-            /* 鍒犻櫎鎸夐挳锛氱粷瀵瑰畾浣嶅埌鍗＄墖鍙充笂瑙?*/
+            /* 删除按钮：绝对定位到卡片右上角 */
             #bulk-logic-table td.bulk-card-remove {
                 position: absolute;
                 top: 4px;
@@ -1141,19 +1141,19 @@
                 box-sizing: border-box;
             }
 
-            /* 澶ц揣浠锋牸鍖哄煙锛氭湡鏈涗环鏍?& 鏍哥畻璇存槑鍚勫崰涓€琛?*/
+            /* 大货价格区域：期望价格 & 核算说明各占一行 */
             #bulk-price-grid {
                 grid-template-columns: 1fr !important;
                 gap: 20px !important;
             }
 
-            /* 澶ц揣鍖呰鍖哄煙锛氭弿杩?& 涓婁紶鍚勫崰涓€琛?*/
+            /* 大货包装区域：描述 & 上传各占一行 */
             #bulk-packing-grid {
                 grid-template-columns: 1fr !important;
                 gap: 20px !important;
             }
 
-            /* Step 5 鎵€鏈夌綉鏍硷細绉诲姩绔悇椤瑰悇鍗犱竴琛?*/
+            /* Step 5 所有网格：移动端各项各占一行 */
             #step5-grid-a1,
             #step5-grid-a2,
             #step5-grid-b,
@@ -1162,7 +1162,7 @@
                 grid-template-columns: 1fr !important;
                 gap: 15px !important;
             }
-            /* C鍖洪瑙堣闅愯棌宸︿晶鍗犱綅绗?*/
+            /* C区预览行隐藏左侧占位符 */
             #step5-grid-c2 > div:first-child:empty { display: none; }
             #sample-logic-table select,
             #sample-logic-table input {
@@ -1177,16 +1177,16 @@
 
             .site-footer { font-size: 10px; padding: 0 16px; }
 
-            /* 绉诲姩绔細绂佺敤鍗＄墖 hover 鏁堟灉锛岄伩鍏嶉渶瑕佺偣涓ゆ */
+            /* 移动端：禁用卡片 hover 效果，避免需要点两次 */
             .option-item:hover { transform: none; box-shadow: none; }
             .option-item:hover .option-img { transform: none; }
-            /* hover 涓嶆樉绀烘寜閽紝浠呴€変腑鍚庢樉绀?*/
+            /* hover 不显示按钮，仅选中后显示 */
             .option-item:hover .details-btn,
             .option-item:hover .customize-btn { opacity: 0; visibility: hidden; transform: scale(0.8); }
             .option-item.selected .details-btn,
             .option-item.selected .customize-btn { opacity: 1 !important; visibility: visible !important; transform: scale(1) !important; }
 
-            /* step3 瀛愭爣绛惧彲妯悜婊戝姩 */
+            /* step3 子标签可横向滑动 */
             .sub-tabs {
                 overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none;
                 flex-wrap: nowrap;
@@ -1199,53 +1199,53 @@
             }
             .sub-tabs::-webkit-scrollbar { display: none; }
 
-            /* 閲戝睘楗板搧閰嶇疆闈㈡澘锛氭枃鏈?涓婁紶鍚勫崰涓€琛岋紝Logo鎻愮ず绉诲埌checkbox涓嬫柟 */
+            /* 金属饰品配置面板：文本/上传各占一行，Logo提示移到checkbox下方 */
             #metal-config-panel > div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
             #metal-config-panel > div:last-of-type > div:first-child { flex-direction: column !important; align-items: flex-start !important; }
             #metal-config-panel > div:last-of-type > div:first-child > div:last-child { margin-top: 8px; }
 
-            /* 鑳稿灚A鍖?褰㈢姸瀹氬埗)鍜孌鍖?鏉愯川鎻忚堪)锛氭枃鏈?涓婁紶鍚勫崰涓€琛?*/
+            /* 胸垫A区(形状定制)和D区(材质描述)：文本/上传各占一行 */
             #pad-shape-custom-area > div[style*="grid-template-columns"],
             #pad-custom-details .attr-section > div > div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
 
-            /* 鍖呰琚婤鍖?鍗板埛璁捐)锛氭枃浠朵笂浼犲拰鏂囨湰杈撳叆鍚勫崰涓€琛?*/
+            /* 包装袋B区(印刷设计)：文件上传和文本输入各占一行 */
             #bag-print-panel > div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
 
-            /* 鍚婄墝tab锛氭墍鏈夎嚜瀹氫箟鍖哄煙鐨勬枃浠朵笂浼犲拰鏂囨湰杈撳叆鍚勫崰涓€琛?*/
+            /* 吊牌tab：所有自定义区域的文件上传和文本输入各占一行 */
             #content-hangtag div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
 
-            /* 鏍囩tab锛?鍖哄煙鍙夾B鑷畾涔夌殑鏂囦欢涓婁紶鍜屾枃鏈緭鍏ュ悇鍗犱竴琛?*/
+            /* 标签tab：2区域及AB自定义的文件上传和文本输入各占一行 */
             #content-label div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
 
-            /* 鍗敓璐磘ab锛欰BC鑷畾涔夊尯鍩熺殑鏂囦欢涓婁紶鍜屾枃鏈緭鍏ュ悇鍗犱竴琛?*/
+            /* 卫生贴tab：ABC自定义区域的文件上传和文本输入各占一行 */
             #hygiene-custom-details div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
 
-            /* step4 A鍖哄煙锛歄DM/OEM鏁伴噺鍙妌ote鍚勫崰涓€琛?*/
+            /* step4 A区域：ODM/OEM数量及note各占一行 */
             #pane-delivery-sample .attr-section > div[style*="display: flex"],
             #pane-delivery-bulk .attr-section > div[style*="display: flex"] { flex-direction: column !important; gap: 12px !important; align-items: flex-start !important; }
 
-            /* step4 鎵撴牱瑙勬牸寤鸿寮圭獥锛氬悇椤瑰悇鍗犱竴琛?*/
+            /* step4 打样规格建议弹窗：各项各占一行 */
             .sample-guide-grid { grid-template-columns: 1fr !important; }
 
-            /* step4 C鍖猴細鐩殑鍦板拰蹇€掓柟寮忓悇鍗犱竴琛?*/
+            /* step4 C区：目的地和快递方式各占一行 */
             #pane-delivery-sample .attr-section > div > div[style*="grid-template-columns: 1fr 1.5fr"] { grid-template-columns: 1fr !important; }
 
-            /* step4 D鍖猴細棰勪及鏁伴噺鍜屾湡鏈涘崟浠峰悇鍗犱竴琛?*/
+            /* step4 D区：预估数量和期望单价各占一行 */
             #sample-bulk-intent-fields > div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
 
-            /* step3 toggle-section 瀛椾綋缂╁皬锛屼繚璇佸崟琛屾斁涓?*/
+            /* step3 toggle-section 字体缩小，保证单行放下 */
             .toggle-section { gap: 10px !important; padding: 12px 14px !important; }
             .toggle-title { font-size: 12px !important; }
             .toggle-options label { font-size: 11px !important; margin-right: 8px !important; gap: 4px !important; }
 
-            /* 杞诲畾鍒跺脊绐楋細鏍囬缂╁皬 + 闅愯棌宸︿晶鍥剧墖 */
+            /* 轻定制弹窗：标题缩小 + 隐藏左侧图片 */
             #customModal .custom-modal-header { padding: 20px 18px 14px; }
             #customModal .custom-modal-header h3 { font-size: 15px; gap: 6px; }
             #customModal .custom-modal-header h3 span[style*="font-size:12px"] { font-size: 10px !important; padding: 3px 6px !important; }
             #customModal .custom-modal-body { flex-direction: column; padding: 18px 16px 20px; gap: 0; }
             #customModal .custom-modal-body > div:first-child { display: none !important; }
 
-            /* OEM妯″潡锛欱/C鍚勫崰涓€琛岋紝D鍐呬袱閮ㄥ垎鍚勫崰涓€琛?*/
+            /* OEM模块：B/C各占一行，D内两部分各占一行 */
             #custom-upload > div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
             #custom-upload .oem-upload-section > div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
         }
@@ -1272,7 +1272,7 @@
             .site-logo { height: 28px; }
             .site-title { font-size: 15px; font-weight: 700; }
 
-            /* 澶у浘棰勮锛氶殣钘忕澶村拰鎻愮ず鏂囧瓧 */
+            /* 大图预览：隐藏箭头和提示文字 */
             #swatch-prev-btn, #swatch-next-btn { display: none !important; }
             .swatch-hint-desktop { display: none !important; }
         }

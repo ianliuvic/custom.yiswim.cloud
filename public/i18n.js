@@ -1400,13 +1400,28 @@
             }
             if (hasNew && !translateTimer) {
                 translateTimer = setTimeout(function () {
+                    var nodes = pendingNodes.slice();
                     pendingNodes = [];
                     translateTimer = null;
-                    // Single full-body pass instead of per-node calls.
-                    // Per-node calls cause redundant querySelectorAll over overlapping
-                    // subtrees when large batches of nodes are added (e.g. renderFabrics),
-                    // saturating the main thread and freezing the page in zh mode.
-                    translateDOM();
+                    // Deduplicate: only translate top-level ancestor nodes.
+                    // If node A is a descendant of node B, skip A and translate B once.
+                    // This avoids redundant overlapping querySelectorAll traversals that
+                    // saturate the main thread when large batches of nodes are inserted.
+                    var roots = [];
+                    for (var n = 0; n < nodes.length; n++) {
+                        var nd = nodes[n];
+                        var dominated = false;
+                        for (var r = 0; r < roots.length; r++) {
+                            if (roots[r].contains(nd)) { dominated = true; break; }
+                        }
+                        if (!dominated) {
+                            roots = roots.filter(function(xr) { return !nd.contains(xr); });
+                            roots.push(nd);
+                        }
+                    }
+                    for (var i = 0; i < roots.length; i++) {
+                        translateDOM(roots[i]);
+                    }
                 }, 100);
             }
         });
@@ -1443,8 +1458,7 @@
     }
 
     window.addEventListener('load', function () {
-        setTimeout(function () { translateDOM(); }, 300);
-        setTimeout(function () { translateDOM(); }, 1000);
+        // observeDOM() handles dynamic content — no full-body re-scan needed here
     });
 
     // Tagged template for strings with dynamic parts (compat stub)

@@ -91,7 +91,15 @@
             }
         }
         @media (max-width: 768px) {
-            #feedbackBar { display: none !important; }
+            #feedbackBar {
+                position: fixed !important;
+                top: 0; left: 0; right: 0;
+                z-index: 9997 !important;
+                height: 34px !important;
+                min-height: 34px !important;
+                padding: 0 12px !important;
+            }
+            #feedbackBarLabel { display: none !important; }
         }
     </style>
     <script>window.__lang = '<%= lng %>';</script>

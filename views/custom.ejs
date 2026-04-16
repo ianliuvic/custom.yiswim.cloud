@@ -91,15 +91,8 @@
             }
         }
         @media (max-width: 768px) {
-            #feedbackBar {
-                position: fixed !important;
-                top: 0; left: 0; right: 0;
-                z-index: 9997 !important;
-                height: 34px !important;
-                min-height: 34px !important;
-                padding: 0 12px !important;
-            }
-            #feedbackBarLabel { display: none !important; }
+            #feedbackBar { display: none !important; }
+            .header-feedback-mobile { display: block !important; }
         }
     </style>
     <script>window.__lang = '<%= lng %>';</script>
@@ -152,6 +145,22 @@
                 <a href="/user" style="color: var(--text-light); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='var(--text-light)'"><%= lng === 'zh' ? '用户中心' : 'User Center' %></a>
                 <a href="/logout" style="color: var(--text-light); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='var(--text-light)'"><%= lng === 'zh' ? '退出' : 'Log Out' %></a>
             </span>
+            <!-- 移动端：反馈按钮 -->
+            <div class="header-avatar-wrap header-feedback-mobile" style="display:none;">
+                <button class="header-avatar-btn" onclick="openFeedbackMenu(event)" title="Feedback" style="color:#f59e0b; border-color:#f59e0b;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </button>
+                <div class="header-user-menu" id="headerFeedbackMenu">
+                    <a href="javascript:void(0)" onclick="openFeedback('bug')" class="header-user-menu-item">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <%= lng === 'zh' ? '报告问题' : 'Report a Bug' %> <span style="color:#16a34a; font-weight:700; margin-left:4px;">+$10</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openFeedback('experience')" class="header-user-menu-item">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        <%= lng === 'zh' ? '分享体验' : 'Share Feedback' %> <span style="color:#16a34a; font-weight:700; margin-left:4px;">+$5</span>
+                    </a>
+                </div>
+            </div>
             <!-- 移动端：头像按钮 + 下拉菜单 -->
             <div class="header-avatar-wrap">
                 <button class="header-avatar-btn" onclick="toggleUserMenu(event)">
@@ -174,6 +183,22 @@
                 <button onclick="openAuth('login')" style="background: none; border: 1.5px solid var(--primary-color); color: var(--primary-color); padding: 6px 18px; border-radius: 0; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='var(--primary-color)';this.style.color='#fff'" onmouseout="this.style.background='none';this.style.color='var(--primary-color)'"><%= lng === 'zh' ? '登录' : 'Login' %></button>
                 <button onclick="openAuth('register')" style="background: var(--primary-color); border: 1.5px solid var(--primary-color); color: #fff; padding: 6px 18px; border-radius: 0; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='var(--primary-hover)'" onmouseout="this.style.background='var(--primary-color)'"><%= lng === 'zh' ? '注册' : 'Register' %></button>
             </span>
+            <!-- 移动端：反馈按钮（未登录） -->
+            <div class="header-avatar-wrap header-feedback-mobile" style="display:none;">
+                <button class="header-avatar-btn" onclick="openFeedbackMenu(event)" title="Feedback" style="color:#f59e0b; border-color:#f59e0b;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </button>
+                <div class="header-user-menu" id="headerFeedbackMenuGuest">
+                    <a href="javascript:void(0)" onclick="openFeedback('bug')" class="header-user-menu-item">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <%= lng === 'zh' ? '报告问题' : 'Report a Bug' %> <span style="color:#16a34a; font-weight:700; margin-left:4px;">+$10</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openFeedback('experience')" class="header-user-menu-item">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        <%= lng === 'zh' ? '分享体验' : 'Share Feedback' %> <span style="color:#16a34a; font-weight:700; margin-left:4px;">+$5</span>
+                    </a>
+                </div>
+            </div>
             <!-- 移动端：未登录用户的登录按钮 -->
             <div class="header-avatar-wrap">
                 <button class="header-avatar-btn" onclick="toggleGuestMenu(event)">
@@ -3249,25 +3274,35 @@
     });
 
     // 移动端头像下拉菜单
+    function closeAllHeaderMenus() {
+        ['headerUserMenu','headerGuestMenu','headerFeedbackMenu','headerFeedbackMenuGuest'].forEach(function(id){
+            var m = document.getElementById(id); if (m) m.classList.remove('open');
+        });
+    }
     function toggleUserMenu(e) {
         e.stopPropagation();
         var menu = document.getElementById('headerUserMenu');
-        menu.classList.toggle('open');
-        var guestMenu = document.getElementById('headerGuestMenu');
-        if (guestMenu) guestMenu.classList.remove('open');
+        var wasOpen = menu.classList.contains('open');
+        closeAllHeaderMenus();
+        if (!wasOpen) menu.classList.add('open');
     }
     function toggleGuestMenu(e) {
         e.stopPropagation();
         var menu = document.getElementById('headerGuestMenu');
-        menu.classList.toggle('open');
-        var userMenu = document.getElementById('headerUserMenu');
-        if (userMenu) userMenu.classList.remove('open');
+        var wasOpen = menu.classList.contains('open');
+        closeAllHeaderMenus();
+        if (!wasOpen) menu.classList.add('open');
+    }
+    function openFeedbackMenu(e) {
+        e.stopPropagation();
+        var menu = document.getElementById('headerFeedbackMenu') || document.getElementById('headerFeedbackMenuGuest');
+        if (!menu) return;
+        var wasOpen = menu.classList.contains('open');
+        closeAllHeaderMenus();
+        if (!wasOpen) menu.classList.add('open');
     }
     document.addEventListener('click', function() {
-        var menu = document.getElementById('headerUserMenu');
-        if (menu) menu.classList.remove('open');
-        var guestMenu = document.getElementById('headerGuestMenu');
-        if (guestMenu) guestMenu.classList.remove('open');
+        closeAllHeaderMenus();
     });
     </script>
 

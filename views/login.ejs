@@ -1,14 +1,9 @@
 <!DOCTYPE html>
 <html lang="<%= lng === 'zh' ? 'zh-CN' : 'en' %>">
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VJRS8PCF14"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-VJRS8PCF14');
-    </script>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-K9ZKGLKW');</script>
+    <!-- End Google Tag Manager -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
@@ -19,6 +14,9 @@
     <script src="/i18n.js"></script>
 </head>
 <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K9ZKGLKW" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <div class="auth-container">
         <div style="position: absolute; top: 15px; right: 20px;">
             <button onclick="setLanguage(window.__lang === 'zh' ? 'en' : 'zh')" style="background: none; border: 1px solid #e0e0e0; border-radius: 0; padding: 5px 14px; font-size: 12px; cursor: pointer; color: #64748b; transition: all 0.25s; display: inline-flex; align-items: center; gap: 5px; font-weight: 500; letter-spacing: 0.3px;" onmouseover="this.style.borderColor='#aa0000';this.style.color='#aa0000';this.querySelector('svg').style.stroke='#aa0000'" onmouseout="this.style.borderColor='#e0e0e0';this.style.color='#64748b';this.querySelector('svg').style.stroke='currentColor'">

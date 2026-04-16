@@ -62,8 +62,8 @@
                 var screenshotLine = imgs.length
                     ? '<div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;">'
                         + imgs.map(function(fn) {
-                            return '<a href="/uploads/feedback/' + encodeURIComponent(fn) + '" target="_blank" rel="noopener" style="display:block; width:64px; height:64px; overflow:hidden; flex-shrink:0; border:1px solid #e2e8f0;">'
-                                + '<img src="/uploads/feedback/' + encodeURIComponent(fn) + '" style="width:100%; height:100%; object-fit:cover; display:block;" loading="lazy">'
+                            return '<a href="https://files.yiswim.cloud/uploads/feedback/' + encodeURIComponent(fn) + '" target="_blank" rel="noopener" style="display:block; width:64px; height:64px; overflow:hidden; flex-shrink:0; border:1px solid #e2e8f0;">'
+                                + '<img src="https://files.yiswim.cloud/uploads/feedback/' + encodeURIComponent(fn) + '" style="width:100%; height:100%; object-fit:cover; display:block;" loading="lazy">'
                                 + '</a>';
                         }).join('') + '</div>'
                     : '';

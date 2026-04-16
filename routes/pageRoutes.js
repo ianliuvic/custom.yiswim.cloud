@@ -17,7 +17,7 @@ router.get('/sitemap.xml', (req, res) => {
     const base = `${req.protocol}://${req.get('host')}`;
     res.type('application/xml');
     res.send(`<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>${base}/</loc>
     <changefreq>weekly</changefreq>

@@ -1127,6 +1127,18 @@ router.post('/feedback', authenticateToken, feedbackUpload.array('screenshots', 
             return res.status(400).json({ success: false, message: isZh ? '内容不超过2000字符' : 'Content must not exceed 2000 characters' });
         }
 
+        // 限制：每种类型最多2条 pending 状态的反馈存在
+        const pendingCount = await db.query(
+            `SELECT COUNT(*) FROM custom_user_feedback WHERE user_id = $1 AND type = $2 AND status = 'pending'`,
+            [req.user.id, type]
+        );
+        if (parseInt(pendingCount.rows[0].count) >= 2) {
+            const msg = isZh
+                ? '您尚有未审核的反馈，请等审核完成后再提交'
+                : 'You have pending feedback awaiting review. Please wait for it to be reviewed first.';
+            return res.status(429).json({ success: false, message: msg });
+        }
+
         const couponAmount = type === 'bug' ? 10.00 : 5.00;
         const browserInfo = req.headers['user-agent'] || null;
         const screenshots = (req.files || []).map(f => f.filename);

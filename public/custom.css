@@ -441,9 +441,10 @@
         /* =========================================================
            6. 切换器与导航
            ========================================================= */
-        .mode-switcher { display: inline-flex; background: #f1f5f9; padding: 4px; border-radius: 0; }
-        .mode-option { padding: 8px 24px; font-size: 13px; font-weight: 500; color: #64748b; cursor: pointer; border-radius: 0; transition: all 0.25s ease; }
+        .mode-switcher { display: inline-flex; background: #f1f5f9; padding: 4px; border-radius: 0; overflow: visible; }
+        .mode-option { padding: 8px 24px; font-size: 13px; font-weight: 500; color: #64748b; cursor: pointer; border-radius: 0; transition: all 0.25s ease; position: relative; overflow: visible; }
         .mode-option.active { background: #fff; color: var(--primary-color); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        @keyframes moqPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
         .category-nav { display: flex; gap: 35px; margin-bottom: 30px; border-bottom: 1px solid #f1f5f9; padding-bottom: 2px; overflow-x: auto; }
         .cat-item { font-size: 14px; color: #94a3b8; cursor: pointer; padding-bottom: 10px; position: relative; transition: all 0.3s; white-space: nowrap; }
         .cat-item.active { color: var(--primary-color); font-weight: 600; }

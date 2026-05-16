@@ -236,22 +236,18 @@
                          ========================================== -->
                     <div class="step-content" id="step-1">
                         <div class="step-desc">Upload your own design package (OEM) to start customizing. Multiple styles supported.</div>
-                        
-                        <!-- OEM 定制区域 -->
-                        <div style="display: flex; justify-content: flex-end; margin-bottom: 30px;">
-                            <button type="button" class="clear-all-btn" onclick="clearCurrentMode()" title="Clear all OEM selections">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;">
-                                    <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                </svg>
-                                Clear
-                            </button>
-                        </div>
 
                         <!-- OEM 自主设计模块 -->
                         <div id="custom-upload" style="animation: fadeIn 0.4s ease;">
                             <!-- 新增：项目系列名称与款式数量 -->
-                            <div class="oem-section-header" style="margin-bottom: 18px;">
+                            <div class="oem-section-header" style="margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
                                 <h4 class="section-heading" style="margin: 0;">A. Project Basic Info</h4>
+                                <button type="button" class="clear-all-btn" onclick="clearCurrentMode()" title="Clear all OEM selections">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;">
+                                        <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                    Clear
+                                </button>
                             </div>  
                             <div class="oem-upload-section" style="margin-bottom: 25px; padding: 20px; border: 1px solid #e2e8f0; border-radius: 0; background: #fbfcfd;">
                                 <div style="display: flex; gap: 20px; align-items: flex-start; margin-bottom: 15px;">

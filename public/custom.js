@@ -1110,10 +1110,8 @@
             
             // --- 优化：Step 1 的 OEM 必填 Checklist 拦截逻辑 ---
             if (currentStep === 1) {
-                const isOemActive = document.getElementById('mode-oem').classList.contains('active');
-                
-                // 只有当处于 OEM 模式，并且用户确实填写了 OEM 内容时，才触发拦截校验
-                if (isOemActive && checkOemHasContent()) {
+                // OEM-only 页面：当用户填写了 OEM 内容时，触发拦截校验
+                if (checkOemHasContent()) {
                     const checklists = document.querySelectorAll('.oem-checklist-item input[type="checkbox"]');
                     let allChecked = true;
                     checklists.forEach(cb => { if (!cb.checked) allChecked = false; });

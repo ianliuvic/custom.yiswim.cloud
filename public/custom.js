@@ -6413,7 +6413,6 @@
         function refreshSampleTableStyles() {
             renderSampleTable(); 
         }
-                        if (!v.style) missing.push(_t('① 款式定义：请上传并完善 OEM 设计信息'));
         
         // 核心渲染函数 (修复下拉框状态丢失问题)
         function renderSampleTable() {

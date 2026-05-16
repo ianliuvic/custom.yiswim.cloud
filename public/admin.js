@@ -308,8 +308,6 @@
             if (d.delivery_mode) stats.push(dpill('truck', d.delivery_mode === 'bulk' ? 'Bulk Order' : 'Sample Order'));
             if (d.brand_name) stats.push(dpill('tag', d.brand_name));
             if (d.contact_name) stats.push(dpill('contact', d.contact_name));
-            const odmArr = tryParse(d.odm_styles);
-            if (Array.isArray(odmArr) && odmArr.length) stats.push(dpill('style', 'ODM ' + odmArr.length + ' style(s)'));
             if (d.oem_project) stats.push(dpill('style', 'OEM ' + (d.oem_style_count || 0) + ' style(s)'));
             if (d.files && d.files.length) stats.push(dpill('file', d.files.length + ' attachment(s)'));
             statsEl.innerHTML = stats.join('');
@@ -351,7 +349,7 @@
             html += renderContactSection(d);
 
             // Uncategorized files
-            const shownCats = ['odmCustom', 'oem', 'fabric', 'cmt', 'metal', 'pad', 'bag', 'hangtag', 'label', 'hygiene', 'other', 'bulkPacking', 'finalDocs'];
+            const shownCats = ['oem', 'fabric', 'cmt', 'metal', 'pad', 'bag', 'hangtag', 'label', 'hygiene', 'other', 'bulkPacking', 'finalDocs'];
             let remainFiles = [];
             Object.keys(fileMap).forEach(cat => {
                 if (!shownCats.includes(cat)) remainFiles = remainFiles.concat(fileMap[cat]);
@@ -491,40 +489,11 @@
 
     // ── Section Renderers ──
     function renderStyleSection(d, fileMap) {
-        const odmArr = tryParse(d.odm_styles);
-        const odmCustom = tryParse(d.odm_custom_data);
-        const odmImages = d.odm_style_images || {};
         const oemDescs = tryParse(d.oem_descriptions);
-        const hasODM = Array.isArray(odmArr) && odmArr.length;
         const hasOEM = d.oem_project;
-        if (!hasODM && !hasOEM) return '';
+        if (!hasOEM) return '';
 
         let h = dsecStart('style', 'Style Information');
-
-        if (hasODM) {
-            h += '<div class="adm-divider"><span class="adm-divider-tag odm">ODM</span> Selected Styles</div>';
-            h += '<div class="adm-style-grid">';
-            odmArr.forEach(name => {
-                const displayName = typeof name === 'object' ? (name.name || JSON.stringify(name)) : name;
-                let remark = '';
-                if (odmCustom && odmCustom[displayName] && odmCustom[displayName].remark) remark = odmCustom[displayName].remark;
-                const imgs = odmImages[displayName];
-                const coverImg = Array.isArray(imgs) && imgs.length ? imgs[0] : '';
-                const customFiles = (fileMap['odmCustom'] || []).filter(f => f.sub_key === displayName);
-
-                h += '<div class="adm-style-card">';
-                if (coverImg) h += '<div class="adm-style-card-img"><img src="' + esc(coverImg) + '" alt="' + esc(displayName) + '" loading="lazy"></div>';
-                h += '<div class="adm-style-card-body"><strong>' + esc(displayName) + '</strong>';
-                if (remark) h += '<div class="adm-style-remark">' + esc(remark) + '</div>';
-                if (customFiles.length) {
-                    h += '<div class="adm-file-grid" style="margin-top:8px">';
-                    customFiles.forEach(f => { h += renderFileItem(f); });
-                    h += '</div>';
-                }
-                h += '</div></div>';
-            });
-            h += '</div>';
-        }
 
         if (hasOEM) {
             h += '<div class="adm-divider"><span class="adm-divider-tag oem">OEM</span> Custom Design</div>';

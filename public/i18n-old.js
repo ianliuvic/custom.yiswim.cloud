@@ -37,7 +37,7 @@
         "确认提交": "Confirm & Submit",
 
         // ── Step 1 ──
-        "请选择定制模式：从现有库中挑选 (ODM) 或 上传自主设计包 (OEM)，支持同时选择/上传多款。": "Choose your customization mode: select from our library (ODM) or upload your own design package (OEM). Multiple styles supported.",
+        "上传自主设计包 (OEM) 开始定制，支持同时上传多款。": "Upload your own design package (OEM) to start customizing. Multiple styles supported.",
         "现有款式 (ODM)": "ODM",
         "自主设计 (OEM)": "OEM",
         "仅清空当前模式的选择": "Clear current mode selections only",
@@ -963,7 +963,7 @@
         "⚠️ 提交前置校验失败：\n\n您提交了自主设计 (OEM) 需求，为避免后期版型开发与大货生产出现工艺偏差，请务必逐一勾选确认「核心工艺与细节确认单」中的所有必填核对项。": "⚠️ Validation failed:\n\nYou submitted a custom design (OEM) request. Please check all items in the \"Core Specifications Checklist\".",
         "✅ 提交成功！\n\n您的需求编号为: HX20240508001\n专属业务经理将在 24 小时内为您提供正式报价。": "✅ Submitted successfully!\n\nYour request number: HX20240508001\nA dedicated account manager will provide a formal quote within 24 hours.",
         "提交前请完善以下必填内容：": "Please complete the following required items before submitting:",
-        "① 款式定义：请至少选择一个 ODM 款式或上传一个 OEM 设计": "① Style: Select at least one ODM style or upload one OEM design",
+        "① 款式定义：请至少上传一个 OEM 设计": "① Style: Upload at least one OEM design",
         "② 面料材质：请至少选择一种面料": "② Fabric: Please select at least one fabric",
         "③ 品牌辅料：已启用的辅料需完善配置": "③ Trims: Enabled trims need to be configured",
         "④ 下单交付：请在表格中至少选择一个款式": "④ Delivery: Please select at least one style in the table",

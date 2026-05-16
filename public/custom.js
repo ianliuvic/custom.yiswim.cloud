@@ -147,7 +147,6 @@
                 const result = await response.json();
                 if (result.success && result.data) {
                     if(result.data.bags) renderBags(result.data.bags);
-                    if(result.data.odm_styles) renderOdmStyles(result.data.odm_styles);
                     if(result.data.fabrics) renderFabrics(result.data.fabrics);
                     // 新增：触发渲染 Checklist
                     if(result.data.oem_checklists) renderOemChecklists(result.data.oem_checklists);
@@ -213,34 +212,8 @@
             };
 
             // ── Step 1: Style ──
-            const odmArr = _parse(d.odm_styles) || [];
-            const odmCustom = _parse(d.odm_custom_data) || {};
 
-            // 选择 ODM Style
-            odmArr.forEach(function(name) {
-                const cardId = 'card-' + String(name).replace(/\s+/g, '-');
-                const cardEl = document.getElementById(cardId);
-                if (cardEl) {
-                    selectOdmStyle(name, cardEl, true);
-                } else {
-                    if (selectedOdmStyles.indexOf(name) === -1) selectedOdmStyles.push(name);
-                }
-            });
-            // Restore odmCustomData (无文件)
-            for (const sn in odmCustom) {
-                odmCustomData[sn] = { remark: (odmCustom[sn] && odmCustom[sn].remark) || '', files: [] };
-                // 更新轻定制徽章
-                const badge = document.getElementById('badge-' + sn.replace(/\s+/g, '-'));
-                if (badge && odmCustom[sn] && odmCustom[sn].remark) badge.classList.add('active');
-            }
-
-            // 确保默认显示 ODM 面板
-            toggleStyleMode('existing');
-
-            // OEM 数据恢复 (始终填充，仅在 OEM 模式激活时切换 Tab)
-            if (d.oem_mode_active) {
-                toggleStyleMode('upload');
-            }
+            // OEM 数据恢复
             if (d.oem_project || d.oem_mode_active || d.oem_style_count) {
                 const projEl = document.getElementById('oem-collection-name');
                 if (projEl) projEl.value = d.oem_project || '';
@@ -958,11 +931,6 @@
                     filesByCategory[f.category].push(f);
                 });
 
-                // ODM Custom
-                (filesByCategory.odmCustom || []).forEach(function(f) {
-                    if (odmCustomData[f.sub_key]) odmCustomData[f.sub_key].files.push(makeRemote(f));
-                });
-
                 // OEM
                 (filesByCategory.oem || []).forEach(function(f) {
                     if (oemFilesData[f.sub_key]) oemFilesData[f.sub_key].push(makeRemote(f));
@@ -1207,74 +1175,6 @@
 
 
 
-        // ==========================================
-        // 1. ODM 款式渲染与联动
-        // ==========================================
-        function renderOdmStyles(styles) {
-            const navContainer = document.getElementById('odm-category-nav');
-            const contentContainer = document.getElementById('odm-content-container');
-            if (!styles || styles.length === 0) { navContainer.innerHTML = '<p style="color:#999;font-size:12px;">No style data available</p>'; return; }
-
-            const categories = [...new Set(styles.map(s => s.category).filter(Boolean))];
-
-            // --- 新增：强制分类排序逻辑 ---
-            const targetOrder = ['Bikini', 'Two-piece', 'One-piece', 'Plus Size', 'Children', 'Board Shorts', "Men's Shorts",
-                                 '比基尼', '分体', '连体', '大码', '儿童', '沙滩裤', '男裤'];
-            categories.sort((a, b) => {
-                const indexA = targetOrder.indexOf(a);
-                const indexB = targetOrder.indexOf(b);
-                if (indexA !== -1 && indexB !== -1) return indexA - indexB; // 都在预设里，按预设顺序
-                if (indexA !== -1) return -1; // a 在预设里，a 靠前
-                if (indexB !== -1) return 1;  // b 在预设里，b 靠前
-                return a.localeCompare(b, 'zh-CN'); // 都不在预设里，按默认中文排序
-            });
-            // ------------------------------
-            
-            navContainer.innerHTML = ''; contentContainer.innerHTML = '';
-            categories.forEach((cat, index) => {
-                const isActive = index === 0 ? 'active' : '';
-                const catId = `cat-${cat.replace(/\s+/g, '-')}`;
-                navContainer.insertAdjacentHTML('beforeend', `<div class="cat-item ${isActive}" onclick="switchCategory('${catId}', this)">${_rt(cat)}</div>`);
-                contentContainer.insertAdjacentHTML('beforeend', `<div id="${catId}" class="cat-pane ${isActive}"><div class="option-grid" id="grid-${catId}"></div></div>`);
-                
-                const catStyles = styles.filter(s => s.category === cat);
-
-                const gridContainer = document.getElementById(`grid-${catId}`);
-                catStyles.forEach(style => {
-                    if (style.image_urls && style.image_urls.length > 0) {
-                        style.image_urls.sort((a, b) => {
-                            const keyA = a.split('/').pop().replace(/_\d+\.\w+$/, '');
-                            const keyB = b.split('/').pop().replace(/_\d+\.\w+$/, '');
-                            return keyA === keyB ? a.localeCompare(b) : keyA.localeCompare(keyB);
-                        });
-                    }
-                    const coverImg = (style.image_urls && style.image_urls.length > 0) ? style.image_urls[0] : '';
-                    const styleJson = JSON.stringify(style).replace(/"/g, '&quot;');
-                    
-                    const cardHtml = `
-                        <div class="option-item style-item" id="card-${style.name.replace(/\s+/g, '-')}" onclick="selectOdmStyle('${style.name}', this)">
-                            <div class="details-btn" onclick="event.stopPropagation(); openDetailModal(${styleJson})" title="View images">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                            </div>
-                            <div class="customize-btn" onclick="event.stopPropagation(); openCustomModal(${styleJson}, this.closest('.option-item'))" title="Pattern customization">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                            </div>
-                            <img src="${coverImg}" class="option-img" loading="lazy">
-                            <div class="option-info" style="padding: 14px 18px;">
-                                <h4 style="margin: 0; text-align: center;">${style.name} <span class="custom-badge" id="badge-${style.name.replace(/\s+/g, '-')}">✨ Customized</span></h4>
-                            </div>
-                        </div>`;
-
-                    gridContainer.insertAdjacentHTML('beforeend', cardHtml);
-                });
-            });
-        }
-
-        function switchCategory(catId, el) {
-            document.querySelectorAll('#odm-category-nav .cat-item').forEach(item => item.classList.remove('active')); el.classList.add('active');
-            document.querySelectorAll('#odm-content-container .cat-pane').forEach(pane => pane.classList.remove('active')); document.getElementById(catId).classList.add('active');
-        }
-
     // 1. 实现双向同步 OEM Qty
     function syncOemCount(val) {
         const sampleInput = document.getElementById('oem-style-count');
@@ -1292,45 +1192,9 @@
         updateLogisticsSummary();
     }
 
-        // 多选切换逻辑
-        function selectOdmStyle(name, el, forceSelect = false) {
-            const index = selectedOdmStyles.indexOf(name);
-            
-            if (forceSelect) {
-                if (index === -1) selectedOdmStyles.push(name);
-                if (el) el.classList.add('selected');
-            } else {
-                if (index > -1) {
-                    selectedOdmStyles.splice(index, 1); 
-                    if (el) el.classList.remove('selected');
-                } else {
-                    selectedOdmStyles.push(name); 
-                    if (el) el.classList.add('selected');
-                }
-            }
-            updateCombinedStyleSummary();
-            // 【新增】同步更新 Step-4 的 ODM 数量徽章
-            const count = selectedOdmStyles.length; // 定义 count
-            const sBadge = document.getElementById('odm-count-badge');
-            const bBadge = document.getElementById('bulk-odm-count-badge');
-            if (sBadge) sBadge.innerText = count;
-            if (bBadge) bBadge.innerText = count;
-        }
-
         // 3. 升级初始化逻辑，支持两个 Tab 的锁定状态同步
         function updateStep4Scale() {
-            const count = selectedOdmStyles.length;
-            const hasOemContent = checkOemHasContent();
-
-            // 处理打样 Tab
-            const sBadge = document.getElementById('odm-count-badge');
-            if(sBadge) sBadge.innerText = count;
-            
-            // 处理大货 Tab
-            const bBadge = document.getElementById('bulk-odm-count-badge');
-            if(bBadge) bBadge.innerText = count;
-            
-            // 将 Step 1 的数量同步到 Step 4 的 OEM 徽章上
+            // 将 Step 1 的 OEM 数量同步到 Step 4 的 OEM 徽章上
             const oemCountInput = document.getElementById('oem-collection-count');
             const currentOemCount = oemCountInput ? (parseInt(oemCountInput.value) || 0) : 0;
             const sOemBadge = document.getElementById('oem-count-badge');
@@ -1345,23 +1209,12 @@
             else renderBulkTable();
         }
 
-        // --- 新增函数，替换掉旧的 updateOdmSummary ---
+        // --- 新增函数，替换掉旧的 updateStyleSummary ---
         function updateCombinedStyleSummary() {
             const sumStyleEl = document.getElementById('sum-style');
             let html = '';
         
-            // 1. 处理 ODM 部分
-            if (selectedOdmStyles.length > 0) {
-                html += `<div style="margin-bottom:8px;"><strong>ODM Styles (${selectedOdmStyles.length}):</strong><br>`;
-                html += selectedOdmStyles.map(name => {
-                    const custom = odmCustomData[name];
-                    const hasCustom = custom && (custom.remark !== '' || custom.files.length > 0);
-                    return `<span style="font-size: 11px; color: #64748b; display: block;">- ${name}${hasCustom ? ' <span style="color:var(--primary-color)">(Customized)</span>' : ''}</span>`;
-                }).join('');
-                html += `</div>`;
-            }
-        
-            // 2. 处理 OEM 部分 (判断是否有文件或备注)
+            // 处理 OEM 部分 (判断是否有文件或备注)
             const hasOemFiles = oemFilesData.tech.length > 0 || oemFilesData.ref.length > 0 || oemFilesData.size.length > 0;
             const oemRemark = document.getElementById('oem-remark').value.trim();
             const oemSizeRemark = (document.getElementById('oem-size-remark')?.value || '').trim();
@@ -1411,132 +1264,7 @@
             validateStyle();
         }
 
-        // ==========================================
-        // 2. ODM Light Customization (Modal)
-        // ==========================================
-        let odmCustomData = {}; let currentEditingStyle = ''; let currentModalFiles = [];
-        let selectedOdmStyles = []; 
         const MAX_FILE_SIZE = 20 * 1024 * 1024;
-
-        // 新增轮播状态变量
-        let customModalImages = [];
-        let customImageIndex = 0;
-        // 参数名改为 styleData 接收完整对象
-        function openCustomModal(styleData, cardEl) {
-            const styleName = styleData.name; // 从对象中解构出名字
-            selectOdmStyle(styleName, cardEl, true); 
-            currentEditingStyle = styleName;
-            document.getElementById('customModalTarget').innerText = `(${styleName})`;
-            
-            // 初始化轮播数据
-            customModalImages = styleData.image_urls || [];
-            if (typeof styleData.image_urls === 'string') customModalImages = [styleData.image_urls];
-            customImageIndex = 0;
-            renderCustomModalCarousel();
-
-            const existingData = odmCustomData[styleName] || { remark: '', files: [] };
-            document.getElementById('customRemark').value = existingData.remark;
-            currentModalFiles = [...existingData.files];
-            renderFileList();
-            document.getElementById('customModal').classList.add('active');
-        }
-
-        // 渲染轻定制弹窗的轮播图
-        function renderCustomModalCarousel() {
-            const imgEl = document.getElementById('customModalImg');
-            const prevBtn = document.getElementById('custom-carousel-prev');
-            const nextBtn = document.getElementById('custom-carousel-next');
-            const dots = document.getElementById('custom-carousel-dots');
-            
-            if (!customModalImages || customModalImages.length === 0) {
-                imgEl.style.display = 'none';
-                prevBtn.style.display = 'none'; nextBtn.style.display = 'none'; dots.innerHTML = '';
-                return;
-            }
-            
-            imgEl.style.display = 'block';
-            imgEl.src = customModalImages[customImageIndex];
-            
-            if (customModalImages.length <= 1) {
-                prevBtn.style.display = 'none'; nextBtn.style.display = 'none'; dots.innerHTML = '';
-            } else {
-                prevBtn.style.display = 'flex'; nextBtn.style.display = 'flex';
-                dots.innerHTML = customModalImages.map((_, idx) => `<div class="carousel-dot ${idx === customImageIndex ? 'active' : ''}" onclick="goToCustomModalImage(${idx})" style="width: 6px; height: 6px;"></div>`).join('');
-            }
-        }
-        
-        // 轻定制弹窗的翻页事件
-        function customCarouselMove(step) {
-            if (customModalImages.length <= 1) return;
-            customImageIndex = (customImageIndex + step + customModalImages.length) % customModalImages.length;
-            renderCustomModalCarousel();
-        }
-        
-        // 轻定制弹窗的点选事件
-        function goToCustomModalImage(idx) {
-            customImageIndex = idx;
-            renderCustomModalCarousel();
-        }
-
-        function closeCustomModal() { document.getElementById('customModal').classList.remove('active'); currentModalFiles = []; }
-
-        function saveCustomization() {
-            const remark = document.getElementById('customRemark').value.trim();
-            const hasFile = currentModalFiles.length > 0;
-            odmCustomData[currentEditingStyle] = { remark: remark, files: [...currentModalFiles] };
-            const safeId = currentEditingStyle.replace(/\s+/g, '-');
-            const badgeEl = document.getElementById(`badge-${safeId}`);
-            if (badgeEl) badgeEl.classList.toggle('active', remark !== '' || hasFile);
-            
-            updateCombinedStyleSummary(); 
-            closeCustomModal();
-        }
-
-        function formatBytes(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024, sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-
-        function getFileExt(filename) { return filename.split('.').pop().toLowerCase(); }
-
-        function renderFileList() {
-            const listContainer = document.getElementById('customFileList');
-            listContainer.innerHTML = '';
-            currentModalFiles.forEach((file, index) => {
-                const ext = getFileExt(file.name);
-                let iconClass = '';
-                if (['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext)) iconClass = 'img';
-                else if (ext === 'pdf') iconClass = 'pdf'; else if (['ai', 'eps'].includes(ext)) iconClass = 'ai';
-                const sizeStr = isRemoteFile(file) ? formatBytes(file.size || 0) : formatBytes(file.size);
-                listContainer.insertAdjacentHTML('beforeend', `
-                    <div class="file-item"><div class="file-info"><div class="file-icon ${iconClass}">${ext.substring(0, 3)}</div><div class="file-details"><span class="file-name" title="${file.name}">${file.name}</span><span class="file-size">${sizeStr}</span></div></div><button class="file-remove" onclick="removeModalFile(${index})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>
-                `);
-            });
-        }
-        function removeModalFile(index) { currentModalFiles.splice(index, 1); renderFileList(); }
-
-        function handleFilesAdded(files) {
-            let alertMsg = '';
-            Array.from(files).forEach(file => {
-                if (file.size > MAX_FILE_SIZE) { alertMsg += `file(s) "${file.name}" 超20MB。\n`; return; }
-                if (!currentModalFiles.some(existing => existing.name === file.name && existing.size === file.size)) { currentModalFiles.push(file); }
-            });
-            if (alertMsg) showMsg(alertMsg, 'error');
-            renderFileList();
-        }
-
-        document.getElementById('customFile').addEventListener('change', function(e) { handleFilesAdded(e.target.files); this.value = ''; });
-        const dropzone = document.getElementById('customDropzone');
-        if (dropzone) {
-            dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
-            dropzone.addEventListener('dragleave', (e) => { e.preventDefault(); dropzone.classList.remove('dragover'); });
-            dropzone.addEventListener('drop', (e) => {
-                e.preventDefault(); dropzone.classList.remove('dragover');
-                if (e.dataTransfer.files?.length) handleFilesAdded(e.dataTransfer.files);
-            });
-        }
 
         // 检查用户是否在 Step 1 填写了任何 OEM 相关信息
         function checkOemHasContent() {
@@ -1714,20 +1442,6 @@
             });
         });
 
-        // --- 修改后 ---
-        function toggleStyleMode(mode) {
-            const list = document.getElementById('existing-styles'), upload = document.getElementById('custom-upload');
-            const odmBtn = document.getElementById('mode-odm'), oemBtn = document.getElementById('mode-oem');
-            if(mode === 'existing') {
-                list.classList.remove('hidden'); upload.classList.add('hidden');
-                odmBtn.classList.add('active'); oemBtn.classList.remove('active');
-            } else {
-                list.classList.add('hidden'); upload.classList.remove('hidden');
-                oemBtn.classList.add('active'); odmBtn.classList.remove('active');
-            }
-            updateCombinedStyleSummary(); // 统一调用新的汇总函数
-        }
-
         // ==========================================
         // Non-Disclosure Agreement (NDA) 弹窗
         // ==========================================
@@ -1873,7 +1587,6 @@
         }
 
         function validateStyle() {
-            const hasOdm = selectedOdmStyles.length > 0;
             const hasOem = typeof checkOemHasContent === 'function' && checkOemHasContent();
 
             // 如果 OEM 有任何内容，则必须保证完整性
@@ -1900,8 +1613,8 @@
                 }
             }
 
-            // 至少有一种模式，且 OEM 若有内容则必须完整
-            const ok = (hasOdm || hasOem) && oemComplete;
+            // 至少有 OEM 内容，且必须完整
+            const ok = hasOem && oemComplete;
             setDot('dot-style', ok);
             return ok;
         }
@@ -2382,16 +2095,8 @@
             const checkedIds = [];
             document.querySelectorAll('.oem-checklist-item input[type="checkbox"]:checked').forEach(cb => checkedIds.push(cb.value));
 
-            // odmCustomData 只保留 remark
-            const odmClean = {};
-            for (const [sn, data] of Object.entries(odmCustomData)) {
-                odmClean[sn] = { remark: data.remark || '' };
-            }
-
             return {
                 // Step 1
-                odm_styles: selectedOdmStyles,
-                odm_custom_data: odmClean,
                 oem_project: document.getElementById('oem-collection-name')?.value || '',
                 oem_project_desc: document.getElementById('oem-project-desc')?.value || '',
                 oem_style_count: parseInt(document.getElementById('oem-collection-count')?.value) || 0,
@@ -2401,7 +2106,6 @@
                 oem_size_remark: document.getElementById('oem-size-remark')?.value || '',
                 oem_physical_sample: document.getElementById('oem-physical')?.checked || false,
                 oem_tracking_no: document.querySelector('#oem-address-info input')?.value.trim() || '',
-                oem_mode_active: document.getElementById('mode-oem')?.classList.contains('active') || false,
                 // Step 2
                 fabric_selection: stripFabricFiles(fabricSelection).clean,
                 // Step 3
@@ -2464,16 +2168,6 @@
             const remoteFiles = [];
 
             // —— Step 1: Style ——
-            fd.append('odm_styles', JSON.stringify(selectedOdmStyles));
-            const odmClean = {};
-            for (const [styleName, data] of Object.entries(odmCustomData)) {
-                odmClean[styleName] = { remark: data.remark };
-                (data.files || []).forEach(f => {
-                    if (isRemoteFile(f)) { remoteFiles.push({ category: 'odmCustom', sub_key: styleName, orig_name: f.name, stored_name: f.stored_name, mime_type: f.mime, size_bytes: f.size }); }
-                    else { fd.append(`files[odmCustom][${styleName}]`, f); }
-                });
-            }
-            fd.append('odm_custom_data', JSON.stringify(odmClean));
             fd.append('oem_project', document.getElementById('oem-collection-name')?.value || '');
             fd.append('oem_project_desc', document.getElementById('oem-project-desc')?.value || '');
             fd.append('oem_style_count', document.getElementById('oem-collection-count')?.value || '0');
@@ -2648,7 +2342,7 @@
             if (!v.allValid) {
                 // 构造缺失项提示
                 const missing = [];
-                if (!v.style) missing.push(_t('① Style: Select at least one ODM style or upload one OEM design'));
+                if (!v.style) missing.push(_t('① Style: Upload at least one OEM design'));
                 if (!v.fabric) missing.push(_t('② Fabric: Please select at least one fabric'));
                 if (!v.trims) missing.push(_t('③ Trims: Enabled trims need to be configured'));
                 if (!v.shipping) missing.push(_t('④ Delivery: Please select at least one style in the table'));
@@ -6636,15 +6330,10 @@
             const tbody = document.getElementById('bulk-table-body');
             if(!tbody) return;
         
-            const odmStyles = (typeof selectedOdmStyles !== 'undefined') ? selectedOdmStyles : [];
             const oemCountInput = document.getElementById('oem-collection-count');
             const oemCount = oemCountInput ? (parseInt(oemCountInput.value) || 0) : 0;
         
             let styleOptionsHtml = `<option value="">-- Select style --</option>`;
-            odmStyles.forEach(name => {
-                const val = `ODM: ${name}`;
-                styleOptionsHtml += `<option value="${val}">${val}</option>`;
-            });
             for (let i = 1; i <= oemCount; i++) {
                 const val = `OEM - Style ${i} style(s)`;
                 styleOptionsHtml += `<option value="${val}">${val}</option>`;
@@ -6695,13 +6384,8 @@
             const qty = parseInt(value) || 0;
             const style = bulkRows[index].style;
             
-            let minAllowed = 50; // 默认按 ODM 算
-            let typeName = _t("Existing style (ODM)");
-        
-            if (style.startsWith('OEM')) {
-                minAllowed = 100;
-                typeName = _t("Custom design (OEM)");
-            }
+            let minAllowed = 100; // OEM MOQ
+            let typeName = _t("Custom design (OEM)");
         
             if (qty < minAllowed) {
                 showMsg(_t('⚠️ MOQ Reminder:') + '\n' + (window.__lang === 'en'
@@ -6731,12 +6415,7 @@
         
         // 初始化：Step 4 激活时调用
         function initSampleTab() {
-            // 1. 更新 ODM 数量徽章
-            const odmCount = (typeof selectedOdmStyles !== 'undefined') ? selectedOdmStyles.length : 0;
-            const badge = document.getElementById('odm-count-badge');
-            if (badge) badge.innerText = odmCount;
-            
-            // 3. 渲染或初始化表格
+            // 渲染或初始化表格
             if (sampleRows.length === 0) {
                 addSampleRow(); // 默认第一行
             } else {
@@ -6766,7 +6445,7 @@
             renderSampleTable();
         }
         
-        // 当 ODM 或 OEM 数量变化时，刷新款式下拉列表而不重置表格
+        // 当 OEM 数量变化时，刷新款式下拉列表而不重置表格
         function refreshSampleTableStyles() {
             renderSampleTable(); 
         }
@@ -6774,7 +6453,6 @@
         // 核心渲染函数 (修复下拉框状态丢失问题)
         function renderSampleTable() {
             const tbody = document.getElementById('sample-table-body');
-            const odmStyles = (typeof selectedOdmStyles !== 'undefined') ? selectedOdmStyles : [];
             const oemCountInput = document.getElementById('oem-collection-count');
             const oemCount = oemCountInput ? (parseInt(oemCountInput.value) || 0) : 0;
         
@@ -6788,13 +6466,6 @@
                 
                 // styleFound 标记：用来检查用户以前选的款式现在还在不在列表里
                 let styleFound = (row.style === ""); 
-        
-                odmStyles.forEach(name => {
-                    const val = `ODM: ${name}`;
-                    const isSelected = (row.style === val);
-                    if (isSelected) styleFound = true;
-                    rowStyleOptions += `<option value="${val}" ${isSelected ? 'selected' : ''}>${val}</option>`;
-                });
         
                 for (let i = 1; i <= oemCount; i++) {
                     const val = `OEM - Style ${i} style(s)`;
@@ -7027,28 +6698,16 @@
 
         // --- 修复：OEM 模式一键清空逻辑（无弹窗打扰，完整覆盖 A 区域数据） ---
         function clearCurrentMode() {
-            const isOdmActive = document.getElementById('mode-odm').classList.contains('active');
-            
-            if (isOdmActive) {
-                // 【Clear ODM 逻辑】
-                if (selectedOdmStyles.length === 0) return;
+            // 【Clear OEM 逻辑】
                 
-                selectedOdmStyles = [];
-                odmCustomData = {};
-                document.querySelectorAll('.style-item').forEach(item => item.classList.remove('selected'));
-                document.querySelectorAll('.custom-badge').forEach(badge => badge.classList.remove('active'));
-                
-            } else {
-                // 【Clear OEM 逻辑】
-                
-                // 1. 释放图片预览的 Blob 内存 (防止内存泄漏)
-                ['tech', 'ref', 'size'].forEach(type => {
-                    if (oemFilesData[type] && oemFilesData[type].length > 0) {
-                        oemFilesData[type].forEach(file => {
-                            if (file.previewUrl) URL.revokeObjectURL(file.previewUrl);
-                        });
-                    }
-                });
+            // 1. 释放图片预览的 Blob 内存 (防止内存泄漏)
+            ['tech', 'ref', 'size'].forEach(type => {
+                if (oemFilesData[type] && oemFilesData[type].length > 0) {
+                    oemFilesData[type].forEach(file => {
+                        if (file.previewUrl) URL.revokeObjectURL(file.previewUrl);
+                    });
+                }
+            });
 
                 // 2. 清空全局数据对象
                 oemFilesData = { tech: [], ref: [], size: [] };
@@ -7083,11 +6742,6 @@
                     togglePhysicalInfo(false);
                 }
                 const addrInput = document.querySelector('#oem-address-info input');
-                if (addrInput) addrInput.value = '';
-
-                // 5. Clear Checklist 必填核对单的打勾状态 (如果有的话)
-                const checklists = document.querySelectorAll('.oem-checklist-item input[type="checkbox"]');
-                checklists.forEach(cb => {
                     cb.checked = false;
                     if(cb.parentElement) cb.parentElement.style.background = 'transparent';
                 });
@@ -7109,16 +6763,10 @@
             const _el = (id) => document.getElementById(id);
             const _q = (sel) => document.querySelector(sel);
 
-            // 1. Reset ODM/OEM
-            selectedOdmStyles = []; 
-            document.querySelectorAll('.style-item').forEach(item => item.classList.remove('selected'));
-            const sumStyle = _el('sum-style'); if (sumStyle) sumStyle.innerText = 'Not Selected';
-            odmCustomData = {}; currentEditingStyle = '';
-
-            document.querySelectorAll('.custom-badge').forEach(badge => badge.classList.remove('active'));
-            
+            // 1. Reset OEM
             oemFilesData = { tech: [], ref: [], size: [] };
             oemStyleDescriptions = [];
+            const sumStyle = _el('sum-style'); if (sumStyle) sumStyle.innerText = 'Not Selected';
             const oemRefPreview = _el('oemRefPreview'); if (oemRefPreview) oemRefPreview.innerHTML = '';
             const oemTechPreview = _el('oemTechPreview'); if (oemTechPreview) oemTechPreview.innerHTML = '';
             const oemRemark = _el('oem-remark'); if (oemRemark) oemRemark.value = '';
@@ -7130,8 +6778,6 @@
             // Reset OEM checklist
             document.querySelectorAll('.oem-checklist-item input[type="checkbox"]').forEach(cb => { cb.checked = false; if(cb.parentElement) cb.parentElement.style.background = 'transparent'; });
             if (typeof syncOemCheckAllBtn === 'function') syncOemCheckAllBtn();
-            // 切换回 ODM 模式
-            toggleStyleMode('existing');
 
             // 2. 重置面料
             for (let key in fabricSelection) {

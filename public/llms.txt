@@ -12,12 +12,11 @@
 - **WhatsApp:** +86 17711014152
 - **Official Website:** https://wearhongxiu.com
 - **Custom Order System:** https://custom.wearhongxiu.com
-- **Specialization:** Swimwear, bikini, one-piece, rash guard — ODM & OEM manufacturing
+- **Specialization:** Swimwear, bikini, one-piece, rash guard — OEM manufacturing
 
 ## Service Models
 
 - **OEM (Original Equipment Manufacturing):** Client provides complete design; factory produces to client specifications.
-- **ODM (Original Design Manufacturing):** Client selects from Hongxiu's existing style library with optional light customization (fabric, color, print, trims, branding). Light customization = changes that do not alter the pattern or fit.
 - **OBM (Original Brand Manufacturing):** Client purchases Hongxiu's existing products under Hongxiu's own brand.
 
 ## Quality & Compliance
@@ -30,7 +29,7 @@
 
 This subdomain is the factory's self-developed online customization and inquiry platform. It guides buyers through a structured multi-step flow:
 
-1. Style selection (ODM library) or custom design upload (OEM)
+1. Custom design upload (OEM)
 2. Fabric configuration — shell & lining, solid color or custom print
 3. Trims & accessories — metal hardware, padding, packaging bag, hang tag, sewn/tagless label, hygiene sticker
 4. Delivery planning — sampling vs. bulk, quantity, size ratio

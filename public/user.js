@@ -174,9 +174,6 @@
 
     function buildDesc(r) {
         var parts = [];
-        // ODM styles count
-        var odm = tryParse(r.odm_styles);
-        if (Array.isArray(odm) && odm.length) parts.push('ODM: ' + odm.length + 'style(s)');
         // OEM
         if (r.oem_project) parts.push('OEM: ' + esc(r.oem_project));
         if (r.oem_style_count) parts.push(r.oem_style_count + 'style(s)');
@@ -223,8 +220,6 @@
             if (d.delivery_mode) stats.push(pill('truck', d.delivery_mode === 'bulk' ? 'Bulk Order' : 'Sample Order'));
             if (d.brand_name) stats.push(pill('tag', d.brand_name));
             if (d.contact_name) stats.push(pill('user', d.contact_name));
-            var odmArr = tryParse(d.odm_styles);
-            if (Array.isArray(odmArr) && odmArr.length) stats.push(pill('style', 'ODM ' + odmArr.length + ' style(s)'));
             if (d.oem_project) stats.push(pill('style', 'OEM ' + (d.oem_style_count || 0) + ' style(s)'));
             if (d.files && d.files.length) stats.push(pill('file', d.files.length + ' attachment(s)'));
             statsEl.innerHTML = stats.join('');
@@ -275,7 +270,7 @@
             html += renderContactSection(d);
 
             // ─── Uncategorized files ───
-            var shownCats = ['odmCustom', 'oem', 'fabric', 'cmt', 'metal', 'pad', 'bag', 'hangtag', 'label', 'hygiene', 'other', 'bulkPacking', 'finalDocs'];
+            var shownCats = ['oem', 'fabric', 'cmt', 'metal', 'pad', 'bag', 'hangtag', 'label', 'hygiene', 'other', 'bulkPacking', 'finalDocs'];
             var remainFiles = [];
             Object.keys(fileMap).forEach(function (cat) {
                 if (shownCats.indexOf(cat) === -1) remainFiles = remainFiles.concat(fileMap[cat]);
@@ -304,68 +299,14 @@
     /* ── Section Renderers ── */
 
     function renderStyleSection(d, fileMap) {
-        var odmArr = tryParse(d.odm_styles);
-        var odmCustom = tryParse(d.odm_custom_data);
-        var odmImages = d.odm_style_images || {};
         var oemDescs = tryParse(d.oem_descriptions);
-        var hasODM = Array.isArray(odmArr) && odmArr.length;
         var hasOEM = d.oem_project;
-        if (!hasODM && !hasOEM) return '';
+        if (!hasOEM) return '';
 
         var h = secStart('style', 'Style Information');
 
-        // ODM
-        if (hasODM) {
-            h += '<div class="u-sec-divider"><span class="u-sec-divider-tag odm">ODM</span><span class="u-sec-divider-text">Selected Styles</span><span class="u-sec-divider-line"></span></div>';
-            h += '<div class="u-style-grid">';
-            odmArr.forEach(function (name) {
-                var displayName = typeof name === 'object' ? (name.name || name.id || JSON.stringify(name)) : name;
-                var remark = '';
-                if (odmCustom && typeof odmCustom === 'object') {
-                    var cd = odmCustom[displayName];
-                    if (cd && cd.remark) remark = cd.remark;
-                }
-                // Style images from DB
-                var imgs = odmImages[displayName];
-                var allImgs = Array.isArray(imgs) ? imgs : [];
-                var coverImg = allImgs.length ? allImgs[0] : '';
-
-                // User-uploaded custom files for this style
-                var customFiles = (fileMap['odmCustom'] || []).filter(function (f) { return f.sub_key === displayName; });
-
-                h += '<div class="u-style-card' + (coverImg ? ' has-img' : '') + '">';
-                if (coverImg) {
-                    var lbKey = regLbImages(allImgs);
-                    h += '<div class="u-style-card-img" style="cursor:pointer" onclick="openLightbox(\'' + lbKey + '\', 0)">';
-                    h += '<img src="' + esc(coverImg) + '" alt="' + esc(displayName) + '" loading="lazy" onerror="this.parentElement.style.display=\'none\'">';
-                    if (allImgs.length > 1) {
-                        h += '<span class="u-img-count">' + allImgs.length + ' photo(s)</span>';
-                    }
-                    h += '</div>';
-                }
-                h += '<div class="u-style-card-body">';
-                h += '<div class="u-style-card-name">' + esc(displayName) + '</div>';
-                // Light Customization compact pill
-                if (remark || customFiles.length) {
-                    var summary = [];
-                    if (remark) summary.push('Remark');
-                    if (customFiles.length) summary.push(customFiles.length + ' file(s)');
-                    var popId = 'cpop' + (++_lbSeq);
-                    // store data for popover
-                    _customPopData[popId] = { remark: remark, files: customFiles };
-                    h += '<div class="u-custom-pill" onclick="event.stopPropagation();toggleCustomPop(\'' + popId + '\', this)">';
-                    h += '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>';
-                    h += '<span>Light Customization</span><span class="u-custom-pill-sum">' + esc(summary.join(' · ')) + '</span>';
-                    h += '</div>';
-                }
-                h += '</div></div>';
-            });
-            h += '</div>';
-        }
-
         // OEM
         if (hasOEM) {
-            if (hasODM) h += '<div class="u-sec-separator"></div>';
             h += '<div class="u-sec-divider"><span class="u-sec-divider-tag oem">OEM</span><span class="u-sec-divider-text">Custom Design</span><span class="u-sec-divider-line"></span></div>';
             h += kv('Project Name', esc(d.oem_project));
             h += kv('Style Count', d.oem_style_count || '-');

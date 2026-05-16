@@ -7,8 +7,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
-    <meta name="description" content="<%= lng === 'zh' ? '红绣定制系统——专业泳装ODM/OEM定制平台。在线配置面料、辅料、印花、吊牌，一站式完成打样与大货询盘。' : 'Hongxiu Custom System — Professional swimwear ODM/OEM customization platform. Configure fabrics, trims, prints, and labels online. Submit sampling or bulk inquiries in one flow.' %>">
-    <meta name="keywords" content="<%= lng === 'zh' ? '泳装定制,比基尼定制,泳衣ODM,泳衣OEM,泳装工厂,红绣' : 'custom swimwear,bikini manufacturer,swimwear ODM,swimwear OEM,swimwear factory,Hongxiu' %>">
+    <meta name="description" content="<%= lng === 'zh' ? '红绣定制系统——专业泳装OEM定制平台。在线配置面料、辅料、印花、吊牌，一站式完成打样与大货询盘。' : 'Hongxiu Custom System — Professional swimwear OEM customization platform. Configure fabrics, trims, prints, and labels online. Submit sampling or bulk inquiries in one flow.' %>">
+    <meta name="keywords" content="<%= lng === 'zh' ? '泳装定制,比基尼定制,泳衣OEM,泳装工厂,红绣' : 'custom swimwear,bikini manufacturer,swimwear OEM,swimwear factory,Hongxiu' %>">
     <meta name="robots" content="index, follow">
     <meta name="author" content="Hongxiu Clothing">
     <link rel="canonical" href="<%= baseUrl %>/">
@@ -16,7 +16,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="<%= baseUrl %>/">
     <meta property="og:title" content="<%= title %>">
-    <meta property="og:description" content="<%= lng === 'zh' ? '红绣定制系统——专业泳装ODM/OEM定制平台。在线配置面料、辅料、印花、吊牌，一站式完成打样与大货询盘。' : 'Hongxiu Custom System — Professional swimwear ODM/OEM customization platform. Configure fabrics, trims, prints and labels online.' %>">
+    <meta property="og:description" content="<%= lng === 'zh' ? '红绣定制系统——专业泳装OEM定制平台。在线配置面料、辅料、印花、吊牌，一站式完成打样与大货询盘。' : 'Hongxiu Custom System — Professional swimwear OEM customization platform. Configure fabrics, trims, prints and labels online.' %>">
     <meta property="og:image" content="<%= baseUrl %>/serp-image.webp">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -25,7 +25,7 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="<%= title %>">
-    <meta name="twitter:description" content="<%= lng === 'zh' ? '红绣定制系统——专业泳装ODM/OEM定制平台。' : 'Hongxiu Custom System — Professional swimwear ODM/OEM customization platform.' %>">
+    <meta name="twitter:description" content="<%= lng === 'zh' ? '红绣定制系统——专业泳装OEM定制平台。' : 'Hongxiu Custom System — Professional swimwear OEM customization platform.' %>">
     <meta name="twitter:image" content="<%= baseUrl %>/serp-image.webp">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
@@ -235,16 +235,11 @@
                          Step 1: Style Definition
                          ========================================== -->
                     <div class="step-content" id="step-1">
-                        <div class="step-desc">Choose your customization mode: select from our library (ODM) or upload your own design package (OEM). Multiple styles supported.</div>
+                        <div class="step-desc">Upload your own design package (OEM) to start customizing. Multiple styles supported.</div>
                         
-                        <!-- --- 修改后 --- -->
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px;">
-                            <div class="mode-switcher" style="margin-bottom: 0;"> <!-- 移除原有 margin-bottom -->
-                                <div class="mode-option active" id="mode-odm" onclick="toggleStyleMode('existing')" style="position:relative;">ODM<span style="position:absolute;top:-10px;right:-18px;background:linear-gradient(135deg,#ff4d4f,#ff7a45);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:8px;line-height:1.2;white-space:nowrap;box-shadow:0 2px 6px rgba(255,77,79,0.4);animation:moqPulse 2s ease-in-out infinite;">MOQ 50!</span></div>
-                                <div class="mode-option" id="mode-oem" onclick="toggleStyleMode('custom')">OEM</div>
-                            </div>
-                            
-                            <button type="button" class="clear-all-btn" onclick="clearCurrentMode()" title="Clear current mode selections only">
+                        <!-- OEM 定制区域 -->
+                        <div style="display: flex; justify-content: flex-end; margin-bottom: 30px;">
+                            <button type="button" class="clear-all-btn" onclick="clearCurrentMode()" title="Clear all OEM selections">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;">
                                     <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                                 </svg>
@@ -252,14 +247,8 @@
                             </button>
                         </div>
 
-                        <!-- 动态生成的 ODM 区域 -->
-                        <div id="existing-styles">
-                            <div class="category-nav" id="odm-category-nav"><p style="font-size:12px; color:#999;">Loading style data...</p></div>
-                            <div id="odm-content-container"></div>
-                        </div>
-
                         <!-- OEM 自主设计模块 -->
-                        <div id="custom-upload" class="hidden" style="animation: fadeIn 0.4s ease;">
+                        <div id="custom-upload" style="animation: fadeIn 0.4s ease;">
                             <!-- 新增：项目系列名称与款式数量 -->
                             <div class="oem-section-header" style="margin-bottom: 18px;">
                                 <h4 class="section-heading" style="margin: 0;">A. Project Basic Info</h4>
@@ -2314,11 +2303,6 @@
                             <div class="attr-section" style="margin-bottom: 25px;">
                                 <h4 class="section-heading" style="margin-bottom: 18px;">A. Development Scale Confirmation</h4>
                                 <div style="margin-left: 13px; display: flex; gap: 40px; align-items: center; background: #f8fafc; padding: 20px; border-radius: 0; border: 1px solid #f1f5f9;">
-                                    <!-- ODM 自动识别显示 -->
-                                    <div style="display: flex; align-items: center; gap: 12px;">
-                                        <span style="font-size: 13px; color: #64748b;">Selected ODM Styles:</span>
-                                        <span id="odm-count-badge" style="background: var(--primary-color); color: #fff; padding: 2px 10px; border-radius: 0; font-weight: 700; font-size: 14px;">0</span>
-                                    </div>
                                     <!-- OEM 数量输入 -->
                                     <div style="display: flex; align-items: center; gap: 12px;">
                                         <span style="font-size: 13px; color: #64748b;">Custom Design (OEM) Style Count:</span>
@@ -2610,11 +2594,6 @@
                             <div class="attr-section" style="margin-bottom: 25px;">
                                 <h4 class="section-heading" style="margin-bottom: 18px;">A. Production Scale Confirmation</h4>
                                 <div style="margin-left: 13px; display: flex; gap: 40px; align-items: center; background: #f8fafc; padding: 20px; border-radius: 0; border: 1px solid #f1f5f9;">
-                                    <!-- ODM 自动识别显示 -->
-                                    <div style="display: flex; align-items: center; gap: 12px;">
-                                        <span style="font-size: 13px; color: #64748b;">Selected ODM Styles:</span>
-                                        <span id="bulk-odm-count-badge" style="background: var(--primary-color); color: #fff; padding: 2px 10px; border-radius: 0; font-weight: 700; font-size: 14px;">0</span>
-                                    </div>
                                     <!-- OEM 数量输入 -->
                                     <div style="display: flex; align-items: center; gap: 12px;">
                                         <span style="font-size: 13px; color: #64748b;">Custom Design (OEM) Style Count:</span>
@@ -2792,18 +2771,7 @@
                                 <!-- 阶梯说明列表 -->
                                 <div style="display: flex; flex-direction: column; gap: 15px;">
                                     
-                                    <!-- Level 1: ODM/OBM + 常规 -->
-                                    <div style="padding: 15px; border: 1px solid #e2e8f0; border-radius: 0; background: #fff;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                            <span style="font-size: 13px; font-weight: 700; color: #1e293b;">ODM / OBM + Standard Materials, Colors & Prints</span>
-                                            <span style="font-size: 14px; font-weight: 800; color: var(--primary-color);">MOQ 50 pcs</span>
-                                        </div>
-                                        <p style="font-size: 11px; color: #64748b; margin: 0; line-height: 1.5;">
-                                            Hongxiu's existing proven patterns with standard market fabrics, colors and universal trims. Fast reorder, ideal for market testing.
-                                        </p>
-                                    </div>
-                    
-                                    <!-- Level 2: OEM + 常规 -->
+                                    <!-- Level 1: OEM + 常规 -->
                                     <div style="padding: 15px; border: 1px solid #e2e8f0; border-radius: 0; background: #fff;">
                                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                             <span style="font-size: 13px; font-weight: 700; color: #1e293b;">OEM + Standard Materials, Colors & Prints</span>
@@ -3049,65 +3017,6 @@
             </div>
         </div>
     </div>
-
-    <div class="modal-overlay" id="customModal">
-        <!-- 1. 将弹窗最大宽度加宽到 960px -->
-        <div class="modal-content modal-md" style="max-width: 960px;">
-            <div class="custom-modal-header" style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
-                <h3 style="flex:1; min-width:0;"><span style="background:var(--primary-color); color:#fff; padding:4px 8px; border-radius: 0; font-size:12px;">PLUS</span> Style Light Customization <span id="customModalTarget" style="font-size: 14px; font-weight: normal; color: #94a3b8; margin-left: 10px;"></span></h3>
-                <button class="modal-close-abs" onclick="closeCustomModal()" style="position:static; flex-shrink:0; margin-top:-4px;">&times;</button>
-            </div>
-            
-            <!-- 采用左右 Flex 布局 -->
-            <div class="custom-modal-body" style="display: flex; gap: 35px; padding: 30px 35px 35px;">
-                
-                <!-- 2. 左侧图片区：加宽到 400px，并增加最小高度，让泳装图更显修长 -->
-                <div style="flex: 0 0 400px; min-height: 480px; position: relative; border-radius: 0; overflow: hidden; background: #f8fafc; display: flex; align-items: center; justify-content: center; border: 1px solid #e2e8f0;">
-                    
-                    <!-- 3. 修复左箭头：严格锁定宽高 36px，加入 display:flex 强制内容居中，彻底告别椭圆 -->
-                    <button class="carousel-btn left" id="custom-carousel-prev" onclick="customCarouselMove(-1)" 
-                            style="width: 36px; height: 36px; min-width: 36px; min-height: 36px; font-size: 16px; left: 15px; padding: 0; display: flex; align-items: center; justify-content: center; line-height: 1;">&#10094;</button>
-                    
-                    <img id="customModalImg" src="" style="width: 100%; height: 100%; object-fit: contain;">
-                    
-                    <!-- 3. 修复右箭头：同理严格锁定宽高 -->
-                    <button class="carousel-btn right" id="custom-carousel-next" onclick="customCarouselMove(1)" 
-                            style="width: 36px; height: 36px; min-width: 36px; min-height: 36px; font-size: 16px; right: 15px; padding: 0; display: flex; align-items: center; justify-content: center; line-height: 1;">&#10095;</button>
-                    
-                    <div class="carousel-dots" id="custom-carousel-dots" style="bottom: 15px;"></div>
-                </div>
-
-                <!-- 右侧：填写表单区 (保持原样即可) -->
-                <div style="flex: 1; display: flex; flex-direction: column;">
-                    
-                    <div style="font-size: 11px; color: #f59e0b; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 5px; line-height: 1.4;">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-top:1px; flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                        <span><strong>Note:</strong>If this is a multi-piece set and you only need one piece, specify below.</span>
-                    </div>
-                    
-                    <label style="display:block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 8px;">Customization Description</label>
-                    <textarea id="customRemark" placeholder="Describe your light customization needs in detail.&#10;E.g., the shoulder straps are widened to 2 cm, and zigzag edge finishing is applied, etc." spellcheck="false" style="flex: 1; min-height: 120px; margin-bottom: 20px;"></textarea>
-                    
-                    <label style="display:block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 8px;">Reference Attachments</label>
-                    <div class="premium-upload-row" id="customDropzone" onclick="document.getElementById('customFile').click()" style="padding: 12px 15px;">
-                        <div class="upload-label-group">
-                            <span class="upload-label-main" style="font-size: 12px;">Upload reference images or tech packs</span><span class="upload-label-sub" style="font-size: 10px;">Max 20MB</span>
-                        </div>
-                        <input type="file" id="customFile" multiple class="hidden"> 
-                        <button type="button" style="background:#fff; border:1px solid #e2e8f0; color:#64748b; padding: 4px 12px; font-size:11px; pointer-events:none;">Select File</button>
-                    </div>
-                    <div id="customFileList" class="file-list-container" style="max-height: 120px;"></div>
-                    
-                    <div class="modal-footer" style="margin-top: auto; padding-top: 20px; border-top: none;">
-                        <button type="button" class="btn-outline" onclick="closeCustomModal()">Cancel</button>
-                        <button type="button" id="saveCustomBtn" onclick="saveCustomization()" style="background:var(--primary-color); color:#fff; border:none; box-shadow: 0 4px 12px rgba(170, 0, 0, 0.2);">Save Customization</button>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
-    </div>
-
 
     <div class="modal-overlay" id="ndaModal">
         <div class="modal-content modal-md" style="max-width: 580px; padding: 0;">
